@@ -1,0 +1,411 @@
+
+Alpha 59: 
+- Moved mcedit.ini to your Documents folder.
+- Brush tool remembers its size
+- Fixed several more crashes
+
+Alpha 58:
+- Fixed several crashes
+
+Alpha 57:
+- Doors rotate correctly
+- Fewer crashes when deselecting, rolling, and changing the brush size
+
+Alpha 56:
+- Change a number input by pointing at it and using the mouse wheel
+- Added automatic crash reporting. You may disable it via mcedit.ini
+- Minor interface tweaks
+
+Alpha 55:
+ - Added hotkeys (ALT-1 through ALT-5) for changing tool options. Right now 
+you can only control the "Copy Air" and "Copy Water" options this way.
+ - Fixed a few more bugs and memory errors
+ 
+Alpha 54:
+ - Fixed several bugs and crashes, including a crash when trying to
+nudge and blocks not appearing after using the brush.
+
+Alpha 53:
+ - Slightly improved the sphere tool
+ - A Linux version is available.  It might work on Macs, too.
+ 
+Alpha 52:
+ - Added a crude tool for drawing spheres
+ - Fixed a crash on attempting to undo
+
+Alpha 51:
+ - The name of the selected block is shown in the fill/replace tool.
+ - When looking down or nearly down, the forward and back keys do something more sensible.
+ - Fixed an issue with fluids imported from Indev .mclevel files.
+ 
+Alpha 49:
+ - Fixes a crash when importing anything that's too large for where it's going.
+
+
+Alpha 48.3 shows what happened after using the Prune command, and shows an error message on a failed import.
+The block translations from older levels no longer produce water(8) which seems to be 
+converted to still water(9) in Minecraft, and sometimes crashes the game.
+
+Alpha 48.2 enables Select All for the older level formats
+
+Alpha 48.1 fixes a bug where too many chunks were relighted on every save.
+
+Alpha 48:
+ - Added Select All (Control-A) and Deselect (Control-D)
+ - Improved CPU and memory usage during lighting calculation.  MCEdit will no longer crash with a MemoryError
+ when lighting more than 8,000 chunks.
+
+Alpha 47:
+- Imports .inv files from INVEdit as chests. Only the 27 main inventory slots are used.
+
+Alpha 46:
+- Improved block rotation to handle doors, stairs, levers, and buttons.
+- Improved support for Classic single-player levels (.mine extension)
+
+
+Alpha 45.3 fixes a crash with "Copy Water" unchecked.
+
+Alpha 45.2 fixes a crash when editing Classic levels.
+
+Alpha 45.1 brings back the block search list when pressing 'R' to enable replace mode for the fill tool.
+
+Alpha 45:
+
+- Slimmed down the block replace interface, and added mouseovers
+- Buttons with key shortcuts are shown when you press Control.
+
+- Added a 64-megablock limit to undo. Copying or filling more blocks
+cannot be undone and will prompt for confirmation. See "block buffer" setting in mcedit.ini
+
+- Memory errors are handled by freeing memory from the renderer and retrying the operation
+- Memory errors in the renderer will decrease the view distance setting and ask you to restart MCEdit.
+
+Alpha 43:
+
+- Hold Space to move slowly instead of stopping immediately.
+
+- Remembers view distance in the .ini
+
+- Added a limit for low-detail chunks. This is 3 times the high-detail
+rendering distance, and it doubles when up in space and not rendering in high detail. 
+Improves performance on some machines.
+
+
+Version 42.1 fixes a crash when rotating regions of certain sizes.
+
+Alpha 42:
+ - Added key controls (E R) to the Fill tool for swapping materials and turning on replace mode.
+ - Replacing a block with another block of the same transparency does not trigger a relight.
+ 
+
+Alpha 41.5 enables the Clone button after using the nudge button or offset inputs.
+
+Alpha 41.4 restores function to the block rotate done by the "E" key.
+
+Alpha 41.3 makes the block replacement more natural, with an added Swap button
+
+Alpha 41.2 fixes a crash when the block search has no results
+
+Alpha 41.1 restores full function to the fill and DELETE tools
+
+Alpha 41:
+
+- Added Prune command to chunk tool.  This keeps the selected blocks and removes the rest.
+- Added block replace option to fill tool.  
+- Added flip and roll keys for clone and crane.
+
+- Messed around with selection appearance again.
+- Fixed stairs to be transparent to light.
+- Lighting calculation is more aggressive
+
+
+MCEdit Alpha 40:
+- Many tools can be undone.  Press Control-Z to undo.  
+- Mobs are in the right place during a rotate now.  Really!
+
+
+MCEdit Alpha 39 (August 23)
+- Fixed the fill tool for Classic levels
+
+
+MCEdit Alpha 38 (August 23)
+- Streamlined the clone tool.  There are fewer colors involved now.
+- Streamlined the fill tool.  One less press of "Enter" is needed now.
+- Streamlined the DELETE key.  Pressing "Enter" is no longer needed.
+- Added nudge controls for the selection and clone tools.  
+- Reduced selection tools by 50%.
+- Added arithmetic input for the clone.
+- Fooled around with the visuals some more.
+
+
+MCEdit Alpha 37 (August 20): 
+- Fixed a bug that made the chunk tool unusable
+
+MCEdit Alpha 36 (August 20):
+- Added options to the clone tools:  "Copy Air" and "Copy Water" control 
+  whether these blocks are copied along with the others. 
+  
+- Signs will now rotate correctly.
+- Entities will now rotate correctly.  Signs will keep their text,
+  chests will keep their contents, and creepers will stay in their cages.
+
+
+MCEdit Alpha 35 (August 18)
+
+- Fixed a crash on launch for some non-English-speaking users.
+- Added save-changes confirmation on exit
+- Lighting is more reliable.  If not, lighting can be accessed via the Chunk tool.
+- Toned down the selection's colors.
+- Fixed several bugs with older level formats
+
+
+MCEdit Alpha 34 (August 13)
+
+- Changes are no longer saved automatically.  You must press Control-S to save your changes.
+- Lighting calculator works.  Cheap lighting is done after every edit.  
+   Expensive, time-consuming lighting is done when you press Control-S
+
+- Tweaked the selection tool a little.  Surface mode selection is still terrible, 
+   so try to use depth mode until I get it fixed.
+
+MCEdit Alpha 33 (August 10)
+
+- Fixed a crash when trying to load bad chunks
+- Automatically create the correct chunks when pasting
+- Redstone torches rotate instead of falling off
+- Entities copy correctly.  Chests can be exported once again.  
+Schematics containing animals and enemies will not paste them inside of walls any more.
+
+
+
+MCEdit Alpha 32 (August 9)
+- Empty chunks are automatically created when using the clone and crane tools.
+
+- The current tool no longer disappears from the screen when mouse control is off.
+
+- The low-detail terrain from last patch now:
+uses less memory
+updates when the terrain is modified
+appears for newly pasted blocks
+
+
+
+MCEdit Alpha 30 (August 6)
+- You can create new Alpha worlds now.  They are created with 256 chunks of 
+one block thick Adminium.
+
+- You can control chunks with the new Chunk tool.  When you select it, your selection 
+expands to cover all of the chunks it touches.  Two buttons pop up to let you create 
+or destroy the selected chunks.
+
+
+MCEdit Alpha 28 (August 4)
+
+- Minor changes to prevent crashing when trying to load Alpha Multiplayer levels.
+- Cheap skylight calculator to stop Minecraft from crashing
+
+MCEdit Alpha 27 (August 3)
+
+- You can see the blocks you're about to place.
+- You can see the edges of infinite levels.
+- Blocks are even MORE likely to snap to the correct surface!
+- Block rotation works again, mostly.
+- Torches, rails, and ladders rotate along with everything else.
+- Block copy is even faster.
+
+MCEdit Alpha 26 (July 30)
+
+- Block copying speed has been improved.
+- Full lighting is shown (again)
+- Fixed a few bugs caused by the new code in version 25.
+
+MCEdit Alpha 25 (July 29)
+
+- Performance has been moderately improved.
+
+MCEdit Alpha 24 (July 28)
+
+- The surface-targeting is less ornery.
+- Recently copied blocks are easier to see.
+- Adjusted the appearance for several selection boxes.
+- Small numbers of blocks in transit are easier to work with.
+- You can rotate blocks in transit with E and C.
+Sadly, you can't see which way the blocks face, only the bounding box.
+
+
+MCEdit Alpha 23 (July 27)
+
+- Bucket-on-wheels tool added.  Fill the selection with your favorite blocks.
+- An empty wire cube is under the pointer when no tool is selected.
+- Tools turn red if they need a selection and you don't have one.
+- Selections now have a crisp, non-buggy look.
+
+- Copied blocks have the proper sky lights after Minecraft updates them.  
+You may still need to jiggle the torch handle, though.
+
+- Open and Save dialogs can't get lost.  Plus, it's 
+harder to accidentally replace your schematic when you try to open it.
+
+MCEdit Alpha 22 (July 25)
+
+- Upon launch, shows a list of worlds.
+- Use keys F1-F5 to quickload a world at any time.
+- Heightmaps are generated correctly, leading to improved natural light from Minecraft.
+- Cloning blocks in Classic levels no longer converts cloth to wool.
+- Blue lines glitch on ATI hardware has been resolved.
+- Tangles of redstone dust are slightly easier to see.
+- File dialogs start in your Saves folder more often.
+- Various tinkering.
+
+MCEdit Alpha 21 (July 23)
+
+- Tools are less ornery when not in look-mode.
+- Clone tool places blocks further out, depending on the box size.
+- FPS is a bit smoother now.
+
+MCEdit Alpha 20 (July 22)
+
+- Fixed a crash on launch.
+
+MCEdit Alpha 19 (July 22)
+
+- Moderate performance improvements
+- Press DELETE to remove the selected blocks.
+- Fonts look better now.
+- Several bug-fixes and minor changes in behavior and appearance.
+
+MCEdit Alpha 18 (July 20)
+
+- Fixed schematics this time.  Honest!
+- Added graphics for Cactus
+- Added infrared vision.  I wish this were X-ray vision.
+- Many subtle bugfixes.
+
+MCEdit Alpha 17 (July 18)
+
+- Fixed a number of bugs introduced in Alpha 16, including backwards block
+conversion and completely broken schematics.
+- Minor peformance improvement.
+
+
+MCEdit Alpha 16 (July 16)
+
+- Fixed a couple of known and potential crashes
+- Many tools including the Clone and Crane will now place blocks on the
+surface of existing blocks. This is buggy over long distances.
+- Schematics should be able to hold either Classic blocks or Alpha blocks,
+and will remember which kind it holds.
+- Old schematics are broken.
+
+
+MCEdit Alpha 15 (July 14)
+
+- Chests, furnaces, minecarts, and Creepers ought to copy correctly.
+- Fixed a bug with saving files
+- Hold shift to move the staged blocks along only one axis
+- Player position tools no longer place the player's head inside blocks.
+
+
+MCEdit Alpha 14 (July 13)
+
+- Fixed yet another crash on startup.
+
+- Added some info to the helpful text.
+
+- Completely disabled skylighting calculation.  The game will recalculate
+the skylighting, sometimes.
+
+- Cloned blockdata (torch/rail direction, redstone current) ought to work now.
+
+- The tools now follow the mouse around whenever the camera isn't
+following the mouse.
+
+- Adjusted the art for the different selection boxes hopefully to make it
+easier to see where the edges cut into the terrain.
+
+
+MCEdit Alpha 10-13
+- Crash hunting
+
+MCEdit Alpha 9 (July 10)
+- Fixed some save corruption
+
+MCEdit Alpha 8 (July 9)
+
+- Added names to the helpful text
+- The close button works now!
+- Tools are here for moving the player and his spawn point
+- Lighting calculator is buggier than ever
+
+
+MCEdit Alpha 7 (July 6)
+
+- Copies BlockData between maps that have it.  Torch direction and
+crop growth are preserved. Chests and furnaces may still lose all
+their items.
+
+- Tries to calculate HeightMap SkyLight for newer maps.  Results are
+not 100% accurate.  Lighting is also used in displaying blocks when present.
+
+- Remembers window size between uses
+- Calculates height and skylight data, approximately
+- Consumes a bit less memory
+- Options added to .ini for mouse and camera speeds
+- Now you can save to old-style Creative and Survival levels.
+
+
+MCEdit Alpha 6 (July 5)
+
+- You may now tap right-click to enable and disable mouselook.  You
+can still drag with the right mouse button like before.
+
+- Staged blocks are highlighted in green, and can be moved around
+with the left mouse button.  You're asked to press RETURN to confirm
+your placement.
+
+- Several of the new block types should now have graphics.
+
+- Takes longer to save infinite maps.
+
+
+MCEdit Alpha 5 (July 4)
+
+- Minor improvements to chunk-loading and memory usage
+- Fixed an occasional hang
+- Broke all previously-made schematics
+- Able to load even more old maps
+
+
+Alpha 4 (July 3) changes:
+
+- Played around with selection box appearance
+- Error output is saved to mcedit.log
+
+
+Alpha 3 (July 2) changes:
+
+- Measuring lines added to selection boxes
+- The Crane tool will automatically convert old blocks (specifically, converts colored cloth, cogs, and sponges to white cloth)
+- Tap the middle mouse button to return your reach to the default.
+- Does not mangle as many different kinds of save files.
+
+
+Alpha 2 (July 1) changes:
+
+- Increased maximum FPS
+- Tweaked camera controls
+- Crane tool no longer attempts to preview 1+ million blocks
+- Crane and Clone tools can't go outside the level's vertical bounds
+- Improved compatibility with older maps
+- Added a configuration file, mcedit.ini
+- Schematics no longer come out sideways
+
+
+Alpha (June 30) changes:
+
+- Moderate performance boosts. Framerate should be steady, at least.
+- Start at the player's location
+- Load nearby chunks first, instead of haphazardly
+- Pencil and Crane tools!
+- Reads the older map formats by guessing where the blocks are.
+- More bugs! (see above)

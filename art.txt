@@ -1,0 +1,3 @@
+Included with this software are several image files taken from Minecraft that are property of Mojang Specifications. I do not claim any rights to them. They are included to allow MCEdit to display the correct graphics when editing levels from older versions of Minecraft.
+
+The graphic for the Minecraft toolbar, gui.png, is not needed for compatibility and can be replaced with original art or a more fitting toolbar UI.

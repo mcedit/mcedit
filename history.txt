@@ -1,0 +1,341 @@
+Version History
+
+testing286:
+- Flatland generator now lights new chunks correctly in the Nether and End
+- Fixed a startup failure related to minecraft.yaml
+
+testing285:
+- Pocket Edition levels will relight correctly (again)
+
+testing283:
+- Pocket Edition levels can save again (fixed "has no attribute needsLighting")
+
+testing282:
+- Fixed a redraw problem when deleting all of the air in a chunk.
+
+testing281:
+- Fixed the "Delete Blocks" and "Cut" commands
+
+testing273:
+- Added Chunk View. Press TAB to toggle between Chunk and Camera view, or use the new button.
+- Added Chunk selection mode. With the Chunk tool selected or the Chunk View active, selection boxes will add or remove chunks from the current chunk selection.
+- Added "Deselect" button to Chunk tool.
+
+- Visibility Check setting now defaults to ON.
+- Key shortcut for Goto... is now G (changed from Ctrl-G)
+
+- Fixed a crash related to forgetting to turn off GL_TEXTURE_COORD_ARRAY
+
+testing259:
+- Fixed a crash when reading unexpected settings from mcedit.ini
+
+testing258:
+- Fixed a problem with saving Nether data that caused Nether Wart to be unplantable in low light levels.
+- Added line brush. Hold SHIFT while brushing.
+
+testing253:
+- Added "Hidden Ores" to Show menu
+- Away-facing sides of a selection can now be moved by clicking near the edge of a front-facing side.
+
+testing250:
+- Added "Unpopulated Chunks" view option
+- Added Repop and Don't Repop commands to the Chunk tool.
+
+testing249:
+- Fixed a crash when trying to use other dimensions.
+
+testing247:
+- Added Paste brush. Prompts you to choose a .schematic file or uses the top item on the pasteboard if any. The three inputs change the anchor point.
+- Brush tool refactored. Beware of bugs.
+- Double-clicking anywhere with the Goto panel open will teleport you immediately.
+
+testing244:
+- Added a new options bar across the top of the screen
+- Added Show options to quickly hide or show Entities, TileTicks, and other visual elements
+- Added player list and Goto Player's View / Align Player to Camera to the Player tool
+- Added Teleport feature to the regular Goto command (shortcut: Ctrl-G). While the Goto box is up, click anywhere to enter the coordinates under the mouse.
+
+- Fixed an error when creating a flatland world
+- Fixed an error when saving a level after moving the player. Reinstall may be needed to fix this error.
+
+
+testing231: 
+- Fixed a UnicodeDecodeError on startup
+
+testing229:
+- Added keys for panning the camera
+- Tried to fix a problem with crashing after automatic updates
+
+testing227:
+- Tweaked grass colors in low detail mode
+
+testing226:
+- Fixed monster spawner editor
+- Fixed "KeyError: PATH not found" on startup
+
+testing225:
+- You can now drag using the brush tool.
+
+testing223:
+- Changed to a darker, more professional color scheme.
+- Added "Off-color" leaves - they are normal leaves with pine leaf coloratio
+- Saving and relighting is moderately faster
+
+- Many dialogs now respond to ENTER and ESCAPE as expected
+
+- Hidden debug feature:  hold SHIFT+ALT while clicking the Import button to import a flat board with all 1024 block/data combinations.
+- Updated items.txt.  (Thanks, copyboy!)
+
+testing222:
+- Fixed the super slow automatic update.
+
+testing220:
+- Rebuilt Windows builds with Numpy 1.6.1. This fixes a few bugs and gives an impressive speed increase.
+- Linux / OS X users are encouraged to update their Numpy to version 1.6.1!
+
+testing219:
+- Improved loading speed by reducing the framerate whenever there is no user input.
+
+testing214:
+- Tried to fix the crash on OS X 10.7 when importing a level
+- Forester no longer clusters trees around the center of the selection
+
+testing213:
+- Fixed a problem where startup errors weren't always getting reported.
+- Fixed incorrect lights when torch or firelight passes through water.
+
+testing210:
+- Changed several block names to match Minecraft's names
+- Block conversions added (including colored wool) for Pocket Edition levels. White wool is unfortunately missing from Pocket Edition.
+
+testing209:
+- Fixed texture pack support for Minecraft levels
+- Fixed the "Any Subtype" checkbox
+
+testing208: 
+- Fixed an error when loading Pocket levels
+ 
+testing207:
+- Block definitions added for Minecraft Pocket
+- Block definitions moved to minecraft.yaml, classic.yaml, and pocket.yaml in the pymclevel folder.
+- Items are colored green, XP Orbs light green and Paintings brown.
+
+testing202:
+- Early support for Minecraft Pocket levels. Levels will load, save, and relight, but the block info including names and graphics is incorrect for now.
+- Added an option to show a grid at the level's height limit.
+- Added an 'indiscriminate' setting to Flood Fill, which makes it spread between grass and dirt and between any blocks that share a block ID.
+- Selection box uses mipmapping to give a crisper look when seen from a distance
+- "Goto Dimension" button shows a list of dimensions.
+- "Create New World" prompts you for X, Y, Z, F, and Seed.
+
+testing200:
+- Added Flood Fill Brush
+
+testing199:
+- Added block names for 1.9pre blocks.
+
+- Added graphics and rotations for huge mushrooms, and rotations for beds.
+- Undoing a Cut now only takes one Undo, and doesn't make duplicate TileEntities.
+- Temporary files are cleaned up after use
+
+testing198:
+- Worlds with height 256 and below can now be loaded.
+
+stable33:
+- Added "Long Distance Mode" and "Fly Mode" options. When enabled together, these make the controls more Minecraft-like.
+- Some long running operations can be canceled now.
+- Improved speed and memory usage of the Minecraft Server-based chunk generator.
+- Attempted to fix the "Loading imports..." crash
+
+stable31:
+- Added spawner choices for Enderman, Silverfish, and CaveSpider
+- Move Spawn Point tool now checks your spawn point according to Minecraft's weird rules: y=63 and y=64 must not both be air, and you must have three air blocks above the spawn point.
+- Move Spawn Point tool now offers to fix the blocks around your spawn point to make it fit the rules. This cannot be undone (yet).
+- Fixed an issue with rotating copied items and later finding them scrambled.
+
+stable30:
+- Added all three variations of hidden silverfish blocks: Stone, Cobblestone, Stone Brick
+- Added graphics for all four kinds of stairs
+- Added rotation info for the new stairs, Chests, and Vines
+- Replacing different types of stairs will preserve the stairs' orientation.
+
+- Fixed the Move Player tool not working correctly
+- Fixed the Topsoil brush not working inside caves
+
+- Fixed a problem where the window wouldn't remember its size correctly
+- Fixed a problem where the mouse control became unusable after resizing the window
+- Copy/Import operations now create chunks and copy blocks in a single pass
+- Added more progress bars
+
+stable27:
+- Added Creative/Survival toggle to Create New World and World Info windows.
+- Fixed a problem with missing trees in the chunk generator.
+- Move Player tool now correctly moves players to and from the Nether
+- Move Player tool now jumps to the dimension the player is in.
+
+- Fixed a startup error in reloadVersions
+
+stable26:
+- Added Copy and Paste commands. Shortcuts are Ctrl-C and Ctrl-V. 
+- Up to 10 copied items are listed on the right side of the screen
+- "Export Schematic" changed to "Copy" - to use the Export function, click the Save button by one of the copied items
+- added progress bars for some long-running operations
+
+- setup.exe now has an option to install in Fixed Install mode, placing your settings and exports in your Documents folder.
+- Added the option to generate chunks using the Minecraft Server. When you choose the Chunk tool and press Create, you're given a few options.
+- Added a "Classic Water Flood" filter, which will simulate the way water used to flood in Classic. This is handy for filling the area around a boat with water, for example.
+- Included Decliff filter, contributed by Minecraft Forums user DrRomz
+
+- Delete Entities is now undoable
+- Undoing a copy now correctly removes the copied tile entities
+- Added an "Analyze" command to the selection and recently copied items.
+- Added format and size info to the World Info panel (Ctrl-I)
+
+- Topsoil brush doesn't improperly change the blocks at the top edge of the brush area.
+
+
+
+
+stable21:
+- Hopefully fixed an "ImportError: cannot import name ctypesloader"
+
+stable20:
+- Added an "Also delete blocks placed in the world..." option to the Delete Item ID From World command.
+- Fixed a "File Not Found" crash when choosing Load World on some systems
+
+stable19:
+- Double-click on a chest, sign, or spawner using the selection tool to edit it. (changed from right-click)
+- Added a basic chest editor. Select an item and delete it, or delete all copies of it from every chest in the world. You can also change an item's ID, damage, and count. 
+- The chest editor's "Delete Item From World" now removes blocks, dropped items, dispenser and furnace contents, and player inventory items matching the chosen item.
+
+- Added a "Load World..." command with a list of Minecraft worlds sorted by LastPlayed date.
+
+- Many tools will remember the last 7 blocks used.
+- Topsoil brush has an option to replace only natural earth blocks. 
+
+- Minor cosmetic tweaks
+- Automatic update is more robust
+
+
+stable18.1:
+- Fixed an AttributeError on startup.
+
+stable18:
+- Added Fill, Replace, Erode, and Topsoil modes for the brush tool. Press X to swap the two chosen materials when replacing and don't forget you can ALT-click to pick up a block.
+- Fixed a crash on startup introduced in stable16.
+
+stable17:
+- Fixed a "negatively sized display mode" error, hopefully.
+
+stable16:
+- Added a "Reset Distance When Brush Size Changes" option to brush tool
+- Fixed maximized window size having black borders
+
+- Chunks outside the viewing area are not loaded until later
+- The window remembers its position on Windows
+
+- Added a few options to control the initial world created by the "Create New World" command.
+- Using the mousewheel while dragging a cloned object now shifts the camera along with the object.
+- Most input fields will let you hold shift while using the mousewheel to adjust them faster.
+
+stable15:
+- Improved texture pack compatibility.
+- HD texture packs no longer call you a noob.
+
+stable14:
+- Added custom key settings with presets for WASD, Arrows, and Numpad
+- press "E" to rotate the brush size
+
+- Added a "Skin" setting.  [Current] uses your currently selected texture pack from Minecraft. [Default] uses the textures included with MCEdit.
+- Added a "Low-Detail Height" setting.
+- Chunks load more reliably in low-memory conditions
+
+stable12:
+- The Clone tool's "Scale" setting now accepts any value between 0.125 and 8.0
+- Hold ALT with the selection tool to drag the opposite side of the selection box 
+
+- Brushes can be different sizes in all three dimensions. As an example, you can use a 4x4x1 Round brush with the Noise option and the Flower block to sprinkle flowers on an area.
+- Added automatic protection against stacking grass. Stacked grass will convert to dirt in MCEdit to avoid stressing Minecraft.
+
+stable11:
+- Added block names and rotation info for Pistons and Sticky Pistons
+
+- Brush tool's "Surface" option now places blocks at a fixed distance from the block under the cursor. Use Mousewheel to adjust the distance
+- Clone tool now supports dragging on one, two, or three dimensions using the SHIFT key and/or the Mousewheel. Try using the Clone tool's "Place Immediately" option to get a better feel for it.
+
+- Added a time of day setting to the world info window (Ctrl-I)
+- Added a "Vertex Buffer Limit" setting to limit the amount of memory taken by the renderer, in megabytes. Default setting is 384.
+- Fixed transparency for brush and clone previews (again)
+
+stable10:
+- Updated for Minecraft 1.6.5
+- Added block info for webs, tall grass, shrubs, and hatches
+- Worlds created by Primordial Desert Generator and other generators should load and import correctly.
+- Tried to make renderer errors non-fatal.
+
+stable9:
+- More brush and clone settings are persistent
+- Undoing a clone will not produce duplicate entities
+- Fixed incorrect entity positions
+- Suppressed some floating-point errors
+
+stable8: 
+- Added graphics and rotations for powered and detector rails
+- Added spawn point protection. You can't place your spawn point below height 64 since the game will relocate it if you do. Right-click the tool to disable, only if the game is changed to accept any spawn point.
+- The "Delete Entities" command correctly refreshes the red blocks showing entity positions.
+
+stable7:
+- Fixed another error when doing a Fill/Replace on a Select All selection
+ 
+stable6:
+- Fixed a config file issue on OS X
+- Fixed an error when using Find/Replace on a Select All selection.
+- Fixed an issue with filenames of exported schematics
+
+stable5:
+- Blocks refresh correctly again
+- Low detail renderer no longer crashes on columns cleared through to the void.
+
+stable4:
+
+- The grass is greener. (Fences are still ugly, though)
+- Added power and detector rails, birch and spruce saplings
+- Added a "Show Entities" option, enabled by default, showing the Entities in red and TileEntities in yellow.
+
+
+- Added a "Portable/Fixed" option to the Options window. This lets you choose where your settings and schematics are stored.
+
+   In Fixed Install mode, your MCEdit-schematics folder and your mcedit.ini are kept in your Documents folder. This is where they were kept for most of MCEdit's history. 
+   In Portable Install mode, the MCEdit-schematics folder and mcedit.ini are kept in the MCEdit folder - that is, the folder that contains the 'MCEditData' folder will also contain the 'MCEdit-schematics' folder and the 'mcedit.ini' settings file.
+   Portable Install mode is now the default mode for new installations.
+
+On Mac OS X, the mcedit.ini is moved to ~/Library/Preferences in Fixed Install mode.
+
+
+stable3:
+- Fixed a bug where the player move tool did not move any players
+- Sign text is now decoded to Unicode correctly
+- Slightly improved performance on enormous maps
+- Added a 'Hollow' option to the Brush tool.
+
+stable2:
+- Fixed a UnicodeDecodeError on startup related to the recent world list
+
+stable1:
+
+- Monster spawner editor has a [Custom] option that lets you type in the mob's ID.
+
+- Changed to a cleaner method for capturing the mouse pointer - mouse control should be less flaky now.
+- Sign text is displayed in a mouseover when you point at a sign.
+- Right-click on a monster spawner to change what it spawns.
+- Move Player tool upgraded with multiplayer functions: added a popup menu and a "Goto Player" button
+
+- Added an 'Extract' command to the chunk control, to extract chunks to the old chunk format
+
+- The "Open a level" dialog on OS X now defaults to the correct folder
+- Control-key shortcuts changed to Command-key on OS X
+
+- An experimental port of dudecon's Forester script is included. Somewhat buggy.
+  Forester's original thread:
+  http://www.minecraftforum.net/viewtopic.php?f=25&t=219461
+

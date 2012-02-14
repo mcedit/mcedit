@@ -1,0 +1,3 @@
+[submodule "pymclevel"]
+	path = pymclevel
+	url = git://github.com/codewarrior0/pymclevel

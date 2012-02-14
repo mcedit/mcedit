@@ -1,0 +1,238 @@
+<html>
+<title>
+MCEdit Alpha 
+</title>
+<body>
+<div style="width:800px;margin:0px auto;">
+<img src="MCEditData/favicon.png">
+For info about the latest version, be sure to visit the <a href="http://www.minecraftforum.net/viewtopic.php?f=25&t=15522">
+thread on the official forums.</a><br>
+
+<br>
+This program is shareware.  If you enjoy it or find it useful, please support the author.<br>
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=codewarrior@hawaii.rr.com&item_name=MCEdit,%20a%20Minecraft%20World%20Editor"><img src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"></a>
+
+<div class="content">
+  <br />MCEdit is a versatile map utility, designed for moving blocks from one level to another. With it, you can open a level of nearly any type and fly around in glorious 3D with multiple levels of detail!  Select millions of blocks and clone them anywhere else in the level.  Fill a boxy selection with the block of your choice, or replace one kind of block with another.  Export blocks to a &quot;schematic&quot; file for later use.  Import a schematic or an entire level into any world using the crane.  Move the player or his spawn point.  Create and and remove chunks from the world.  Fill blackened areas with light.  Find bugs!
+  <pre>
+Controls:
+    WASD                    - Move
+    Q / Z                   - Altitude
+    SPACE                   - Stop
+    
+    Right-Click             - Toggle Look-Mode
+    
+    Right-Click and Drag    - Quick Look
+    
+    Left-Click              - Use Tool
+    1-9                     - Select Tool
+    Mousewheel              - Change Tool Distance
+    
+    E                       - Rotate Blocks
+    R                       - Roll Blocks
+    F                       - Flip Blocks 
+    
+    ESCAPE                  - Holster Tools
+    DELETE                  - Remove Selected Blocks
+    
+    F1-F5                   - Open World1-World5
+    O                       - Open Level...
+    N                       - Create World...
+    Control-S               - Save World
+    
+    Control-A               - Select All
+    Control-D               - Deselect
+    
+    Control-F               - Change view distance
+    
+    Alt-F4                  - Leave
+    
+    Control-Z               - Undo
+</pre>
+  <span id="Tools">
+  </span><br />Here's a quick overview of a few of the different tools we have:<br /><br />
+  <ul>
+    <li>
+    <a href="#Selection">Selection</a>:  Make a selection by marking its corners. Press again to switch corners.<br />
+    </li>
+    <li>
+    <a href="#Clone">Clone</a>:  Copies the selected blocks.  Click to set the copy down, then press &quot;Clone&quot; to clone.
+    <span style="font-weight: bold">E R F
+    </span> to transform blocks.<br />
+    </li>
+    <li>
+    <a href="#Fill">Fill</a>:  Fills the selection with a chosen block type, optionally replacing another type.
+    <span style="font-weight: bold">R
+    </span> to start replacing,
+    <span style="font-weight: bold">E
+    </span> to swap materials.
+    </li>
+    <li>
+    <a href="#Pencil">Pencil</a>:  Export the selection as a Schematic file for later use.
+    </li>
+    <li>
+    <a href="#Crane">Crane</a>:  Import a Schematic file or an entire level. Use this to convert older levels by importing them into an Alpha world.
+    </li>
+    <li>
+    <a href="#Player">Player</a>:  Click to move the player. Press twice to teleport.
+    </li>
+    <li>
+    <a href="#Spawn">Spawn</a>:  Click to move the player's spawn. Press twice to teleport.
+    </li>
+    <li>
+    <a href="#Chunk">Chunk</a>:  Create, delete, and light chunks. Prune away all of the chunks outside the selection.
+    </li>
+  </ul><br />There are a few
+  <span style="font-weight: bold">Nudge
+  </span> buttons scattered around.  To use them, click and hold down on one. While holding the mouse button, use the movement keys (defaults:
+  <span style="font-weight: bold">WASDQZ
+  </span>) to move the related item around.  Hold Shift to nudge further.<br /><br />If you have a powerful computer, press Control-F to see farther.<br /><br />
+  <span id="Selection">
+    <span style="font-weight: bold">Selection tools:
+    </span>
+  </span><br />Mark a selection using blue and yellow cubes. Here is a selection in progress.<br />
+  <a href="doc/images/selection0.jpg">
+    <img src="doc/images/selection0.jpg" class="simg" alt="Image"></a><br /><br />A selection.<br />
+  <a href="doc/images/selection1.jpg">
+    <img src="doc/images/selection1.jpg" class="simg" alt="Image"></a><br /><br />
+  <span id="Clone">
+    <span style="font-weight: bold">Clone tool:
+    </span>
+  </span><br />Quickly copy blocks within the same level. The selected blocks are cloned into the green box and will follow your cursor around until you click. <br />
+  <a href="doc/images/clone0.jpg">
+    <img src="doc/images/clone0.jpg" class="simg" alt="Image"></a><br /><br />Click once, and your duplicate blocks are set down and will begin pulsating.  Click again to pick them back up.<br />
+  <a href="doc/images/clone1.jpg">
+    <img src="doc/images/clone1.jpg" class="simg" alt="Image"></a><br /><br />Use the keys
+  <span style="font-weight: bold">E R F
+  </span> to rotate, roll, and flip the blocks.  <br />
+  <a href="doc/images/clone2.jpg">
+    <img src="doc/images/clone2.jpg" class="simg" alt="Image"></a><br /><br />Press ENTER or click
+  <span style="font-weight: bold">Clone
+  </span> to expand public housing. The clone is finished when the selection is moved to the newly cloned object.<br />
+  <a href="doc/images/clone3.jpg">
+    <img src="doc/images/clone3.jpg" class="simg" alt="Image"></a><br /><br />
+  <span id="Fill">
+    <span style="font-weight: bold">Fill tool:
+    </span>
+  </span><br />
+  <a href="doc/images/replace.jpg">
+    <img src="doc/images/replace.jpg" class="simg" alt="Image"></a><br />You'll have to play around with this one on your own.<br /><br />
+  <span id="Pencil">
+    <span style="font-weight: bold">Pencil tool:
+    </span>
+  </span><br />Save the current selection as a &quot;schematic&quot; file. This file can be loaded into another level using the Crane. Nothing interesting to see here, unless you want a pic of a &quot;Save file...&quot; window.<br /><br />
+  <span id="Crane">
+    <span style="font-weight: bold">Crane tool:
+    </span>
+  </span><br />The crane tool lets you import blocks from different sources: It can place blocks previously saved by the pencil to a schematic. It can import
+  <span style="font-style: italic">.inv
+  </span> files created by
+  <a href="http://www.minecraftforum.net/viewtopic.php?t=15921" class="postlink">INVEdit</a> as chests. It can import an entire level into another level.  It will ask you to choose a level or schematic.  After you've chosen, the level or schematic will appear in the green box.  The blocks are fully loaded and ready to use, even though they appear slowly.  Click to set it down.  <br />
+  <a href="doc/images/crane0.jpg">
+    <img src="doc/images/crane0.jpg" class="simg" alt="Image"></a><br />Here, I've placed
+  <a href="http://www.minecraftforum.net/viewtopic.php?f=23&amp;t=13796" class="postlink">the destroyed city.</a><br /><br />As before, you can click to pick the blocks up, and use
+  <span style="font-weight: bold">E R F
+  </span> to rotate, roll, and flip them.<br />
+  <a href="doc/images/crane1.jpg">
+    <img src="doc/images/crane1.jpg" class="simg" alt="Image"></a><br /><br />Press ENTER or click
+  <span style="font-weight: bold">Import
+  </span> to construct.  Constructions of up to 64 million blocks should take less than a minute.  The copy is done once you regain control. You should press Control-S to save your level now.  The lighting recalculation for this city took about 3 minutes on a Core i5.<br />
+  <a href="doc/images/crane2.jpg">
+    <img src="doc/images/crane2.jpg" class="simg" alt="Image"></a><br /><br />Et voila.<br /><br />
+  <a href="http://img413.imageshack.us/img413/4492/voila.jpg">
+    <img src="http://img413.imageshack.us/img413/4492/voila.jpg" class="simg" alt="Image"></a><br /><br />
+  <span id="Chunk">
+    <span style="font-weight: bold">Chunk tool:
+    </span>
+  </span><br />
+  <img src="doc/images/chunk.jpg" alt="Image" /><br />When you pick the Chunk tool, the visible selection is automatically expanded to cover all of the chunks it touches. Press
+  <span style="font-style: italic">Create
+  </span> to create all missing chunks in the selection, ignoring any chunks already present. Press
+  <span style="font-style: italic">Destroy
+  </span> to remove any chunks within the selection. Use
+  <span style="font-style: italic">Prune
+  </span> to keep all of the chunks in the selection, and delete the ones outside. All of these will ask you for confirmation because there's no way to undo them.<br /><br />Finally, you can press
+  <span style="font-style: italic">Relight
+  </span> to fix any bad lighting within the selected chunks.  If other programs leave your level full of black spots, you can fix it with this.<br /><br />
+  <span id="Player">
+  </span><br /><br />
+  <span id="Spawn">
+  </span><br /><br />(not pictured:  Player and Player Spawn tools, DELETE operation)<br /><br /><br />
+  <a href="http://www.minecraftforum.net/viewtopic.php?f=25&amp;t=15522#p271802" class="postlink">Click here for downloads</a><br /><br />A few people can't get MCEdit to start up or do anything at all.  If MCEdit doesn't work for you, please post here or keep in touch via PM or e-mail.  I'll try to work with you and figure out what's wrong.<br /><br />
+  <span style="font-size: 85%; line-height: 116%;">MCEdit:  over one trillion blocks cloned
+  </span>
+</div>
+
+
+<br>
+This program is shareware.  If you enjoy it or find it useful, please support the author.<br>
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=codewarrior@hawaii.rr.com&item_name=MCEdit,%20a%20Minecraft%20World%20Editor"><img src="https://www.paypal.com/en_GB/i/btn/btn_donate_LG.gif"></a>
+
+
+Open and save the following formats, compressed or non:
+(saving not guaranteed)
+
+<br>
+<br>
+Alpha Creative/Survival/Multiplayer (level.dat + folders)
+<br>
+
+Classic Indev (*.mclevel)
+<br>
+Classic Creative/Survival  (*.mine, server_level.dat)  **
+<br>
+<br>
+
+
+** If your Classic level fails to load, or loads with the blocks all
+out of order, put the dimensions of the map into the filename, e.g.
+server_level_256_256_128.dat.
+<br>
+<br>
+
+
+Import schematics created by MCEdit, schematics created by Redstone Simulator, and 
+inventory files created by INVEdit. (as chests!)
+
+<br>
+<br>
+Make backups!
+
+<br>
+<br>
+Report any bugs to codewarrior0@gmail.com or post on the <a href=http://www.minecraftforum.net/viewtopic.php?f=25&t=15522>official forum thread</a>
+
+<pre>
+
+Caveats:
+
+After increasing the window size, mouse input no longer works correctly.  
+Restart MCEdit to fix this.
+ 
+Support for non-English computers and foreign character sets is shaky. For best results, 
+put the MCEdit folder directly into your C:\
+
+Creating and deleting chunks will save them to disk or delete them immediately.
+
+Cannot resize finite levels.
+
+Many tiles are replaced when converting from the older maps to
+Minecraft Alpha maps.  All cloth tiles are bleached white and any
+"Infinite" liquids are replaced with still liquids.
+
+The conversion also works the other way:  Blocks introduced since Alpha are
+converted to white cloth when moved to a Classic level. There is no way to control
+which blocks are replaced during a conversion.
+
+There is no conversion between the old Indev and the older Creative/Survival.
+Take caution when copying between them. 
+
+Classic levels require their dimensions to be in the file name, or 
+else MCEdit will attempt to guess them based on the file's size.
+
+
+Copyright 2010 David Rio Vierra
+</pre>
+</div>
+</body>
+</html>
