@@ -938,7 +938,7 @@ class MCEdit(GLViewport):
                   self.showOptions),
                   ("",
                   "Source Code",
-                  lambda: platform_open("http://www.github.com/codewarrior0/mcedit")),
+                  lambda: platform_open("http://www.github.com/mcedit/mcedit")),
                   ("",
                   "View Readme",
                   lambda: platform_open(readmePath)),
