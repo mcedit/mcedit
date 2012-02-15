@@ -36,7 +36,7 @@ class SafeOutputStream(object):
 
     def close(self):
         pass
-        
+
 
 class tee(object):
     def __init__(self, _fd1, _fd2) :
@@ -48,7 +48,7 @@ class tee(object):
             self.fd1.close()
         if self.fd2 != sys.stdout and self.fd2 != sys.stderr :
             self.fd2.close()
-        
+
 
     def write(self, text) :
         self.fd1.write(text)
@@ -66,13 +66,13 @@ sys.stderr = sys.stdout
 try:
     from release import release
     print "Release: ", release
-    
+
     import locale
     locale.setlocale(locale.LC_ALL, '')
     import traceback
     import logging
     from os.path import exists, isdir, join
-    
+
     import tempfile
     import gc
     import functools
@@ -84,9 +84,9 @@ try:
     from cStringIO import StringIO
     import platform
     from datetime import timedelta
-    
+
     from errorreporting import reportException
-    
+
     if "-debug" in sys.argv and platform.architecture()[0] == "32bit":
         os.environ['PATH'] = "C:\\Program Files (x86)\\GLIntercept_1_0_Beta01" + os.pathsep + os.environ['PATH']
     try:
@@ -109,15 +109,15 @@ try:
         OpenGL.ERROR_ON_COPY = True
         if "-full" in sys.argv:
             OpenGL.FULL_LOGGING = True
-        
+
     else:
         OpenGL.ERROR_CHECKING = False
     logging.basicConfig(format=u'%(levelname)s:%(message)s')
     logging.getLogger().level = logging.WARN
-        
+
     from OpenGL import GL
     logging.getLogger().level = loglevel
-    
+
     try:
         print "Loading numpy..."
         import numpy
@@ -150,13 +150,13 @@ try:
     except Exception as e:
         print "Error opening logfile", repr(e)
 
-    
+
 
 
 
 
     #from OpenGL.GLUT import glutBitmapCharacter, glutInit
-    
+
 
     print "Loading albow..."
 
@@ -315,7 +315,7 @@ class FileOpener(Widget):
         self.add(contentRow)
         self.sideColumn = sideColumn
 
-    
+
     def gl_draw_self(self, root, offset):
         #self.mcedit.editor.mainViewport.setPerspective();
         self.mcedit.editor.drawStars()
@@ -323,7 +323,7 @@ class FileOpener(Widget):
     def idleevent(self, evt):
         self.mcedit.editor.doWorkUnit()
         #self.invalidate()
-        
+
     def key_down(self, evt):
         keyname = key.name(evt.key)
         if keyname == 'f4' and (key.get_mods() & (KMOD_ALT | KMOD_LALT | KMOD_RALT)):
@@ -525,19 +525,19 @@ class KeyConfigPanel(Dialog):
             oldkey = config.config.get("Keys", configKey)#save key before recursive call
             config.config.set("Keys", configKey, keyname)
             for keyname, setting in occupiedKeys:
-                if self.askAssignKey(setting, 
+                if self.askAssignKey(setting,
                                      "The key {0} is no longer bound to {1}.\n"
                                      "Press a new key for the action \"{1}\"\n\n"
                                      "Press ESC to cancel."
                                      .format(keyname, setting)):
                     config.config.set("Keys", configKey, oldkey) #revert
                     return True
-                    
-                
-            
+
+
+
         else:
             return True
-            
+
 class GraphicsPanel(Panel):
     def __init__(self, mcedit):
         Panel.__init__(self)
@@ -561,25 +561,25 @@ class GraphicsPanel(Panel):
 
         texturePackRow = Row((Label("Skin: "), texturePackChoice))
 
-        fieldOfViewRow = FloatInputRow("Field of View: ", 
+        fieldOfViewRow = FloatInputRow("Field of View: ",
             ref=Settings.fov.propertyRef(), width=100, min=25, max=120)
 
-        targetFPSRow = IntInputRow("Target FPS: ", 
+        targetFPSRow = IntInputRow("Target FPS: ",
             ref=Settings.targetFPS.propertyRef(), width=100, min=1, max=60)
 
-        bufferLimitRow = IntInputRow("Vertex Buffer Limit (MB): ", 
+        bufferLimitRow = IntInputRow("Vertex Buffer Limit (MB): ",
             ref=Settings.vertexBufferLimit.propertyRef(), width=100, min=0)
 
-        fastLeavesRow = CheckBoxLabel("Fast Leaves", 
-            ref=Settings.fastLeaves.propertyRef(), 
+        fastLeavesRow = CheckBoxLabel("Fast Leaves",
+            ref=Settings.fastLeaves.propertyRef(),
             tooltipText="Leaves are solid, like Minecraft's 'Fast' graphics")
-            
-        roughGraphicsRow = CheckBoxLabel("Rough Graphics", 
-            ref=Settings.roughGraphics.propertyRef(), 
+
+        roughGraphicsRow = CheckBoxLabel("Rough Graphics",
+            ref=Settings.roughGraphics.propertyRef(),
             tooltipText="All blocks are drawn the same way (overrides 'Fast Leaves')")
-            
+
         enableMouseLagRow = CheckBoxLabel("Enable Mouse Lag",
-            ref=Settings.enableMouseLag.propertyRef(), 
+            ref=Settings.enableMouseLag.propertyRef(),
             tooltipText="Enable choppy mouse movement for faster loading.")
 
         settingsColumn = Column(( fastLeavesRow,
@@ -606,7 +606,7 @@ class GraphicsPanel(Panel):
 
     texturePack = Settings.skin.configProperty(_reloadTextures)
 
-    
+
 
 class OptionsPanel(Dialog):
     anchor = 'wh'
@@ -616,59 +616,59 @@ class OptionsPanel(Dialog):
         self.mcedit = mcedit
 
 
-        autoBrakeRow = CheckBoxLabel("Autobrake", 
-            ref=ControlSettings.autobrake.propertyRef(), 
+        autoBrakeRow = CheckBoxLabel("Autobrake",
+            ref=ControlSettings.autobrake.propertyRef(),
             tooltipText="Apply brake when not pressing movement keys")
 
-        swapAxesRow = CheckBoxLabel("Swap Axes Looking Down", 
-            ref=ControlSettings.swapAxes.propertyRef(), 
+        swapAxesRow = CheckBoxLabel("Swap Axes Looking Down",
+            ref=ControlSettings.swapAxes.propertyRef(),
             tooltipText="Change the direction of the Forward and Backward keys when looking down")
 
-        cameraAccelRow = FloatInputRow("Camera Acceleration: ", 
+        cameraAccelRow = FloatInputRow("Camera Acceleration: ",
             ref=ControlSettings.cameraAccel.propertyRef(), width=100, min=5.0)
 
-        cameraDragRow = FloatInputRow("Camera Drag: ", 
+        cameraDragRow = FloatInputRow("Camera Drag: ",
             ref=ControlSettings.cameraDrag.propertyRef(), width=100, min=1.0)
 
-        cameraMaxSpeedRow = FloatInputRow("Camera Max Speed: ", 
+        cameraMaxSpeedRow = FloatInputRow("Camera Max Speed: ",
             ref=ControlSettings.cameraMaxSpeed.propertyRef(), width=100, min=1.0)
 
-        cameraBrakeSpeedRow = FloatInputRow("Camera Braking Speed: ", 
+        cameraBrakeSpeedRow = FloatInputRow("Camera Braking Speed: ",
             ref=ControlSettings.cameraBrakingSpeed.propertyRef(), width=100, min=1.0)
 
-        mouseSpeedRow = FloatInputRow("Mouse Speed: ", 
+        mouseSpeedRow = FloatInputRow("Mouse Speed: ",
             ref=ControlSettings.mouseSpeed.propertyRef(), width=100, min=0.1, max=20.0)
-        
-        invertRow = CheckBoxLabel("Invert Mouse", 
-            ref=ControlSettings.invertMousePitch.propertyRef(), 
+
+        invertRow = CheckBoxLabel("Invert Mouse",
+            ref=ControlSettings.invertMousePitch.propertyRef(),
             tooltipText="Reverse the up and down motion of the mouse.")
-        
-        spaceHeightRow = IntInputRow("Low Detail Height", 
-            ref=Settings.spaceHeight.propertyRef(), 
+
+        spaceHeightRow = IntInputRow("Low Detail Height",
+            ref=Settings.spaceHeight.propertyRef(),
             tooltipText="When you are this far above the top of the world, move fast and use low-detail mode.")
-        
-        blockBufferRow = IntInputRow("Block Buffer", 
-            ref=Settings.blockBuffer.propertyRef(), min=1, 
+
+        blockBufferRow = IntInputRow("Block Buffer",
+            ref=Settings.blockBuffer.propertyRef(), min=1,
             tooltipText="Amount of memory used for temporary storage.  When more than this is needed, the disk is used instead.")
-        
-        setWindowPlacementRow = CheckBoxLabel("Set Window Placement", 
-            ref=Settings.setWindowPlacement.propertyRef(), 
+
+        setWindowPlacementRow = CheckBoxLabel("Set Window Placement",
+            ref=Settings.setWindowPlacement.propertyRef(),
             tooltipText="Try to save and restore the window position.")
-        
-        windowSizeRow = CheckBoxLabel("Window Resize Alert", 
-            ref=Settings.shouldResizeAlert.propertyRef(), 
+
+        windowSizeRow = CheckBoxLabel("Window Resize Alert",
+            ref=Settings.shouldResizeAlert.propertyRef(),
             tooltipText="Reminds you that the cursor won't work correctly after resizing the window.")
-        
-        visibilityCheckRow = CheckBoxLabel("Visibility Check", 
-            ref=Settings.visibilityCheck.propertyRef(), 
+
+        visibilityCheckRow = CheckBoxLabel("Visibility Check",
+            ref=Settings.visibilityCheck.propertyRef(),
             tooltipText="Do a visibility check on chunks while loading. May cause a crash.")
-            
-        longDistanceRow = CheckBoxLabel("Long-Distance Mode", 
-            ref=Settings.longDistanceMode.propertyRef(), 
+
+        longDistanceRow = CheckBoxLabel("Long-Distance Mode",
+            ref=Settings.longDistanceMode.propertyRef(),
             tooltipText="Always target the farthest block under the cursor, even in mouselook mode. Shortcut: ALT-Z")
-            
-        flyModeRow = CheckBoxLabel("Fly Mode", 
-            ref=Settings.flyMode.propertyRef(), 
+
+        flyModeRow = CheckBoxLabel("Fly Mode",
+            ref=Settings.flyMode.propertyRef(),
             tooltipText="Moving forward and backward will not change your altitude in Fly Mode.")
 
         self.goPortableButton = goPortableButton = Button("Change", action=self.togglePortable)
@@ -676,8 +676,8 @@ class OptionsPanel(Dialog):
         goPortableButton.tooltipText = self.portableButtonTooltip()
         goPortableRow = Row((ValueDisplay(ref=AttrRef(self, 'portableLabelText'), width=250, align='r'), goPortableButton))
 
-        reportRow = CheckBoxLabel("Report Crashes", 
-            ref=Settings.reportCrashes.propertyRef(), 
+        reportRow = CheckBoxLabel("Report Crashes",
+            ref=Settings.reportCrashes.propertyRef(),
             tooltipText="Automatically report fatal errors to the author.")
 
         inputs = (
@@ -690,7 +690,7 @@ class OptionsPanel(Dialog):
             mouseSpeedRow,
         )
 
-        options = ( 
+        options = (
             longDistanceRow,
             flyModeRow,
             autoBrakeRow,
@@ -706,10 +706,10 @@ class OptionsPanel(Dialog):
             ) + (
             goPortableRow,
         )
-        
+
         rightcol = Column(options, align='r')
         leftcol = Column(inputs, align='r')
-        
+
 
         optionsColumn = Column((Label("Options"),
                                 Row((leftcol, rightcol), align="t")))
@@ -805,7 +805,7 @@ class MCEdit(GLViewport):
 
         self.fileOpener = FileOpener(self)
         self.add(self.fileOpener)
-        
+
         self.fileOpener.focus()
 
 
@@ -926,7 +926,7 @@ class MCEdit(GLViewport):
             platform_open(os.path.join(mcplatform.dataDir, "LICENSE.txt"))
 
         readmePath = os.path.join(mcplatform.dataDir, "README.html")
-        
+
         hotkeys = ([("",
                   "Keys",
                   self.showKeyConfig),
@@ -985,10 +985,10 @@ class MCEdit(GLViewport):
                     if self.resizeAlert:
                         alert("Window size increased. You may have problems using the cursor until MCEdit is restarted.")
                         self.resizeAlert = False
-                        
+
     shouldResizeAlert = Settings.shouldResizeAlert.configProperty()
-      
-            
+
+
         #self.size = (w,h)
 
 
@@ -1032,7 +1032,7 @@ class MCEdit(GLViewport):
 
     def confirm_quit(self):
         if self.editor.unsavedEdits:
-            result = ask("There are {0} unsaved changes.".format(self.editor.unsavedEdits), 
+            result = ask("There are {0} unsaved changes.".format(self.editor.unsavedEdits),
                      responses = ["Save and Quit", "Quit", "Cancel"] )
             if result == "Save and Quit":self.saveAndQuit()
             elif result == "Quit":       self.justQuit()
@@ -1057,7 +1057,7 @@ class MCEdit(GLViewport):
 
         displayContext = GLDisplayContext()
 
-        
+
         #mcedit.size = displayContext.getWindowSize()
         rootwidget = RootWidget(displayContext.display)
         mcedit = MCEdit(displayContext)
@@ -1069,7 +1069,7 @@ class MCEdit(GLViewport):
         rootwidget.focus_switch = mcedit
         if 0 == len(alphaMaterials.yamlDatas):
             alert("Failed to load minecraft.yaml. Check the console window for details.")
-            
+
         if mcedit.droppedLevel:
             mcedit.loadFile(mcedit.droppedLevel)
 
@@ -1080,8 +1080,8 @@ class MCEdit(GLViewport):
             if answer == "Don't remind me again.":
                 mcedit.closeMinecraftWarning = False
                 print "Disabled warning"
-                
-            
+
+
 
 
         print "saveConfig()"
@@ -1099,7 +1099,7 @@ class MCEdit(GLViewport):
                     if (showCmd == mcplatform.win32con.SW_MINIMIZE or
                        showCmd == mcplatform.win32con.SW_SHOWMINIMIZED):
                         showCmd = mcplatform.win32con.SW_SHOWNORMAL
-                    
+
                     Settings.windowX.set(X)
                     Settings.windowY.set(Y)
                     Settings.windowShowCmd.set(showCmd)
@@ -1168,10 +1168,10 @@ import cProfile
 def _profilemain():
 
     cProfile.run("_main()", mcplatform.dataDir + os.path.sep + "mcedit.profile")
-    # p = Stats("mcedit.profile");                                              
-    # p.sort_stats('cum');                                                      
-    # p.print_stats(15);                                                        
-    # #system("c:\program files (x86)\graphviz\")                               
+    # p = Stats("mcedit.profile");
+    # p.sort_stats('cum');
+    # p.print_stats(15);
+    # #system("c:\program files (x86)\graphviz\")
     if mcplatform.runningInEditor:
         del os.environ["PYTHONPATH"]
         os.system("python gprof2dot.py -f pstats mcedit.profile > mcedit.dot ")
@@ -1210,7 +1210,7 @@ class GLDisplayContext(object):
             print("Failed to set vertical sync: {0!r}".format(e))
 
         d = display.set_mode(self.getWindowSize(), self.displayMode())
-        try:    
+        try:
             pygame.scrap.init()
         except:
             print "scrap not available"
@@ -1221,7 +1221,7 @@ class GLDisplayContext(object):
             Settings.setWindowPlacement.set(False)
             config.saveConfig()
             X, Y = Settings.windowX.get(), Settings.windowY.get()
-            
+
             if X:
                 w, h = self.getWindowSize()
                 hwndOwner = display.get_wm_info()['window']
@@ -1233,7 +1233,7 @@ class GLDisplayContext(object):
                 print "GetWindowPlacement", ptMin, ptMax, rect
                 showCmd = Settings.windowShowCmd.get()
                 rect = (X, Y, X+realW, Y+realH) #left, top, right, bottom
-                
+
 
                 mcplatform.win32gui.SetWindowPlacement(hwndOwner , (0, showCmd, ptMin, ptMax, rect))
 
@@ -1260,14 +1260,14 @@ class GLDisplayContext(object):
         GL.glScale(1 / 256., 1 / 256., 1 / 256.)
 
         self.loadTextures()
-    
+
     def getTerrainTexture(self, level):
         return self.terrainTextures.get(level.materials.name, self.terrainTextures["Alpha"])
-        
+
     def loadTextures(self):
         print "Loading terrain textures..."
         self.terrainTextures = {}
-        
+
         def makeTerrainTexture(mats):
             w, h = 1, 1
             teximage = zeros((w, h, 4), dtype='uint8')
@@ -1280,15 +1280,15 @@ class GLDisplayContext(object):
                                (indevMaterials, "terrain-classic.png"),
                                (alphaMaterials,   "terrain.png"),
                                (pocketMaterials,  "terrain-pocket.png") ):
-            matName = mats.name             
+            matName = mats.name
             try:
                 if matName=="Alpha":
                     tex = loadAlphaTerrainTexture()
                 else:
                     tex = loadPNGTexture(matFile)
-                    
+
                 self.terrainTextures[matName] = tex
-    
+
             except Exception, e:
                 print repr(e), "while loading Classic terrain texture from {0}. Using flat colors.".format(matFile)
                 self.terrainTextures[matName] = Texture(functools.partial(makeTerrainTexture, mats))
@@ -1316,6 +1316,7 @@ if __name__ == "__main__":
         main()
     except Exception, e:
         traceback.print_exc()
-        print "An error has been found!  Please send the above to codewarrior0@gmail.com."
+        print("An error occured. Please post the above exception as an issue"
+                "on https://github.com/mcdevs/mcedit/issues/new")
         raw_input("Press ENTER to dismiss...")
 
