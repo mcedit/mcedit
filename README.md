@@ -37,3 +37,26 @@ easy_install pyyaml
 ```
 
 You should now be able to run MCEdit with `python main.py` assuming you've installed all the dependencies correctly.
+
+### Freezing/Packaging
+
+"Freezing" Python applications to deploy them for use by non-technical users is not in any way fun, except errors and edge cases.
+
+Additional dependenies are required to package MCEdit. Regardless of which platform you're targetting, [esky](http://pypi.python.org/pypi/esky/) will be required.
+
+#### OS X
+*Note:* These instructions have only been testing on OS X Lion.
+
+You will run into errors attempting to use the system Python when packaging anything under OS X. The easiest way to install a new Python is by using [Homebrew](http://mxcl.github.com/homebrew/).
+
+If you were using the system python while developing and using virtualenv, you'll need to overwrite it with your newly installed version.
+
+```bash
+virtualenv -p /usr/local/bin/python ENV
+brew install python
+easy_install esky
+easy_install py2app
+python setup.py bdist_esky
+```
+
+This will leave  you with a zip file in `dist/` that contains a portable `.app` bundle.

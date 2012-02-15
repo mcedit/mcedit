@@ -9,6 +9,7 @@
 # Folders created by setup.py.
 dist
 build
+*.egg-info
 
 # The "standard" virtualenv directory.
 ENV
