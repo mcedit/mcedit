@@ -52,8 +52,9 @@ You will run into errors attempting to use the system Python when packaging anyt
 If you were using the system python while developing and using virtualenv, you'll need to overwrite it with your newly installed version.
 
 ```bash
-virtualenv -p /usr/local/bin/python ENV
 brew install python
+virtualenv -p /usr/local/bin/python ENV
+
 easy_install esky
 easy_install py2app
 python setup.py bdist_esky
