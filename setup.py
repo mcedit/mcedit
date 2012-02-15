@@ -1,10 +1,9 @@
-import glob
-
 from esky import bdist_esky
 from setuptools import setup
 
 import os
 import sys
+import glob
 import platform
 
 LONG_DESC = '''
@@ -32,7 +31,7 @@ SETUP_COMMON = {
     'maintainer': 'MCDevs',
     'maintainer_email': 'mcdevs@tkte.ch',
 
-    'url': 'http://www.github.com/mcdevs/mcedit',
+    'url': 'http://www.github.com/mcedit/mcedit',
 
     # PyPi,
     'keywords': 'minecraft world editor',
