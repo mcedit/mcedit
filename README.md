@@ -42,7 +42,7 @@ You should now be able to run MCEdit with `python main.py` assuming you've insta
 
 "Freezing" Python applications to deploy them for use by non-technical users is not in any way fun, expect errors and edge cases.
 
-Additional dependenies are required to package MCEdit. Regardless of which platform you're targetting, [esky](http://pypi.python.org/pypi/esky/) will be required.
+Additional dependencies are required to package MCEdit. Regardless of which platform you're targetting, [esky](http://pypi.python.org/pypi/esky/) will be required.
 
 #### OS X
 *Note:* These instructions have only been testing on OS X Lion.
