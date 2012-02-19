@@ -323,6 +323,7 @@ def createPrecomputedVertices():
 
 faceVertexTemplates = makeVertexTemplates()
 
+
 class ChunkCalculator (object):
     cachedTemplate = None
     cachedTemplateHeight = 0
@@ -1482,6 +1483,7 @@ class TorchBlockRenderer(BlockRenderer):
 
     makeVertices = makeTorchVertices
 
+
 class RailBlockRenderer(BlockRenderer):
     blocktypes = [alphaMaterials.Rail.ID, alphaMaterials.PoweredRail.ID, alphaMaterials.DetectorRail.ID]
     renderstate = ChunkCalculator.renderstateAlphaTest
@@ -1676,6 +1678,7 @@ class RedstoneBlockRenderer(BlockRenderer):
     makeVertices = redstoneVertices
 
 # button, floor plate, door -> 1-cube features
+
 
 class FeatureBlockRenderer(BlockRenderer):
 #    blocktypes = [alphaMaterials.Button.ID,
