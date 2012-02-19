@@ -2746,7 +2746,9 @@ class LevelEditor(GLViewport):
 
             t = functools.partial(isinstance, self.level)
             if t(MCInfdevOldLevel):
-                if self.level.version == 19132:
+                if self.level.version == MCInfdevOldLevel.VERSION_ANVIL:
+                    levelFormat = "Minecraft Infinite World (Anvil Format)"
+                elif self.level.version == MCInfdevOldLevel.VERSION_MCR:
                     levelFormat = "Minecraft Infinite World (Region Format)"
                 else:
                     levelFormat = "Minecraft Infinite World (Old Chunk Format)"
