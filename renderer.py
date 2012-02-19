@@ -335,7 +335,7 @@ class ChunkCalculator (object):
         self.makeRenderstates(level.materials)
 
             # del xArray, zArray, yArray
-        self.nullVertices = zeros((0,) * len(self.precomputedVertices[0].shape), dtype = self.precomputedVertices[0].dtype)
+        self.nullVertices = zeros((0,) * len(self.precomputedVertices[0].shape), dtype=self.precomputedVertices[0].dtype)
         from leveleditor import Settings
 
         Settings.fastLeaves.addObserver(self)
@@ -1930,7 +1930,7 @@ from glutils import DisplayList
 class MCRenderer(object):
     isPreviewer = False
 
-    def __init__(self, level = None, alpha=1.0):
+    def __init__(self, level=None, alpha=1.0):
         self.render = True
         self.origin = (0, 0, 0)
         self.rotation = 0
@@ -1999,7 +1999,7 @@ class MCRenderer(object):
 
         self.loadNearbyChunks()
 
-    def layerProperty(layer, default = True):  # @NoSelf
+    def layerProperty(layer, default=True):  # @NoSelf
         attr = intern("_draw" + layer)
 
         def _get(self):
