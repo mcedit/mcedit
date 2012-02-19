@@ -1230,31 +1230,31 @@ class LeafBlockRenderer(BlockRenderer):
         yield
 
         if self.materials.name in ("Alpha", "Pocket"):
-          if not self.chunkCalculator.fastLeaves:
-            blockIndices = materialIndices
-            data = blockData[blockIndices]
-            data &= 0x3  # ignore decay states
-            leaves = (data == 0) | (data == 3)
-            pines = (data == alphaMaterials.PineLeaves.blockData)
-            birches = (data == alphaMaterials.BirchLeaves.blockData)
-            texes = texMap(18, data, 0)
+            if not self.chunkCalculator.fastLeaves:
+                blockIndices = materialIndices
+                data = blockData[blockIndices]
+                data &= 0x3  # ignore decay states
+                leaves = (data == 0) | (data == 3)
+                pines = (data == alphaMaterials.PineLeaves.blockData)
+                birches = (data == alphaMaterials.BirchLeaves.blockData)
+                texes = texMap(18, data, 0)
         else:
             blockIndices = materialIndices
             texes = texMap(18, [0], 0)
 
         for (direction, exposedFaceIndices) in enumerate(facingBlockIndices):
             if self.materials.name in ("Alpha", "Pocket"):
-              if self.chunkCalculator.fastLeaves:
-                blockIndices = materialIndices & exposedFaceIndices
-                data = blockData[blockIndices]
-                data &= 0x3  # ignore decay states
-                leaves = (data == 0)
-                pines = (data == alphaMaterials.PineLeaves.blockData)
-                birches = (data == alphaMaterials.BirchLeaves.blockData)
-                type3 = (data == 3)
-                leaves |= type3
+                if self.chunkCalculator.fastLeaves:
+                    blockIndices = materialIndices & exposedFaceIndices
+                    data = blockData[blockIndices]
+                    data &= 0x3  # ignore decay states
+                    leaves = (data == 0)
+                    pines = (data == alphaMaterials.PineLeaves.blockData)
+                    birches = (data == alphaMaterials.BirchLeaves.blockData)
+                    type3 = (data == 3)
+                    leaves |= type3
 
-                texes = texMap(18, data, 0)
+                    texes = texMap(18, data, 0)
 
             facingBlockLight = areaBlockLights[self.directionOffsets[direction]]
             vertexArray = self.makeTemplate(direction, blockIndices)
