@@ -109,18 +109,18 @@ def chunkMarkers(chunkSet):
         else:
             break
     return sizedChunks
-    
+
 
 class ChunkRenderer(object):
     maxlod = 2
     minlod = 0
-    
+
     def __init__(self, renderer, chunkPosition):
         self.renderer = renderer
         self.blockRenderers = []
         self.detailLevel = 0
         self.invalidLayers = set(Layer.AllLayers)
-        
+
         self.chunkPosition = chunkPosition
         self.bufferSize = 0
         self.renderstateLists = None
@@ -128,11 +128,11 @@ class ChunkRenderer(object):
     @property
     def visibleLayers(self):
         return self.renderer.visibleLayers
-    
+
     def forgetDisplayLists(self, states=None):
         if self.renderstateLists is not None:
             # print "Discarded {0}, gained {1} bytes".format(self.chunkPosition,self.bufferSize)
-            
+
             for k in states or self.renderstateLists.iterkeys():
                 a = self.renderstateLists.get(k, [])
                 # print a
@@ -143,7 +143,7 @@ class ChunkRenderer(object):
                 del self.renderstateLists[states]
             else:
                 self.renderstateLists = None
-            
+
             self.needsRedisplay = True
             self.renderer.discardMasterList()
 
@@ -172,7 +172,7 @@ class ChunkRenderer(object):
                 continue
             if blockRenderer.layer not in self.visibleLayers:
                 continue
-            
+
             l = blockRenderer.makeArrayList(self.chunkPosition, self.needsBlockRedraw and showRedraw)
             lists[blockRenderer.renderstate].append(l)
 
@@ -181,19 +181,19 @@ class ChunkRenderer(object):
 
         self.needsRedisplay = False
         self.renderstateLists = lists
-    
 
-        
+
+
     @property
     def needsBlockRedraw(self):
         return Layer.Blocks in self.invalidLayers
 
-    
-    
+
+
     def invalidate(self, layers=None):
         if layers is None:
             layers = Layer.AllLayers
-            
+
         if layers:
             layers = set(layers)
             self.invalidLayers.update(layers)
@@ -203,32 +203,32 @@ class ChunkRenderer(object):
             if len(blockRenderers) < len(self.blockRenderers):
                 self.forgetDisplayLists()
             self.blockRenderers = blockRenderers
-            
+
             if self.renderer.showRedraw and Layer.Blocks in layers:
                 self.needsRedisplay = True
 
 
     def calcFaces(self):
         minlod = self.renderer.detailLevelForChunk(self.chunkPosition)
-        
+
         minlod = min(minlod, self.maxlod)
         if self.detailLevel != minlod:
             self.forgetDisplayLists()
             self.detailLevel = minlod
             self.invalidLayers.add(Layer.Blocks)
-            
-            
+
+
             # discard the standard detail renderers
             if minlod > 0:
                 blockRenderers = []
                 for br in self.blockRenderers:
                     if br.detailLevels != (0,):
                         blockRenderers.append(br)
-            
-                self.blockRenderers = blockRenderers
-            
 
-        
+                self.blockRenderers = blockRenderers
+
+
+
         if self.renderer.chunkCalculator:
             for i in self.renderer.chunkCalculator.calcFacesForChunkRenderer(self):
                 yield
@@ -239,7 +239,7 @@ class ChunkRenderer(object):
             yield
 
     def vertexArraysDone(self):
-        
+
         bufferSize = 0
         for br in self.blockRenderers:
             bufferSize += br.bufferSize()
@@ -265,7 +265,7 @@ _A = s_[..., 23]
 
 
 def makeVertexTemplates(xmin=0, ymin=0, zmin=0, xmax=1, ymax=1, zmax=1):
-        
+
         return array([
 
              # FaceXIncreasing: 
@@ -337,21 +337,21 @@ def createPrecomputedVertices():
 faceVertexTemplates = makeVertexTemplates()        
 
 class ChunkCalculator (object):
-    
-    
+
+
     cachedTemplate = None
     cachedTemplateHeight = 0
 
     whiteLight = array([[[15] * 16] * 16] * 16, uint8)
     precomputedVertices = createPrecomputedVertices()
-    
+
     def __init__(self, level):
         self.makeRenderstates(level.materials)
 
             # del xArray, zArray, yArray
         self.nullVertices = zeros((0,)*len(self.precomputedVertices[0].shape), dtype=self.precomputedVertices[0].dtype)
         from leveleditor import Settings
-        
+
         Settings.fastLeaves.addObserver(self)
         Settings.roughGraphics.addObserver(self)
 
@@ -370,7 +370,7 @@ class ChunkCalculator (object):
             glDisable(GL_CULL_FACE)
             glDisable(GL_TEXTURE_2D)
 
-            
+
         @classmethod
         def release(self):
             glEnable(GL_CULL_FACE)
@@ -498,9 +498,9 @@ class ChunkCalculator (object):
         if 0 == len(cr.invalidLayers): 
 #            layers = set(br.layer for br in cr.blockRenderers)
 #            assert set() == cr.visibleLayers.difference(layers)
-   
+
             return
-        
+
         lod = cr.detailLevel
         cx, cz = cr.chunkPosition
         level = cr.renderer.level
@@ -523,7 +523,7 @@ class ChunkCalculator (object):
             OverheadBlockRenderer,
         ]
         existingBlockRenderers = dict(((type(b), b) for b in cr.blockRenderers))
-        
+
         for blockRendererClass in classes:
             if cr.detailLevel not in blockRendererClass.detailLevels:
                 continue
@@ -532,29 +532,29 @@ class ChunkCalculator (object):
             if blockRendererClass.layer not in cr.invalidLayers: 
                 if blockRendererClass in existingBlockRenderers:
                     brs.append(existingBlockRenderers[blockRendererClass])
-                    
+
                 continue
-            
+
             br = blockRendererClass(self)
             br.detailLevel = cr.detailLevel
-            
+
             for _ in br.makeChunkVertices(chunk):
                 yield
             brs.append(br)
-        
+
         blockRenderers = []
-        
+
         # Recalculate high detail blocks if needed, otherwise retain the high detail renderers
         if lod == 0 and Layer.Blocks in cr.invalidLayers:
             for _ in self.calcHighDetailFaces(cr, blockRenderers):
                 yield
         else:
             blockRenderers.extend(br for br in cr.blockRenderers if type(br) not in classes)
-            
+
         # Add the layer renderers
         blockRenderers.extend(brs)
         cr.blockRenderers = blockRenderers
-        
+
         cr.vertexArraysDone()
         raise StopIteration
 
@@ -670,7 +670,7 @@ class ChunkCalculator (object):
 
         areaBlockLights = self.getAreaBlockLights(chunk, neighboringChunks)
         yield
-        
+
         slabs = areaBlocks == alphaMaterials.StoneSlab.ID
         if slabs.any():
             areaBlockLights[slabs] = areaBlockLights[:,:,1:][slabs[:,:,:-1]]
@@ -706,11 +706,11 @@ class ChunkCalculator (object):
 
         sx = sz = slice(0, 16)
         asx = asz = slice(0, 18)
-        
+
         for y in range(0, chunk.world.Height, 16):
             sy = slice(y, y+16)
             asy = slice(y, y+18)
-            
+
             for _i in self.computeCubeGeometry(
                     y,
                     blockRenderers,
@@ -722,16 +722,16 @@ class ChunkCalculator (object):
                     areaBlockLights[asx, asz, asy], 
                     chunkRenderer):
                 yield
-                
-        
+
+
     def computeCubeGeometry(self, y, blockRenderers, blocks, blockData, materials, blockMaterials, facingBlockIndices, areaBlockLights, chunkRenderer):
         materialCounts = bincount(blockMaterials.ravel())
-        
+
 
         def texMap(blocks, blockData=0, direction=slice(None)):
             return materials.blockTextures[blocks, blockData, direction]  # xxx slow
 
-        
+
         for blockRendererClass in self.blockRendererClasses:
             mi = blockRendererClass.materialIndex
             if mi >= len(materialCounts) or materialCounts[mi] == 0:
@@ -760,7 +760,7 @@ class Layer:
     TileTicks = "TileTicks"
     TerrainPopulated = "TerrainPopulated"
     AllLayers = (Blocks, Entities, Monsters, Items, TileEntities, TileTicks, TerrainPopulated)
-    
+
 
 class BlockRenderer(object):
     # vertexArrays = None
@@ -781,11 +781,11 @@ class BlockRenderer(object):
         self.vertexArrays = []
 
         pass
-    
+
     @classmethod
     def getBlocktypes(cls, mats):
         return cls.blocktypes
-        
+
     def setAlpha(self, alpha):
         "alpha is an unsigned byte value"
         for a in self.vertexArrays:
@@ -801,11 +801,11 @@ class BlockRenderer(object):
         arrays = []
         materialIndices = self.getMaterialIndices(blockMaterials)
         yield
-            
+
         blockLight = areaBlockLights[1:-1, 1:-1, 1:-1]
 
         for (direction, exposedFaceIndices) in enumerate(facingBlockIndices):
-            
+
             facingBlockLight = areaBlockLights[self.directionOffsets[direction]]
             vertexArray = self.makeFaceVertices(direction, materialIndices, exposedFaceIndices, blocks, blockData, blockLight, facingBlockLight, texMap)
             yield
@@ -855,7 +855,7 @@ class BlockRenderer(object):
 class EntityRendererGeneric(BlockRenderer):
     renderstate = ChunkCalculator.renderstateEntity
     detailLevels = (0,1,2)
-    
+
     def drawFaceVertices(self, buf):
         if 0 == len(buf):
             return
@@ -866,20 +866,20 @@ class EntityRendererGeneric(BlockRenderer):
         glColorPointer(4, GL_UNSIGNED_BYTE, stride, (buf.view(dtype=uint8).ravel()[20:]))
 
         glDepthMask(False)
-        
-        
+
+
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glLineWidth(2.0)
         glDrawArrays(GL_QUADS, 0, len(buf) * 4)
-        
+
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-        
+
         glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
         with gl.glEnable(GL_POLYGON_OFFSET_FILL, GL_DEPTH_TEST):
             glDrawArrays(GL_QUADS, 0, len(buf) * 4)
         glDepthMask(True)
-        
+
     def _computeVertices(self, positions, colors, offset=False, chunkPosition=(0,0)):
         cx, cz = chunkPosition
         x = cx << 4
@@ -898,7 +898,7 @@ class EntityRendererGeneric(BlockRenderer):
             vertexArray.shape = (len(positions) * 6, 4, 6)
         return vertexArray
 
-    
+
 class TileEntityRenderer(EntityRendererGeneric):
     layer = Layer.TileEntities
 
@@ -913,8 +913,8 @@ class TileEntityRenderer(EntityRendererGeneric):
         tiles = self._computeVertices(tilePositions, (0xff, 0xff, 0x33, 0x44), chunkPosition=chunk.chunkPosition)
         yield
         self.vertexArrays = [tiles]
-        
-        
+
+
 class BaseEntityRenderer(EntityRendererGeneric):
     pass
 
@@ -930,9 +930,9 @@ class MonsterRenderer(BaseEntityRenderer):
             id = ent["id"].value
             if id in self.notMonsters:
                 continue
-            
+
             monsterPositions.append(Entity.pos(ent))
-            
+
         monsters = self._computeVertices(monsterPositions, 
                                          (0xff, 0x22, 0x22, 0x44), 
                                          offset=True, 
@@ -953,7 +953,7 @@ class EntityRenderer(BaseEntityRenderer):
 #        entities = self._computeVertices(entityPositions, (0x88, 0x00, 0x00, 0x66), offset=True, chunkPosition=chunk.chunkPosition)
 #        yield
 #        self.vertexArrays = [entities]
-        
+
 
 class ItemRenderer(BaseEntityRenderer):
     layer = Layer.Items
@@ -971,14 +971,14 @@ class ItemRenderer(BaseEntityRenderer):
             color = colorMap.get(ent["id"].value)
             if color is None:
                 continue
-            
+
             entityPositions.append(Entity.pos(ent))
             entityColors.append(color)
-            
+
         entities = self._computeVertices(entityPositions, array(entityColors, dtype='uint8')[:, newaxis, newaxis], offset=True, chunkPosition=chunk.chunkPosition)
         yield
         self.vertexArrays = [entities]
-    
+
 
 class TileTicksRenderer(EntityRendererGeneric):
     layer = Layer.TileTicks
@@ -990,11 +990,11 @@ class TileTicksRenderer(EntityRendererGeneric):
                 self.vertexArrays.append(self._computeVertices([[t[i].value for i in "xyz"] for t in ticks], 
                                                                (0xff, 0xff, 0xff, 0x44), 
                                                                chunkPosition=chunk.chunkPosition))
-                                                        
+
 
         yield
-         
-    
+
+
 class TerrainPopulatedRenderer(EntityRendererGeneric):
     layer = Layer.TerrainPopulated
     vertexTemplate = zeros( (6, 4, 6), 'float32')
@@ -1002,7 +1002,7 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
     vertexTemplate[_XYZ] *= (16, 128, 16)
     color = (255, 200, 155)
     vertexTemplate.view('uint8')[_RGBA] = color + (72,)
-    
+
     def drawFaceVertices(self, buf):
         if 0 == len(buf):
             return
@@ -1013,16 +1013,16 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
         glColorPointer(4, GL_UNSIGNED_BYTE, stride, (buf.view(dtype=uint8).ravel()[20:]))
 
         glDepthMask(False)
-        
+
 
         # glDrawArrays(GL_QUADS, 0, len(buf) * 4)
         glDisable(GL_CULL_FACE)
-        
+
         with gl.glEnable(GL_DEPTH_TEST):
             glDrawArrays(GL_QUADS, 0, len(buf) * 4)
-        
+
         glEnable(GL_CULL_FACE)
-        
+
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glLineWidth(1.0)
@@ -1031,26 +1031,26 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
         with gl.glEnable(GL_DEPTH_TEST):
             glDrawArrays(GL_QUADS, 0, len(buf) * 4)
         glLineWidth(1.0)
-        
+
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
         glDepthMask(True)
-        
+
 #        glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
 #        with gl.glEnable(GL_POLYGON_OFFSET_FILL, GL_DEPTH_TEST):
 #            glDrawArrays(GL_QUADS, 0, len(buf) * 4)
 #        
-        
+
     def makeChunkVertices(self, chunk):
         chunk.decompress()
         neighbors = self.chunkCalculator.getNeighboringChunks(chunk)
         def getpop(ch):
             return getattr(ch, "TerrainPopulated", True)
-            
+
         pop = getpop(chunk)
         yield
         if pop:
             return
-                
+
         visibleFaces = [
             getpop(neighbors[FaceXIncreasing]),
             getpop(neighbors[FaceXDecreasing]),
@@ -1064,8 +1064,8 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
         self.vertexArrays.append(verts)
 
         yield
-        
-        
+
+
 class LowDetailBlockRenderer(BlockRenderer):
     renderstate = ChunkCalculator.renderstateLowDetail
     detailLevels = (1,)
@@ -1083,12 +1083,12 @@ class LowDetailBlockRenderer(BlockRenderer):
 
     def makeChunkVertices(self, ch):
         step = 1
-        
+
         level = ch.world
         vertexArrays = []
         blocks = ch.Blocks
         heightMap = ch.HeightMap
-        
+
         heightMap = heightMap[::step, ::step]
         blocks = blocks[::step, ::step]
 
@@ -1107,7 +1107,7 @@ class LowDetailBlockRenderer(BlockRenderer):
         depths = zeros((chunkWidth, chunkLength), dtype='uint16')
         depths[1:-1, 1:-1] = reduce(minimum, (h[1:-1, :-2], h[1:-1, 2:], h[:-2, 1:-1]), h[2:, 1:-1])
         yield
-        
+
         try:
             topBlocks = blocks[gridaxes]
             nonAirBlocks = (topBlocks != 0)
@@ -1132,14 +1132,14 @@ class LowDetailBlockRenderer(BlockRenderer):
             vertexArray[_XYZ][..., 0] = x[:, newaxis]
             vertexArray[_XYZ][..., 1] = y[:, newaxis]
             vertexArray[_XYZ][..., 2] = z[:, newaxis]
-            
+
             va0 = array(vertexArray)
 
             va0[..., :3] += faceVertexTemplates[FaceYIncreasing, ..., :3]
-            
+
             overmask = overblocks > 0
             flatcolors[overmask] = level.materials.flatColors[:,0][overblocks[overmask]][:,newaxis]
-            
+
             if self.detailLevel == 2:
                 heightfactor = (y / float(2.0 * ch.world.Height)) + 0.5
                 flatcolors[..., :3] *= heightfactor[:, newaxis, newaxis]
@@ -1149,15 +1149,15 @@ class LowDetailBlockRenderer(BlockRenderer):
 
             va0[_XYZ][:, :, 0] *= step
             va0[_XYZ][:, :, 2] *= step
-            
+
             yield
             if self.detailLevel == 2:
                 self.vertexArrays = [va0]
                 return
-                
+
             va1 = array(vertexArray)
             va1[..., :3] += faceVertexTemplates[FaceXIncreasing, ..., :3]
-            
+
             va1[_XYZ][:, (0, 1), 1] = depths[nonAirBlocks].ravel()[:, newaxis]  # stretch to floor
             va1[_XYZ][:, (1, 2), 0] -= 1.0  # turn diagonally
             va1[_XYZ][:, (2, 3), 1] -= 0.5  # drop down to prevent intersection pixels
@@ -1175,7 +1175,7 @@ class LowDetailBlockRenderer(BlockRenderer):
             va2 = array(va1)
             va2[_XYZ][:, (1, 2), 0] += step
             va2[_XYZ][:, (0, 3), 0] -= step
-            
+
             vertexArrays = [va1, va2, va0]
 
         self.vertexArrays = vertexArrays
@@ -1183,7 +1183,7 @@ class LowDetailBlockRenderer(BlockRenderer):
 
 class OverheadBlockRenderer(LowDetailBlockRenderer):
     detailLevels = (2,)
-    
+
 
 class GenericBlockRenderer(BlockRenderer):
     renderstate = ChunkCalculator.renderstateAlphaTest
@@ -1193,9 +1193,9 @@ class GenericBlockRenderer(BlockRenderer):
         vertexArrays = []
         materialIndices = self.getMaterialIndices(blockMaterials)
         yield
-        
+
         for (direction, exposedFaceIndices) in enumerate(facingBlockIndices):
-            
+
             facingBlockLight = areaBlockLights[self.directionOffsets[direction]]
             blockIndices = materialIndices & exposedFaceIndices
 
@@ -1232,7 +1232,7 @@ class GenericBlockRenderer(BlockRenderer):
 #                
             setColors()
             yield
-            
+
             vertexArrays.append(vertexArray)
 
         self.vertexArrays = vertexArrays
@@ -1255,7 +1255,7 @@ class LeafBlockRenderer(BlockRenderer):
         arrays = []
         materialIndices = self.getMaterialIndices(blockMaterials)
         yield
-        
+
         if self.materials.name in ("Alpha", "Pocket"):
           if not self.chunkCalculator.fastLeaves:
             blockIndices = materialIndices
@@ -1268,7 +1268,7 @@ class LeafBlockRenderer(BlockRenderer):
         else:
             blockIndices = materialIndices
             texes = texMap(18, [0], 0)
-            
+
         for (direction, exposedFaceIndices) in enumerate(facingBlockIndices):
             if self.materials.name in ("Alpha", "Pocket"):
               if self.chunkCalculator.fastLeaves:
@@ -1280,7 +1280,7 @@ class LeafBlockRenderer(BlockRenderer):
                 birches = (data == alphaMaterials.BirchLeaves.blockData)
                 type3 = (data == 3)
                 leaves |= type3
-                
+
                 texes = texMap(18, data, 0)
 
             facingBlockLight = areaBlockLights[self.directionOffsets[direction]]
@@ -1307,7 +1307,7 @@ class LeafBlockRenderer(BlockRenderer):
     leafColor = leafColorDefault = [0x48 / 255., 0xb5 / 255., 0x18 / 255.]  # 48b518
     pineLeafColor = pineLeafColorDefault = [0x61 / 255., 0x99 / 255., 0x61 / 255.]  # 0x619961
     birchLeafColor = birchLeafColorDefault = [0x80 / 255., 0xa7 / 255., 0x55 / 255.]  # 0x80a755
-    
+
 
     makeVertices = makeLeafVertices
 
@@ -1319,9 +1319,9 @@ class PlantBlockRenderer(BlockRenderer):
         # if mats.name != "Classic": blocktypes += [31, 32]  # shrubs, tall grass
         # if mats.name == "Alpha": blocktypes += [115]  # nether wart
         blocktypes = [b.ID for b in mats if b.type in ("DECORATION_CROSS", "NETHER_WART", "CROPS", "STEM")]
-        
+
         return blocktypes
-        
+
     renderstate = ChunkCalculator.renderstateAlphaTest
 
     def makePlantVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
@@ -1330,14 +1330,14 @@ class PlantBlockRenderer(BlockRenderer):
         yield
 
         theseBlocks = blocks[blockIndices]
-        
+
         bdata = blockData[blockIndices]
         bdata[theseBlocks == 6] &= 0x3  # xxx saplings only
         texes = texMap(blocks[blockIndices], bdata, 0)
-        
+
         blockLight = areaBlockLights[1:-1, 1:-1, 1:-1]
         lights = blockLight[blockIndices][..., newaxis, newaxis]
-        
+
         colorize = None
         if self.materials.name == "Alpha":
             colorize = (theseBlocks == alphaMaterials.TallGrass.ID) & (bdata != 0)
@@ -1580,7 +1580,7 @@ class RailBlockRenderer(BlockRenderer):
         direction = FaceYIncreasing
         blockIndices = self.getMaterialIndices(blockMaterials)
         yield
-        
+
         bdata = blockData[blockIndices]
         railBlocks = blocks[blockIndices]
         tex = texMap(railBlocks, bdata, FaceYIncreasing)[:, newaxis, :]
@@ -1655,7 +1655,7 @@ class LadderBlockRenderer(BlockRenderer):
 
 class SnowBlockRenderer(BlockRenderer):
     snowID = 78
-    
+
     blocktypes = [snowID]
     def makeSnowVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         snowIndices = self.getMaterialIndices(blockMaterials)
@@ -1809,14 +1809,14 @@ class FeatureBlockRenderer(BlockRenderer):
 
     fenceTemplates = makeVertexTemplates(3/8., 0, 3/8., 5/8., 1, 5/8.)
 
-        
-        
+
+
 
     def fenceVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         fenceMask = blocks == alphaMaterials.Fence.ID
         fenceIndices = fenceMask.nonzero()
         yield
-        
+
         vertexArray = zeros((len(fenceIndices[0]), 6, 4, 6), dtype='float32')
         for i in range(3):
             j = (0, 2, 1)[i]
@@ -1827,20 +1827,20 @@ class FeatureBlockRenderer(BlockRenderer):
         vertexArray[_ST] += alphaMaterials.blockTextures[alphaMaterials.WoodPlanks.ID, 0, 0]
 
         vertexArray.view('uint8')[_RGBA] = self.fenceTemplates[..., 5][..., newaxis]
-        
+
         vertexArray.view('uint8')[_RGB] *= areaBlockLights[1:-1,1:-1,1:-1][fenceIndices][..., newaxis, newaxis, newaxis]
         vertexArray.shape = (vertexArray.shape[0] * 6, 4, 6)
         yield
         self.vertexArrays = [vertexArray]
 
     makeVertices = fenceVertices
-    
+
 
 class StairBlockRenderer(BlockRenderer):
     @classmethod
     def getBlocktypes(cls, mats):
         return [a.ID for a in mats.AllStairs]
-    
+
     # South - FaceXIncreasing
     # North - FaceXDecreasing
     # West - FaceZIncreasing
@@ -1858,44 +1858,44 @@ class StairBlockRenderer(BlockRenderer):
         {"ymax":0.5},
         ]
     ])
-        
+
     def stairVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         arrays = []
         materialIndices = self.getMaterialIndices(blockMaterials)
         yield
         stairBlocks = blocks[materialIndices]
         stairData = blockData[materialIndices] & 0x3
-        
+
         blockLight = areaBlockLights[1:-1, 1:-1, 1:-1]
         x,z,y = materialIndices.nonzero()
-        
+
         for _ in ("slab", "step"):
-            
+
             vertexArray = zeros( (len(x), 6, 4, 6), dtype='float32')
             for i in range(3):
                 vertexArray[_XYZ][..., i] = (x,y,z)[i][:, newaxis, newaxis]
-            
-            
+
+
             if _ == "step":
                 vertexArray[_XYZST] += self.stairTemplates[4][..., :5]
-            
-                
+
+
             else:
                 vertexArray[_XYZST] += self.stairTemplates[stairData][..., :5]
-                
+
             vertexArray[_ST] += texMap(stairBlocks, 0)[..., newaxis, :]
-            
+
             vertexArray.view('uint8')[_RGB] = self.stairTemplates[4][newaxis, ..., 5, newaxis]   
             vertexArray.view('uint8')[_RGB] *= 0xf
             vertexArray.view('uint8')[_A] = 0xff
-                        
+
             vertexArray.shape = (len(x)*6, 4, 6)    
             yield
             arrays.append(vertexArray)
         self.vertexArrays = arrays
-        
+
     makeVertices = stairVertices
-    
+
 
 class SlabBlockRenderer(BlockRenderer):
     slabID = 44
@@ -1975,7 +1975,7 @@ class MCRenderer(object):
         self.chunkRenderers = {}
         self.loadableChunkMarkers = DisplayList()
         self.visibleLayers = set(Layer.AllLayers)
-        
+
         self.masterLists = None
 
         alpha = alpha * 255
@@ -1989,12 +1989,12 @@ class MCRenderer(object):
         self.chunkSamples = [timedelta(0, 0, 0)] * 15
 
         self.chunkIterator = None
-        
+
         import leveleditor
         Settings = leveleditor.Settings
-        
+
         Settings.fastLeaves.addObserver(self)
-        
+
         Settings.roughGraphics.addObserver(self)
         Settings.showHiddenOres.addObserver(self)
         Settings.vertexBufferLimit.addObserver(self)
@@ -2005,14 +2005,14 @@ class MCRenderer(object):
         Settings.drawUnpopulatedChunks.addObserver(self, "drawTerrainPopulated")
         Settings.drawMonsters.addObserver(self)
         Settings.drawItems.addObserver(self)
-        
+
         Settings.showChunkRedraw.addObserver(self, "showRedraw")
         Settings.spaceHeight.addObserver(self)
         Settings.targetFPS.addObserver(self, "targetFPS")
-        
-        
+
+
         self.level = level
-        
+
     chunkClass = ChunkRenderer
     calculatorClass = ChunkCalculator
 
@@ -2020,10 +2020,10 @@ class MCRenderer(object):
     maxViewDistance = 24
 
     _viewDistance = 8
-    
+
     needsRedraw = True
-    
-    
+
+
     def toggleLayer(self, val, layer):
         if val:
             self.visibleLayers.add(layer)
@@ -2031,9 +2031,9 @@ class MCRenderer(object):
             self.visibleLayers.discard(layer)
         for cr in self.chunkRenderers.itervalues():
             cr.invalidLayers.add(layer)
-        
+
         self.loadNearbyChunks()
-        
+
     def layerProperty(layer, default = True):  # @NoSelf
         attr = intern("_draw" + layer)
         def _get(self):
@@ -2042,18 +2042,18 @@ class MCRenderer(object):
             if val != _get(self):
                 setattr(self, attr, val)
                 self.toggleLayer(val, layer)
-        
+
         return property(_get, _set)
-        
+
     drawEntities = layerProperty(Layer.Entities)
     drawTileEntities = layerProperty(Layer.TileEntities)
     drawTileTicks = layerProperty(Layer.TileTicks)
     drawMonsters = layerProperty(Layer.Monsters)
     drawItems = layerProperty(Layer.Items)
     drawTerrainPopulated = layerProperty(Layer.TerrainPopulated)
-      
-    
-            
+
+
+
 
     def inSpace(self):
         if self.level is None:
@@ -2078,7 +2078,7 @@ class MCRenderer(object):
         return max(abs(cx - camcx), abs(cz - camcz))
 
     overheadMode = False
-    
+
     def detailLevelForChunk(self, cpos):
         if self.overheadMode:
             return 2
@@ -2120,7 +2120,7 @@ class MCRenderer(object):
         self.discardChunksOutsideViewDistance()
 
 
-    
+
     maxWorkFactor = 64
     minWorkFactor = 1
     workFactor = 2
@@ -2223,7 +2223,7 @@ class MCRenderer(object):
     def discardChunksOutsideViewDistance(self):
         if self.overheadMode:
             return
-        
+
         # print "discardChunksOutsideViewDistance"
         d = self.effectiveViewDistance
         cx = (self.position[0] - self.origin[0]) / 16
@@ -2388,7 +2388,7 @@ class MCRenderer(object):
 
                 self.oldPosition = self.position
                 self.lastVisibleLoad = datetime.now()
-        
+
     lastVisibleLoad = datetime.now()
 
     def loadNearbyChunks(self):
@@ -2432,13 +2432,13 @@ class MCRenderer(object):
         self.loadableChunkMarkers.invalidate()
 
     def _drawLoadableChunkMarkers(self):
-        
+
         if self.level.chunkCount:
             chunkSet = set(self.level.allChunks)
-            
+
 
             sizedChunks = chunkMarkers(chunkSet)
-            
+
 
             glPushAttrib(GL_FOG_BIT)
             glDisable(GL_FOG)
@@ -2552,7 +2552,7 @@ class MCRenderer(object):
     if "-debuglists" in sys.argv:
         def createMasterLists(self):
             pass
-            
+
         def callMasterLists(self):
             for cr in self.chunkRenderers.itervalues():
                 cr.debugDraw()
@@ -2563,7 +2563,7 @@ class MCRenderer(object):
                 chunkLists = defaultdict(list)
                 chunksPerFrame = 80
                 shouldRecreateAgain = False
-                
+
                 for ch in self.chunkRenderers.itervalues():
                     if chunksPerFrame:
                         if ch.needsRedisplay:
@@ -2571,11 +2571,11 @@ class MCRenderer(object):
                         ch.makeDisplayLists()
                     else:
                         shouldRecreateAgain = True
-                        
+
                     if ch.renderstateLists:
                         for rs in ch.renderstateLists:
                             chunkLists[rs] += ch.renderstateLists[rs]
-    
+
                 for rs in chunkLists:
                     if len(chunkLists[rs]):
                         lists[rs] = array(chunkLists[rs], dtype='uint32').ravel()
@@ -2584,24 +2584,24 @@ class MCRenderer(object):
                 self.masterLists = lists
                 self.shouldRecreateMasterList = shouldRecreateAgain
                 self.needsImmediateRedraw = shouldRecreateAgain
-        
+
         def callMasterLists(self):
             for renderstate in self.chunkCalculator.renderstates:
                 if renderstate not in self.masterLists:
                     continue
-                
+
                 if self.alpha != 0xff and renderstate is not ChunkCalculator.renderstateLowDetail:
                     glEnable(GL_BLEND)
                 renderstate.bind()
 
                 glCallLists(self.masterLists[renderstate])
-                
+
                 renderstate.release()
                 if self.alpha != 0xff and renderstate is not ChunkCalculator.renderstateLowDetail:
                     glDisable(GL_BLEND)
 
     errorLimit = 10
-    
+
     def draw(self):
         self.needsRedraw = False
         if not self.level:
@@ -2632,14 +2632,14 @@ class MCRenderer(object):
             try:
                 self.callMasterLists()
 
-                
+
 
             except GLError, e:
                 if self.errorLimit:
                     self.errorLimit -= 1
                     traceback.print_exc()
                     print e
-                
+
 
             glDisable(GL_POLYGON_OFFSET_FILL)
 
@@ -2680,7 +2680,7 @@ class MCRenderer(object):
 
                 if len(self.invalidChunkQueue) > 1024:
                     self.invalidChunkQueue.clear()
-                    
+
                 if len(self.invalidChunkQueue):
                     c = self.invalidChunkQueue[0]
                     for i in self.workOnChunk(c):
@@ -2723,8 +2723,8 @@ class MCRenderer(object):
             self._chunkWorker = None
             if self.chunkIterator:
                 self.chunkIterator = None
-            
-            
+
+
     vertexBufferLimit = 384
 
     def getChunkRenderer(self, c):
@@ -2774,9 +2774,9 @@ class MCRenderer(object):
                     fn = c
 
                 info(u"Skipped chunk {f}: {e}".format(e=e, f=fn))
-    
+
     redrawChunks = 0
-    
+
     def chunkDone(self, chunkRenderer, work):
         self.chunkRenderers[chunkRenderer.chunkPosition] = chunkRenderer
         self.bufferUsage += chunkRenderer.bufferSize
@@ -2789,7 +2789,7 @@ class MCRenderer(object):
 
             else:
                 self.redrawChunks = 2
-        
+
         if work > 0:
             self.oldChunkStartTime = self.chunkStartTime
             self.chunkStartTime = datetime.now()
@@ -2812,7 +2812,7 @@ class MCRenderer(object):
 
 class PreviewRenderer(MCRenderer):
     isPreviewer = True
-    
+
 
 def rendermain():
     renderer = MCRenderer()
