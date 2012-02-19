@@ -1230,7 +1230,7 @@ class LeafBlockRenderer(BlockRenderer):
             blockIndices = materialIndices
             data = blockData[blockIndices]
             data &= 0x3 #ignore decay states
-            leaves = (data == 0)
+            leaves = (data == 0) | (data == 3)
             pines = (data == alphaMaterials.PineLeaves.blockData)
             birches = (data == alphaMaterials.BirchLeaves.blockData)
             texes = texMap(18, data, 0)
@@ -1248,7 +1248,7 @@ class LeafBlockRenderer(BlockRenderer):
                 pines = (data == alphaMaterials.PineLeaves.blockData)
                 birches = (data == alphaMaterials.BirchLeaves.blockData)
                 type3 = (data == 3)
-                pines |= type3
+                leaves |= type3
                 
                 texes = texMap(18, data, 0)
 
