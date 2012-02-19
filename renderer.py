@@ -257,42 +257,42 @@ def makeVertexTemplates(xmin=0, ymin=0, zmin=0, xmax=1, ymax=1, zmax=1):
         return array([
 
              # FaceXIncreasing:
-                              [[xmax, ymin, zmax, (zmin*16), 16-(ymin*16), 0x0b],
-                               [xmax, ymin, zmin, (zmax*16), 16-(ymin*16), 0x0b],
-                               [xmax, ymax, zmin, (zmax*16), 16-(ymax*16), 0x0b],
-                               [xmax, ymax, zmax, (zmin*16), 16-(ymax*16), 0x0b],
+                              [[xmax, ymin, zmax, (zmin * 16), 16 - (ymin * 16), 0x0b],
+                               [xmax, ymin, zmin, (zmax * 16), 16 - (ymin * 16), 0x0b],
+                               [xmax, ymax, zmin, (zmax * 16), 16 - (ymax * 16), 0x0b],
+                               [xmax, ymax, zmax, (zmin * 16), 16 - (ymax * 16), 0x0b],
                                ],
 
              # FaceXDecreasing:
-                              [[xmin, ymin, zmin, (zmin*16), 16-(ymin*16), 0x0b],
-                               [xmin, ymin, zmax, (zmax*16), 16-(ymin*16), 0x0b],
-                               [xmin, ymax, zmax, (zmax*16), 16-(ymax*16), 0x0b],
-                               [xmin, ymax, zmin, (zmin*16), 16-(ymax*16), 0x0b]],
+                              [[xmin, ymin, zmin, (zmin * 16), 16 - (ymin * 16), 0x0b],
+                               [xmin, ymin, zmax, (zmax * 16), 16 - (ymin * 16), 0x0b],
+                               [xmin, ymax, zmax, (zmax * 16), 16 - (ymax * 16), 0x0b],
+                               [xmin, ymax, zmin, (zmin * 16), 16 - (ymax * 16), 0x0b]],
 
 
              # FaceYIncreasing:
-                              [[xmin, ymax, zmin, xmin*16, 16-(zmax*16), 0x11],  # ne
-                               [xmin, ymax, zmax, xmin*16, 16-(zmin*16), 0x11],  # nw
-                               [xmax, ymax, zmax, xmax*16, 16-(zmin*16), 0x11],  # sw
-                               [xmax, ymax, zmin, xmax*16, 16-(zmax*16), 0x11]],  # se
+                              [[xmin, ymax, zmin, xmin * 16, 16 - (zmax * 16), 0x11],  # ne
+                               [xmin, ymax, zmax, xmin * 16, 16 - (zmin * 16), 0x11],  # nw
+                               [xmax, ymax, zmax, xmax * 16, 16 - (zmin * 16), 0x11],  # sw
+                               [xmax, ymax, zmin, xmax * 16, 16 - (zmax * 16), 0x11]],  # se
 
              # FaceYDecreasing:
-                              [[xmin, ymin, zmin, xmin*16, 16-(zmax*16), 0x08],
-                               [xmax, ymin, zmin, xmax*16, 16-(zmax*16), 0x08],
-                               [xmax, ymin, zmax, xmax*16, 16-(zmin*16), 0x08],
-                               [xmin, ymin, zmax, xmin*16, 16-(zmin*16), 0x08]],
+                              [[xmin, ymin, zmin, xmin * 16, 16 - (zmax * 16), 0x08],
+                               [xmax, ymin, zmin, xmax * 16, 16 - (zmax * 16), 0x08],
+                               [xmax, ymin, zmax, xmax * 16, 16 - (zmin * 16), 0x08],
+                               [xmin, ymin, zmax, xmin * 16, 16 - (zmin * 16), 0x08]],
 
              # FaceZIncreasing:
-                              [[xmin, ymin, zmax, xmin*16, 16-(ymin*16), 0x0d],
-                               [xmax, ymin, zmax, xmax*16, 16-(ymin*16), 0x0d],
-                               [xmax, ymax, zmax, xmax*16, 16-(ymax*16), 0x0d],
-                               [xmin, ymax, zmax, xmin*16, 16-(ymax*16), 0x0d]],
+                              [[xmin, ymin, zmax, xmin * 16, 16 - (ymin * 16), 0x0d],
+                               [xmax, ymin, zmax, xmax * 16, 16 - (ymin * 16), 0x0d],
+                               [xmax, ymax, zmax, xmax * 16, 16 - (ymax * 16), 0x0d],
+                               [xmin, ymax, zmax, xmin * 16, 16 - (ymax * 16), 0x0d]],
 
              # FaceZDecreasing:
-                              [[xmax, ymin, zmin, xmin*16, 16-(ymin*16), 0x0d],
-                               [xmin, ymin, zmin, xmax*16, 16-(ymin*16), 0x0d],
-                               [xmin, ymax, zmin, xmax*16, 16-(ymax*16), 0x0d],
-                               [xmax, ymax, zmin, xmin*16, 16-(ymax*16), 0x0d],
+                              [[xmax, ymin, zmin, xmin * 16, 16 - (ymin * 16), 0x0d],
+                               [xmin, ymin, zmin, xmax * 16, 16 - (ymin * 16), 0x0d],
+                               [xmin, ymax, zmin, xmax * 16, 16 - (ymax * 16), 0x0d],
+                               [xmax, ymax, zmin, xmin * 16, 16 - (ymax * 16), 0x0d],
                               ],
 
         ])
@@ -301,7 +301,7 @@ elementByteLength = 24
 
 
 def createPrecomputedVertices():
-    height=16
+    height = 16
     precomputedVertices = [zeros(shape=(16, 16, height, 4, 6),  # x,y,z,s,t,rg, ba
                                   dtype='float32') for d in faceVertexTemplates]
 
@@ -334,7 +334,7 @@ class ChunkCalculator (object):
         self.makeRenderstates(level.materials)
 
             # del xArray, zArray, yArray
-        self.nullVertices = zeros((0,)*len(self.precomputedVertices[0].shape), dtype=self.precomputedVertices[0].dtype)
+        self.nullVertices = zeros((0,) * len(self.precomputedVertices[0].shape), dtype = self.precomputedVertices[0].dtype)
         from leveleditor import Settings
 
         Settings.fastLeaves.addObserver(self)
@@ -678,8 +678,8 @@ class ChunkCalculator (object):
         asx = asz = slice(0, 18)
 
         for y in range(0, chunk.world.Height, 16):
-            sy = slice(y, y+16)
-            asy = slice(y, y+18)
+            sy = slice(y, y + 16)
+            asy = slice(y, y + 18)
 
             for _i in self.computeCubeGeometry(
                     y,
@@ -758,7 +758,7 @@ class BlockRenderer(object):
             a.view('uint8')[_RGBA][..., 3] = alpha
 
     def bufferSize(self):
-        return sum(a.size for a in self.vertexArrays)* 4
+        return sum(a.size for a in self.vertexArrays) * 4
 
     def getMaterialIndices(self, blockMaterials):
         return blockMaterials == self.materialIndex
@@ -1761,7 +1761,7 @@ class FeatureBlockRenderer(BlockRenderer):
 
         self.vertexArrays = [vertexArray]
 
-    fenceTemplates = makeVertexTemplates(3/8., 0, 3/8., 5/8., 1, 5/8.)
+    fenceTemplates = makeVertexTemplates(3 / 8., 0, 3 / 8., 5 / 8., 1, 5 / 8.)
 
     def fenceVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         fenceMask = blocks == alphaMaterials.Fence.ID
@@ -1837,7 +1837,7 @@ class StairBlockRenderer(BlockRenderer):
             vertexArray.view('uint8')[_RGB] *= 0xf
             vertexArray.view('uint8')[_A] = 0xff
 
-            vertexArray.shape = (len(x)*6, 4, 6)
+            vertexArray.shape = (len(x) * 6, 4, 6)
             yield
             arrays.append(vertexArray)
         self.vertexArrays = arrays
@@ -2668,7 +2668,7 @@ class MCRenderer(object):
             cr = self.getChunkRenderer(c)
             if self.viewingFrustum:
                 # if not self.viewingFrustum.visible(array([[c[0] * 16 + 8, 64, c[1] * 16 + 8, 1.0]]), 64).any():
-                if not self.viewingFrustum.visible1([c[0] * 16 + 8, self.level.Height/2, c[1] * 16 + 8, 1.0], self.level.Height/2):
+                if not self.viewingFrustum.visible1([c[0] * 16 + 8, self.level.Height / 2, c[1] * 16 + 8, 1.0], self.level.Height / 2):
                     raise StopIteration
                     yield
 
