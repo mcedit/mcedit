@@ -1317,6 +1317,6 @@ if __name__ == "__main__":
     except Exception, e:
         traceback.print_exc()
         print("An error occured. Please post the above exception as an issue"
-                "on https://github.com/mcdevs/mcedit/issues/new")
+                "on https://github.com/mcedit/mcedit/issues/new")
         raw_input("Press ENTER to dismiss...")
 

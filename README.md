@@ -13,7 +13,7 @@ You'll need Python 2.6+ and `easy_install`/`pip` at a minimum before getting sta
 Clone MCEdit:
 
 ```bash
-git clone https://github.com/mcdevs/mcedit
+git clone https://github.com/mcedit/mcedit
 cd mcedit
 git submodule init
 git submodule update
