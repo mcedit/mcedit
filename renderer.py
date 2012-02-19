@@ -313,9 +313,9 @@ def createPrecomputedVertices():
         precomputedVertices[dir][_XYZ][..., 0] = xArray
         precomputedVertices[dir][_XYZ][..., 1] = yArray
         precomputedVertices[dir][_XYZ][..., 2] = zArray
-        precomputedVertices[dir][_XYZ] += faceVertexTemplates[dir][..., 0:3]# xyz
+        precomputedVertices[dir][_XYZ] += faceVertexTemplates[dir][..., 0:3]  # xyz
 
-        precomputedVertices[dir][_ST] = faceVertexTemplates[dir][..., 3:5]# s
+        precomputedVertices[dir][_ST] = faceVertexTemplates[dir][..., 3:5]  # s
         precomputedVertices[dir].view('uint8')[_RGB] = faceVertexTemplates[dir][..., 5, newaxis]
         precomputedVertices[dir].view('uint8')[_A] = 0xff
 
