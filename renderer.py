@@ -625,7 +625,7 @@ class ChunkCalculator (object):
                 areaBlockLights[1:-1, -1:, 1:-1])
 
         minimumLight = 4
-        # areaBlockLights[areaBlockLights<minimumLight]=minimumLight;
+        # areaBlockLights[areaBlockLights<minimumLight]=minimumLight
         clip(areaBlockLights, minimumLight, 16, areaBlockLights)
 
         return areaBlockLights
@@ -1196,11 +1196,11 @@ class GenericBlockRenderer(BlockRenderer):
                 # vertexArray.view('uint8')[_RGBA][leaves] *= [0.15, 0.88, 0.15, 1.0]
 #                snow = theseBlocks == alphaMaterials.SnowLayer.ID
 #                if direction == FaceYIncreasing:
-#                    vertexArray[_XYZ][snow, ...,1] -= 0.875;
+#                    vertexArray[_XYZ][snow, ...,1] -= 0.875
 #
 #                if direction != FaceYIncreasing and direction != FaceYDecreasing:
-#                    vertexArray[_XYZ][snow, ...,2:4,1] -= 0.875;
-#                    vertexArray[_ST][snow, ...,2:4,1] += 14;
+#                    vertexArray[_XYZ][snow, ...,2:4,1] -= 0.875
+#                    vertexArray[_ST][snow, ...,2:4,1] += 14
 #
             setColors()
             yield
@@ -2122,7 +2122,7 @@ class MCRenderer(object):
 
     def loadChunksStartingFrom(self, wx, wz, distance=None):  # world position
         if None is self.level:
-            return;
+            return
 
         cx = wx >> 4
         cz = wz >> 4
@@ -2190,7 +2190,7 @@ class MCRenderer(object):
         size = d * 2
 
         if not len(self.chunkRenderers):
-            return;
+            return
         (ox, oz) = origin
         bytes = 0
         # chunks = fromiter(self.chunkRenderers.iterkeys(), dtype='int32', count=len(self.chunkRenderers))
@@ -2263,7 +2263,7 @@ class MCRenderer(object):
     def invalidateChunk(self, cx, cz, layers=None):
         " marks the chunk for regenerating vertex data and display lists "
         if (cx, cz) in self.chunkRenderers:
-            # self.chunkRenderers[(cx,cz)].invalidate();
+            # self.chunkRenderers[(cx,cz)].invalidate()
             # self.bufferUsage -= self.chunkRenderers[(cx, cz)].bufferSize
 
             self.chunkRenderers[(cx, cz)].invalidate(layers)
@@ -2418,7 +2418,7 @@ class MCRenderer(object):
 #            chunkColor *= 255
 #            chunkColor = array(chunkColor, dtype='uint8')
 #
-            # glColorPointer(4, GL_UNSIGNED_BYTE, 0, chunkColor);
+            # glColorPointer(4, GL_UNSIGNED_BYTE, 0, chunkColor)
             for size, chunks in sizedChunks.iteritems():
                 if not len(chunks):
                     continue
@@ -2558,7 +2558,7 @@ class MCRenderer(object):
     def draw(self):
         self.needsRedraw = False
         if not self.level:
-            return;
+            return
         if not self.chunkCalculator:
             return
         if not self.render:
