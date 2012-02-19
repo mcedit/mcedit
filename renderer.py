@@ -345,6 +345,7 @@ class ChunkCalculator (object):
         @classmethod
         def bind(self):
             pass
+
         @classmethod
         def release(self):
             pass
@@ -364,6 +365,7 @@ class ChunkCalculator (object):
         @classmethod
         def bind(self):
             glEnable(GL_ALPHA_TEST)
+
         @classmethod
         def release(self):
             glDisable(GL_ALPHA_TEST)
@@ -372,12 +374,14 @@ class ChunkCalculator (object):
         @classmethod
         def bind(self):
             glEnable(GL_BLEND)
+
         @classmethod
         def release(self):
             glDisable(GL_BLEND)
 
     class renderstateWater(_renderstateAlphaBlend):
         pass
+
     class renderstateIce(_renderstateAlphaBlend):
         pass
 
@@ -742,6 +746,7 @@ class BlockRenderer(object):
         FaceZIncreasing:s_[1:-1, 2:, 1:-1],
     }
     renderstate = ChunkCalculator.renderstateAlphaTest
+
     def __init__(self, cc):
         self.makeTemplate = cc.makeTemplate
         self.chunkCalculator = cc
@@ -885,6 +890,7 @@ class BaseEntityRenderer(EntityRendererGeneric):
 class MonsterRenderer(BaseEntityRenderer):
     layer = Layer.Entities  # xxx Monsters
     notMonsters = set(["Item", "XPOrb", "Painting"])
+
     def makeChunkVertices(self, chunk):
         monsterPositions = []
         for i, ent in enumerate(chunk.Entities):
@@ -920,6 +926,7 @@ class EntityRenderer(BaseEntityRenderer):
 
 class ItemRenderer(BaseEntityRenderer):
     layer = Layer.Items
+
     def makeChunkVertices(self, chunk):
         entityPositions = []
         entityColors = []
@@ -945,6 +952,7 @@ class ItemRenderer(BaseEntityRenderer):
 
 class TileTicksRenderer(EntityRendererGeneric):
     layer = Layer.TileTicks
+
     def makeChunkVertices(self, chunk):
         chunk.decompress()
         if chunk.root_tag and "Level" in chunk.root_tag and "TileTicks" in chunk.root_tag["Level"]:
@@ -1004,6 +1012,7 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
     def makeChunkVertices(self, chunk):
         chunk.decompress()
         neighbors = self.chunkCalculator.getNeighboringChunks(chunk)
+
         def getpop(ch):
             return getattr(ch, "TerrainPopulated", True)
 
@@ -1030,6 +1039,7 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
 class LowDetailBlockRenderer(BlockRenderer):
     renderstate = ChunkCalculator.renderstateLowDetail
     detailLevels = (1,)
+
     def drawFaceVertices(self, buf):
         if not len(buf):
             return
@@ -1149,6 +1159,7 @@ class GenericBlockRenderer(BlockRenderer):
     renderstate = ChunkCalculator.renderstateAlphaTest
 
     materialIndex = 1
+
     def makeGenericVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         vertexArrays = []
         materialIndices = self.getMaterialIndices(blockMaterials)
@@ -1172,8 +1183,10 @@ class GenericBlockRenderer(BlockRenderer):
             def setGrassColors():
                 grass = theseBlocks == alphaMaterials.Grass.ID
                 vertexArray.view('uint8')[_RGB][grass] *= self.grassColor
+
             def getBlockLight():
                 return facingBlockLight[blockIndices]
+
             def setColors():
                 vertexArray.view('uint8')[_RGB] *= getBlockLight()[..., newaxis, newaxis]
                 if self.materials.name in ("Alpha", "Pocket"):
@@ -1203,6 +1216,7 @@ class GenericBlockRenderer(BlockRenderer):
 
 class LeafBlockRenderer(BlockRenderer):
     blocktypes = [18]
+
     @property
     def renderstate(self):
         if self.chunkCalculator.fastLeaves:
@@ -1614,6 +1628,7 @@ class SnowBlockRenderer(BlockRenderer):
     snowID = 78
 
     blocktypes = [snowID]
+
     def makeSnowVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         snowIndices = self.getMaterialIndices(blockMaterials)
         arrays = []
@@ -1653,6 +1668,7 @@ class SnowBlockRenderer(BlockRenderer):
 
 class RedstoneBlockRenderer(BlockRenderer):
     blocktypes = [55]
+
     def redstoneVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         blockIndices = self.getMaterialIndices(blockMaterials)
         yield
@@ -1728,6 +1744,7 @@ class FeatureBlockRenderer(BlockRenderer):
     buttonOffsets[buttonOffsets < 0] += 1.0
 
     dirIndexes = ((3, 2), (-3, 2), (1, 3), (1, 3), (-1, 2), (1, 2))
+
     def buttonVertices(self, facingBlockIndices, blocks, blockMaterials, blockData, areaBlockLights, texMap):
         blockIndices = blocks == alphaMaterials.Button.ID
         axes = blockIndices.nonzero()
@@ -1912,6 +1929,7 @@ from glutils import DisplayList
 
 class MCRenderer(object):
     isPreviewer = False
+
     def __init__(self, level = None, alpha=1.0):
         self.render = True
         self.origin = (0, 0, 0)
@@ -1983,8 +2001,10 @@ class MCRenderer(object):
 
     def layerProperty(layer, default = True):  # @NoSelf
         attr = intern("_draw" + layer)
+
         def _get(self):
             return getattr(self, attr, default)
+
         def _set(self, val):
             if val != _get(self):
                 setattr(self, attr, val)
@@ -2202,9 +2222,11 @@ class MCRenderer(object):
         self.level.compressChunk(cx, cz)
 
     _fastLeaves = False
+
     @property
     def fastLeaves(self):
         return self._fastLeaves
+
     @fastLeaves.setter
     def fastLeaves(self, val):
         if self._fastLeaves != bool(val):
@@ -2213,9 +2235,11 @@ class MCRenderer(object):
         self._fastLeaves = bool(val)
 
     _roughGraphics = False
+
     @property
     def roughGraphics(self):
         return self._roughGraphics
+
     @roughGraphics.setter
     def roughGraphics(self, val):
         if self._roughGraphics != bool(val):
@@ -2224,9 +2248,11 @@ class MCRenderer(object):
         self._roughGraphics = bool(val)
 
     _showHiddenOres = False
+
     @property
     def showHiddenOres(self):
         return self._showHiddenOres
+
     @showHiddenOres.setter
     def showHiddenOres(self, val):
         if self._showHiddenOres != bool(val):
@@ -2286,6 +2312,7 @@ class MCRenderer(object):
         self.discardMasterList()
 
     shouldRecreateMasterList = True
+
     def discardMasterList(self):
         self.shouldRecreateMasterList = True
 
@@ -2341,6 +2368,7 @@ class MCRenderer(object):
         self.loadChunksStartingFrom(box.origin[0] + box.width / 2, box.origin[2] + box.length / 2, max(box.width, box.length))
 
     _floorTexture = None
+
     @property
     def floorTexture(self):
         if self._floorTexture is None:
