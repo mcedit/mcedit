@@ -2527,7 +2527,7 @@ class LevelEditor(GLViewport):
 
             if keyname == 'f10':
                 def causeError():
-                    raise ValueError, "User pressed CONTROL-F10, requesting a program error."
+                    raise ValueError( "User pressed CONTROL-F10, requesting a program error." )
 
                 if mods & KMOD_ALT:
                     alert("MCEdit, a Minecraft World Editor\n\nCopyright 2010 David Rio Vierra")
@@ -3015,7 +3015,7 @@ class LevelEditor(GLViewport):
             worker = generatorPanel.generate(newlevel, BoundingBox((x - w * 8, 0, z - h * 8), (w * 16, newlevel.Height, h * 16)))
 
             if "Canceled" == showProgress("Generating chunks...", worker, cancel=True):
-                raise RuntimeError, "Canceled."
+                raise RuntimeError( "Canceled." )
 
             if y < 64:
                 y = 64
@@ -3485,7 +3485,7 @@ class LevelEditor(GLViewport):
 
     def handleMemoryError(self):
         if self.renderer.viewDistance <= 2:
-            raise MemoryError, "Out of memory. Please restart MCEdit."
+            raise MemoryError( "Out of memory. Please restart MCEdit." )
         if hasattr(self.level, 'compressAllChunks'):
             self.level.compressAllChunks()
         self.toolbar.selectTool(-1)
