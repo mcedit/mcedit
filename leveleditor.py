@@ -148,22 +148,22 @@ class ControlPanel(Panel):
             buttonsColumn.append(b)'''
 
         cmd = mcplatform.cmd_name
-        hotkeys = ([   (cmd + "-N", "Create New World", editor.mcedit.createNewWorld),
-                        (cmd + "-O", "Open World...", editor.askOpenFile) ,
-                        (cmd + "-L", "Load World...", editor.askLoadWorld) ,
-                        (cmd + "-S", "Save", editor.saveFile) ,
-                        (cmd + "-R", "Reload", editor.reload) ,
-                        (cmd + "-W", "Close", editor.closeEditor) ,
-                        ("", "", lambda: None) ,
+        hotkeys = ([(cmd + "-N", "Create New World", editor.mcedit.createNewWorld),
+                    (cmd + "-O", "Open World...", editor.askOpenFile) ,
+                    (cmd + "-L", "Load World...", editor.askLoadWorld) ,
+                    (cmd + "-S", "Save", editor.saveFile) ,
+                    (cmd + "-R", "Reload", editor.reload) ,
+                    (cmd + "-W", "Close", editor.closeEditor) ,
+                    ("", "", lambda: None) ,
 
-                        ("G", "Goto", editor.showGotoPanel) ,
-                        (cmd + "-I", "World Info", editor.showWorldInfo) ,
-                        (cmd + "-Z", "Undo", editor.undo) ,
-                        (cmd + "-A", "Select All", editor.selectAll),
-                        (cmd + "-D", "Deselect", editor.deselect) ,
-                        (cmd + "-F", AttrRef(editor, 'viewDistanceLabelText'), editor.swapViewDistance),
-                        ("Alt-F4", "Quit", editor.quit),
-                        ])
+                    ("G", "Goto", editor.showGotoPanel) ,
+                    (cmd + "-I", "World Info", editor.showWorldInfo) ,
+                    (cmd + "-Z", "Undo", editor.undo) ,
+                    (cmd + "-A", "Select All", editor.selectAll),
+                    (cmd + "-D", "Deselect", editor.deselect) ,
+                    (cmd + "-F", AttrRef(editor, 'viewDistanceLabelText'), editor.swapViewDistance),
+                    ("Alt-F4", "Quit", editor.quit),
+                    ])
 
         if cmd == "Cmd":
             hotkeys[-1] = ("Cmd-Q", hotkeys[-1][1], hotkeys[-1][2])
