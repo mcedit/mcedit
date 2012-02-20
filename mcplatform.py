@@ -53,7 +53,7 @@ def getTexturePacks():
         return []
 
 
-#for k,v in os.environ.iteritems():
+# for k,v in os.environ.iteritems():
 #    try:
 #        os.environ[k] = v.decode(sys.getfilesystemencoding())
 #    except:
@@ -72,7 +72,7 @@ if sys.platform == "win32":
 
     try:
         import win32com.client
-        from win32com.shell import shell, shellcon  #@UnresolvedImport
+        from win32com.shell import shell, shellcon  # @UnresolvedImport
     except:
         pass
 
@@ -131,13 +131,13 @@ def askOpenFile(title='Select a Minecraft level....', schematics=False):
 
             op.setDirectory_(initialDir)
             if op.runModal() == 0:
-                return  #pressed cancel
+                return  # pressed cancel
 
             AppKit.NSApp.mainWindow().makeKeyWindow()
 
             return op.filename()
 
-        else:  #linux
+        else:  # linux
 
             return request_old_filename(suffixes=suffixes, directory=initialDir)
 
@@ -152,7 +152,7 @@ def askOpenFile(title='Select a Minecraft level....', schematics=False):
 
 def askOpenFileWin32(title, schematics, initialDir):
     try:
-        #if schematics:
+        # if schematics:
         f = ('Levels and Schematics\0*.mclevel;*.dat;*.mine;*.mine.gz;*.schematic;*.zip;*.schematic.gz;*.inv\0' +
               '*.*\0*.*\0\0')
         #        else:
@@ -167,7 +167,7 @@ def askOpenFileWin32(title, schematics, initialDir):
                    | win32con.OFN_NOCHANGEDIR
                    | win32con.OFN_FILEMUSTEXIST
                    | win32con.OFN_LONGNAMES
-                   #|win32con.OFN_EXTENSIONDIFFERENT
+                   # |win32con.OFN_EXTENSIONDIFFERENT
                    ),
             Title=title,
             Filter=f,
@@ -225,10 +225,10 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
         sp = AppKit.NSSavePanel.savePanel()
         sp.setDirectory_(initialDir)
         sp.setAllowedFileTypes_([suffix])
-        #sp.setFilename_(self.editor.level.displayName)
+        # sp.setFilename_(self.editor.level.displayName)
 
         if sp.runModal() == 0:
-            return  #pressed cancel
+            return  # pressed cancel
 
         filename = sp.filename()
         AppKit.NSApp.mainWindow().makeKeyWindow()
@@ -248,7 +248,7 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 #
 #            (filename, customfilter, flags) = win32gui.GetSaveFileNameW(
 #                hwndOwner = display.get_wm_info()['window'],
-#                #InitialDir=saveFileDir,
+#                # InitialDir=saveFileDir,
 #                Flags=win32con.OFN_EXPLORER | win32con.OFN_NOCHANGEDIR | win32con.OFN_OVERWRITEPROMPT,
 #                File=initialDir + os.sep + displayName,
 #                DefExt=fileFormat,
@@ -263,10 +263,10 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 #        sp = AppKit.NSSavePanel.savePanel();
 #        sp.setDirectory_(initialDir)
 #        sp.setAllowedFileTypes_([fileFormat])
-#        #sp.setFilename_(self.editor.level.displayName)
+#        # sp.setFilename_(self.editor.level.displayName)
 #
 #        if sp.runModal() == 0:
-#            return;  #pressed cancel
+#            return;  # pressed cancel
 #
 #        filename = sp.filename()
 #        AppKit.NSApp.mainWindow().makeKeyWindow();
@@ -311,9 +311,9 @@ def platform_open(path):
     try:
         if sys.platform == "win32":
             os.startfile(path)
-            #os.system('start ' + path + '\'')
+            # os.system('start ' + path + '\'')
         elif sys.platform == "darwin":
-            #os.startfile(path)
+            # os.startfile(path)
             os.system('open "' + path + '"')
         else:
             os.system('xdg-open "' + path + '"')
@@ -333,7 +333,7 @@ fixedSchematicsDir = os.path.join(docsFolder, u"MCEdit-schematics")
 
 
 if sys.platform == "darwin":
-    #parentDir is MCEdit.app/Contents/
+    # parentDir is MCEdit.app/Contents/
     folderContainingAppPackage = dirname(dirname(parentDir))
     oldPath = fixedConfigFilePath
     fixedConfigFilePath = os.path.expanduser("~/Library/Preferences/mcedit.ini")
@@ -392,8 +392,8 @@ def goFixed():
     portable = False
 
 def portableConfigExists():
-    return (os.path.exists(portableConfigFilePath)  #mcedit.ini in MCEdit folder
-        or (sys.platform != 'darwin' and not os.path.exists(fixedConfigFilePath)))  #no mcedit.ini in Documents folder (except on OS X when we always want it in Library/Preferences
+    return (os.path.exists(portableConfigFilePath)  # mcedit.ini in MCEdit folder
+        or (sys.platform != 'darwin' and not os.path.exists(fixedConfigFilePath)))  # no mcedit.ini in Documents folder (except on OS X when we always want it in Library/Preferences
 
 if "-fixed" not in sys.argv and ("-portable" in sys.argv or portableConfigExists()):
     print "Running in portable mode. MCEdit-schematics and mcedit.ini are stored alongside " + (sys.platform == "darwin" and "the MCEdit app bundle" or "MCEditData")
