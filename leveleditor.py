@@ -1703,7 +1703,7 @@ class LevelEditor(GLViewport):
         tileEntitySum = sum(tileEntityCounts.values())
         presentTypes = types.nonzero()
 
-        blockCounts = sorted([(level.materials[t & 0xff, t >> 8], types[t]) for t in presentTypes[0] ])
+        blockCounts = sorted([(level.materials[t & 0xff, t >> 8], types[t]) for t in presentTypes[0]])
 
         counts = []
         c=0
