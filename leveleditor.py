@@ -230,7 +230,7 @@ class CameraViewport(GLViewport):
 
         self.brake = False
         self.lastTick = datetime.now()
-        # self.nearheight = near * tang;
+        # self.nearheight = near * tang
 
         self.cameraPosition = (16., 45., 16.)
         self.velocity = [0., 0., 0.]
@@ -349,7 +349,7 @@ class CameraViewport(GLViewport):
 
         # give the camera an impulse according to the state of the inputs and in the direction of the camera
         cameraAccel = map(lambda x:x * accel_factor * timeDelta, directedInputs)
-        # cameraImpulse = map(lambda x:x*impulse_factor, directedInputs);
+        # cameraImpulse = map(lambda x:x*impulse_factor, directedInputs)
 
         newVelocity = map(lambda a, b:a + b, velocity, cameraAccel)
         velocityDir, speed = normalize_size(newVelocity)
@@ -370,7 +370,7 @@ class CameraViewport(GLViewport):
         speed = max(-max_speed, min(max_speed, speed))
 
         if abs(speed) < drag_epsilon:
-            speed = 0;
+            speed = 0
 
         velocity = map(lambda a:a * speed, velocityDir)
 
@@ -467,8 +467,8 @@ class CameraViewport(GLViewport):
             pixel = glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT)
             newpoint = unproject(x, y, pixel[0])
         except Exception, e:
-            # print e;
-            # traceback.print_exc();
+            # print e
+            # traceback.print_exc()
             return 0, 0, 0
 
         return newpoint
@@ -946,7 +946,7 @@ class CameraViewport(GLViewport):
 
         td = datetime.now() - self.rightMouseDragStart
         # except AttributeError:
-        #    return;
+        #    return
         # print "RightClickUp: ", td
         if td.seconds > 0 or td.microseconds > 280000:
             self.mouseLookOff()
@@ -1036,13 +1036,13 @@ class CameraViewport(GLViewport):
                 self.editor.renderer.loadNearbyChunks()
                 self.lastRendererUpdate = datetime.now()
 
-            # adjustLimit = 2;
+            # adjustLimit = 2
 
             # self.oldMousePosition = (x, y)
             # if (self.startingMousePosition[0] - x > adjustLimit or self.startingMousePosition[1] - y > adjustLimit or
             #   self.startingMousePosition[0] - x < -adjustLimit or self.startingMousePosition[1] - y < -adjustLimit):
             #    mouse.set_pos(*self.startingMousePosition)
-            #    event.get(MOUSEMOTION);
+            #    event.get(MOUSEMOTION)
             #    self.oldMousePosition = (self.startingMousePosition)
 
     @property
@@ -1244,7 +1244,7 @@ class CameraViewport(GLViewport):
         else:
             self.viewingFrustum = None
 
-        # self.editor.drawStars();
+        # self.editor.drawStars()
         if self.drawSky:
             self.drawSkyBackground()
         if self.drawFog:
@@ -1916,7 +1916,7 @@ class LevelEditor(GLViewport):
         if self.level and self.unsavedEdits > 0:
             resp = ask("Save unsaved edits before loading?", ["Cancel", "Don't Save", "Save"], default=2, cancel=0)
             if resp == "Cancel":
-                return;
+                return
             if resp == "Save":
                 self.saveFile()
 
@@ -1936,9 +1936,9 @@ class LevelEditor(GLViewport):
 
             y, p = level.getPlayerOrientation()
             if p == -90.0:
-                p += 0.000000001;
+                p += 0.000000001
             if p == 90.0:
-                p -= 0.000000001;
+                p -= 0.000000001
             self.mainViewport.yaw, self.mainViewport.pitch = y, p
 
             pdim = level.getPlayerDimension()
