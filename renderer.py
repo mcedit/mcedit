@@ -544,9 +544,9 @@ class ChunkCalculator (object):
 
         neighboringChunks = {}
         for dir, dx, dz in ((FaceXDecreasing, -1, 0),
-                           (FaceXIncreasing, 1 , 0),
-                           (FaceZDecreasing, 0 , -1),
-                           (FaceZIncreasing, 0 , 1)):
+                           (FaceXIncreasing, 1, 0),
+                           (FaceZDecreasing, 0, -1),
+                           (FaceZIncreasing, 0, 1)):
             if not level.containsChunk(cx + dx, cz + dz):
                 neighboringChunks[dir] = ZeroChunk(level.Height)
             else:
