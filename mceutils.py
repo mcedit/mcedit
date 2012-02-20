@@ -631,7 +631,7 @@ def setWindowCaption(prefix):
 
 
 def showProgress(progressText, progressIterator, cancel=False):
-    """Show the progress for a long-running synchronous operation. 
+    """Show the progress for a long-running synchronous operation.
     progressIterator should be a generator-like object that can return
     either None, for an indeterminate indicator,
     A float value between 0.0 and 1.0 for a determinate indicator,
@@ -663,7 +663,7 @@ def showProgress(progressText, progressIterator, cancel=False):
                 if isinstance(amount, tuple):
                     if len(amount)>2: infoText = ": " + amount[2]
 
-                    amount, max = amount[:2] 
+                    amount, max = amount[:2]
 
                 else:
                     max = amount
