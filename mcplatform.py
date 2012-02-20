@@ -192,7 +192,7 @@ def askCreateWorld(initialDir):
     while exists(join(initialDir, name)):
         i+= 1
         name = defaultName + " " + str(i)
-        
+
     return askSaveFile(initialDir,
                 title='Name this new world.',
                 defaultName=name,
@@ -394,7 +394,7 @@ def goFixed():
 def portableConfigExists():
     return (os.path.exists(portableConfigFilePath) #mcedit.ini in MCEdit folder
         or (sys.platform != 'darwin' and not os.path.exists(fixedConfigFilePath))) #no mcedit.ini in Documents folder (except on OS X when we always want it in Library/Preferences
-        
+
 if "-fixed" not in sys.argv and ("-portable" in sys.argv or portableConfigExists()):
     print "Running in portable mode. MCEdit-schematics and mcedit.ini are stored alongside " + (sys.platform == "darwin" and "the MCEdit app bundle" or "MCEditData")
     portable = True
@@ -413,7 +413,7 @@ if filtersDir not in [s.decode(sys.getfilesystemencoding())
                       if isinstance(s, str)
                       else s
                       for s in sys.path]:
-                          
+
     sys.path.append(filtersDir.encode(sys.getfilesystemencoding()))
 
 
@@ -423,5 +423,5 @@ if portable:
     jarStorage = ServerJarStorage(serverJarStorageDir)
 else:
     jarStorage = ServerJarStorage()
-    
+
 items.items = items.Items(join(dataDir, "pymclevel", "items.txt"))
