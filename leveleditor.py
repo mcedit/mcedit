@@ -571,6 +571,7 @@ class CameraViewport(GLViewport):
         return self.width / float(self.height)
 
     startingMousePosition = None
+
     def mouseLookOn(self):
         root.get_root().capture_mouse(self)
         self.focus_switch = None
@@ -741,6 +742,7 @@ class CameraViewport(GLViewport):
                 if 0 == len(tileEntityTag['Items']):
                     return "N/A"
                 return tileEntityTag['Items'][self.selectedItemIndex][key].value
+
             def setter(self, val):
                 if 0 == len(tileEntityTag['Items']):
                     return
@@ -771,6 +773,7 @@ class CameraViewport(GLViewport):
 
             TableColumn("Name", 200, "l"),
         ])
+
         def itemName(id, damage):
             try:
                 return items.items.findItem(id, damage).name
@@ -783,6 +786,7 @@ class CameraViewport(GLViewport):
             return slot, id, damage, count, itemName(id, damage)
 
         chestWidget.selectedItemIndex = 0
+
         def selectTableRow(i, evt):
             chestWidget.selectedItemIndex = i
 
@@ -825,6 +829,7 @@ class CameraViewport(GLViewport):
                     else:
                         def matches(t):
                             return t["id"].value == id
+
                     def matches_itementity(e):
                         if e["id"].value != "Item":
                             return False
@@ -881,8 +886,10 @@ class CameraViewport(GLViewport):
 
         def deleteEnable():
             return len(tileEntityTag['Items']) and chestWidget.selectedItemIndex != -1
+
         def addEnable():
             return len(tileEntityTag['Items']) < chestWidget.itemLimit
+
         def addItem():
             slot = 0
             for item in tileEntityTag['Items']:
@@ -914,6 +921,7 @@ class CameraViewport(GLViewport):
         class ChestEditOperation(Operation):
             def perform(self, recordUndo=True):
                 level.addTileEntity(tileEntityTag)
+
             def undo(self):
                 level.addTileEntity(backupEntityTag)
                 return BoundingBox(TileEntity.pos(tileEntityTag), (1, 1, 1))
@@ -925,6 +933,7 @@ class CameraViewport(GLViewport):
             self.editor.addUnsavedEdit()
 
     rightMouseDragStart = None
+
     def rightClickDown(self, evt):
 
         self.rightMouseDragStart = datetime.now()
@@ -1095,6 +1104,7 @@ class CameraViewport(GLViewport):
         glTranslate(-x, -y, -z)
 
     _floorQuadList = None
+
     @property
     def floorQuadList(self):
         if not self._floorQuadList:
@@ -1102,6 +1112,7 @@ class CameraViewport(GLViewport):
         return self._floorQuadList
 
     _ceilingList = None
+
     @property
     def ceilingList(self):
         if not self._ceilingList:
@@ -1128,6 +1139,7 @@ class CameraViewport(GLViewport):
     @property
     def drawSky(self):
         return self._drawSky
+
     @drawSky.setter
     def drawSky(self, val):
         self._drawSky = val
@@ -1137,6 +1149,7 @@ class CameraViewport(GLViewport):
             self._floorQuadList.invalidate()
 
     skyList = None
+
     def drawSkyBackground(self):
         if self.skyList is None:
             self.skyList = DisplayList()
@@ -1181,6 +1194,7 @@ class CameraViewport(GLViewport):
     @property
     def drawFog(self):
         return self._drawFog and not self.editor.renderer.inSpace()
+
     @drawFog.setter
     def drawFog(self, val):
         self._drawFog = val
@@ -1196,6 +1210,7 @@ class CameraViewport(GLViewport):
             glFogfv(GL_FOG_COLOR, self.fogColorBlack)
 
         glFogf(GL_FOG_DENSITY, 0.002)
+
     def disableFog(self):
         glDisable(GL_FOG)
 
@@ -1277,6 +1292,7 @@ class CameraViewport(GLViewport):
 
 class ChunkViewport(CameraViewport):
     defaultScale = 1.0  # pixels per block
+
     def __init__(self, *a, **kw):
         CameraViewport.__init__(self, *a, **kw)
 
@@ -1308,8 +1324,10 @@ class ChunkViewport(CameraViewport):
             self.editor.renderer.loadNearbyChunks()
 
     incrementFactor = 1.4
+
     def zoomIn(self):
         self.zoom(1.0 / self.incrementFactor)
+
     def zoomOut(self):
         self.zoom(self.incrementFactor)
 
@@ -1364,6 +1382,7 @@ class ChunkViewport(CameraViewport):
 
 class LevelEditor(GLViewport):
     anchor = "tlbr"
+
     def __init__(self, mcedit):
         self.mcedit = mcedit
         rect = mcedit.rect
@@ -1518,6 +1537,7 @@ class LevelEditor(GLViewport):
         self.deleteAllCopiedSchematics()
 
     _viewMode = None
+
     @property
     def viewMode(self):
         return self._viewMode
@@ -1600,6 +1620,7 @@ class LevelEditor(GLViewport):
 
     thumbCache = None
     fboCache = None
+
     def createCopyPanel(self):
         panel = GLBackground()
         panel.bg_color = (0.0, 0.0, 0.0, 0.5)
@@ -2264,6 +2285,7 @@ class LevelEditor(GLViewport):
     def mouseLookOff(self):
         self.mouseWasCaptured = False
         self.mainViewport.mouseLookOff()
+
     def mouseLookOn(self):
         self.mainViewport.mouseLookOn()
 
@@ -2377,6 +2399,7 @@ class LevelEditor(GLViewport):
         if reach > 30 and self.fractionalReachAdjustment:
             reach *= 1.05
         return reach
+
     def _decrementReach(self, reach):
         reach -= 1
         if reach > 30 and self.fractionalReachAdjustment:
@@ -2626,6 +2649,7 @@ class LevelEditor(GLViewport):
         gotoPanel.add(column)
         gotoPanel.shrink_wrap()
         d = Dialog(client=gotoPanel, responses=["Goto", "Cancel"])
+
         def click_outside(event):
             if event not in d:
                 x, y, z = self.blockFaceUnderCursor[0]
@@ -2733,6 +2757,7 @@ class LevelEditor(GLViewport):
             if hasattr(self.level, 'GameType'):
                 t = self.level.GameType
                 types = ["Survival", "Creative"]
+
                 def gametype(t):
                     if t < len(types):
                         return types[t]
@@ -2866,6 +2891,7 @@ class LevelEditor(GLViewport):
             TableColumn("Dims", 100, "r"),
 
         ])
+
         def dateobj(lp):
             try:
                 return datetime.utcfromtimestamp(lp / 1000.0)
@@ -2938,6 +2964,7 @@ class LevelEditor(GLViewport):
         # blockInputRow = Row( (Label("Surface: "), blockInput) )
 
         types = ["Survival", "Creative"]
+
         def gametype(t):
             if t < len(types):
                 return types[t]
@@ -3188,6 +3215,7 @@ class LevelEditor(GLViewport):
             return panel
 
     workInfoPanel = None
+
     def updateWorkInfoPanel(self):
         if self.workInfoPanel:
             self.workInfoPanel.set_parent(None)
@@ -3329,6 +3357,7 @@ class LevelEditor(GLViewport):
         self.parent.confirm_quit()
 
     mouseWasCaptured = False
+
     def showControls(self):
         if self.controlPanel.parent:
             return
@@ -3351,6 +3380,7 @@ class LevelEditor(GLViewport):
         self.controlPanel.set_parent(None)
 
     infoPanel = None
+
     def showChunkRendererInfo(self):
         if self.infoPanel:
             self.infoPanel.set_parent(None)
@@ -3358,6 +3388,7 @@ class LevelEditor(GLViewport):
 
         self.infoPanel = infoPanel = Widget(bg_color = (0, 0, 0, 80))
         infoPanel.add(Label(""))
+
         def idleHandler(evt):
 
             x,y,z = self.blockFaceUnderCursor[0]
