@@ -114,11 +114,13 @@ ControlSettings.swapAxes = ControlSettings("swap axes looking down", False)
 
 arch = platform.architecture()[0]
 
+
 def remapMouseButton(button):
     buttons = [0, 1, 3, 2, 4, 5]  # mouse2 is right button, mouse3 is middle
     if button < len(buttons):
         return buttons[button]
     return button
+
 
 class ControlPanel(Panel):
     @classmethod
@@ -187,11 +189,13 @@ class ControlPanel(Panel):
     def key_down(self, evt):
         self.editor.key_down(evt)
 
+
 def unproject(x, y, z):
     try:
         return GLU.gluUnProject(x, y, z)
     except ValueError:  # projection failed
         return 0, 0, 0
+
 
 def DebugDisplay(obj, *attrs):
     col = []
@@ -1356,7 +1360,8 @@ class ChunkViewport(CameraViewport):
         pass
 #        if self.defaultScale >= 0.5:
 #            return super(ChunkViewport, self).drawCeiling()
-#
+
+
 class LevelEditor(GLViewport):
     anchor = "tlbr"
     def __init__(self, mcedit):
