@@ -72,7 +72,7 @@ if sys.platform == "win32":
 
     try:
         import win32com.client
-        from win32com.shell import shell, shellcon #@UnresolvedImport
+        from win32com.shell import shell, shellcon  #@UnresolvedImport
     except:
         pass
 
@@ -131,13 +131,13 @@ def askOpenFile(title='Select a Minecraft level....', schematics=False):
 
             op.setDirectory_(initialDir)
             if op.runModal() == 0:
-                return #pressed cancel
+                return  #pressed cancel
 
             AppKit.NSApp.mainWindow().makeKeyWindow()
 
             return op.filename()
 
-        else: #linux
+        else:  #linux
 
             return request_old_filename(suffixes=suffixes, directory=initialDir)
 
@@ -228,7 +228,7 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
         #sp.setFilename_(self.editor.level.displayName)
 
         if sp.runModal() == 0:
-            return #pressed cancel
+            return  #pressed cancel
 
         filename = sp.filename()
         AppKit.NSApp.mainWindow().makeKeyWindow()
@@ -266,7 +266,7 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 #        #sp.setFilename_(self.editor.level.displayName)
 #
 #        if sp.runModal() == 0:
-#            return; #pressed cancel
+#            return;  #pressed cancel
 #
 #        filename = sp.filename()
 #        AppKit.NSApp.mainWindow().makeKeyWindow();
@@ -392,8 +392,8 @@ def goFixed():
     portable = False
 
 def portableConfigExists():
-    return (os.path.exists(portableConfigFilePath) #mcedit.ini in MCEdit folder
-        or (sys.platform != 'darwin' and not os.path.exists(fixedConfigFilePath))) #no mcedit.ini in Documents folder (except on OS X when we always want it in Library/Preferences
+    return (os.path.exists(portableConfigFilePath)  #mcedit.ini in MCEdit folder
+        or (sys.platform != 'darwin' and not os.path.exists(fixedConfigFilePath)))  #no mcedit.ini in Documents folder (except on OS X when we always want it in Library/Preferences
 
 if "-fixed" not in sys.argv and ("-portable" in sys.argv or portableConfigExists()):
     print "Running in portable mode. MCEdit-schematics and mcedit.ini are stored alongside " + (sys.platform == "darwin" and "the MCEdit app bundle" or "MCEditData")
