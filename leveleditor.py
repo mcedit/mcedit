@@ -1077,11 +1077,11 @@ class CameraViewport(GLViewport):
         minz = minx = -256
         maxz = maxx = 256
         for x in range(minx, maxx+1, 16):
-            lines.append( (x, 0, minz) )
-            lines.append( (x, 0, maxz) )
+            lines.append((x, 0, minz))
+            lines.append((x, 0, maxz))
         for z in range(minz, maxz+1, 16):
-            lines.append( (minx, 0, z) )
-            lines.append( (maxx, 0, z) )
+            lines.append((minx, 0, z))
+            lines.append((maxx, 0, z))
 
         glColor(0.3, 0.7, 0.9)
         glVertexPointer(3, GL_FLOAT, 0, numpy.array(lines, dtype='float32'))
@@ -1703,18 +1703,18 @@ class LevelEditor(GLViewport):
         tileEntitySum = sum(tileEntityCounts.values())
         presentTypes = types.nonzero()
 
-        blockCounts = sorted([ (level.materials[t & 0xff, t >> 8], types[t]) for t in presentTypes[0] ])
+        blockCounts = sorted([(level.materials[t & 0xff, t >> 8], types[t]) for t in presentTypes[0] ])
 
         counts = []
         c=0
         b=level.materials.Air
         for block, count in blockCounts:
             if b.name != block.name:
-                counts.append( (b, c) )
+                counts.append((b, c))
                 b = block
                 c = 0
             c += count
-        counts.append( (b, c) )
+        counts.append((b, c))
 
         blockRows = [("({0}:{1})".format(block.ID, block.blockData), block.name, count)  for block, count in counts]
         # blockRows.sort(key=lambda x:alphanum_key(x[2]), reverse=True)
@@ -1768,12 +1768,12 @@ class LevelEditor(GLViewport):
         tableBacking.shrink_wrap()
 
         def saveToFile():
-            filename = askSaveFile( mcplatform.docsFolder,
-                                    title='Save analysis...',
-                                    defaultName=self.level.displayName + "_analysis",
-                                    filetype='Comma Separated Values\0*.txt\0\0',
-                                    suffix="",
-                                    )
+            filename = askSaveFile(mcplatform.docsFolder,
+                                   title='Save analysis...',
+                                   defaultName=self.level.displayName + "_analysis",
+                                   filetype='Comma Separated Values\0*.txt\0\0',
+                                   suffix="",
+                                   )
 
             if filename:
                 try:
@@ -1990,7 +1990,7 @@ class LevelEditor(GLViewport):
             dimensionsMenu += [(MCAlphaDimension.dimensionNames.get(dimNo, "Dimension {0}".format(dimNo)), str(dimNo)) for dimNo in dimensions]
             for dim, name in MCAlphaDimension.dimensionNames.iteritems():
                 if dim not in dimensions:
-                    dimensionsMenu.append( (name, str(dim) ) )
+                    dimensionsMenu.append((name, str(dim)))
 
             menu = Menu("", dimensionsMenu)
 
@@ -2344,8 +2344,8 @@ class LevelEditor(GLViewport):
 
         p = randPoints
         p1 = p + (- upVector - rightVector)
-        p2 = p + (  upVector - rightVector)
-        p3 = p + (  upVector + rightVector)
+        p2 = p + (upVector - rightVector)
+        p3 = p + (upVector + rightVector)
         p4 = p + (- upVector + rightVector)
 
         vertexBuffer[:, 0, :] = p1
@@ -2773,7 +2773,7 @@ class LevelEditor(GLViewport):
                 b = Button(gametype(t), action=action)
                 b.gametype = t
 
-                gametypeRow = Row( ( Label("Game Type: "), b ))
+                gametypeRow = Row((Label("Game Type: "), b ))
 
                 items.append(gametypeRow)
 
