@@ -463,7 +463,7 @@ def normalize(x):
     size = numpy.sqrt(l)
     if size <= 0.0:
         return [0, 0, 0]
-    return map(lambda a:a / size, x)
+    return map(lambda a: a / size, x)
 
 
 def normalize_size(x):
