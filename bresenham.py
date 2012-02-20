@@ -7,14 +7,20 @@ def bresenham(p1, p2):
     x2, y2, z2 = p2
 
     dx = abs(x2 - x)
-    if (x2 - x) > 0: sx = 1
-    else: sx = -1
+    if (x2 - x) > 0:
+        sx = 1
+    else:
+        sx = -1
     dy = abs(y2 - y)
-    if (y2 - y) > 0: sy = 1
-    else: sy = -1
+    if (y2 - y) > 0:
+        sy = 1
+    else:
+        sy = -1
     dz = abs(z2 - z)
-    if (z2 - z) > 0: sz = 1
-    else: sz = -1
+    if (z2 - z) > 0:
+        sz = 1
+    else:
+        sz = -1
 
     dl = [dx, dy, dz]
     longestAxis = dl.index(max(dl))
@@ -39,6 +45,4 @@ def bresenham(p1, p2):
         p[longestAxis] = p[longestAxis] + sp[longestAxis]
         d = map(lambda a, b: a + 2 * b, d, dl)
 
-    return coords #added by me
-
-
+    return coords  # added by me
