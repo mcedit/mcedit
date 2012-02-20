@@ -356,7 +356,7 @@ def loadAlphaTerrainTexture():
     if foliageColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(foliageColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[17, 0, :3] = color #xxxxxxx
+        materials.alphaMaterials.flatColors[17, 0, :3] = color  #xxxxxxx
 
         color = [c / 255.0 for c in color]
         LeafBlockRenderer.leafColor = color
@@ -366,7 +366,7 @@ def loadAlphaTerrainTexture():
     if grassColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(grassColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[2, 0, :3] = color #xxxxxxx
+        materials.alphaMaterials.flatColors[2, 0, :3] = color  #xxxxxxx
         color = [c / 255.0 for c in color]
 
         GenericBlockRenderer.grassColor = color
@@ -396,7 +396,7 @@ def loadPNGData(filename_or_data):
 
         data = numpy.fromstring(img.get_buffer().raw, 'uint8')
         w, h = img.get_size()
-        data.shape = (h, w, 4) #xxx 32-bit images
+        data.shape = (h, w, 4)  #xxx 32-bit images
 
         format = GL.GL_BGRA
 
@@ -429,7 +429,7 @@ def loadPNGFile(filename):
     (w, h, data) = loadPNGData(filename)
 
     powers = (16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
-    assert (w in powers) and (h in powers) #how crude
+    assert (w in powers) and (h in powers)  #how crude
 
     ndata = numpy.array(data, dtype='uint8')
 
