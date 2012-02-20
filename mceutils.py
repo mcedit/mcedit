@@ -140,7 +140,6 @@ def drawFace(box, face, type=GL.GL_QUADS):
     GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
 
-
 def drawCube(box, cubeType=GL.GL_QUADS, blockType=0, texture=None, textureVertices=None, selectionBox=False):
     """ pass a different cubeType e.g. GL_LINE_STRIP for wireframes """
     x, y, z, = box.origin
@@ -299,7 +298,6 @@ def loadAlphaTerrainTexture():
                     grassColorFile = zf.open("misc/grasscolor.png")
                 zf.close()
 
-
             except Exception, e:
                 print repr(e), "while reading terrain.png from ", repr(pack)
 
@@ -433,8 +431,6 @@ def loadPNGFile(filename):
     return w, h, data
 
 def loadTextureFunc(w, h, ndata):
-
-
     GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ndata)
     return w, h
 
