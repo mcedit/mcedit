@@ -2773,7 +2773,7 @@ class LevelEditor(GLViewport):
                 b = Button(gametype(t), action=action)
                 b.gametype = t
 
-                gametypeRow = Row((Label("Game Type: "), b ))
+                gametypeRow = Row((Label("Game Type: "), b))
 
                 items.append(gametypeRow)
 
@@ -2977,7 +2977,7 @@ class LevelEditor(GLViewport):
 
         gametypeButton = Button(gametype(0), action=action)
         gametypeButton.gametype = 0
-        gametypeRow = Row((Label("Game Type:" ), gametypeButton))
+        gametypeRow = Row((Label("Game Type:"), gametypeButton))
         newWorldPanel.add(Column((label, Row([winput, hinput]), xyzrow, seedinput, gametypeRow, generatorPanel), align="l"))
         newWorldPanel.shrink_wrap()
 
