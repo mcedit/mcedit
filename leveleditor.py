@@ -348,10 +348,10 @@ class CameraViewport(GLViewport):
         ))
 
         # give the camera an impulse according to the state of the inputs and in the direction of the camera
-        cameraAccel = map(lambda x:x * accel_factor * timeDelta, directedInputs)
-        # cameraImpulse = map(lambda x:x*impulse_factor, directedInputs)
+        cameraAccel = map(lambda x: x * accel_factor * timeDelta, directedInputs)
+        # cameraImpulse = map(lambda x: x*impulse_factor, directedInputs)
 
-        newVelocity = map(lambda a, b:a + b, velocity, cameraAccel)
+        newVelocity = map(lambda a, b: a + b, velocity, cameraAccel)
         velocityDir, speed = normalize_size(newVelocity)
 
         # apply drag
@@ -372,15 +372,15 @@ class CameraViewport(GLViewport):
         if abs(speed) < drag_epsilon:
             speed = 0
 
-        velocity = map(lambda a:a * speed, velocityDir)
+        velocity = map(lambda a: a * speed, velocityDir)
 
-        # velocity = map(lambda p,d:p+d, velocity, cameraImpulse)
-        d = map(lambda a, b:abs(a - b), self.cameraPosition, self.oldPosition)
+        # velocity = map(lambda p,d: p + d, velocity, cameraImpulse)
+        d = map(lambda a, b: abs(a - b), self.cameraPosition, self.oldPosition)
         if d[0] + d[2] > 32.0:
             self.oldPosition = self.cameraPosition
             self.updateFloorQuad()
 
-        self.cameraPosition = map(lambda p, d:p + d * timeDelta, self.cameraPosition, velocity)
+        self.cameraPosition = map(lambda p, d: p + d * timeDelta, self.cameraPosition, velocity)
         if self.cameraPosition[1] > 3800.:
             self.cameraPosition[1] = 3800.
         if self.cameraPosition[1] < -1000.:
@@ -529,7 +529,7 @@ class CameraViewport(GLViewport):
         else:
             # discard any faces that aren't likely to be exposed
             for face, offsets in faceDirections:
-                point = map(lambda a, b:a + b, intProjectedPoint, offsets)
+                point = map(lambda a, b: a + b, intProjectedPoint, offsets)
                 try:
                     neighborBlock = self.editor.level.blockAt(*point)
                     if block != neighborBlock:
@@ -956,11 +956,11 @@ class CameraViewport(GLViewport):
 
         if evt.num_clicks == 2:
             def distance2(p1, p2):
-                return sum(map(lambda a, b:(a - b) ** 2, p1, p2))
+                return sum(map(lambda a, b: (a - b) ** 2, p1, p2))
 
             point, face = self.blockFaceUnderCursor
             if point is not None:
-                point = map(lambda x:int(floor(x)), point)
+                point = map(lambda x: int(floor(x)), point)
                 if self.editor.currentTool is self.editor.selectionTool:
                     block = self.editor.level.blockAt(*point)
                     if distance2(point, self.cameraPosition) > 4:
@@ -1428,16 +1428,16 @@ class LevelEditor(GLViewport):
         viewDistanceReadout = ValueDisplay(width=40, ref=AttrRef(self.renderer, "viewDistance"))
 
         chunksReadout = SmallValueDisplay(width=140,
-            get_value=lambda:"Chunks: %d" % len(self.renderer.chunkRenderers),
+            get_value=lambda: "Chunks: %d" % len(self.renderer.chunkRenderers),
             tooltipText = "Number of chunks loaded into the renderer.")
         fpsReadout = SmallValueDisplay(width=80,
-            get_value=lambda:"fps: %0.1f" % self.averageFPS,
+            get_value=lambda: "fps: %0.1f" % self.averageFPS,
             tooltipText = "Frames per second.")
         cpsReadout = SmallValueDisplay(width=100,
-            get_value=lambda:"cps: %0.1f" % self.averageCPS,
+            get_value=lambda: "cps: %0.1f" % self.averageCPS,
             tooltipText = "Chunks per second.")
         mbReadout = SmallValueDisplay(width=60,
-            get_value=lambda:"MBv: %0.1f" % (self.renderer.bufferUsage / 1000000.),
+            get_value=lambda: "MBv: %0.1f" % (self.renderer.bufferUsage / 1000000.),
             tooltipText = "Memory used for vertexes")
 
         def dataSize():
@@ -1459,7 +1459,7 @@ class LevelEditor(GLViewport):
             return sum(size(c) for c in chunks.itervalues())
 
         mbldReadout = SmallValueDisplay(width=60,
-            get_value=lambda:"MBd: %0.1f" % (dataSize() / 1000000.),
+            get_value=lambda: "MBd: %0.1f" % (dataSize() / 1000000.),
             tooltipText = "Memory used for saved game data.")
 
         def showViewOptions():
@@ -1642,8 +1642,8 @@ class LevelEditor(GLViewport):
                 thumb.tooltipText = "Click to import this item."
                 thumbCache[sch] = thumb
             self.addWorker(thumb.renderer)
-            deleteButton = Button("Delete", action=lambda:(self.deleteCopiedSchematic(sch)))
-            saveButton = Button("Save", action=lambda:(self.exportSchematic(sch)))
+            deleteButton = Button("Delete", action=lambda: (self.deleteCopiedSchematic(sch)))
+            saveButton = Button("Save", action=lambda: (self.exportSchematic(sch)))
             sizeLabel = Label("{0} x {1} x {2}".format(sch.Length, sch.Width, sch.Height))
             if isinstance(sch, MCSchematic):
                 sch.compress()
@@ -1717,7 +1717,7 @@ class LevelEditor(GLViewport):
         counts.append((b, c))
 
         blockRows = [("({0}:{1})".format(block.ID, block.blockData), block.name, count)  for block, count in counts]
-        # blockRows.sort(key=lambda x:alphanum_key(x[2]), reverse=True)
+        # blockRows.sort(key=lambda x: alphanum_key(x[2]), reverse=True)
 
         rows = list(blockRows)
 
@@ -2359,7 +2359,7 @@ class LevelEditor(GLViewport):
 
     def drawStars(self):
         pos = self.mainViewport.cameraPosition
-        self.mainViewport.cameraPosition = map(lambda x:x / 128.0, pos)
+        self.mainViewport.cameraPosition = map(lambda x: x / 128.0, pos)
         self.mainViewport.setModelview()
 
         glColor(.5, .5, .5, 1.)
@@ -2911,7 +2911,7 @@ class LevelEditor(GLViewport):
 
         worldData = [[dateFormat(d), nameFormat(w), str(w.dimensions.keys())[1:-1], w, d]
             for w, d in ((w, dateobj(w.LastPlayed)) for w in worlds)]
-        worldData.sort(key=lambda (a, b, dim, w, d):d, reverse=True)
+        worldData.sort(key=lambda (a, b, dim, w, d): d, reverse=True)
         # worlds = [w[2] for w in worldData]
 
         worldTable.selectedWorldIndex = 0
@@ -3513,7 +3513,7 @@ class EditorToolbar(GLOrtho):
     def toolbarSizeForScreenWidth(self, width):
         f = max(1, int(width + 398) / 400)
 
-        return map(lambda x:x * f, self.toolbarSize)
+        return map(lambda x: x * f, self.toolbarSize)
 
         # return ( self.toolbarWidthRatio * width,
         #         self.toolbarWidthRatio * width * self.toolbarTextureSize[1] / self.toolbarTextureSize[0] )
