@@ -179,7 +179,7 @@ def askOpenFileWin32(title, schematics, initialDir):
             )
     except Exception, e:
         print "Open File: ", e
-        pass;
+        pass
     else:
         return filename
 
@@ -268,7 +268,7 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 #            return
 #
 #    elif sys.platform == "darwin" and AppKit is not None:
-#        sp = AppKit.NSSavePanel.savePanel();
+#        sp = AppKit.NSSavePanel.savePanel()
 #        sp.setDirectory_(initialDir)
 #        sp.setAllowedFileTypes_([fileFormat])
 #        # sp.setFilename_(self.editor.level.displayName)
@@ -277,7 +277,7 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 #            return;  # pressed cancel
 #
 #        filename = sp.filename()
-#        AppKit.NSApp.mainWindow().makeKeyWindow();
+#        AppKit.NSApp.mainWindow().makeKeyWindow()
 #
 #    else:
 #
@@ -312,7 +312,8 @@ def documents_folder():
         docsFolder = os.path.expanduser(u"~/.mcedit")
     try:
         os.mkdir(docsFolder)
-    except: pass;
+    except:
+        pass
 
     return docsFolder
 
