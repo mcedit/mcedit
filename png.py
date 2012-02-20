@@ -1017,9 +1017,12 @@ def filter_scanline(type, line, fo, prev=None):
             pa = abs(p - a)
             pb = abs(p - b)
             pc = abs(p - c)
-            if pa <= pb and pa <= pc: Pr = a
-            elif pb <= pc: Pr = b
-            else: Pr = c
+            if pa <= pb and pa <= pc:
+                Pr = a
+            elif pb <= pc:
+                Pr = b
+            else:
+                Pr = c
 
             x = (x - Pr) & 0xff
             out.append(x)
@@ -2961,29 +2964,52 @@ def test_suite(options, args):
     # Below is a big stack of test image generators.
     # They're all really tiny, so PEP 8 rules are suspended.
 
-    def test_gradient_horizontal_lr(x, y): return x
-    def test_gradient_horizontal_rl(x, y): return 1 - x
-    def test_gradient_vertical_tb(x, y): return y
-    def test_gradient_vertical_bt(x, y): return 1 - y
-    def test_radial_tl(x, y): return max(1 - math.sqrt(x * x + y * y), 0.0)
-    def test_radial_center(x, y): return test_radial_tl(x - 0.5, y - 0.5)
-    def test_radial_tr(x, y): return test_radial_tl(1 - x, y)
-    def test_radial_bl(x, y): return test_radial_tl(x, 1 - y)
-    def test_radial_br(x, y): return test_radial_tl(1 - x, 1 - y)
-    def test_stripe(x, n): return float(int(x * n) & 1)
-    def test_stripe_h_2(x, y): return test_stripe(x, 2)
-    def test_stripe_h_4(x, y): return test_stripe(x, 4)
-    def test_stripe_h_10(x, y): return test_stripe(x, 10)
-    def test_stripe_v_2(x, y): return test_stripe(y, 2)
-    def test_stripe_v_4(x, y): return test_stripe(y, 4)
-    def test_stripe_v_10(x, y): return test_stripe(y, 10)
-    def test_stripe_lr_10(x, y): return test_stripe(x + y, 10)
-    def test_stripe_rl_10(x, y): return test_stripe(1 + x - y, 10)
-    def test_checker(x, y, n): return float((int(x * n) & 1) ^ (int(y * n) & 1))
-    def test_checker_8(x, y): return test_checker(x, y, 8)
-    def test_checker_15(x, y): return test_checker(x, y, 15)
-    def test_zero(x, y): return 0
-    def test_one(x, y): return 1
+    def test_gradient_horizontal_lr(x, y):
+        return x
+    def test_gradient_horizontal_rl(x, y):
+        return 1 - x
+    def test_gradient_vertical_tb(x, y):
+        return y
+    def test_gradient_vertical_bt(x, y):
+        return 1 - y
+    def test_radial_tl(x, y):
+        return max(1 - math.sqrt(x * x + y * y), 0.0)
+    def test_radial_center(x, y):
+        return test_radial_tl(x - 0.5, y - 0.5)
+    def test_radial_tr(x, y):
+        return test_radial_tl(1 - x, y)
+    def test_radial_bl(x, y):
+        return test_radial_tl(x, 1 - y)
+    def test_radial_br(x, y):
+        return test_radial_tl(1 - x, 1 - y)
+    def test_stripe(x, n):
+        return float(int(x * n) & 1)
+    def test_stripe_h_2(x, y):
+        return test_stripe(x, 2)
+    def test_stripe_h_4(x, y):
+        return test_stripe(x, 4)
+    def test_stripe_h_10(x, y):
+        return test_stripe(x, 10)
+    def test_stripe_v_2(x, y):
+        return test_stripe(y, 2)
+    def test_stripe_v_4(x, y):
+        return test_stripe(y, 4)
+    def test_stripe_v_10(x, y):
+        return test_stripe(y, 10)
+    def test_stripe_lr_10(x, y):
+        return test_stripe(x + y, 10)
+    def test_stripe_rl_10(x, y):
+        return test_stripe(1 + x - y, 10)
+    def test_checker(x, y, n):
+        return float((int(x * n) & 1) ^ (int(y * n) & 1))
+    def test_checker_8(x, y):
+        return test_checker(x, y, 8)
+    def test_checker_15(x, y):
+        return test_checker(x, y, 15)
+    def test_zero(x, y):
+        return 0
+    def test_one(x, y):
+        return 1
 
     test_patterns = {
         'GLR': test_gradient_horizontal_lr,
