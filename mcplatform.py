@@ -227,7 +227,8 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
         try:
             filename = filename[:filename.index('\0')]
             filename = filename.decode(sys.getfilesystemencoding())
-        except: pass
+        except:
+            pass
 
     elif sys.platform == "darwin" and AppKit is not None:
         sp = AppKit.NSSavePanel.savePanel()
