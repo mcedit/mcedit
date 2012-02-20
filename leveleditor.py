@@ -23,8 +23,6 @@ imported from editortools/
 
 """
 
-
-
 import gc
 from datetime import datetime, timedelta
 from OpenGL.GL import *
@@ -43,7 +41,6 @@ from glutils import gl, Texture, FramebufferTexture
 import glutils
 # Label = GLLabel
 
-
 import config
 from pymclevel import *
 from glbackground import *
@@ -61,7 +58,6 @@ from mcplatform import askSaveFile
 from editortools.chunk import GeneratorPanel
 from os.path import isdir, dirname
 import renderer
-
 
 Settings = config.Settings("Settings")
 Settings.flyMode = Settings("Fly Mode", False)
@@ -116,8 +112,6 @@ ControlSettings.invertMousePitch = ControlSettings("invert mouse pitch", False)
 ControlSettings.autobrake = ControlSettings("autobrake", True)
 ControlSettings.swapAxes = ControlSettings("swap axes looking down", False)
 
-
-
 arch = platform.architecture()[0]
 
 def remapMouseButton(button):
@@ -143,8 +137,6 @@ class ControlPanel(Panel):
         header = self.getHeader()
         keysColumn = [Label("")]
         buttonsColumn = [header]
-
-
 
         '''def addRow(key, text, action):
             b = Button(text, action=action, width = 300)
@@ -188,7 +180,6 @@ class ControlPanel(Panel):
         sideColumn.left = self.centerx
         sideColumn.anchor = "wh"
 
-
         self.add(sideColumn)
 
         self.shrink_wrap()
@@ -230,14 +221,12 @@ class CameraViewport(GLViewport):
         near = 0.5
         far = 4000.0
 
-
         self.near = near
         self.far = far
 
         self.brake = False
         self.lastTick = datetime.now()
         # self.nearheight = near * tang;
-
 
         self.cameraPosition = (16., 45., 16.)
         self.velocity = [0., 0., 0.]
@@ -287,7 +276,6 @@ class CameraViewport(GLViewport):
     def brakeOff(self):
         self.brake = False
 
-
     tickInterval = 1000 / 30
 
     oldPosition = (0, 0, 0)
@@ -306,7 +294,6 @@ class CameraViewport(GLViewport):
         drag = ControlSettings.cameraDrag.get()
         accel_factor = drag + ControlSettings.cameraAccel.get()
 
-
         # if we're in space, move faster
 
         drag_epsilon = 10.0 * timeDelta
@@ -323,7 +310,6 @@ class CameraViewport(GLViewport):
         mouseSpeed = ControlSettings.mouseSpeed.get()
         self.yaw += pi[0] * mouseSpeed
         self.pitch += pi[1] * mouseSpeed
-
 
         alignMovementToAxes = key.get_mods() & KMOD_SHIFT
 
@@ -350,7 +336,6 @@ class CameraViewport(GLViewport):
             dx = int(dx * 1.4)
             dy = int(dy * 1.6)
             dz = int(dz * 1.4)
-
 
         directedInputs = normalize((
             i[0] * cosyaw + i[2] * dx,
@@ -391,7 +376,6 @@ class CameraViewport(GLViewport):
             self.oldPosition = self.cameraPosition
             self.updateFloorQuad()
 
-
         self.cameraPosition = map(lambda p, d:p + d * timeDelta, self.cameraPosition, velocity)
         if self.cameraPosition[1] > 3800.:
             self.cameraPosition[1] = 3800.
@@ -414,9 +398,7 @@ class CameraViewport(GLViewport):
                   look[0], look[1], look[2],
                   up[0], up[1], up[2])
 
-
     from math import isnan
-
 
     def _cameraVector(self):
         return self._anglesToVector(self.yaw, self.pitch)
@@ -499,7 +481,6 @@ class CameraViewport(GLViewport):
                     mouse3dPoint = self._blockUnderCursor(True)
                     focusPair = self.findBlockFaceUnderCursor(mouse3dPoint)
 
-
             # otherwise, find the block at a controllable distance in front of the camera
             if focusPair is None:
                 focusPair = (self.getCameraPoint(), (0, 0, 0))
@@ -581,7 +562,6 @@ class CameraViewport(GLViewport):
 
         return intProjectedPoint, d
 
-
     @property
     def ratio(self):
         return self.width / float(self.height)
@@ -629,7 +609,6 @@ class CameraViewport(GLViewport):
 
         panel = Dialog()
 
-
         def addMob(id):
             if id not in mobs:
                 mobs.insert(0, id)
@@ -662,7 +641,6 @@ class CameraViewport(GLViewport):
         def selectedMob():
             return mobs[mobTable.selectedIndex]
 
-
         id = tileEntity["EntityId"].value
         addMob(id)
 
@@ -676,8 +654,6 @@ class CameraViewport(GLViewport):
         panel.present()
 
         tileEntity["EntityId"] = TAG_String(selectedMob())
-
-
 
     @alertException
     def editSign(self, point):
@@ -698,9 +674,7 @@ class CameraViewport(GLViewport):
 
         self.editor.level.addTileEntity(tileEntity)
 
-
         panel = Dialog()
-
 
         lineFields = [TextField(width=150) for l in linekeys]
         for l, f in zip(linekeys, lineFields):
@@ -730,8 +704,6 @@ class CameraViewport(GLViewport):
             currentField = panel.focus_switch.focus_switch
             currentField.text += c  # xxx view hierarchy
             currentField.insertion_point = len(currentField.text)
-
-
 
         colorMenu = MenuButton("Color Code...", colors, menu_picked = menu_picked)
 
@@ -786,7 +758,6 @@ class CameraViewport(GLViewport):
                 return slotNames.get(slot, slot)
             return slot
 
-
         chestWidget = ChestWidget()
         chestItemTable = TableView(columns=[
             TableColumn("Slot", 80, "l", fmt=slotFormat),
@@ -822,8 +793,6 @@ class CameraViewport(GLViewport):
             IntInputRow("DMG: ", ref=AttrRef(chestWidget, 'Damage'), min= -32768, max=32767),
             IntInputRow("Count: ", ref=AttrRef(chestWidget, 'Count'), min= -128, max=127),
         )
-
-
 
         def deleteFromWorld():
             i = chestWidget.selectedItemIndex
@@ -875,7 +844,6 @@ class CameraViewport(GLViewport):
                                 chunk.chunkChanged()
                                 self.editor.invalidateChunks([chunk.chunkPosition])
 
-
                         for te in chunk.TileEntities:
                             if "Items" in te:
                                 l = len(te['Items'])
@@ -896,7 +864,6 @@ class CameraViewport(GLViewport):
                 progressInfo = "Deleting the item {0} from the entire world ({1} chunks)".format(itemName(chestWidget.id, 0), self.editor.level.chunkCount)
 
                 showProgress(progressInfo, deleteItemsIter(), cancel=True)
-
 
                 self.editor.addUnsavedEdit()
                 chestWidget.selectedItemIndex = min(chestWidget.selectedItemIndex, len(tileEntityTag['Items']) - 1)
@@ -953,9 +920,6 @@ class CameraViewport(GLViewport):
             self.editor.addOperation(op)
             self.editor.addUnsavedEdit()
 
-
-
-
     rightMouseDragStart = None
     def rightClickDown(self, evt):
 
@@ -973,7 +937,6 @@ class CameraViewport(GLViewport):
         # print "RightClickUp: ", td
         if td.seconds > 0 or td.microseconds > 280000:
             self.mouseLookOff()
-
 
     def leftClickDown(self, evt):
         self.editor.toolMouseDown(evt, self.blockFaceUnderCursor)
@@ -1007,13 +970,8 @@ class CameraViewport(GLViewport):
                             except ChunkNotPresent:
                                 pass
 
-
-
     def leftClickUp(self, evt):
         self.editor.toolMouseUp(evt, self.blockFaceUnderCursor)
-
-
-
 
     # --- Event handlers ---
 
@@ -1065,8 +1023,6 @@ class CameraViewport(GLViewport):
                 self.editor.renderer.loadNearbyChunks()
                 self.lastRendererUpdate = datetime.now()
 
-
-
             # adjustLimit = 2;
 
             # self.oldMousePosition = (x, y)
@@ -1099,7 +1055,6 @@ class CameraViewport(GLViewport):
         floorQuad += (self.cameraPosition[0], 0.0, self.cameraPosition[2])
         self.floorQuad = floorQuad
         self.floorQuadList.invalidate()
-
 
     def drawFloorQuad(self):
         self.floorQuadList.call(self._drawFloorQuad)
@@ -1135,7 +1090,6 @@ class CameraViewport(GLViewport):
         self.ceilingList.call(self._drawCeiling)
         glTranslate(-x, -y, -z)
 
-
     _floorQuadList = None
     @property
     def floorQuadList(self):
@@ -1166,10 +1120,6 @@ class CameraViewport(GLViewport):
         glColor(*self.floorColor)
         with gl.glEnable(GL_BLEND, GL_DEPTH_TEST, GL_POLYGON_OFFSET_FILL):
             glDrawArrays(GL_QUADS, 0, 4)
-
-
-
-
 
     @property
     def drawSky(self):
@@ -1224,7 +1174,6 @@ class CameraViewport(GLViewport):
 
     enableMouseLag = Settings.enableMouseLag.configProperty()
 
-
     @property
     def drawFog(self):
         return self._drawFog and not self.editor.renderer.inSpace()
@@ -1262,7 +1211,6 @@ class CameraViewport(GLViewport):
             distance = 8.0
         GLU.gluPerspective(max(self.fov, 25.0), self.ratio, self.near * distance, self.far * distance)
 
-
     def setup_modelview(self):
         self.setModelview()
 
@@ -1282,7 +1230,6 @@ class CameraViewport(GLViewport):
             self.drawSkyBackground()
         if self.drawFog:
             self.enableFog()
-
 
         self.drawFloorQuad()
 
@@ -1329,12 +1276,9 @@ class ChunkViewport(CameraViewport):
     def __init__(self, *a, **kw):
         CameraViewport.__init__(self, *a, **kw)
 
-
-
     def setup_projection(self):
         w, h = (0.5 * s / self.defaultScale
                 for s in self.size)
-
 
         minx, maxx = - w,  w
         miny, maxy = - h,  h
@@ -1375,9 +1319,6 @@ class ChunkViewport(CameraViewport):
             self.zoomOut()
         else:
             super(ChunkViewport, self).mouse_down(evt)
-
-
-
 
     def rightClickDown(self, evt):
         pass
@@ -1423,7 +1364,6 @@ class LevelEditor(GLViewport):
         rect = mcedit.rect
         GLViewport.__init__(self, rect)
 
-
         self.frames = 0
         self.frameStartTime = datetime.now()
         self.oldFrameStartTime = self.frameStartTime
@@ -1451,7 +1391,6 @@ class LevelEditor(GLViewport):
 
         print "Generating selection grid texture..."
         self.sixteenBlockTex = self.genSixteenBlockTexture()
-
 
         # print "FontRenderer()"
         # self.Font = Font("Verdana, Arial", 18)
@@ -1495,7 +1434,6 @@ class LevelEditor(GLViewport):
 
             return sum(size(c) for c in chunks.itervalues())
 
-
         mbldReadout = SmallValueDisplay(width=60,
             get_value=lambda:"MBd: %0.1f" % (dataSize() / 1000000.),
             tooltipText = "Memory used for saved game data.")
@@ -1538,7 +1476,6 @@ class LevelEditor(GLViewport):
 
         row = (viewDistanceDown, Label("View Distance:"), viewDistanceReadout, viewDistanceUp,
                readoutGrid, viewButton, self.viewportButton)
-
 
         # row += (Button("CR Info", action=self.showChunkRendererInfo), )
         row = Row(row)
@@ -1621,7 +1558,6 @@ class LevelEditor(GLViewport):
         else:
             Settings.viewMode = "Chunk"
 
-
     maxCopies = 10
 
     def addCopiedSchematic(self, sch):
@@ -1668,8 +1604,6 @@ class LevelEditor(GLViewport):
             if k not in self.copyStack:
                 del self.thumbCache[k]
         editor = self
-
-
 
         def createOneCopyPanel(sch):
             from editortools.toolbasics import ThumbView
@@ -1756,8 +1690,6 @@ class LevelEditor(GLViewport):
             c += count
         counts.append( (b, c) )
 
-
-
         blockRows = [("({0}:{1})".format(block.ID, block.blockData), block.name, count)  for block, count in counts]
         # blockRows.sort(key=lambda x:alphanum_key(x[2]), reverse=True)
 
@@ -1799,7 +1731,6 @@ class LevelEditor(GLViewport):
             table.sortColumn = col
             rows[:] = blockRows
             extendEntities()
-
 
         table.num_rows = lambda : len(rows)
         table.row_data = lambda i: rows[i]
@@ -1856,12 +1787,10 @@ class LevelEditor(GLViewport):
                       editortools.ChunkTool(self),
                       ])
 
-
         self.toolbar.anchor = 'bwh'
         self.add(self.toolbar)
         self.toolbar.bottom = self.viewportContainer.bottom  # bottoms are touching
         self.toolbar.centerx = self.centerx
-
 
     is_gl_container = True
 
@@ -1882,7 +1811,6 @@ class LevelEditor(GLViewport):
         else:
             maxLevel = 1
             mode = GL.GL_LINEAR
-
 
         def makeSixteenBlockTex():
             darkColor = (0x30, 0x30, 0x30, 0xff)
@@ -1918,7 +1846,6 @@ class LevelEditor(GLViewport):
                          w/step, h/step, 0,
                          GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
                          teximage[::step, ::step].ravel())
-
 
         return Texture(makeSixteenBlockTex, mode)
 
@@ -1958,11 +1885,6 @@ class LevelEditor(GLViewport):
 
         glDisable(GL_BLEND)
         glDisable(GL_DEPTH_TEST)
-
-
-
-
-
 
     def loadFile(self, filename):
         if self.level and self.unsavedEdits > 0:
@@ -2013,7 +1935,6 @@ class LevelEditor(GLViewport):
         self.renderer.position = self.currentViewport.cameraPosition
         self.renderer.loadNearbyChunks()
 
-
     def loadLevel(self, level):
         self.level = level
         filename = level.filename
@@ -2021,7 +1942,6 @@ class LevelEditor(GLViewport):
         self.toolbar.selectTool(-1)
         self.toolbar.removeToolPanels()
         self.selectedChunks = set()
-
 
         self.mainViewport.stopMoving()
 
@@ -2074,8 +1994,6 @@ class LevelEditor(GLViewport):
                 self.toolbar.tools[8].createChunks()
                 self.mainViewport.cameraPosition = (x, self.level.Height, z)
 
-
-
     def removeNetherPanel(self):
         if self.netherPanel:
             self.remove(self.netherPanel)
@@ -2096,7 +2014,6 @@ class LevelEditor(GLViewport):
         x, y, z = self.mainViewport.cameraPosition
         self.mainViewport.cameraPosition = [x / 8, y, z / 8]
         self.loadLevel(self.level.getDimension(-1))
-
 
     def gotoDimension(self, dimNo):
         if dimNo == self.level.dimNo:
@@ -2123,7 +2040,6 @@ class LevelEditor(GLViewport):
         title = os.path.split(s[0])[1] + os.sep + s[1] + u" - MCEdit " + release.release
         title = title.encode('ascii', 'replace')
         display.set_caption(title)
-
 
     @alertException
     def reload(self):
@@ -2177,19 +2093,16 @@ class LevelEditor(GLViewport):
         self.add(saveInfoBackground)
         self.saveInfoBackground = saveInfoBackground
 
-
     def clearUnsavedEdits(self):
         if self.unsavedEdits:
             self.unsavedEdits = 0
             self.remove(self.saveInfoBackground)
-
 
     @property
     def saveInfoLabelText(self):
         if self.unsavedEdits == 0:
             return ""
         return "{0} unsaved edits.  CTRL-S to save.  ".format(self.unsavedEdits)
-
 
     @property
     def viewDistanceLabelText(self):
@@ -2213,8 +2126,6 @@ class LevelEditor(GLViewport):
     def removeWorker(self, chunkWorker):
         if chunkWorker in self.workers:
             self.workers.remove(chunkWorker)
-
-
 
     def getFrameDuration(self):
         frameDuration = timedelta(0, 1, 0) / self.renderer.targetFPS
@@ -2297,7 +2208,6 @@ class LevelEditor(GLViewport):
         except Exception, e:
             return repr(e)
 
-
     def toolMouseDown(self, evt, f):  # xxx f is a tuple
         if self.level:
             if None != f:
@@ -2352,7 +2262,6 @@ class LevelEditor(GLViewport):
     def mouseLookOn(self):
         self.mainViewport.mouseLookOn()
 
-
     @property
     def blockFaceUnderCursor(self):
         return self.currentViewport.blockFaceUnderCursor
@@ -2405,7 +2314,6 @@ class LevelEditor(GLViewport):
 
         rightVector = normvector(cross(referenceVector, viewVector)) * randsizes[:, newaxis]  # vector perpendicular to viewing line
         upVector = normvector(cross(rightVector, viewVector)) * randsizes[:, newaxis]  # vector perpendicular previous vector and viewing line
-
 
         p = randPoints
         p1 = p + (- upVector - rightVector)
@@ -2470,7 +2378,6 @@ class LevelEditor(GLViewport):
             reach *= 0.95
         return reach
 
-
     def key_up(self, evt):
         d = self.cameraInputs
         keyname = getattr(evt, 'keyname', None) or key.name(evt.key)
@@ -2478,10 +2385,8 @@ class LevelEditor(GLViewport):
         if keyname == config.config.get('Keys', 'Brake'):
             self.mainViewport.brakeOff()
 
-
         # if keyname == 'left ctrl' or keyname == 'right ctrl':
         #    self.hideControls()
-
 
         if keyname == config.config.get('Keys', 'Left'):
             d[0] = 0.
@@ -2507,7 +2412,6 @@ class LevelEditor(GLViewport):
             cp[1] = 0.
 
         # if keyname in ("left alt", "right alt"):
-
 
     def key_down(self, evt):
         keyname = evt.dict.get('keyname', None) or key.name(evt.key)
@@ -2671,7 +2575,6 @@ class LevelEditor(GLViewport):
             if keyname == config.config.get('Keys', 'Pan Down'):
                 cp[1] = 1.
 
-
             if keyname == config.config.get('Keys', 'Confirm Construction'):
                 self.confirmConstruction()
 
@@ -2749,13 +2652,11 @@ class LevelEditor(GLViewport):
         self.renderer.level = None
         self.mcedit.removeEditor()
 
-
     def repairRegions(self):
         for rf in self.level.regionFiles.itervalues():
             rf.repair()
 
         alert("Repairs complete.  See the console window for details.")
-
 
     @alertException
     def showWorldInfo(self):
@@ -2966,7 +2867,6 @@ class LevelEditor(GLViewport):
             except:
                 return datetime.utcfromtimestamp(0.0)
 
-
         def dateFormat(lp):
             try:
                 return lp.strftime("%x %X").decode('utf-8')
@@ -2996,9 +2896,6 @@ class LevelEditor(GLViewport):
         if d.present() == "Load":
             loadWorld()
 
-
-
-
     def askOpenFile(self):
         self.mouseLookOff()
         try:
@@ -3020,7 +2917,6 @@ class LevelEditor(GLViewport):
 
         label = Label("Creating a new world.")
         generatorPanel = GeneratorPanel()
-
 
         xinput = IntInputRow("X: ", ref=AttrRef(newWorldPanel, "x"))
         yinput = IntInputRow("Y: ", ref=AttrRef(newWorldPanel, "y"))
@@ -3046,7 +2942,6 @@ class LevelEditor(GLViewport):
             if gametypeButton.gametype < 2:
                 gametypeButton.gametype = 1 - gametypeButton.gametype
                 gametypeButton.text = gametype(gametypeButton.gametype)
-
 
         gametypeButton = Button(gametype(0), action=action)
         gametypeButton.gametype = 0
@@ -3101,8 +2996,6 @@ class LevelEditor(GLViewport):
             return
 
         return newlevel
-
-
 
     def confirmConstruction(self):
         self.currentTool.confirm()
@@ -3192,7 +3085,6 @@ class LevelEditor(GLViewport):
         if self.debug:
             self.debugString += string
 
-
     averageFPS = 0.0
     averageCPS = 0.0
     shouldLoadAndRender = True
@@ -3218,8 +3110,6 @@ class LevelEditor(GLViewport):
         if self.currentTool.previewRenderer:
             self.currentTool.previewRenderer.loadVisibleChunks()
             self.addWorker(self.currentTool.previewRenderer)
-
-
 
         self.frames += 1
         frameDuration = self.getFrameDuration()
@@ -3248,7 +3138,6 @@ class LevelEditor(GLViewport):
         cps = 1000000. / ((chunkTotal.microseconds + 1000000 * chunkTotal.seconds) / float(len(r.chunkSamples)) + 0.00001)
         self.averageCPS = cps
 
-
         self.oldFrameStartTime = self.frameStartTime
         self.frameStartTime = frameStartTime
 
@@ -3270,7 +3159,6 @@ class LevelEditor(GLViewport):
 
             if self.renderer:
                 self.renderer.addDebugInfo(self.addDebugString)
-
 
                 # if self.onscreen:
 
@@ -3313,12 +3201,8 @@ class LevelEditor(GLViewport):
                 if hasattr(w, "needsRedraw") and w.needsRedraw:
                     self.invalidate()
 
-
         else:
             time.sleep(0.001)
-
-
-
 
     def updateInspectionString(self, blockPosition):
         self.inspectionString += str(blockPosition) + ": "
@@ -3400,7 +3284,6 @@ class LevelEditor(GLViewport):
     def drawString(self, x, y, color, string):
         return
 
-
     def freezeStatus(self, string):
         return
 
@@ -3431,7 +3314,6 @@ class LevelEditor(GLViewport):
             self.toolbar.selectTool(-1)
 
         self.currentTool.selectionChanged()
-
 
     def addOperation(self, op):
         self.undoStack.append(op)
@@ -3492,7 +3374,6 @@ class LevelEditor(GLViewport):
         self.add(infoPanel)
         infoPanel.click_outside_response = -1
         # infoPanel.present()
-
 
 ##    def testGLSL(self):
 ##        print "Hello"
@@ -3625,7 +3506,6 @@ class EditorToolbar(GLOrtho):
         self.bottom = self.parent.viewportContainer.bottom
         # xxx resize children when get
 
-
     def getTooltipText(self):
         toolNumber = self.toolNumberUnderMouse(mouse.get_pos())
         return self.tools[toolNumber].tooltipText
@@ -3675,7 +3555,6 @@ class EditorToolbar(GLOrtho):
             self.parent.currentTool = t
             self.parent.currentTool.toolSelected()
 
-
     def removeToolPanels(self):
         for tool in self.tools:
             tool.hidePanel()
@@ -3710,13 +3589,11 @@ class EditorToolbar(GLOrtho):
             if hasattr(tool, 'markerList'):
                 tool.markerList.invalidate()
 
-
     def drawToolbar(self):
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
 
         glColor(1., 1., 1., 1.)
         w, h = self.toolbarTextureSize
-
 
         self.guiTexture.bind()
 
@@ -3771,7 +3648,6 @@ class EditorToolbar(GLOrtho):
 
     def gl_draw(self):
 
-
         glEnable(GL_TEXTURE_2D)
         glEnable(GL_BLEND)
         self.toolbarDisplayList.call(self.drawToolbar)
@@ -3782,7 +3658,6 @@ class EditorToolbar(GLOrtho):
         # with gl.glPushMatrix(GL_TEXTURE):
         #    glLoadIdentity()
         #    self.gfont.flatPrint("ADLADLADLADLADL")
-
 
         try:
             currentToolNumber = self.tools.index(self.parent.currentTool)
