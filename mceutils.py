@@ -246,7 +246,7 @@ def drawTerrainCuttingWire(box,
                            c0=(0.75, 0.75, 0.75, 0.4),
                            c1=(1.0, 1.0, 1.0, 1.0)):
 
-    #glDepthMask(False);
+    #glDepthMask(False)
     GL.glEnable(GL.GL_DEPTH_TEST)
 
     GL.glDepthFunc(GL.GL_LEQUAL)
@@ -261,7 +261,7 @@ def drawTerrainCuttingWire(box,
 
     GL.glDepthFunc(GL.GL_LEQUAL)
     GL.glDisable(GL.GL_DEPTH_TEST)
-    #glDepthMask(True);
+    #glDepthMask(True)
 
 #texturePacksDir = os.path.join(pymclevel.minecraftDir, "texturepacks")
 
@@ -458,7 +458,8 @@ import glutils
 
 def normalize(x):
     l = x[0] * x[0] + x[1] * x[1] + x[2] * x[2]
-    if l <= 0.0: return [0, 0, 0]
+    if l <= 0.0:
+        return [0, 0, 0]
     size = numpy.sqrt(l)
     if size <= 0.0:
         return [0, 0, 0]
@@ -467,7 +468,8 @@ def normalize(x):
 
 def normalize_size(x):
     l = x[0] * x[0] + x[1] * x[1] + x[2] * x[2]
-    if l <= 0.0: return [0., 0., 0.], 0.
+    if l <= 0.0:
+        return [0., 0., 0.], 0.
     size = numpy.sqrt(l)
     if size <= 0.0:
         return [0, 0, 0], 0
@@ -480,8 +482,10 @@ class HotkeyColumn(Widget):
     is_gl_container = True
 
     def __init__(self, items, keysColumn=None, buttonsColumn=None):
-        if keysColumn is None: keysColumn = []
-        if buttonsColumn is None: buttonsColumn = []
+        if keysColumn is None:
+            keysColumn = []
+        if buttonsColumn is None:
+            buttonsColumn = []
 
         Widget.__init__(self)
         for (hotkey, title, action) in items:
@@ -521,7 +525,8 @@ class MenuButton(Button):
 
     def action(self):
         index = self.menu.present(self, (0,0))
-        if index == -1: return
+        if index == -1:
+            return
         self.menu_picked(index)
 
     def menu_picked(self, index):
@@ -555,11 +560,13 @@ class ChoiceButton(ValueButton):
             if self.choose:
                 self.choose()
 
-    def get_value(self): return self.selectedChoice
+    def get_value(self):
+        return self.selectedChoice
 
     @property
     def selectedChoice(self):
-        if self.choiceIndex >= len(self.choices) or self.choiceIndex < 0: return ""
+        if self.choiceIndex >= len(self.choices) or self.choiceIndex < 0:
+            return ""
         return self.choices[self.choiceIndex]
 
     @selectedChoice.setter
@@ -661,7 +668,8 @@ def showProgress(progressText, progressIterator, cancel=False):
             if amount is not None:
 
                 if isinstance(amount, tuple):
-                    if len(amount)>2: infoText = ": " + amount[2]
+                    if len(amount)>2:
+                        infoText = ": " + amount[2]
 
                     amount, max = amount[:2]
 
@@ -682,7 +690,8 @@ def showProgress(progressText, progressIterator, cancel=False):
                     else:
                         self.statusText = str(amount)
 
-                if infoText: self.statusText += infoText
+                if infoText:
+                    self.statusText += infoText
 
         @property
         def estimateText(self):
@@ -692,7 +701,8 @@ def showProgress(progressText, progressIterator, cancel=False):
             return "Time left: {0}".format(left)
 
         def cancel(self):
-            if cancel: self.dismiss(False)
+            if cancel:
+                self.dismiss(False)
 
         def idleevent(self, evt):
             self.invalidate()
