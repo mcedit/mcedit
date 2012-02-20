@@ -2056,7 +2056,7 @@ class LevelEditor(GLViewport):
 
     @alertException
     def gotoEarth(self):
-        assert self.level.parentWorld;
+        assert self.level.parentWorld
         self.removeNetherPanel()
         self.loadLevel(self.level.parentWorld)
 
@@ -2110,7 +2110,7 @@ class LevelEditor(GLViewport):
         with setWindowCaption("SAVING - "):
             if isinstance(self.level, ChunkedLevelMixin):  # xxx relight indev levels?
                 level = self.level
-                if level.parentWorld: level = level.parentWorld;
+                if level.parentWorld: level = level.parentWorld
 
                 for level in itertools.chain(level.dimensions.itervalues(), [level]):
 
@@ -2137,7 +2137,7 @@ class LevelEditor(GLViewport):
 
         saveInfoLabel = Label(self.saveInfoLabelText)
         saveInfoLabel.anchor = "blwh"
-        # saveInfoLabel.width = 500;
+        # saveInfoLabel.width = 500
 
         saveInfoBackground.add(saveInfoLabel)
         saveInfoBackground.shrink_wrap()
@@ -2157,7 +2157,7 @@ class LevelEditor(GLViewport):
 
     @property
     def saveInfoLabelText(self):
-        if self.unsavedEdits == 0: return "";
+        if self.unsavedEdits == 0: return ""
         return "{0} unsaved edits.  CTRL-S to save.  ".format(self.unsavedEdits)
 
 
@@ -2306,7 +2306,7 @@ class LevelEditor(GLViewport):
 
         x,y = mouse.get_pos(0)
         if None != self.currentOperation:
-            self.dragInProgress = True;
+            self.dragInProgress = True
             self.dragStartPoint = (x,y)
             self.currentOperation.dragStart(x,y)
       '
@@ -2330,7 +2330,7 @@ class LevelEditor(GLViewport):
 #    def worldTooltipText(self):
 #        try:
 #            if self.blockFaceUnderCursor:
-#                pos = self.blockFaceUnderCursor[0];
+#                pos = self.blockFaceUnderCursor[0]
 #                blockID = self.level.blockAt(*pos)
 #                blockData = self.level.blockDataAt(*pos)
 #
@@ -2446,7 +2446,7 @@ class LevelEditor(GLViewport):
 
 
         # if keyname == 'left ctrl' or keyname == 'right ctrl':
-        #    self.hideControls();
+        #    self.hideControls()
 
 
         if keyname == config.config.get('Keys', 'Left'):
@@ -2477,7 +2477,7 @@ class LevelEditor(GLViewport):
 
     def key_down(self, evt):
         keyname = evt.dict.get('keyname', None) or key.name(evt.key)
-        if keyname == 'enter': keyname = 'return';
+        if keyname == 'enter': keyname = 'return'
 
         debug("Key down: %s", keyname)
         d = self.cameraInputs
@@ -2544,7 +2544,7 @@ class LevelEditor(GLViewport):
                     #    Button("Reload Editor", action=self.parent.reloadEditor),
                     # ]
                     # debugPanel.add(Column(buttonColumn))
-                    # debugPanel.shrink_wrap();
+                    # debugPanel.shrink_wrap()
                     # self.add_centered(debugPanel)
                     # ===========================================================
 
@@ -2642,9 +2642,9 @@ class LevelEditor(GLViewport):
 
             # =======================================================================
             # if keyname == config.config.get('Keys','Toggle Flat Shading'):
-            #    self.renderer.swapMipmapping();
+            #    self.renderer.swapMipmapping()
             # if keyname == config.config.get('Keys','Toggle Lighting'):
-            #    self.renderer.toggleLighting();
+            #    self.renderer.toggleLighting()
             # =======================================================================
 
             if keyname == config.config.get('Keys', 'Toggle FPS Counter'):
@@ -2965,7 +2965,7 @@ class LevelEditor(GLViewport):
         self.mouseLookOff()
         try:
             filename = mcplatform.askOpenFile()
-            if filename: self.parent.loadFile(filename);
+            if filename: self.parent.loadFile(filename)
         except Exception, e:
             print "Exception while getting filename", e
             return
@@ -3120,7 +3120,7 @@ class LevelEditor(GLViewport):
 
     @alertException
     def undo(self):
-        if len(self.undoStack) == 0: return;
+        if len(self.undoStack) == 0: return
         with setWindowCaption("UNDOING - "):
             self.freezeStatus("Undoing the previous operation...")
             op = self.undoStack.pop()
@@ -3158,7 +3158,7 @@ class LevelEditor(GLViewport):
         self.debugString = ""
         self.inspectionString = ""
 
-        if not self.level: return;
+        if not self.level: return
 
         if key.get_mods() & (mcplatform.cmd_name is "Cmd" and KMOD_META or KMOD_CTRL):
             self.showControls()
@@ -3339,7 +3339,7 @@ class LevelEditor(GLViewport):
 
         except Exception, e:
             self.inspectionString += "Chunk {0} had an error: {1!r}".format((int(floor(blockPosition[0])) >> 4, int(floor(blockPosition[2])) >> 4), e)
-            pass;
+            pass
 
     def drawWireCubeReticle(self, color=(1.0, 1.0, 1.0, 1.0), position=None):
         glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
@@ -3359,21 +3359,21 @@ class LevelEditor(GLViewport):
     def freezeStatus(self, string):
         return
 
-#        glColor(1.0, 0., 0., 1.0);
+#        glColor(1.0, 0., 0., 1.0)
 #
-#        # glDrawBuffer(GL_FRONT);
-#        glMatrixMode(GL_PROJECTION);
-#        glPushMatrix();
-#        glRasterPos(50, 100);
+#        # glDrawBuffer(GL_FRONT)
+#        glMatrixMode(GL_PROJECTION)
+#        glPushMatrix()
+#        glRasterPos(50, 100)
 #        for i in string:
-#            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(i));
+#            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(i))
 #
-#        # glDrawBuffer(GL_BACK);
-#        glMatrixMode(GL_PROJECTION);
-#        glPopMatrix();
-#        glFlush();
-#        display.flip();
-#        # while(True): pass;
+#        # glDrawBuffer(GL_BACK)
+#        glMatrixMode(GL_PROJECTION)
+#        glPopMatrix()
+#        glFlush()
+#        display.flip()
+#        # while(True): pass
 
     def selectionSize(self):
         return self.selectionTool.selectionSize()
@@ -3397,7 +3397,7 @@ class LevelEditor(GLViewport):
 
     mouseWasCaptured = False
     def showControls(self):
-        if self.controlPanel.parent: return;
+        if self.controlPanel.parent: return
 
         controlPanel = self.controlPanel
 
@@ -3408,7 +3408,7 @@ class LevelEditor(GLViewport):
         self.mouseWasCaptured = mouseWasCaptured
 
     def hideControls(self):
-        if None is self.controlPanel.parent: return;
+        if None is self.controlPanel.parent: return
 
         if self.mouseWasCaptured and root.top_widget == root.get_root():
             self.mouseLookOn()
@@ -3446,19 +3446,19 @@ class LevelEditor(GLViewport):
 
 
 ##    def testGLSL(self):
-##        print "Hello";
-##        level = MCLevel.fromFile("mrchunk.schematic");
-##        blocks = level.Blocks;
+##        print "Hello"
+##        level = MCLevel.fromFile("mrchunk.schematic")
+##        blocks = level.Blocks
 ##        blockCount = level.Width * level.Length * level.Height,
 ##        fbo = glGenFramebuffersEXT(1)
 ##        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo)
 ##
-##        print blockCount, fbo;
+##        print blockCount, fbo
 ##
 ##        destBlocks = zeros(blockCount, 'uint8')
 ##        (sourceTex, destTex) = glGenTextures(2)
 ##
-##        glBindTexture(GL_TEXTURE_3D, sourceTex);
+##        glBindTexture(GL_TEXTURE_3D, sourceTex)
 ##        glTexImage3D(GL_TEXTURE_3D, 0, 1,
 ##                     level.Width, level.Length, level.Height,
 ##                     0, GL_RED, GL_UNSIGNED_BYTE,
@@ -3466,11 +3466,11 @@ class LevelEditor(GLViewport):
 ##
 ##        # return
 ##
-##        glBindTexture(GL_TEXTURE_2D, destTex);
+##        glBindTexture(GL_TEXTURE_2D, destTex)
 ##        glTexImage2D(GL_TEXTURE_2D, 0, 1,
 ##                     level.Width, level.Length,
 ##                     0, GL_RED, GL_UNSIGNED_BYTE, destBlocks)
-##        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+##        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 ##        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, destTex, 0)
 ##
 ##        vertShader = glCreateShader(GL_VERTEX_SHADER)
@@ -3478,7 +3478,7 @@ class LevelEditor(GLViewport):
 ##        vertShaderSource = """
 ##        void main()
 ##        {
-##            gl_Position = gl_Vertex;
+##            gl_Position = gl_Vertex
 ##        }
 ##        """
 ##
@@ -3535,7 +3535,7 @@ class LevelEditor(GLViewport):
 
 
 class EditorToolbar(GLOrtho):
-    # is_gl_container = True;
+    # is_gl_container = True
     toolbarSize = (184, 24)
     tooltipsUp = True
 
@@ -3604,7 +3604,7 @@ class EditorToolbar(GLOrtho):
     def showToolOptions(self, toolNumber):
         if toolNumber < len(self.tools) and toolNumber >= 0:
             t = self.tools[toolNumber]
-            # if not t.toolEnabled(): return;
+            # if not t.toolEnabled(): return
             if t.optionsPanel:
                 t.optionsPanel.present()
 
@@ -3614,7 +3614,7 @@ class EditorToolbar(GLOrtho):
             toolNumber = 0
 
         t = self.tools[toolNumber]
-        if not t.toolEnabled(): return;
+        if not t.toolEnabled(): return
         if self.parent.currentTool == t:
             self.parent.currentTool.toolReselected()
         else:
@@ -3634,7 +3634,8 @@ class EditorToolbar(GLOrtho):
         location in the window.  use for hit testing."""
 
         (pw, ph) = self.parent.size
-        pw = float(pw); ph = float(ph)
+        pw = float(pw)
+        ph = float(ph)
         x, y = self.toolbarSizeForScreenWidth(pw)
         tw = x * 180. / 182.
         th = y * 20. / 22.
@@ -3724,7 +3725,7 @@ class EditorToolbar(GLOrtho):
         self.toolbarDisplayList.call(self.drawToolbar)
         glColor(1.0, 1.0, 0.0)
 
-        # glEnable(GL_BLEND);
+        # glEnable(GL_BLEND)
 
         # with gl.glPushMatrix(GL_TEXTURE):
         #    glLoadIdentity()
@@ -3742,9 +3743,9 @@ class EditorToolbar(GLOrtho):
             # tx = tx + tw * float(currentToolNumber) / 9.
             # tx = tx - (2./20.)*float(tw) / 9
             # ty = ty - (2./20.)*th
-            # # tw = th;
+            # # tw = th
             # tw = (24./20.)* th
-            # th = tw;
+            # th = tw
             #
             # ===================================================================
             tx = 20. * float(currentToolNumber)
