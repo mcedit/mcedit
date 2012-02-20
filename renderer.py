@@ -967,7 +967,7 @@ class TileTicksRenderer(EntityRendererGeneric):
 
 class TerrainPopulatedRenderer(EntityRendererGeneric):
     layer = Layer.TerrainPopulated
-    vertexTemplate = zeros( (6, 4, 6), 'float32')
+    vertexTemplate = zeros((6, 4, 6), 'float32')
     vertexTemplate[_XYZ] = faceVertexTemplates[_XYZ]
     vertexTemplate[_XYZ] *= (16, 128, 16)
     color = (255, 200, 155)
@@ -1088,7 +1088,7 @@ class LowDetailBlockRenderer(BlockRenderer):
             overblocks = blocks[gridaxes][nonAirBlocks].ravel()
 
         except ValueError, e:
-            raise ValueError( str(e.args) + "Chunk shape: {0}".format(blockIndices.shape), sys.exc_info()[-1] )
+            raise ValueError(str(e.args) + "Chunk shape: {0}".format(blockIndices.shape), sys.exc_info()[-1] )
 
         if nonAirBlocks.any():
             blockTypes = blocks[blockIndices]
@@ -1098,7 +1098,7 @@ class LowDetailBlockRenderer(BlockRenderer):
             x, z, y = blockIndices.nonzero()
 
             yield
-            vertexArray = zeros( (len(x), 4, 4), dtype='float32')
+            vertexArray = zeros((len(x), 4, 4), dtype='float32')
             vertexArray[_XYZ][..., 0] = x[:, newaxis]
             vertexArray[_XYZ][..., 1] = y[:, newaxis]
             vertexArray[_XYZ][..., 2] = z[:, newaxis]
@@ -1841,7 +1841,7 @@ class StairBlockRenderer(BlockRenderer):
         x, z, y = materialIndices.nonzero()
 
         for _ in ("slab", "step"):
-            vertexArray = zeros( (len(x), 6, 4, 6), dtype='float32')
+            vertexArray = zeros((len(x), 6, 4, 6), dtype='float32')
             for i in range(3):
                 vertexArray[_XYZ][..., i] = (x, y, z)[i][:, newaxis, newaxis]
 
