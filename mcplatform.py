@@ -52,7 +52,6 @@ def getTexturePacks():
     except:
         return []
 
-
 # for k,v in os.environ.iteritems():
 #    try:
 #        os.environ[k] = v.decode(sys.getfilesystemencoding())
@@ -331,7 +330,6 @@ portableSchematicsDir = os.path.join(parentDir, u"MCEdit-schematics")
 fixedConfigFilePath = os.path.join(docsFolder, ini)
 fixedSchematicsDir = os.path.join(docsFolder, u"MCEdit-schematics")
 
-
 if sys.platform == "darwin":
     # parentDir is MCEdit.app/Contents/
     folderContainingAppPackage = dirname(dirname(parentDir))
@@ -355,7 +353,6 @@ def goPortable():
         move_displace(fixedSchematicsDir, portableSchematicsDir)
     if os.path.exists(fixedConfigFilePath):
         move_displace(fixedConfigFilePath, portableConfigFilePath)
-
 
     configFilePath = portableConfigFilePath
     schematicsDir = portableSchematicsDir
@@ -386,7 +383,6 @@ def goFixed():
     if os.path.exists(portableConfigFilePath):
         move_displace(portableConfigFilePath, fixedConfigFilePath)
 
-
     configFilePath = fixedConfigFilePath
     schematicsDir = fixedSchematicsDir
     portable = False
@@ -407,7 +403,6 @@ else:
     schematicsDir = fixedSchematicsDir
     portable = False
 
-
 filtersDir = os.path.join(dataDir, "filters")
 if filtersDir not in [s.decode(sys.getfilesystemencoding())
                       if isinstance(s, str)
@@ -415,7 +410,6 @@ if filtersDir not in [s.decode(sys.getfilesystemencoding())
                       for s in sys.path]:
 
     sys.path.append(filtersDir.encode(sys.getfilesystemencoding()))
-
 
 if portable:
     serverJarStorageDir = (os.path.join(parentDir, "ServerJarStorage"))
