@@ -3393,7 +3393,7 @@ class LevelEditor(GLViewport):
 
             x, y, z = self.blockFaceUnderCursor[0]
             cx, cz = x // 16, z // 16
-            cr =  self.renderer.chunkRenderers.get((cx, cz))
+            cr = self.renderer.chunkRenderers.get((cx, cz))
             if None is cr:
                 return
 
