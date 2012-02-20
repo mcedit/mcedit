@@ -302,7 +302,7 @@ def documents_folder():
         except Exception, e:
             print e
             try:
-                docsFolder = shell.SHGetFolderPath (0, shellcon.CSIDL_PERSONAL, 0, 0)
+                docsFolder = shell.SHGetFolderPath(0, shellcon.CSIDL_PERSONAL, 0, 0)
             except Exception, e:
                 userprofile = os.environ['USERPROFILE'].decode(sys.getfilesystemencoding())
                 docsFolder = os.path.join(userprofile, "Documents")
