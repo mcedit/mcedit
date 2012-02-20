@@ -246,7 +246,7 @@ def drawTerrainCuttingWire(box,
                            c0=(0.75, 0.75, 0.75, 0.4),
                            c1=(1.0, 1.0, 1.0, 1.0)):
 
-    #glDepthMask(False)
+    # glDepthMask(False)
     GL.glEnable(GL.GL_DEPTH_TEST)
 
     GL.glDepthFunc(GL.GL_LEQUAL)
@@ -261,9 +261,9 @@ def drawTerrainCuttingWire(box,
 
     GL.glDepthFunc(GL.GL_LEQUAL)
     GL.glDisable(GL.GL_DEPTH_TEST)
-    #glDepthMask(True)
+    # glDepthMask(True)
 
-#texturePacksDir = os.path.join(pymclevel.minecraftDir, "texturepacks")
+# texturePacksDir = os.path.join(pymclevel.minecraftDir, "texturepacks")
 
 
 def loadAlphaTerrainTexture():
@@ -311,7 +311,7 @@ def loadAlphaTerrainTexture():
     texW, texH, terraindata = loadPNGFile("terrain.png")
 
     def slurpZipExt(zipextfile):
-        #zipextfile.read() doesn't read all available data
+        # zipextfile.read() doesn't read all available data
         alldata = ""
         data = zipextfile.read()
         while len(data):
@@ -333,11 +333,11 @@ def loadAlphaTerrainTexture():
 
         w, h, data = loadPNGData(slurpZipExt(customWaterFile))
         if w == texW / 16:
-            #only handle the easy case for now
+            # only handle the easy case for now
             texdata = data[:w, :w]
             terraindata[t:t + w, s:s + w] = texdata
 
-            #GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
+            # GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
     if customLavaFile is not None:
         s, t = pymclevel.materials.alphaMaterials.blockTextures[pymclevel.materials.alphaMaterials.Lava.ID, 0, 0]
         s = s * texW / 256
@@ -345,18 +345,18 @@ def loadAlphaTerrainTexture():
 
         w, h, data = loadPNGData(slurpZipExt(customLavaFile))
         if w == texW / 16:
-            #only handle the easy case for now
+            # only handle the easy case for now
             texdata = data[:w, :w]
             terraindata[t:t + w, s:s + w] = texdata
 
-            #GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
+            # GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
 
     from renderer import LeafBlockRenderer
     from renderer import GenericBlockRenderer
     if foliageColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(foliageColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[17, 0, :3] = color  #xxxxxxx
+        materials.alphaMaterials.flatColors[17, 0, :3] = color  # xxxxxxx
 
         color = [c / 255.0 for c in color]
         LeafBlockRenderer.leafColor = color
@@ -366,7 +366,7 @@ def loadAlphaTerrainTexture():
     if grassColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(grassColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[2, 0, :3] = color  #xxxxxxx
+        materials.alphaMaterials.flatColors[2, 0, :3] = color  # xxxxxxx
         color = [c / 255.0 for c in color]
 
         GenericBlockRenderer.grassColor = color
@@ -382,12 +382,12 @@ def loadAlphaTerrainTexture():
 
 
 def loadPNGData(filename_or_data):
-    #if filename[1:4] != "PNG":
+    # if filename[1:4] != "PNG":
     if isinstance(filename_or_data, basestring):
         filename_or_data = os.path.join(mcplatform.dataDir, filename_or_data)
         filename_or_data = filename_or_data.encode(sys.getfilesystemencoding())
     else:
-        #path = numpy.fromstring(filename, 'uint8')
+        # path = numpy.fromstring(filename, 'uint8')
         pass
     try:
         img = image.load(filename_or_data)
@@ -396,7 +396,7 @@ def loadPNGData(filename_or_data):
 
         data = numpy.fromstring(img.get_buffer().raw, 'uint8')
         w, h = img.get_size()
-        data.shape = (h, w, 4)  #xxx 32-bit images
+        data.shape = (h, w, 4)  # xxx 32-bit images
 
         format = GL.GL_BGRA
 
@@ -408,7 +408,7 @@ def loadPNGData(filename_or_data):
         data = numpy.array(data, dtype='uint8')
         data.shape = (h, w, metadata['planes'])
         if data.shape[2] == 1:
-            #indexed color. remarkably straightforward.
+            # indexed color. remarkably straightforward.
             data.shape = data.shape[:2]
             data = numpy.array(reader.palette(), dtype='uint8')[data]
 
@@ -429,7 +429,7 @@ def loadPNGFile(filename):
     (w, h, data) = loadPNGData(filename)
 
     powers = (16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
-    assert (w in powers) and (h in powers)  #how crude
+    assert (w in powers) and (h in powers)  # how crude
 
     ndata = numpy.array(data, dtype='uint8')
 
@@ -476,7 +476,7 @@ def normalize_size(x):
     return (x / size), size
 
 
-#Label = GLLabel
+# Label = GLLabel
 
 class HotkeyColumn(Widget):
     is_gl_container = True
@@ -538,7 +538,7 @@ class ChoiceButton(ValueButton):
     choose = None
 
     def __init__(self, choices, **kw):
-        #passing an empty list of choices is ill-advised
+        # passing an empty list of choices is ill-advised
 
         if 'choose' in kw:
             self.choose = kw.pop('choose')
