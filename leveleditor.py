@@ -176,7 +176,7 @@ class ControlPanel(Panel):
 
         buttons = HotkeyColumn(hotkeys, keysColumn, buttonsColumn)
 
-        #buttons.buttons[-1].ref = 
+        #buttons.buttons[-1].ref =
 
         self.add(buttons)
         buttons.right = self.centerx
@@ -652,7 +652,7 @@ class CameraViewport(GLViewport):
         mobTable.selectedIndex = 0
 
         def selectedMob():
-            return mobs[mobTable.selectedIndex]      
+            return mobs[mobTable.selectedIndex]
 
 
         id = tileEntity["EntityId"].value
@@ -1273,7 +1273,7 @@ class CameraViewport(GLViewport):
         self.editor.renderer.draw()
         focusPair = None
 
-        if self.showCeiling and not self.editor.renderer.inSpace():     
+        if self.showCeiling and not self.editor.renderer.inSpace():
             self.drawCeiling()
 
         if self.editor.level:
@@ -1378,7 +1378,7 @@ class ChunkViewport(CameraViewport):
             x, y, z = self.cameraPosition
             dx, dz = evt.rel
             self.cameraPosition = (
-                x - dx / self.defaultScale, 
+                x - dx / self.defaultScale,
                 y,
                 z - dz / self.defaultScale)
         else:
@@ -1397,7 +1397,7 @@ class ChunkViewport(CameraViewport):
         pass
 #        if self.defaultScale >= 0.5:
 #            return super(ChunkViewport, self).drawCeiling()
-#        
+#
 class LevelEditor(GLViewport):
     anchor = "tlbr"
     def __init__(self, mcedit):
@@ -1446,16 +1446,16 @@ class LevelEditor(GLViewport):
         viewDistanceUp = Button(">", action=self.increaseViewDistance)
         viewDistanceReadout = ValueDisplay(width=40, ref=AttrRef(self.renderer, "viewDistance"))
 
-        chunksReadout = SmallValueDisplay(width=140, 
+        chunksReadout = SmallValueDisplay(width=140,
             get_value=lambda:"Chunks: %d" % len(self.renderer.chunkRenderers),
             tooltipText = "Number of chunks loaded into the renderer.")
-        fpsReadout = SmallValueDisplay(width=80, 
+        fpsReadout = SmallValueDisplay(width=80,
             get_value=lambda:"fps: %0.1f" % self.averageFPS,
             tooltipText = "Frames per second.")
-        cpsReadout = SmallValueDisplay(width=100, 
+        cpsReadout = SmallValueDisplay(width=100,
             get_value=lambda:"cps: %0.1f" % self.averageCPS,
             tooltipText = "Chunks per second.")
-        mbReadout = SmallValueDisplay(width=60, 
+        mbReadout = SmallValueDisplay(width=60,
             get_value=lambda:"MBv: %0.1f" % (self.renderer.bufferUsage / 1000000.),
             tooltipText = "Memory used for vertexes")
 
@@ -1478,7 +1478,7 @@ class LevelEditor(GLViewport):
             return sum(size(c) for c in chunks.itervalues())
 
 
-        mbldReadout = SmallValueDisplay(width=60, 
+        mbldReadout = SmallValueDisplay(width=60,
             get_value=lambda:"MBd: %0.1f" % (dataSize() / 1000000.),
             tooltipText = "Memory used for saved game data.")
 
@@ -1488,18 +1488,18 @@ class LevelEditor(GLViewport):
             col.append(CheckBoxLabel("Items", fg_color = (0x22, 0xff, 0x22), ref=Settings.drawItems.propertyRef()))
             col.append(CheckBoxLabel("TileEntities", fg_color = (0xff, 0xff, 0x22), ref=Settings.drawTileEntities.propertyRef()))
             col.append(CheckBoxLabel("TileTicks", ref=Settings.drawTileTicks.propertyRef()))
-            col.append(CheckBoxLabel("Unpopulated Chunks", fg_color = renderer.TerrainPopulatedRenderer.color, 
+            col.append(CheckBoxLabel("Unpopulated Chunks", fg_color = renderer.TerrainPopulatedRenderer.color,
                                      ref=Settings.drawUnpopulatedChunks.propertyRef()))
 
             col.append(CheckBoxLabel("Sky", ref=Settings.drawSky.propertyRef()))
             col.append(CheckBoxLabel("Fog", ref=Settings.drawFog.propertyRef()))
-            col.append(CheckBoxLabel("Ceiling", 
+            col.append(CheckBoxLabel("Ceiling",
                 ref=Settings.showCeiling.propertyRef()))
 
-            col.append(CheckBoxLabel("Hidden Ores", 
+            col.append(CheckBoxLabel("Hidden Ores",
                 ref=Settings.showHiddenOres.propertyRef()))
 
-            col.append(CheckBoxLabel("Chunk Redraw", fg_color = (0xff, 0x99, 0x99), 
+            col.append(CheckBoxLabel("Chunk Redraw", fg_color = (0xff, 0x99, 0x99),
                 ref=Settings.showChunkRedraw.propertyRef()))
 
             col = Column(col, align="r")
@@ -1518,7 +1518,7 @@ class LevelEditor(GLViewport):
         self.viewportButton = Button("Camera View", action=self.swapViewports,
             tooltipText = "Shortcut: TAB")
 
-        row = (viewDistanceDown, Label("View Distance:"), viewDistanceReadout, viewDistanceUp, 
+        row = (viewDistanceDown, Label("View Distance:"), viewDistanceReadout, viewDistanceUp,
                readoutGrid, viewButton, self.viewportButton)
 
 
@@ -1769,11 +1769,11 @@ class LevelEditor(GLViewport):
 
             def sortKey(x):
                 val = x[colnum]
-                if isinstance(val, basestring): 
+                if isinstance(val, basestring):
                     alphanum_key(val)
                 return val
 
-            blockRows.sort(key = sortKey, 
+            blockRows.sort(key = sortKey,
                            reverse = table.reverseSort)
             table.sortColumn = col
             rows[:] = blockRows
@@ -1790,7 +1790,7 @@ class LevelEditor(GLViewport):
         tableBacking.shrink_wrap()
 
         def saveToFile():
-            filename = askSaveFile( mcplatform.docsFolder, 
+            filename = askSaveFile( mcplatform.docsFolder,
                                     title='Save analysis...',
                                     defaultName=self.level.displayName + "_analysis",
                                     filetype='Comma Separated Values\0*.txt\0\0',
@@ -1893,14 +1893,14 @@ class LevelEditor(GLViewport):
                     teximage[:, :2] = darkColor
 
                 GL.glTexImage2D(GL.GL_TEXTURE_2D, lev, GL.GL_RGBA8,
-                         w/step, h/step, 0, 
-                         GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, 
+                         w/step, h/step, 0,
+                         GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
                          teximage[::step, ::step].ravel())
 
 
         return Texture(makeSixteenBlockTex, mode)
 
-    def showProgress(self, *a, **kw): 
+    def showProgress(self, *a, **kw):
         return showProgress(*a, **kw)
 
     def drawConstructionCube(self, box, color, texture=None):
@@ -2196,8 +2196,8 @@ class LevelEditor(GLViewport):
         if any(self.cameraInputs) or any(self.cameraPanKeys):
             self.postMouseMoved()
 
-        if(self.renderer.needsImmediateRedraw or 
-           (self.renderer.needsRedraw and datetime.now() - self.lastRendererDraw > timedelta(0, 1, 0) / 3)): 
+        if(self.renderer.needsImmediateRedraw or
+           (self.renderer.needsRedraw and datetime.now() - self.lastRendererDraw > timedelta(0, 1, 0) / 3)):
             self.invalidate()
             self.lastRendererDraw = datetime.now()
         if self.renderer.needsImmediateRedraw:
@@ -2309,7 +2309,7 @@ class LevelEditor(GLViewport):
             self.dragInProgress = True;
             self.dragStartPoint = (x,y)
             self.currentOperation.dragStart(x,y)
-      '     
+      '
     def mouseDragOff(self):
         if self.dragInProgress:
             self.dragInProgress = False
@@ -2333,12 +2333,12 @@ class LevelEditor(GLViewport):
 #                pos = self.blockFaceUnderCursor[0];
 #                blockID = self.level.blockAt(*pos)
 #                blockData = self.level.blockDataAt(*pos)
-#                
+#
 #                return "{name} ({bid})\n{pos}".format(name=self.level.materials.names[blockID][blockData], bid=blockID,pos=pos)
-#                
+#
 #        except Exception, e:
 #            return None
-#        
+#
 
     def generateStars(self):
         starDistance = 999.0
@@ -2606,7 +2606,7 @@ class LevelEditor(GLViewport):
                         self.toolbar.tools[0].endSelection()
                 self.mouseLookOff()
 
-            #movement       
+            #movement
             if keyname == config.config.get('Keys', 'Left'):
                 d[0] = -1.
                 im[0] = -1.
@@ -2768,7 +2768,7 @@ class LevelEditor(GLViewport):
 
             if hasattr(self.level, 'Time'):
                 time = self.level.Time
-                #timezone adjust - 
+                #timezone adjust -
                 #minecraft time shows 0:00 on day 0 at the first sunrise
                 #I want that to be 6:00 on day 1, so I add 30 hours
                 timezoneAdjust = ticksPerHour * 30
@@ -3360,7 +3360,7 @@ class LevelEditor(GLViewport):
         return
 
 #        glColor(1.0, 0., 0., 1.0);
-#        
+#
 #        #glDrawBuffer(GL_FRONT);
 #        glMatrixMode(GL_PROJECTION);
 #        glPushMatrix();
@@ -3455,24 +3455,24 @@ class LevelEditor(GLViewport):
 ##
 ##        print blockCount, fbo;
 ##
-##        destBlocks = zeros(blockCount, 'uint8')         
+##        destBlocks = zeros(blockCount, 'uint8')
 ##        (sourceTex, destTex) = glGenTextures(2)
-##        
+##
 ##        glBindTexture(GL_TEXTURE_3D, sourceTex);
 ##        glTexImage3D(GL_TEXTURE_3D, 0, 1,
 ##                     level.Width, level.Length, level.Height,
 ##                     0, GL_RED, GL_UNSIGNED_BYTE,
 ##                     blocks)
-##        
+##
 ##        #return
-##    
+##
 ##        glBindTexture(GL_TEXTURE_2D, destTex);
 ##        glTexImage2D(GL_TEXTURE_2D, 0, 1,
 ##                     level.Width, level.Length,
 ##                     0, GL_RED, GL_UNSIGNED_BYTE, destBlocks)
 ##        glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 ##        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, destTex, 0)
-##        
+##
 ##        vertShader = glCreateShader(GL_VERTEX_SHADER)
 ##
 ##        vertShaderSource = """
@@ -3484,7 +3484,7 @@ class LevelEditor(GLViewport):
 ##
 ##        glShaderSource(vertShader, vertShaderSource);
 ##        glCompileShader(vertShader);
-##        
+##
 ##        fragShader = glCreateShader(GL_FRAGMENT_SHADER)
 ##
 ##        fragShaderSource = """
@@ -3496,9 +3496,9 @@ class LevelEditor(GLViewport):
 ##
 ##        glShaderSource(fragShader, fragShaderSource);
 ##        glCompileShader(fragShader);
-##        
 ##
-##        
+##
+##
 ##        prog = glCreateProgram()
 ##
 ##        glAttachShader(prog, vertShader)
@@ -3511,11 +3511,11 @@ class LevelEditor(GLViewport):
 ##        glVertexPointer(2, GL_FLOAT, 0, [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]);
 ##        glDrawArrays(GL_QUADS, 0, 4);
 ##        glEnable(GL_DEPTH_TEST);
-##        
+##
 ##        glFlush();
 ##        destBlocks = glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE);
 ##        print destBlocks, destBlocks[0:8];
-##        raise SystemExit;      
+##        raise SystemExit;
 
     def handleMemoryError(self):
         if self.renderer.viewDistance <= 2:
@@ -3549,7 +3549,7 @@ class EditorToolbar(GLOrtho):
 
         return map(lambda x:x * f, self.toolbarSize)
 
-        #return ( self.toolbarWidthRatio * width, 
+        #return ( self.toolbarWidthRatio * width,
         #         self.toolbarWidthRatio * width * self.toolbarTextureSize[1] / self.toolbarTextureSize[0] )
 
     def __init__(self, rect, tools, *args, **kw):
@@ -3604,7 +3604,7 @@ class EditorToolbar(GLOrtho):
     def showToolOptions(self, toolNumber):
         if toolNumber < len(self.tools) and toolNumber >= 0:
             t = self.tools[toolNumber]
-            #if not t.toolEnabled(): return;   
+            #if not t.toolEnabled(): return;
             if t.optionsPanel:
                 t.optionsPanel.present()
 
@@ -3745,7 +3745,7 @@ class EditorToolbar(GLOrtho):
             # #tw = th;
             # tw = (24./20.)* th
             # th = tw;
-            # 
+            #
             #===================================================================
             tx = 20. * float(currentToolNumber)
             ty = 0.
