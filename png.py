@@ -425,9 +425,9 @@ class Writer:
         connexions interlaced images can be partially decoded by the
         browser to give a rough view of the image that is successively
         refined as more image data appears.
-        
+
         .. note ::
-        
+
           Enabling the `interlace` option requires the entire image
           to be processed in working memory.
 
@@ -615,7 +615,7 @@ class Writer:
         If `interlace` is specified (when creating the instance), then
         an interlaced PNG file will be written.  Supply the rows in the
         normal image order; the interlacing is carried out internally.
-        
+
         .. note ::
 
           Interlacing will require the entire image to be in working memory.
@@ -638,7 +638,7 @@ class Writer:
 
     Most users are expected to find the :meth:`write` or
     :meth:`write_array` method more convenient.
-        
+
     The rows should be given to this method in the order that
     they appear in the output file.  For straightlaced images,
     this is the usual top to bottom ordering, but for interlaced
@@ -1853,7 +1853,7 @@ class Reader:
         This function returns a 4-tuple:
         (*width*, *height*, *pixels*, *metadata*).
         *width*, *height*, *metadata* are as per the :meth:`read` method.
-        
+
         *pixels* is the pixel data in boxed row flat pixel format.
         """
 
