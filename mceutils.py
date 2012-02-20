@@ -534,7 +534,7 @@ class MenuButton(Button):
 
 
 class ChoiceButton(ValueButton):
-    align="c"
+    align = "c"
     choose = None
 
     def __init__(self, choices, **kw):
@@ -668,7 +668,7 @@ def showProgress(progressText, progressIterator, cancel=False):
             if amount is not None:
 
                 if isinstance(amount, tuple):
-                    if len(amount)>2:
+                    if len(amount) > 2:
                         infoText = ": " + amount[2]
 
                     amount, max = amount[:2]
