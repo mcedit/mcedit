@@ -167,7 +167,7 @@ def askOpenFileWin32(title, schematics, initialDir):
                    | win32con.OFN_NOCHANGEDIR
                    | win32con.OFN_FILEMUSTEXIST
                    | win32con.OFN_LONGNAMES
-                   #|win32con.OFN_EXTENSIONDIFFERENT 
+                   #|win32con.OFN_EXTENSIONDIFFERENT
                    ),
             Title=title,
             Filter=f,
@@ -242,12 +242,12 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 
     return filename
 
-#                
+#
 #    if sys.platform == "win32":
 #        try:
-#            
+#
 #            (filename, customfilter, flags) = win32gui.GetSaveFileNameW(
-#                hwndOwner = display.get_wm_info()['window'],                                                       
+#                hwndOwner = display.get_wm_info()['window'],
 #                #InitialDir=saveFileDir,
 #                Flags=win32con.OFN_EXPLORER | win32con.OFN_NOCHANGEDIR | win32con.OFN_OVERWRITEPROMPT,
 #                File=initialDir + os.sep + displayName,
@@ -258,27 +258,27 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 #        except Exception, e:
 #            print "Error getting filename: {0!r}".format(e)
 #            return
-#            
+#
 #    elif sys.platform == "darwin" and AppKit is not None:
 #        sp = AppKit.NSSavePanel.savePanel();
 #        sp.setDirectory_(initialDir)
 #        sp.setAllowedFileTypes_([fileFormat])
 #        #sp.setFilename_(self.editor.level.displayName)
-#        
+#
 #        if sp.runModal() == 0:
 #            return; #pressed cancel
 #
 #        filename = sp.filename()
 #        AppKit.NSApp.mainWindow().makeKeyWindow();
-#        
+#
 #    else:
-#        
-#        filename = request_new_filename(prompt = "Save this schematic...", 
-#                                        suffix = ".{0}".format(fileFormat), 
-#                                        directory = initialDir, 
-#                                        filename = displayName, 
+#
+#        filename = request_new_filename(prompt = "Save this schematic...",
+#                                        suffix = ".{0}".format(fileFormat),
+#                                        directory = initialDir,
+#                                        filename = displayName,
 #                                        pathname = None)
-#    
+#
 #    return filename
 
 def documents_folder():
