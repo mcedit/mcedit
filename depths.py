@@ -26,5 +26,3 @@ class DepthOffset(object):
     FillMarkers = -3
     CloneMarkers = -3
     CloneReticle = -3
-
-
