@@ -195,9 +195,9 @@ def askSaveSchematic(initialDir, displayName, fileFormat):
 
 def askCreateWorld(initialDir):
     defaultName = name = "Untitled World"
-    i=0
+    i = 0
     while exists(join(initialDir, name)):
-        i+= 1
+        i += 1
         name = defaultName + " " + str(i)
 
     return askSaveFile(initialDir,
