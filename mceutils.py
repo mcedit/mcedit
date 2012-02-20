@@ -531,6 +531,7 @@ class MenuButton(Button):
 class ChoiceButton(ValueButton):
     align="c"
     choose = None
+
     def __init__(self, choices, **kw):
         #passing an empty list of choices is ill-advised
 
@@ -587,11 +588,14 @@ def CheckBoxLabel(title, *args, **kw):
     if tooltipText:
         cb.tooltipText = tooltipText
         lab.tooltipText = tooltipText
+
     class CBRow(Row):
         margin = 0
+
         @property
         def value(self):
             return self.checkbox.value
+
         @value.setter
         def value(self, val):
             self.checkbox.value = val
@@ -620,6 +624,7 @@ def setWindowCaption(prefix):
     class ctx:
         def __enter__(self):
             display.set_caption(prefix + caption)
+
         def __exit__(self, *args):
             display.set_caption(caption)
     return ctx()
@@ -685,6 +690,7 @@ def showProgress(progressText, progressIterator, cancel=False):
             progressPercent = (int(self.progressFraction * 10000))
             left = delta * (10000 - progressPercent) / (progressPercent or 1)
             return "Time left: {0}".format(left)
+
         def cancel(self):
             if cancel: self.dismiss(False)
 
