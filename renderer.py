@@ -738,12 +738,12 @@ class BlockRenderer(object):
     detailLevels = (0,)
     layer = Layer.Blocks
     directionOffsets = {
-        FaceXDecreasing:s_[:-2, 1:-1, 1:-1],
-        FaceXIncreasing:s_[2:, 1:-1, 1:-1],
-        FaceYDecreasing:s_[1:-1, 1:-1, :-2],
-        FaceYIncreasing:s_[1:-1, 1:-1, 2:],
-        FaceZDecreasing:s_[1:-1, :-2, 1:-1],
-        FaceZIncreasing:s_[1:-1, 2:, 1:-1],
+        FaceXDecreasing: s_[:-2, 1:-1, 1:-1],
+        FaceXIncreasing: s_[2:, 1:-1, 1:-1],
+        FaceYDecreasing: s_[1:-1, 1:-1, :-2],
+        FaceYIncreasing: s_[1:-1, 1:-1, 2:],
+        FaceZDecreasing: s_[1:-1, :-2, 1:-1],
+        FaceZIncreasing: s_[1:-1, 2:, 1:-1],
     }
     renderstate = ChunkCalculator.renderstateAlphaTest
 
