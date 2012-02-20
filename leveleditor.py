@@ -149,18 +149,18 @@ class ControlPanel(Panel):
 
         cmd = mcplatform.cmd_name
         hotkeys = ([(cmd + "-N", "Create New World", editor.mcedit.createNewWorld),
-                    (cmd + "-O", "Open World...", editor.askOpenFile) ,
-                    (cmd + "-L", "Load World...", editor.askLoadWorld) ,
-                    (cmd + "-S", "Save", editor.saveFile) ,
-                    (cmd + "-R", "Reload", editor.reload) ,
-                    (cmd + "-W", "Close", editor.closeEditor) ,
-                    ("", "", lambda: None) ,
+                    (cmd + "-O", "Open World...", editor.askOpenFile),
+                    (cmd + "-L", "Load World...", editor.askLoadWorld),
+                    (cmd + "-S", "Save", editor.saveFile),
+                    (cmd + "-R", "Reload", editor.reload),
+                    (cmd + "-W", "Close", editor.closeEditor),
+                    ("", "", lambda: None),
 
-                    ("G", "Goto", editor.showGotoPanel) ,
-                    (cmd + "-I", "World Info", editor.showWorldInfo) ,
-                    (cmd + "-Z", "Undo", editor.undo) ,
+                    ("G", "Goto", editor.showGotoPanel),
+                    (cmd + "-I", "World Info", editor.showWorldInfo),
+                    (cmd + "-Z", "Undo", editor.undo),
                     (cmd + "-A", "Select All", editor.selectAll),
-                    (cmd + "-D", "Deselect", editor.deselect) ,
+                    (cmd + "-D", "Deselect", editor.deselect),
                     (cmd + "-F", AttrRef(editor, 'viewDistanceLabelText'), editor.swapViewDistance),
                     ("Alt-F4", "Quit", editor.quit),
                     ])
@@ -867,7 +867,7 @@ class CameraViewport(GLViewport):
 
                         chunk.compress()
 
-                        yield (i , self.editor.level.chunkCount)
+                        yield (i, self.editor.level.chunkCount)
                         i += 1
 
                 progressInfo = "Deleting the item {0} from the entire world ({1} chunks)".format(itemName(chestWidget.id, 0), self.editor.level.chunkCount)
@@ -907,7 +907,7 @@ class CameraViewport(GLViewport):
         addItemButton = Button("Add Item", action=addItem, enable=addEnable)
         deleteItemButton = Button("Delete This Item", action=deleteItem, enable=deleteEnable)
         deleteFromWorldButton = Button("Delete Item ID From Entire World", action=deleteFromWorld, enable=deleteEnable)
-        deleteCol = Column((addItemButton, deleteItemButton, deleteFromWorldButton) , align="l")
+        deleteCol = Column((addItemButton, deleteItemButton, deleteFromWorldButton), align="l")
 
         fieldRow = Row(fieldRow)
         col = Column((chestItemTable, fieldRow, deleteCol))
@@ -1052,14 +1052,14 @@ class CameraViewport(GLViewport):
     floorQuad = array(((-4000.0, 0.0, -4000.0),
                      (-4000.0, 0.0, 4000.0),
                      (4000.0, 0.0, 4000.0),
-                     (4000.0, 0.0, -4000.0) ,
+                     (4000.0, 0.0, -4000.0),
                      ), dtype='float32')
 
     def updateFloorQuad(self):
         floorQuad = ((-4000.0, 0.0, -4000.0),
                      (-4000.0, 0.0, 4000.0),
                      (4000.0, 0.0, 4000.0),
-                     (4000.0, 0.0, -4000.0) ,
+                     (4000.0, 0.0, -4000.0),
                      )
 
         floorQuad = array(floorQuad, dtype='float32')
