@@ -453,8 +453,8 @@ class CameraViewport(GLViewport):
         ws = self.get_root().size
         if center:
             x, y = ws
-            x//=2
-            y//=2
+            x //= 2
+            y //= 2
         else:
             x, y = mouse.get_pos()
         if (x < 0 or y < 0 or x >= ws[0] or
@@ -1076,10 +1076,10 @@ class CameraViewport(GLViewport):
         lines = []
         minz = minx = -256
         maxz = maxx = 256
-        for x in range(minx, maxx+1, 16):
+        for x in range(minx, maxx + 1, 16):
             lines.append((x, 0, minz))
             lines.append((x, 0, maxz))
-        for z in range(minz, maxz+1, 16):
+        for z in range(minz, maxz + 1, 16):
             lines.append((minx, 0, z))
             lines.append((maxx, 0, z))
 
@@ -1314,8 +1314,8 @@ class ChunkViewport(CameraViewport):
     def zoom(self, f):
         x, y, z = self.cameraPosition
         mx, my, mz = self.blockFaceUnderCursor[0]
-        dx, dz = mx-x, mz-z
-        s = min(4.0, max(1/16., self.defaultScale / f))
+        dx, dz = mx - x, mz - z
+        s = min(4.0, max(1 / 16., self.defaultScale / f))
         if s != self.defaultScale:
             self.defaultScale = s
             f = 1.0 - f
@@ -1706,8 +1706,8 @@ class LevelEditor(GLViewport):
         blockCounts = sorted([(level.materials[t & 0xff, t >> 8], types[t]) for t in presentTypes[0]])
 
         counts = []
-        c=0
-        b=level.materials.Air
+        c = 0
+        b = level.materials.Air
         for block, count in blockCounts:
             if b.name != block.name:
                 counts.append((b, c))
@@ -1856,7 +1856,7 @@ class LevelEditor(GLViewport):
             #                  GL.GL_NEAREST_MIPMAP_NEAREST),
             GL.glTexParameter(GL.GL_TEXTURE_2D,
                               GL_TEXTURE_MAX_LEVEL,
-                              maxLevel-1)
+                              maxLevel - 1)
 
             for lev in range(maxLevel):
                 step = 1 << lev
@@ -1869,7 +1869,7 @@ class LevelEditor(GLViewport):
                     teximage[:, :2] = darkColor
 
                 GL.glTexImage2D(GL.GL_TEXTURE_2D, lev, GL.GL_RGBA8,
-                         w/step, h/step, 0,
+                         w / step, h / step, 0,
                          GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
                          teximage[::step, ::step].ravel())
 
@@ -2014,7 +2014,7 @@ class LevelEditor(GLViewport):
             resp = ask("It looks like this level is completely empty!  You'll have to create some chunks before you can get started.", responses=["Create Chunks", "Cancel"])
             if resp == "Create Chunks":
                 x, y, z = self.mainViewport.cameraPosition
-                box = BoundingBox((x-128, 0, z-128), (256, self.level.Height, 256))
+                box = BoundingBox((x - 128, 0, z - 128), (256, self.level.Height, 256))
                 self.selectionTool.setSelection(box)
                 self.toolbar.selectTool(8)
                 self.toolbar.tools[8].createChunks()
@@ -3006,13 +3006,13 @@ class LevelEditor(GLViewport):
             if generatorPanel.generatorChoice.selectedChoice == "Flatland":
                 y = generatorPanel.chunkHeight
 
-            newlevel.setPlayerPosition((x+0.5, y + 2.8, z+0.5))
-            newlevel.setPlayerOrientation((f*90.0, 0.0))
+            newlevel.setPlayerPosition((x + 0.5, y + 2.8, z + 0.5))
+            newlevel.setPlayerOrientation((f * 90.0, 0.0))
 
             newlevel.setPlayerSpawnPosition((x, y + 1, z))
             newlevel.GameType = gametypeButton.gametype
             newlevel.saveInPlace()
-            worker = generatorPanel.generate(newlevel, BoundingBox((x-w*8, 0, z-h*8), (w*16, newlevel.Height, h*16)))
+            worker = generatorPanel.generate(newlevel, BoundingBox((x - w * 8, 0, z - h * 8), (w * 16, newlevel.Height, h * 16)))
 
             if "Canceled" == showProgress("Generating chunks...", worker, cancel=True):
                 raise RuntimeError, "Canceled."
@@ -3392,7 +3392,7 @@ class LevelEditor(GLViewport):
         def idleHandler(evt):
 
             x, y, z = self.blockFaceUnderCursor[0]
-            cx, cz = x//16, z//16
+            cx, cz = x // 16, z // 16
             cr =  self.renderer.chunkRenderers.get((cx, cz))
             if None is cr:
                 return
