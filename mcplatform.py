@@ -46,6 +46,8 @@ from pymclevel import items
 import shutil
 
 texturePacksDir = os.path.join(minecraftDir, "texturepacks")
+
+
 def getTexturePacks():
     try:
         return os.listdir(texturePacksDir)
@@ -90,6 +92,7 @@ if sys.platform == "darwin":
     except ImportError:
         pass
 
+
 def Lion():
     try:
         import distutils.version
@@ -103,6 +106,8 @@ def Lion():
 
 lastSchematicsDir = None
 lastSaveDir = None
+
+
 def askOpenFile(title='Select a Minecraft level....', schematics=False):
     global lastSchematicsDir, lastSaveDir
 
@@ -149,6 +154,7 @@ def askOpenFile(title='Select a Minecraft level....', schematics=False):
 
     return filename
 
+
 def askOpenFileWin32(title, schematics, initialDir):
     try:
         # if schematics:
@@ -185,6 +191,8 @@ def askSaveSchematic(initialDir, displayName, fileFormat):
                 filetype='Minecraft Schematics (*.{0})\0*.{0}\0\0'.format(fileFormat),
                 suffix=fileFormat,
                 )
+
+
 def askCreateWorld(initialDir):
     defaultName = name = "Untitled World"
     i=0
@@ -198,6 +206,7 @@ def askCreateWorld(initialDir):
                 filetype='Minecraft World\0*.*\0\0',
                 suffix="",
                 )
+
 
 def askSaveFile(initialDir, title, defaultName, filetype, suffix):
     if sys.platform == "win32":
@@ -280,6 +289,7 @@ def askSaveFile(initialDir, title, defaultName, filetype, suffix):
 #
 #    return filename
 
+
 def documents_folder():
     docsFolder = None
 
@@ -305,6 +315,7 @@ def documents_folder():
     except: pass;
 
     return docsFolder
+
 
 def platform_open(path):
     try:
@@ -358,6 +369,7 @@ def goPortable():
     schematicsDir = portableSchematicsDir
     portable = True
 
+
 def move_displace(src, dst):
     dstFolder = os.path.basename(os.path.dirname(dst))
     if not os.path.exists(dst):
@@ -375,6 +387,7 @@ def move_displace(src, dst):
         os.rename(dst, olddst)
         shutil.move(src, dst)
 
+
 def goFixed():
     global configFilePath, schematicsDir, portable
 
@@ -386,6 +399,7 @@ def goFixed():
     configFilePath = fixedConfigFilePath
     schematicsDir = fixedSchematicsDir
     portable = False
+
 
 def portableConfigExists():
     return (os.path.exists(portableConfigFilePath)  # mcedit.ini in MCEdit folder
