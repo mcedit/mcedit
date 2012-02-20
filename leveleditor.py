@@ -637,7 +637,7 @@ class CameraViewport(GLViewport):
             TableColumn("", 200),
             )
         )
-        mobTable.num_rows = lambda : len(mobs)
+        mobTable.num_rows = lambda: len(mobs)
         mobTable.row_data = lambda i: (mobs[i],)
         mobTable.row_is_selected = lambda x: x == mobTable.selectedIndex
         mobTable.click_row = selectTableRow
@@ -651,7 +651,7 @@ class CameraViewport(GLViewport):
 
         mobTable.selectedIndex = mobs.index(id)
 
-        choiceCol = Column((ValueDisplay(width = 200, get_value=lambda : selectedMob() + " spawner"), mobTable))
+        choiceCol = Column((ValueDisplay(width = 200, get_value=lambda: selectedMob() + " spawner"), mobTable))
 
         okButton = Button("OK", action=panel.dismiss)
         panel.add(Column((choiceCol, okButton)))
@@ -790,7 +790,7 @@ class CameraViewport(GLViewport):
         def selectTableRow(i, evt):
             chestWidget.selectedItemIndex = i
 
-        chestItemTable.num_rows = lambda : len(tileEntityTag['Items'])
+        chestItemTable.num_rows = lambda: len(tileEntityTag['Items'])
         chestItemTable.row_data = getRowData
         chestItemTable.row_is_selected = lambda x: x == chestWidget.selectedItemIndex
         chestItemTable.click_row = selectTableRow
@@ -1546,7 +1546,7 @@ class LevelEditor(GLViewport):
     def viewMode(self, val):
         if val == self._viewMode:
             return
-        ports = {"Chunk" : self.chunkViewport, "Camera" : self.mainViewport}
+        ports = {"Chunk": self.chunkViewport, "Camera": self.mainViewport}
         for p in ports.values():
             p.set_parent(None)
         port = ports.get(val, self.mainViewport)
@@ -1758,7 +1758,7 @@ class LevelEditor(GLViewport):
             rows[:] = blockRows
             extendEntities()
 
-        table.num_rows = lambda : len(rows)
+        table.num_rows = lambda: len(rows)
         table.row_data = lambda i: rows[i]
         table.row_is_selected = lambda x: False
         table.click_column_header = sortColumn
@@ -2915,7 +2915,7 @@ class LevelEditor(GLViewport):
         # worlds = [w[2] for w in worldData]
 
         worldTable.selectedWorldIndex = 0
-        worldTable.num_rows = lambda : len(worldData)
+        worldTable.num_rows = lambda: len(worldData)
         worldTable.row_data = lambda i: worldData[i]
         worldTable.row_is_selected = lambda x: x == worldTable.selectedWorldIndex
         worldTable.click_row = click_row
