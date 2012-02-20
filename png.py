@@ -194,10 +194,12 @@ _adam7 = ((0, 0, 8, 8),
           (1, 0, 2, 2),
           (0, 1, 1, 2))
 
+
 def group(s, n):
     # See
     # http://www.python.org/doc/2.6/library/functions.html#zip
     return zip(*[iter(s)] * n)
+
 
 def isarray(x):
     """Same as ``isinstance(x, array)`` except on Python 2.2, where it
@@ -252,6 +254,7 @@ def interleave_planes(ipixels, apixels, ipsize, apsize):
         out[i + ipsize:newtotal:newpsize] = apixels[i:atotal:apsize]
     return out
 
+
 def check_palette(palette):
     """Check a palette argument (to the :class:`Writer` class) for validity.
     Returns the palette as a list if okay; raises an exception otherwise.
@@ -280,10 +283,12 @@ def check_palette(palette):
                   "palette entry %d: values must be integer: 0 <= x <= 255" % i)
     return p
 
+
 class Error(Exception):
     prefix = 'Error'
     def __str__(self):
         return self.prefix + ': ' + ' '.join(self.args)
+
 
 class FormatError(Error):
     """Problem with input file format.  In other words, PNG file does
@@ -291,6 +296,7 @@ class FormatError(Error):
     """
 
     prefix = 'FormatError'
+
 
 class ChunkError(FormatError):
     prefix = 'ChunkError'
@@ -945,6 +951,7 @@ class Writer:
                             pixels[offset + i:end_offset:skip]
                     yield row
 
+
 def write_chunk(outfile, tag, data=''):
     """
     Write a PNG chunk to the output file, including length and
@@ -959,12 +966,14 @@ def write_chunk(outfile, tag, data=''):
     checksum = zlib.crc32(data, checksum)
     outfile.write(struct.pack("!i", checksum))
 
+
 def write_chunks(out, chunks):
     """Create a PNG file by writing out the chunks."""
 
     out.write(_signature)
     for chunk in chunks:
         write_chunk(out, *chunk)
+
 
 def filter_scanline(type, line, fo, prev=None):
     """Apply a scanline filter to a scanline.  `type` specifies the
@@ -2061,6 +2070,7 @@ import unittest
 def test():
     unittest.main(__name__)
 
+
 def topngbytes(name, rows, x, y, **k):
     """Convenience function for creating a PNG file "in memory" as a
     string.  Creates a :class:`Writer` instance using the keyword arguments,
@@ -2081,6 +2091,7 @@ def topngbytes(name, rows, x, y, **k):
         w.close()
     return f.getvalue()
 
+
 def testWithIO(inp, out, f):
     """Calls the function `f` with ``sys.stdin`` changed to `inp`
     and ``sys.stdout`` changed to `out`.  They are restored when `f`
@@ -2094,6 +2105,7 @@ def testWithIO(inp, out, f):
         sys.stdin = oldin
         sys.stdout = oldout
     return x
+
 
 class Test(unittest.TestCase):
     # This member is used by the superclass.  If we don't define a new
@@ -2442,6 +2454,7 @@ class Test(unittest.TestCase):
 
 
 # === Command Line Support ===
+
 
 def _dehex(s):
     """Liberally convert from hex string to binary string."""
@@ -2956,6 +2969,7 @@ acf0c6211c036f14a239703741740adc7da227edd7e56b833d0ae92549b4d357
 """),
 }
 
+
 def test_suite(options, args):
     """
     Create a PNG test image and write the file to stdout.
@@ -3137,6 +3151,7 @@ def test_suite(options, args):
                     interlace=options.interlace)
     writer.write_array(sys.stdout, pixels)
 
+
 def read_pam_header(infile):
     """
     Read (the rest of a) PAM header.  `infile` should be positioned
@@ -3176,6 +3191,7 @@ def read_pam_header(infile):
         raise Error(
           'WIDTH, HEIGHT, DEPTH, MAXVAL must all be positive integers')
     return 'P7', width, height, depth, maxval
+
 
 def read_pnm_header(infile, supported=('P5', 'P6')):
     """
@@ -3254,6 +3270,7 @@ def read_pnm_header(infile, supported=('P5', 'P6')):
     depth = (1, 3)[type == 'P6']
     return header[0], header[1], header[2], depth, header[3]
 
+
 def write_pnm(file, width, height, pixels, meta):
     """Write a Netpbm PNM/PAM file."""
 
@@ -3297,6 +3314,7 @@ def write_pnm(file, width, height, pixels, meta):
     for row in pixels:
         file.write(struct.pack(fmt, *row))
     file.flush()
+
 
 def color_triple(color):
     """
