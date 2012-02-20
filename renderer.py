@@ -872,7 +872,7 @@ class TileEntityRenderer(EntityRendererGeneric):
 
     def makeChunkVertices(self, chunk):
         tilePositions = []
-        for i, ent in enumerate (chunk.TileEntities):
+        for i, ent in enumerate(chunk.TileEntities):
             if i % 10 == 0:
                 yield
             if not 'x' in ent:
@@ -2604,15 +2604,15 @@ class MCRenderer(object):
     renderErrorHandled = False
 
     def addDebugInfo(self, addDebugString):
-        addDebugString("BU: {0} MB, ".format (
+        addDebugString("BU: {0} MB, ".format(
             self.bufferUsage / 1000000,
              ))
 
-        addDebugString("WQ: {0}, ".format (len(self.invalidChunkQueue)))
+        addDebugString("WQ: {0}, ".format(len(self.invalidChunkQueue)))
         if self.chunkIterator:
             addDebugString("[LR], ")
 
-        addDebugString("CR: {0}, ".format (len(self.chunkRenderers),))
+        addDebugString("CR: {0}, ".format(len(self.chunkRenderers),))
 
     def next(self):
         self.chunkWorker.next()
