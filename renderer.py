@@ -650,7 +650,7 @@ class ChunkCalculator (object):
 
         slabs = areaBlocks == alphaMaterials.StoneSlab.ID
         if slabs.any():
-            areaBlockLights[slabs] = areaBlockLights[:,:,1:][slabs[:,:,:-1]]
+            areaBlockLights[slabs] = areaBlockLights[:, :, 1:][slabs[:, :, :-1]]
         yield
 
         showHiddenOres = cr.renderer.showHiddenOres
@@ -823,7 +823,7 @@ class BlockRenderer(object):
 
 class EntityRendererGeneric(BlockRenderer):
     renderstate = ChunkCalculator.renderstateEntity
-    detailLevels = (0,1,2)
+    detailLevels = (0, 1, 2)
 
     def drawFaceVertices(self, buf):
         if 0 == len(buf):
@@ -848,7 +848,7 @@ class EntityRendererGeneric(BlockRenderer):
             glDrawArrays(GL_QUADS, 0, len(buf) * 4)
         glDepthMask(True)
 
-    def _computeVertices(self, positions, colors, offset=False, chunkPosition=(0,0)):
+    def _computeVertices(self, positions, colors, offset=False, chunkPosition=(0, 0)):
         cx, cz = chunkPosition
         x = cx << 4
         z = cz << 4
@@ -1095,7 +1095,7 @@ class LowDetailBlockRenderer(BlockRenderer):
 
             flatcolors = level.materials.flatColors[blockTypes, ch.Data[blockIndices] & 0xf][:, newaxis, :]
             # flatcolors[:,:,:3] *= (0.6 + (h * (0.4 / float(chunkHeight-1)))) [topBlocks != 0][:, newaxis, newaxis]
-            x,z,y = blockIndices.nonzero()
+            x, z, y = blockIndices.nonzero()
 
             yield
             vertexArray = zeros( (len(x), 4, 4), dtype='float32')
@@ -1108,7 +1108,7 @@ class LowDetailBlockRenderer(BlockRenderer):
             va0[..., :3] += faceVertexTemplates[FaceYIncreasing, ..., :3]
 
             overmask = overblocks > 0
-            flatcolors[overmask] = level.materials.flatColors[:,0][overblocks[overmask]][:,newaxis]
+            flatcolors[overmask] = level.materials.flatColors[:, 0][overblocks[overmask]][:, newaxis]
 
             if self.detailLevel == 2:
                 heightfactor = (y / float(2.0 * ch.world.Height)) + 0.5
@@ -1140,7 +1140,7 @@ class LowDetailBlockRenderer(BlockRenderer):
             va1.view('uint8')[_RGBA] = flatcolors
             grassmask = topBlocks[nonAirBlocks] == 2
             # color grass sides with dirt's color
-            va1.view('uint8')[_RGBA][grassmask] = level.materials.flatColors[:,0][[3]][:,newaxis]
+            va1.view('uint8')[_RGBA][grassmask] = level.materials.flatColors[:, 0][[3]][:, newaxis]
 
             va2 = array(va1)
             va2[_XYZ][:, (1, 2), 0] += step
@@ -1799,7 +1799,7 @@ class FeatureBlockRenderer(BlockRenderer):
 
         vertexArray.view('uint8')[_RGBA] = self.fenceTemplates[..., 5][..., newaxis]
 
-        vertexArray.view('uint8')[_RGB] *= areaBlockLights[1:-1,1:-1,1:-1][fenceIndices][..., newaxis, newaxis, newaxis]
+        vertexArray.view('uint8')[_RGB] *= areaBlockLights[1:-1, 1:-1, 1:-1][fenceIndices][..., newaxis, newaxis, newaxis]
         vertexArray.shape = (vertexArray.shape[0] * 6, 4, 6)
         yield
         self.vertexArrays = [vertexArray]
@@ -1838,12 +1838,12 @@ class StairBlockRenderer(BlockRenderer):
         stairData = blockData[materialIndices] & 0x3
 
         blockLight = areaBlockLights[1:-1, 1:-1, 1:-1]
-        x,z,y = materialIndices.nonzero()
+        x, z, y = materialIndices.nonzero()
 
         for _ in ("slab", "step"):
             vertexArray = zeros( (len(x), 6, 4, 6), dtype='float32')
             for i in range(3):
-                vertexArray[_XYZ][..., i] = (x,y,z)[i][:, newaxis, newaxis]
+                vertexArray[_XYZ][..., i] = (x, y, z)[i][:, newaxis, newaxis]
 
             if _ == "step":
                 vertexArray[_XYZST] += self.stairTemplates[4][..., :5]
@@ -2334,7 +2334,7 @@ class MCRenderer(object):
 
         cameraDelta = self.distanceToChunkReload
 
-        return any([abs(x - y) > cameraDelta for x,y in zip(cPos, oldPos)])
+        return any([abs(x - y) > cameraDelta for x, y in zip(cPos, oldPos)])
 
     def loadVisibleChunks(self):
         """ loads nearby chunks if the camera has moved beyond a certain distance """
