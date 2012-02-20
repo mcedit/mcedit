@@ -521,10 +521,10 @@ class MenuButton(Button):
     def __init__(self, title, choices, **kw):
         Button.__init__(self, title, **kw)
         self.choices = choices
-        self.menu = Menu(title, ((c,c) for c in choices))
+        self.menu = Menu(title, ((c, c) for c in choices))
 
     def action(self):
-        index = self.menu.present(self, (0,0))
+        index = self.menu.present(self, (0, 0))
         if index == -1:
             return
         self.menu_picked(index)
@@ -554,7 +554,7 @@ class ChoiceButton(ValueButton):
         self.choiceIndex = 0
 
     def showMenu(self):
-        choiceIndex = self.menu.present(self, (0,0))
+        choiceIndex = self.menu.present(self, (0, 0))
         if choiceIndex != -1:
             self.choiceIndex = choiceIndex
             if self.choose:
