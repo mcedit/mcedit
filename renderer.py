@@ -1088,7 +1088,7 @@ class LowDetailBlockRenderer(BlockRenderer):
             overblocks = blocks[gridaxes][nonAirBlocks].ravel()
 
         except ValueError, e:
-            raise ValueError, str(e.args) + "Chunk shape: {0}".format(blockIndices.shape), sys.exc_info()[-1]
+            raise ValueError( str(e.args) + "Chunk shape: {0}".format(blockIndices.shape), sys.exc_info()[-1] )
 
         if nonAirBlocks.any():
             blockTypes = blocks[blockIndices]
