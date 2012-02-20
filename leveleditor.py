@@ -1095,7 +1095,7 @@ class CameraViewport(GLViewport):
     def drawCeiling(self):
         glMatrixMode(GL_MODELVIEW)
         # glPushMatrix()
-        x,y,z = self.cameraPosition
+        x, y, z = self.cameraPosition
         x -= x % 16
         z -= z % 16
         y = self.editor.level.Height
@@ -1313,7 +1313,7 @@ class ChunkViewport(CameraViewport):
 
     def zoom(self, f):
         x, y, z = self.cameraPosition
-        mx,my,mz = self.blockFaceUnderCursor[0]
+        mx, my, mz = self.blockFaceUnderCursor[0]
         dx, dz = mx-x, mz-z
         s = min(4.0, max(1/16., self.defaultScale / f))
         if s != self.defaultScale:
@@ -1995,8 +1995,8 @@ class LevelEditor(GLViewport):
             menu = Menu("", dimensionsMenu)
 
             def presentMenu():
-                x,y = self.netherPanel.topleft
-                dimIdx = menu.present(self, (x,y - menu.height))
+                x, y = self.netherPanel.topleft
+                dimIdx = menu.present(self, (x, y - menu.height))
                 if dimIdx == -1:
                     return
                 dimNo = int(dimensionsMenu[dimIdx][1])
@@ -2013,7 +2013,7 @@ class LevelEditor(GLViewport):
         if len(list(self.level.allChunks)) == 0:
             resp = ask("It looks like this level is completely empty!  You'll have to create some chunks before you can get started.", responses = ["Create Chunks", "Cancel"])
             if resp == "Create Chunks":
-                x,y,z = self.mainViewport.cameraPosition
+                x, y, z = self.mainViewport.cameraPosition
                 box = BoundingBox((x-128, 0, z-128), (256, self.level.Height, 256))
                 self.selectionTool.setSelection(box)
                 self.toolbar.selectTool(8)
@@ -2373,7 +2373,7 @@ class LevelEditor(GLViewport):
     fractionalReachAdjustment = True
 
     def postMouseMoved(self):
-        evt = event.Event(MOUSEMOTION, rel=(0,0), pos=mouse.get_pos(), buttons=mouse.get_pressed())
+        evt = event.Event(MOUSEMOTION, rel=(0, 0), pos=mouse.get_pos(), buttons=mouse.get_pressed())
         event.post(evt)
 
     def resetReach(self):
@@ -3239,7 +3239,7 @@ class LevelEditor(GLViewport):
 
     def updateInspectionString(self, blockPosition):
         self.inspectionString += str(blockPosition) + ": "
-        x,y,z = blockPosition
+        x, y, z = blockPosition
 
         try:
             if self.debug:
@@ -3283,13 +3283,13 @@ class LevelEditor(GLViewport):
                     except:
                         pass
                     try:
-                        tp = self.level.getChunk(cx,cz).TerrainPopulated
+                        tp = self.level.getChunk(cx, cz).TerrainPopulated
                         self.inspectionString += ", TP: %d" % tp
                     except:
                         pass
 
                     if isinstance(self.level, pymclevel.pocket.PocketWorld):
-                        ch = self.level.getChunk(cx,cz)
+                        ch = self.level.getChunk(cx, cz)
                         self.inspectionString += ", DC: %s" % ch.DirtyColumns[z & 15, x & 15]
 
                     self.inspectionString += ", Ch(%d, %d): %s" % (cx, cz, path)
@@ -3391,9 +3391,9 @@ class LevelEditor(GLViewport):
 
         def idleHandler(evt):
 
-            x,y,z = self.blockFaceUnderCursor[0]
+            x, y, z = self.blockFaceUnderCursor[0]
             cx, cz = x//16, z//16
-            cr =  self.renderer.chunkRenderers.get((cx,cz))
+            cr =  self.renderer.chunkRenderers.get((cx, cz))
             if None is cr:
                 return
 
