@@ -42,6 +42,7 @@ from pymclevel import materials
 
 from errorreporting import reportException, reportCrash
 
+
 def alertException(func):
     def _alertException(*args, **kw):
         try:
@@ -55,6 +56,7 @@ def alertException(func):
     return _alertException
 
 from pymclevel.faces import *
+
 
 def drawFace(box, face, type=GL.GL_QUADS):
     x, y, z, = box.origin
@@ -239,6 +241,7 @@ def drawCube(box, cubeType=GL.GL_QUADS, blockType=0, texture=None, textureVertic
         GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
         GL.glDisable(GL.GL_TEXTURE_2D)
 
+
 def drawTerrainCuttingWire(box,
                            c0=(0.75, 0.75, 0.75, 0.4),
                            c1=(1.0, 1.0, 1.0, 1.0)):
@@ -261,6 +264,7 @@ def drawTerrainCuttingWire(box,
     #glDepthMask(True);
 
 #texturePacksDir = os.path.join(pymclevel.minecraftDir, "texturepacks")
+
 
 def loadAlphaTerrainTexture():
     pngFile = None
@@ -420,6 +424,7 @@ def loadPNGData(filename_or_data):
 
     return w, h, data
 
+
 def loadPNGFile(filename):
     (w, h, data) = loadPNGData(filename)
 
@@ -430,9 +435,11 @@ def loadPNGFile(filename):
 
     return w, h, data
 
+
 def loadTextureFunc(w, h, ndata):
     GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ndata)
     return w, h
+
 
 def loadPNGTexture(filename):
     try:
@@ -448,6 +455,7 @@ def loadPNGTexture(filename):
 
 import glutils
 
+
 def normalize(x):
     l = x[0] * x[0] + x[1] * x[1] + x[2] * x[2]
     if l <= 0.0: return [0, 0, 0]
@@ -455,6 +463,7 @@ def normalize(x):
     if size <= 0.0:
         return [0, 0, 0]
     return map(lambda a:a / size, x)
+
 
 def normalize_size(x):
     l = x[0] * x[0] + x[1] * x[1] + x[2] * x[2]
@@ -502,6 +511,8 @@ class HotkeyColumn(Widget):
 
 
 from albow import CheckBox, AttrRef, Menu
+
+
 class MenuButton(Button):
     def __init__(self, title, choices, **kw):
         Button.__init__(self, title, **kw)
@@ -515,6 +526,7 @@ class MenuButton(Button):
 
     def menu_picked(self, index):
         pass
+
 
 class ChoiceButton(ValueButton):
     align="c"
@@ -589,13 +601,18 @@ def CheckBoxLabel(title, *args, **kw):
     return row
 
 from albow import FloatField, IntField
+
+
 def FloatInputRow(title, *args, **kw):
     return Row((Label(title, tooltipText=kw.get('tooltipText')), FloatField(*args, **kw)))
+
+
 def IntInputRow(title, *args, **kw):
     return Row((Label(title, tooltipText=kw.get('tooltipText')), IntField(*args, **kw)))
 
 from albow.dialogs import Dialog
 from datetime import timedelta
+
 
 def setWindowCaption(prefix):
     caption = display.get_caption()[0]
@@ -606,6 +623,7 @@ def setWindowCaption(prefix):
         def __exit__(self, *args):
             display.set_caption(caption)
     return ctx()
+
 
 def showProgress(progressText, progressIterator, cancel=False):
     """Show the progress for a long-running synchronous operation. 
