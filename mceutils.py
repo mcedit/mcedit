@@ -355,7 +355,7 @@ def loadAlphaTerrainTexture():
         w, h, data = loadPNGData(slurpZipExt(foliageColorFile))
         color = data[77, 55, :3]
         materials.alphaMaterials.flatColors[17, 0, :3] = color #xxxxxxx
-                
+
         color = [c / 255.0 for c in color]
         LeafBlockRenderer.leafColor = color
     else:
@@ -511,15 +511,15 @@ class MenuButton(Button):
         Button.__init__(self, title, **kw)
         self.choices = choices
         self.menu = Menu(title, ((c,c) for c in choices))
-        
+
     def action(self):
         index = self.menu.present(self, (0,0))
         if index == -1: return
         self.menu_picked(index)
-        
+
     def menu_picked(self, index):
         pass
-        
+
 class ChoiceButton(ValueButton):
     align="c"
     choose = None
@@ -545,9 +545,9 @@ class ChoiceButton(ValueButton):
             self.choiceIndex = choiceIndex
             if self.choose:
                 self.choose()
-    
+
     def get_value(self): return self.selectedChoice
-    
+
     @property
     def selectedChoice(self):
         if self.choiceIndex >= len(self.choices) or self.choiceIndex < 0: return ""
@@ -621,31 +621,31 @@ def showProgress(progressText, progressIterator, cancel=False):
     class ProgressWidget(Dialog):
         progressFraction = 0.0
         firstDraw = False
-        
+
         def draw(self, surface):
             Widget.draw(self, surface)
             frameStart = datetime.now()
             frameInterval = timedelta(0, 1, 0) / 2
             amount = None
-            
+
             try:
                 while datetime.now() < frameStart + frameInterval:
                     amount = progressIterator.next()
                     if self.firstDraw is False:
                         self.firstDraw = True
                         break
-                        
+
             except StopIteration:
                 self.dismiss()
-                
+
             infoText = ""
             if amount is not None:
-                
+
                 if isinstance(amount, tuple):
                     if len(amount)>2: infoText = ": " + amount[2]
-                    
+
                     amount, max = amount[:2] 
-                    
+
                 else:
                     max = amount
                 maxwidth = (self.width - self.margin * 2)
@@ -662,9 +662,9 @@ def showProgress(progressText, progressIterator, cancel=False):
                         self.statusText = str("{0} / {1}".format(amount, max))
                     else:
                         self.statusText = str(amount)
-                
+
                 if infoText: self.statusText += infoText
-                
+
         @property
         def estimateText(self):
             delta = ((datetime.now() - self.startTime))
@@ -673,10 +673,10 @@ def showProgress(progressText, progressIterator, cancel=False):
             return "Time left: {0}".format(left)
         def cancel(self):
             if cancel: self.dismiss(False)
-        
+
         def idleevent(self, evt):
             self.invalidate()
-            
+
     widget = ProgressWidget()
     widget.progressText = progressText
     widget.statusText = ""
@@ -700,7 +700,7 @@ def showProgress(progressText, progressIterator, cancel=False):
         return widget.progressAmount
     else:
         return "Canceled"
-        
+
 from glutils import DisplayList
 
 import functools
