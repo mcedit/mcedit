@@ -65,51 +65,51 @@ def drawFace(box, face, type=GL.GL_QUADS):
     if face == FaceXDecreasing:
 
         faceVertices = numpy.array(
-            (x  , y2 , z2 ,
-            x  , y2 , z  ,
-            x  , y  , z  ,
-            x  , y  , z2 ,
+            (x, y2, z2,
+            x, y2, z,
+            x, y, z,
+            x, y, z2,
             ), dtype='f4')
 
     elif face == FaceXIncreasing:
 
         faceVertices = numpy.array(
-            (x2 , y  , z2 ,
-            x2 , y  , z  ,
-            x2 , y2 , z  ,
-            x2 , y2 , z2 ,
+            (x2, y, z2,
+            x2, y, z,
+            x2, y2, z,
+            x2, y2, z2,
             ), dtype='f4')
 
     elif face == FaceYDecreasing:
         faceVertices = numpy.array(
-            (x2 , y  , z2 ,
-            x  , y  , z2 ,
-            x  , y  , z  ,
-            x2 , y  , z  ,
+            (x2, y, z2,
+            x, y, z2,
+            x, y, z,
+            x2, y, z,
             ), dtype='f4')
 
     elif face == FaceYIncreasing:
         faceVertices = numpy.array(
-            (x2 , y2 , z  ,
-            x, y2 , z  ,
-            x  , y2 , z2 ,
-            x2 , y2 , z2 ,
+            (x2, y2, z,
+            x, y2, z,
+            x, y2, z2,
+            x2, y2, z2,
             ), dtype='f4')
 
     elif face == FaceZDecreasing:
         faceVertices = numpy.array(
             (x, y, z,
-            x  , y2 , z,
-            x2 , y2 , z,
-            x2 , y, z,
+            x, y2, z,
+            x2, y2, z,
+            x2, y, z,
             ), dtype='f4')
 
     elif face == FaceZIncreasing:
         faceVertices = numpy.array(
-            (x2 , y, z2 ,
-            x2 , y2 , z2 ,
-            x  , y2 , z2 ,
-            x, y, z2 ,
+            (x2, y, z2,
+            x2, y2, z2,
+            x, y2, z2,
+            x, y, z2,
             ), dtype='f4')
 
     faceVertices.shape = (4, 3)
@@ -150,34 +150,34 @@ def drawCube(box, cubeType=GL.GL_QUADS, blockType=0, texture=None, textureVertic
     cubeVertices = numpy.array(
         (
         x, y, z,
-        x  , y2 , z,
-        x2 , y2 , z,
-        x2 , y, z,
+        x, y2, z,
+        x2, y2, z,
+        x2, y, z,
 
-        x2 , y, z2 ,
-        x2 , y2 , z2 ,
-        x  , y2 , z2 ,
-        x, y, z2 ,
+        x2, y, z2,
+        x2, y2, z2,
+        x, y2, z2,
+        x, y, z2,
 
-        x2 , y  , z2 ,
-        x  , y  , z2 ,
-        x  , y  , z  ,
-        x2 , y  , z  ,
+        x2, y, z2,
+        x, y, z2,
+        x, y, z,
+        x2, y, z,
 
-        x2 , y2 , z  ,
-        x, y2 , z  ,
-        x  , y2 , z2 ,
-        x2 , y2 , z2 ,
+        x2, y2, z,
+        x, y2, z,
+        x, y2, z2,
+        x2, y2, z2,
 
-        x  , y2 , z2 ,
-        x  , y2 , z  ,
-        x  , y  , z  ,
-        x  , y  , z2 ,
+        x, y2, z2,
+        x, y2, z,
+        x, y, z,
+        x, y, z2,
 
-        x2 , y  , z2 ,
-        x2 , y  , z  ,
-        x2 , y2 , z  ,
-        x2 , y2 , z2 ,
+        x2, y, z2,
+        x2, y, z,
+        x2, y2, z,
+        x2, y2, z2,
                             ), dtype='f4')
     if textureVertices == None:
         textureVertices = numpy.array(
