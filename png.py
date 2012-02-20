@@ -180,9 +180,7 @@ import zlib
 # http://www.python.org/doc/2.4.4/lib/module-warnings.html
 import warnings
 
-
 __all__ = ['Reader', 'Writer', 'write_chunks']
-
 
 # The PNG signature.
 # http://www.w3.org/TR/PNG/#5PNG-file-signature
@@ -1664,7 +1662,6 @@ class Reader:
                 meta[attr] = a
         return self.width, self.height, pixels, meta
 
-
     def read_flat(self):
         """
         Read a PNG file and decode it into flat row flat pixel format.
@@ -2037,8 +2034,6 @@ except:
             for element in it:
                 yield element
     itertools.chain = _itertools_chain
-
-
 
 # === Internal Test Support ===
 
