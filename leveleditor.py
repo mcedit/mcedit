@@ -203,7 +203,7 @@ def DebugDisplay(obj, *attrs):
         def _get(attr):
             return lambda: str(getattr(obj, attr))
 
-        col.append(Row((Label(attr + " = "), ValueDisplay(width=600, get_value = _get(attr)))))
+        col.append(Row((Label(attr + " = "), ValueDisplay(width=600, get_value=_get(attr)))))
 
     col = Column(col, align="l")
     b = GLBackground()
@@ -264,7 +264,7 @@ class CameraViewport(GLViewport):
     def pitch(self, val):
         self._pitch = min(89.999, max(-89.999, val))
 
-    def updateFov(self, val = None):
+    def updateFov(self, val=None):
         hfov = self.fovSetting
         fov = degrees(2.0 * arctan(self.size[0] / self.size[1] * tan(radians(hfov) * 0.5)))
 
@@ -651,7 +651,7 @@ class CameraViewport(GLViewport):
 
         mobTable.selectedIndex = mobs.index(id)
 
-        choiceCol = Column((ValueDisplay(width = 200, get_value=lambda: selectedMob() + " spawner"), mobTable))
+        choiceCol = Column((ValueDisplay(width=200, get_value=lambda: selectedMob() + " spawner"), mobTable))
 
         okButton = Button("OK", action=panel.dismiss)
         panel.add(Column((choiceCol, okButton)))
@@ -710,7 +710,7 @@ class CameraViewport(GLViewport):
             currentField.text += c  # xxx view hierarchy
             currentField.insertion_point = len(currentField.text)
 
-        colorMenu = MenuButton("Color Code...", colors, menu_picked = menu_picked)
+        colorMenu = MenuButton("Color Code...", colors, menu_picked=menu_picked)
 
         column = [Label("Edit Sign")] + lineFields + [colorMenu, Button("OK", action=panel.dismiss)]
 
@@ -798,8 +798,8 @@ class CameraViewport(GLViewport):
         fieldRow = (
             # IntInputRow("Slot: ", ref=AttrRef(chestWidget, 'Slot'), min= -128, max=127),
             IntInputRow("ID: ", ref=AttrRef(chestWidget, 'id'), min=0, max=32767),
-            IntInputRow("DMG: ", ref=AttrRef(chestWidget, 'Damage'), min= -32768, max=32767),
-            IntInputRow("Count: ", ref=AttrRef(chestWidget, 'Count'), min= -128, max=127),
+            IntInputRow("DMG: ", ref=AttrRef(chestWidget, 'Damage'), min=-32768, max=32767),
+            IntInputRow("Count: ", ref=AttrRef(chestWidget, 'Count'), min=-128, max=127),
         )
 
         def deleteFromWorld():
@@ -1429,16 +1429,16 @@ class LevelEditor(GLViewport):
 
         chunksReadout = SmallValueDisplay(width=140,
             get_value=lambda: "Chunks: %d" % len(self.renderer.chunkRenderers),
-            tooltipText = "Number of chunks loaded into the renderer.")
+            tooltipText="Number of chunks loaded into the renderer.")
         fpsReadout = SmallValueDisplay(width=80,
             get_value=lambda: "fps: %0.1f" % self.averageFPS,
-            tooltipText = "Frames per second.")
+            tooltipText="Frames per second.")
         cpsReadout = SmallValueDisplay(width=100,
             get_value=lambda: "cps: %0.1f" % self.averageCPS,
-            tooltipText = "Chunks per second.")
+            tooltipText="Chunks per second.")
         mbReadout = SmallValueDisplay(width=60,
             get_value=lambda: "MBv: %0.1f" % (self.renderer.bufferUsage / 1000000.),
-            tooltipText = "Memory used for vertexes")
+            tooltipText="Memory used for vertexes")
 
         def dataSize():
             if not isinstance(self.level, MCInfdevOldLevel):
@@ -1460,15 +1460,15 @@ class LevelEditor(GLViewport):
 
         mbldReadout = SmallValueDisplay(width=60,
             get_value=lambda: "MBd: %0.1f" % (dataSize() / 1000000.),
-            tooltipText = "Memory used for saved game data.")
+            tooltipText="Memory used for saved game data.")
 
         def showViewOptions():
             col = []
-            col.append(CheckBoxLabel("Entities", fg_color = (0xff, 0x22, 0x22), ref=Settings.drawEntities.propertyRef()))
-            col.append(CheckBoxLabel("Items", fg_color = (0x22, 0xff, 0x22), ref=Settings.drawItems.propertyRef()))
-            col.append(CheckBoxLabel("TileEntities", fg_color = (0xff, 0xff, 0x22), ref=Settings.drawTileEntities.propertyRef()))
+            col.append(CheckBoxLabel("Entities", fg_color=(0xff, 0x22, 0x22), ref=Settings.drawEntities.propertyRef()))
+            col.append(CheckBoxLabel("Items", fg_color=(0x22, 0xff, 0x22), ref=Settings.drawItems.propertyRef()))
+            col.append(CheckBoxLabel("TileEntities", fg_color=(0xff, 0xff, 0x22), ref=Settings.drawTileEntities.propertyRef()))
             col.append(CheckBoxLabel("TileTicks", ref=Settings.drawTileTicks.propertyRef()))
-            col.append(CheckBoxLabel("Unpopulated Chunks", fg_color = renderer.TerrainPopulatedRenderer.color,
+            col.append(CheckBoxLabel("Unpopulated Chunks", fg_color=renderer.TerrainPopulatedRenderer.color,
                                      ref=Settings.drawUnpopulatedChunks.propertyRef()))
 
             col.append(CheckBoxLabel("Sky", ref=Settings.drawSky.propertyRef()))
@@ -1479,7 +1479,7 @@ class LevelEditor(GLViewport):
             col.append(CheckBoxLabel("Hidden Ores",
                 ref=Settings.showHiddenOres.propertyRef()))
 
-            col.append(CheckBoxLabel("Chunk Redraw", fg_color = (0xff, 0x99, 0x99),
+            col.append(CheckBoxLabel("Chunk Redraw", fg_color=(0xff, 0x99, 0x99),
                 ref=Settings.showChunkRedraw.propertyRef()))
 
             col = Column(col, align="r")
@@ -1496,7 +1496,7 @@ class LevelEditor(GLViewport):
         readoutGrid = Grid(((chunksReadout, fpsReadout), (mbReadoutRow, cpsReadout), ), 0, 0)
 
         self.viewportButton = Button("Camera View", action=self.swapViewports,
-            tooltipText = "Shortcut: TAB")
+            tooltipText="Shortcut: TAB")
 
         row = (viewDistanceDown, Label("View Distance:"), viewDistanceReadout, viewDistanceUp,
                readoutGrid, viewButton, self.viewportButton)
@@ -1517,7 +1517,7 @@ class LevelEditor(GLViewport):
 
         self.add(self.statusLabel)
 
-        self.viewportContainer = Widget(is_gl_container = True, anchor="tlbr")
+        self.viewportContainer = Widget(is_gl_container=True, anchor="tlbr")
         self.viewportContainer.top = row.bottom
         self.viewportContainer.size = self.mainViewport.size
         self.add(self.viewportContainer)
@@ -1752,8 +1752,8 @@ class LevelEditor(GLViewport):
                     alphanum_key(val)
                 return val
 
-            blockRows.sort(key = sortKey,
-                           reverse = table.reverseSort)
+            blockRows.sort(key=sortKey,
+                           reverse=table.reverseSort)
             table.sortColumn = col
             rows[:] = blockRows
             extendEntities()
@@ -2011,7 +2011,7 @@ class LevelEditor(GLViewport):
             self.add(self.netherPanel)
 
         if len(list(self.level.allChunks)) == 0:
-            resp = ask("It looks like this level is completely empty!  You'll have to create some chunks before you can get started.", responses = ["Create Chunks", "Cancel"])
+            resp = ask("It looks like this level is completely empty!  You'll have to create some chunks before you can get started.", responses=["Create Chunks", "Cancel"])
             if resp == "Create Chunks":
                 x, y, z = self.mainViewport.cameraPosition
                 box = BoundingBox((x-128, 0, z-128), (256, self.level.Height, 256))
@@ -2671,7 +2671,7 @@ class LevelEditor(GLViewport):
 
     def closeEditor(self):
         if self.unsavedEdits:
-            if ask("Save unsaved edits before closing?", ["Don't Save", "Save"], default= -1, cancel=0) == "Save":
+            if ask("Save unsaved edits before closing?", ["Don't Save", "Save"], default=-1, cancel=0) == "Save":
                 self.saveFile()
         self.unsavedEdits = 0
 
@@ -3000,7 +3000,7 @@ class LevelEditor(GLViewport):
 
         self.freezeStatus("Creating world...")
         try:
-            newlevel = MCInfdevOldLevel(filename=filename, create=True, random_seed = seed)
+            newlevel = MCInfdevOldLevel(filename=filename, create=True, random_seed=seed)
             # chunks = list(itertools.product(xrange(w / 2 - w + cx, w / 2 + cx), xrange(h / 2 - h + cz, h / 2 + cz)))
 
             if generatorPanel.generatorChoice.selectedChoice == "Flatland":
@@ -3014,7 +3014,7 @@ class LevelEditor(GLViewport):
             newlevel.saveInPlace()
             worker = generatorPanel.generate(newlevel, BoundingBox((x-w*8, 0, z-h*8), (w*16, newlevel.Height, h*16)))
 
-            if "Canceled" == showProgress("Generating chunks...", worker, cancel = True):
+            if "Canceled" == showProgress("Generating chunks...", worker, cancel=True):
                 raise RuntimeError, "Canceled."
 
             if y < 64:
@@ -3032,7 +3032,7 @@ class LevelEditor(GLViewport):
     def confirmConstruction(self):
         self.currentTool.confirm()
 
-    def selectionToChunks(self, remove = False, add = False):
+    def selectionToChunks(self, remove=False, add=False):
         box = self.selectionBox()
         if box:
             if box == self.level.bounds:
@@ -3386,7 +3386,7 @@ class LevelEditor(GLViewport):
             self.infoPanel.set_parent(None)
             return
 
-        self.infoPanel = infoPanel = Widget(bg_color = (0, 0, 0, 80))
+        self.infoPanel = infoPanel = Widget(bg_color=(0, 0, 0, 80))
         infoPanel.add(Label(""))
 
         def idleHandler(evt):
@@ -3521,7 +3521,7 @@ class EditorToolbar(GLOrtho):
     def __init__(self, rect, tools, *args, **kw):
         GLOrtho.__init__(self, xmin=0, ymin=0,
                                xmax=self.toolbarSize[0], ymax=self.toolbarSize[1],
-                               near= -4.0, far=4.0)
+                               near=-4.0, far=4.0)
         self.size = self.toolbarTextureSize
         self.tools = tools
         for i, t in enumerate(tools):
