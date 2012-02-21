@@ -169,11 +169,11 @@ class Widget(object):
         anchor = self.anchor
         if dw:
             factors = [1, 1, 1]  # left, width, right
-            if 'r' in anchor: 
+            if 'r' in anchor:
                 actors[2] = 0;
-            if 'w' in anchor: 
+            if 'w' in anchor:
                 actors[1] = 0;
-            if 'l' in anchor: 
+            if 'l' in anchor:
                 actors[0] = 0;
             if any(factors):
                 resize = factors[1]
@@ -185,11 +185,11 @@ class Widget(object):
 
         if dh:
             factors = [1, 1, 1]  # bottom, height, top
-            if 't' in anchor: 
+            if 't' in anchor:
                 actors[2] = 0;
-            if 'h' in anchor: 
+            if 'h' in anchor:
                 actors[1] = 0;
-            if 'b' in anchor: 
+            if 'b' in anchor:
                 actors[0] = 0;
             if any(factors):
                 resize = factors[1]
