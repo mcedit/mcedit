@@ -43,7 +43,7 @@ def rect_property(name):
         old_size = r.size
         setattr(r, name, value)
         new_size = r.size
-        if old_size <> new_size:
+        if old_size != new_size:
             self._resized(old_size)
     return property(get, set)
 
