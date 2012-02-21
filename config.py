@@ -264,7 +264,7 @@ class Settings(object):
             old = getattr(self, attr)
             if isinstance(old, Setting):
                 if isinstance(val, Setting):
-                    raise ValueError, "Attempting to reassign setting %s with %s" % (old, val)
+                    raise ValueError("Attempting to reassign setting %s with %s" % (old, val))
 
                 log.warn("Setting attr %s via __setattr__ instead of set()!", attr)
                 return old.set(val)
