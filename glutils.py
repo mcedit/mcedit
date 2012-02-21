@@ -109,10 +109,12 @@ class DisplayList(object):
             self._list = None
 
     def makeList(self, drawFunc):
-        if self._list: return
+        if self._list:
+            return
 
         drawFunc = (drawFunc or self.drawFunc)
-        if drawFunc is None: return
+        if drawFunc is None:
+            return
 
         l = gl.glGenLists(1)
         GL.glNewList(l, GL.GL_COMPILE)
@@ -132,7 +134,8 @@ class DisplayList(object):
     if "-debuglists" in sys.argv:
         def call(self, drawFunc=None):
             drawFunc = (drawFunc or self.drawFunc)
-            if drawFunc is None: return
+            if drawFunc is None:
+                return
             drawFunc()
     else:
         def call(self, drawFunc=None):
