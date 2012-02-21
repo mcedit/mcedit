@@ -54,6 +54,7 @@ def loadConfig():
 
         def __getitem__(self, k):
             return self.dict[k]
+
         def __setitem__(self, k, v):
             self.dict[k] = v
             if not k in self.keyorder: self.keyorder.append(k)
@@ -63,7 +64,9 @@ def loadConfig():
             if k in self.keyorder: self.keyorder.remove(k)
 
         def __contains__(self, k):return self.dict.__contains__(k);
+
         def __len__(self):        return self.dict.__len__()
+
         def copy(self):
             k = keyDict()
             k.dict = self.dict.copy()
@@ -141,6 +144,7 @@ def _propertyRef(section, name, dtype=str, default = None):
     class PropRef(object):
         def get(self):
             return _getProperty(section, name, dtype, default)
+
         def set(self, val):
             _setProperty(section, name, val)
     return PropRef()
@@ -148,8 +152,10 @@ def _propertyRef(section, name, dtype=str, default = None):
 
 def _configProperty(section, name, dtype=str, setter=None, default = None):
     assert default is not None
+
     def _getter(self):
         return _getProperty(section, name, dtype, default)
+
     def _setter(self, val):
         _setProperty(section, name, val)
         if setter:
@@ -221,6 +227,7 @@ class Setting(object):
         self.name = name
         self.dtype = dtype
         self.default = default
+
     def __repr__(self):
         return "Setting(" + ", ".join(str(s) for s in (self.section, self.name, self.dtype, self.default))
 
@@ -229,23 +236,29 @@ class Setting(object):
 
     def get(self):
         return _getProperty(self.section, self.name, self.dtype, self.default)
+
     def set(self, val):
         return _setProperty(self.section, self.name, self.dtype(val))
+
     def propertyRef(self):
         return _propertyRef(self.section, self.name, self.dtype, self.default)
+
     def configProperty(self, setter = None):
         return _configProperty(self.section, self.name, self.dtype, setter, self.default)
 
     def __int__(self):
         return int(self.get())
+
     def __float__(self):
         return float(self.get())
+
     def __bool__(self):
         return bool(self.get())
 
 
 class Settings(object):
     Setting = Setting
+
     def __init__(self, section):
         self.section = section
 
