@@ -143,7 +143,7 @@ class Label(Widget):
                 bg = self.hover_bg_color or bg
             if self.highlighted:
                 fg = self.highlight_color or fg
-                bg = self.highlight_bg_color or bg    
+                bg = self.highlight_bg_color or bg
 
         self.draw_with(surface, fg, bg)
 
@@ -182,7 +182,7 @@ class Label(Widget):
 
 class GLLabel(Label):
     pass
-class SmallLabel(Label): 
+class SmallLabel(Label):
     """Small text size. See theme.py"""
 
 #---------------------------------------------------------------------------

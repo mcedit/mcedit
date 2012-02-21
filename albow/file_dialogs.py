@@ -8,7 +8,7 @@ from pygame import draw, Rect
 from pygame.locals import *
 from albow.widget import Widget
 from albow.dialogs import Dialog, ask, alert
-from albow.controls import Label, Button 
+from albow.controls import Label, Button
 from albow.fields import TextField
 from albow.layout import Row, Column
 from albow.palette_view import PaletteView

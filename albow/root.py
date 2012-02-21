@@ -101,7 +101,7 @@ class RootWidget(Widget):
     captured_widget = None
 
     def capture_mouse(self, widget):
-        #put the mouse in "virtual mode" and pass mouse moved events to the 
+        #put the mouse in "virtual mode" and pass mouse moved events to the
         #specified widget
         if widget:
             pygame.mouse.set_visible(False)
