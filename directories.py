@@ -16,6 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 import sys
 import os
 
+
 def win32_utf8_argv():                                                                                               
     """Uses shell32.GetCommandLineArgvW to get sys.argv as a list of UTF-8                                           
     strings.                                                                                                         
@@ -59,6 +60,7 @@ def win32_utf8_argv():
                     xrange(0, argc.value)]                                                                       
     except Exception:                                                                                                
         pass
+
 
 def findDirectories():
     #print 'CWD:', os.getcwdu()
