@@ -57,15 +57,19 @@ def loadConfig():
 
         def __setitem__(self, k, v):
             self.dict[k] = v
-            if not k in self.keyorder: self.keyorder.append(k)
+            if not k in self.keyorder:
+                self.keyorder.append(k)
 
         def __delitem__(self, k):
             del self.dict[k]
-            if k in self.keyorder: self.keyorder.remove(k)
+            if k in self.keyorder:
+                self.keyorder.remove(k)
 
-        def __contains__(self, k):return self.dict.__contains__(k);
+        def __contains__(self, k):
+            return self.dict.__contains__(k);
 
-        def __len__(self):        return self.dict.__len__()
+        def __len__(self):
+            return self.dict.__len__()
 
         def copy(self):
             k = keyDict()
@@ -166,10 +170,13 @@ def _configProperty(section, name, dtype=str, setter=None, default = None):
 
 def _getProperty(section, name, dtype=str, default = None):
     try:
-        if dtype is bool:   return config.getboolean(section, name)
-        else:               return dtype(config.get(section, name))
+        if dtype is bool:
+            return config.getboolean(section, name)
+        else:
+            return dtype(config.get(section, name))
     except:
-        if default is None: raise
+        if default is None:
+            raise
         _setProperty(section, name, default)
         return default
 
@@ -189,7 +196,8 @@ def _notifyObservers(section, name, value):
             log.debug("Notifying %s", target)
             setattr(target, attr, value)
             callback = observers[targetref, attr]
-            if callback: callback(value)
+            if callback:
+                callback(value)
 
             newObservers[targetref, attr] = callback
 
@@ -218,7 +226,8 @@ def addObserver(section, name, target, attr=None, dtype=str, callback=None, defa
     val = _getProperty(section, name, dtype, default)
 
     setattr(target, attr, val)
-    if callback: callback(val)
+    if callback:
+        callback(val)
 
 
 class Setting(object):
