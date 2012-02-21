@@ -15,8 +15,6 @@ import logging
 context_log = logging.getLogger()
 
 
-
-
 def viewingMatrix(projection=None, model=None):
     """Calculate the total viewing matrix from given data
 
