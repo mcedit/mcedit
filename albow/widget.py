@@ -175,7 +175,6 @@ class Widget(object):
                 width += factors[1] * dw / sum(factors)
                 #left = (left + width) + factors[2] * dw / sum(factors) - width;
 
-
         if dh:
             factors = [1, 1, 1] #bottom, height, top
             if 't' in anchor: factors[2] = 0;
@@ -188,8 +187,6 @@ class Widget(object):
                 top += factors[2] * dh / sum(factors)
                 height += factors[1] * dh / sum(factors)
                 #top = (top + height) + factors[0] * dh / sum(factors) - height;
-
-
 
         if resize:
             if debug_resize:
@@ -267,8 +264,6 @@ class Widget(object):
         if hasattr(widget, "idleevent"):
             print "Adding idle handler for ", widget
             self.get_root().add_idle_handler(widget)
-
-
 
     def _remove(self, widget):
         if hasattr(widget, "idleevent"):
