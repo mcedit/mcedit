@@ -194,7 +194,7 @@ def addObserver(section, name, target, attr=None, dtype=str, callback=None, defa
     """ Register 'target' for changes in the config var named by section and name.
     When the config is changed, calls setattr with target and attr.
     attr may be None; it will be created from the name by lowercasing the first
-    word, uppercasing the rest, and removing spaces. 
+    word, uppercasing the rest, and removing spaces.
     e.g. "block buffer" becomes "blockBuffer"
     """
     observers = config.observers.setdefault((section.lower(), name.lower()), {})
