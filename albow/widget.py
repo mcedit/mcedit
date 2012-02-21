@@ -268,14 +268,14 @@ class Widget(object):
             print "Adding idle handler for ", widget
             self.get_root().add_idle_handler(widget)
 
-        
+
 
     def _remove(self, widget):
         if hasattr(widget, "idleevent"):
             print "Removing idle handler for ", widget
             self.get_root().remove_idle_handler(widget)
         self.subwidgets.remove(widget)
-            
+
         if self.focus_switch is widget:
             self.focus_switch = None
 
@@ -346,13 +346,13 @@ class Widget(object):
         self.augment_mouse_event(event)
         self.call_handler(name, event)
         self.setup_cursor(event)
-    
+
     def mouse_down(self, event):
         self.call_parent_handler("mouse_down", event)
-        
+
     def mouse_up(self, event):
         self.call_parent_handler("mouse_up", event)
-        
+
     def augment_mouse_event(self, event):
         event.dict['local'] = self.global_to_local(event.pos)
 
@@ -473,11 +473,11 @@ class Widget(object):
                 return True
             widget = widget.parent
         return False
-    
+
     @property
     def is_hover(self):
         return self.get_root().hover_widget is self
-        
+
     def present(self, centered=True):
         #print "Widget: presenting with rect", self.rect
         root = self.get_root()
