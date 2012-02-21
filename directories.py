@@ -66,7 +66,7 @@ def findDirectories():
     #print 'CWD:', os.getcwdu()
 
     def fsdecode(x):
-        return x.decode(sys.getfilesystemencoding());
+        return x.decode(sys.getfilesystemencoding())
 
     argzero = fsdecode(sys.argv[0])
     #print "EXE", fsdecode(sys.executable)
