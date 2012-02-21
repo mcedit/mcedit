@@ -103,4 +103,3 @@ class TextScreen(Screen):
 
     def go_back(self):
         self.parent.show_menu()
-
