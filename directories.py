@@ -101,7 +101,6 @@ def findDirectories():
 
     #docsFolder = mcplatform.documents_folder()
 
-
     if runningInEditor:
         print "Running in development mode!"
 
