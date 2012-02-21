@@ -56,7 +56,7 @@ class Theme(object):
     #  name   string          Name of theme, for debugging
     #  base   Theme or None   Theme on which this theme is based
 
-    def __init__(self, name, base = None):
+    def __init__(self, name, base=None):
         self.name = name
         self.base = base
 
@@ -156,7 +156,7 @@ framed = Theme('framed')
 framed.border_width = 1
 framed.margin = 3
 
-root.Field = Theme('Field', base = framed)
+root.Field = Theme('Field', base=framed)
 root.Field.border_color = (128, 128, 128)
 
 root.CheckWidget = Theme('CheckWidget')
@@ -168,9 +168,9 @@ root.Dialog.bg_color = (40, 40, 40)
 root.Dialog.border_width = 1
 root.Dialog.margin = 15
 
-root.DirPathView = Theme('DirPathView', base = framed)
+root.DirPathView = Theme('DirPathView', base=framed)
 
-root.FileListView = Theme('FileListView', base = framed)
+root.FileListView = Theme('FileListView', base=framed)
 root.FileListView.scroll_button_color = (255, 255, 0)
 
 root.FileDialog = Theme("FileDialog")
@@ -207,11 +207,11 @@ menu.disabled_color = (0, 0, 0)
 menu.margin = 8
 menu.border_color = (192, 192, 192)
 
-root.MenuBar = Theme('MenuBar', base = menu)
+root.MenuBar = Theme('MenuBar', base=menu)
 root.MenuBar.border_width = 0
 
-root.Menu = Theme('Menu', base = menu)
+root.Menu = Theme('Menu', base=menu)
 root.Menu.border_width = 1
 
-root.MusicVolumeControl = Theme('MusicVolumeControl', base = framed)
+root.MusicVolumeControl = Theme('MusicVolumeControl', base=framed)
 root.MusicVolumeControl.fg_color = (0x40, 0x40, 0x40)
