@@ -16,7 +16,7 @@ class ThemeProperty(object):
     def __get__(self, obj, owner):
         if debug_theme:
             print "%s(%r).__get__(%r)" % (self.__class__.__name__, self.name, obj)
-        try: ###
+        try:  ###
             cache_name = self.cache_name
             try:
                 return getattr(obj, cache_name)
@@ -26,16 +26,16 @@ class ThemeProperty(object):
                 value = self.get_from_theme(obj.__class__, self.name)
                 obj.__dict__[cache_name] = value
                 return value
-        except: ###
+        except:  ###
             if debug_theme:
                 import traceback
                 traceback.print_exc()
                 print "-------------------------------------------------------"
-            raise ###
+            raise  ###
 
     def __set__(self, obj, value):
         if debug_theme:
-            print "Setting %r.%s = %r" % (obj, self.cache_name, value) ###
+            print "Setting %r.%s = %r" % (obj, self.cache_name, value)  ###
         obj.__dict__[self.cache_name] = value
 
     def get_from_theme(self, cls, name):
