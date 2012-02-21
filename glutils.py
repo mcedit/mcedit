@@ -80,6 +80,7 @@ class gl(object):
         cls.listCount -= n
         return GL.glDeleteLists(base, n)
 
+
 class DisplayList(object):
     allLists = []
 
@@ -177,6 +178,7 @@ class Texture(object):
     def invalidate(self):
         self.dirty = True
 
+
 class FramebufferTexture(Texture):
     def __init__(self, width, height, drawFunc):
         tex = GL.glGenTextures(1)
@@ -210,6 +212,7 @@ class FramebufferTexture(Texture):
             FBO.glDeleteFramebuffersEXT(1, [buf])
             FBO.glDeleteRenderbuffersEXT(1, [depthbuffer])
             self.enabled = True
+
 
 def debugDrawPoint(point):
     GL.glColor(1.0, 1.0, 0.0, 1.0)
