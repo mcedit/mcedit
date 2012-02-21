@@ -28,8 +28,10 @@ from albow import alert
 
 log = logging.getLogger(__name__)
 
+
 def configFilePath():
     return mcplatform.configFilePath
+
 
 def loadConfig():
 
@@ -77,6 +79,7 @@ def loadConfig():
         log.warn(u"Error while reading configuration file mcedit.ini: {0}".format(e))
 
     return config
+
 
 def updateConfig():
     pass
@@ -133,6 +136,7 @@ log.info("Loading config...")
 config = loadConfig()
 config.observers = {}
 
+
 def _propertyRef(section, name, dtype=str, default = None):
     class PropRef(object):
         def get(self):
@@ -140,6 +144,7 @@ def _propertyRef(section, name, dtype=str, default = None):
         def set(self, val):
             _setProperty(section, name, val)
     return PropRef()
+
 
 def _configProperty(section, name, dtype=str, setter=None, default = None):
     assert default is not None
@@ -152,6 +157,7 @@ def _configProperty(section, name, dtype=str, setter=None, default = None):
 
     return property(_getter, _setter, None)
 
+
 def _getProperty(section, name, dtype=str, default = None):
     try:
         if dtype is bool:   return config.getboolean(section, name)
@@ -161,10 +167,12 @@ def _getProperty(section, name, dtype=str, default = None):
         _setProperty(section, name, default)
         return default
 
+
 def _setProperty(section, name, value):
     log.debug("Property Change: %15s %30s = %s", section, name, value)
     config.set(section, name, str(value))
     _notifyObservers(section, name, value)
+
 
 def _notifyObservers(section, name, value):
     observers = config.observers.get((section.lower(), name.lower()), {})
@@ -206,6 +214,7 @@ def addObserver(section, name, target, attr=None, dtype=str, callback=None, defa
     setattr(target, attr, val)
     if callback: callback(val)
 
+
 class Setting(object):
     def __init__(self, section, name, dtype, default):
         self.section = section
@@ -233,6 +242,7 @@ class Setting(object):
         return float(self.get())
     def __bool__(self):
         return bool(self.get())
+
 
 class Settings(object):
     Setting = Setting
