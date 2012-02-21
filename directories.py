@@ -65,7 +65,8 @@ def win32_utf8_argv():
 def findDirectories():
     #print 'CWD:', os.getcwdu()
 
-    def fsdecode(x): return x.decode(sys.getfilesystemencoding());
+    def fsdecode(x):
+        return x.decode(sys.getfilesystemencoding());
 
     argzero = fsdecode(sys.argv[0])
     #print "EXE", fsdecode(sys.executable)
