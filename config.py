@@ -68,7 +68,6 @@ def loadConfig():
             k.keyorder = list(self.keyorder)
             return k
 
-
     config = ConfigParser.RawConfigParser([], keyDict)
     config.readfp(StringIO(configDefaults))
     try:
@@ -83,7 +82,6 @@ def updateConfig():
     pass
 
 
-
 def saveConfig():
     try:
         cf = file(configFilePath(), 'w')
@@ -94,8 +92,6 @@ def saveConfig():
             alert(u"Error saving configuration settings to mcedit.ini: {0}".format(e))
         except:
             pass
-
-
 
 configDefaults = """
 [Keys]
@@ -183,11 +179,9 @@ def _notifyObservers(section, name, value):
 
             newObservers[targetref, attr] = callback
 
-
     config.observers[(section, name)] = newObservers
 
 import weakref
-
 
 
 def addObserver(section, name, target, attr=None, dtype=str, callback=None, default=None):
