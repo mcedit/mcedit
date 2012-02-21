@@ -53,8 +53,10 @@ def extract_tb(tb, limit=None):
             selfstr = " "
         traceback.linecache.checkcache(filename)
         line = traceback.linecache.getline(filename, lineno, f.f_globals)
-        if line: line = line.strip()
-        else: line = None
+        if line:
+            line = line.strip()
+        else:
+            line = None
         list.append((filename, lineno, name, line, selfstr))
         tb = tb.tb_next
         n = n + 1
