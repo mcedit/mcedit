@@ -155,7 +155,7 @@ class Texture(object):
         minFilter = minFilter or self.defaultFilter
         magFilter = magFilter or self.defaultFilter
         if textureFunc is None:
-            textureFunc = lambda:None
+            textureFunc = lambda: None
 
         self.textureFunc = textureFunc
         self._texID = GL.glGenTextures(1)
