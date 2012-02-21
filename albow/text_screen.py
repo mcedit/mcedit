@@ -72,7 +72,7 @@ class TextScreen(Screen):
         b2.midtop = add(page_rect.midbottom, gap)
         b3.topright = add(page_rect.bottomright, gap)
         Screen.__init__(self, shell, **kwds)
-        self.size =  add(b3.bottomright, (b, b))
+        self.size = add(b3.bottomright, (b, b))
         self.add(b1)
         self.add(b2)
         self.add(b3)
