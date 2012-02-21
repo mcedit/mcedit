@@ -144,7 +144,7 @@ def _propertyRef(section, name, dtype=str, default = None):
         def set(self, val):
             _setProperty(section, name, val)
     return PropRef()
-    
+
 def _configProperty(section, name, dtype=str, setter=None, default = None):
     assert default is not None
     def _getter(self):
@@ -164,7 +164,7 @@ def _getProperty(section, name, dtype=str, default = None):
         if default is None: raise
         _setProperty(section, name, default)
         return default
-        
+
 def _setProperty(section, name, value):
     log.debug("Property Change: %15s %30s = %s", section, name, value)
     config.set(section, name, str(value))
@@ -180,16 +180,16 @@ def _notifyObservers(section, name, value):
             setattr(target, attr, value)
             callback = observers[targetref, attr]
             if callback: callback(value)
-            
+
             newObservers[targetref, attr] = callback
-            
+
 
     config.observers[(section, name)] = newObservers
 
 import weakref
 
-        
-    
+
+
 def addObserver(section, name, target, attr=None, dtype=str, callback=None, default=None):
     """ Register 'target' for changes in the config var named by section and name.
     When the config is changed, calls setattr with target and attr.
@@ -202,16 +202,16 @@ def addObserver(section, name, target, attr=None, dtype=str, callback=None, defa
         tokens = name.lower().split()
         attr = tokens[0] + "".join(t.title() for t in tokens[1:])
     log.debug("Subscribing %s.%s", target, attr)
-    
+
     attr = intern(attr)
     targetref = weakref.ref(target)
     observers.setdefault((targetref, attr), callback)
-    
+
     val = _getProperty(section, name, dtype, default)
-        
+
     setattr(target, attr, val)
     if callback: callback(val)
-    
+
 class Setting(object):
     def __init__(self, section, name, dtype, default):
         self.section = section
@@ -220,10 +220,10 @@ class Setting(object):
         self.default = default
     def __repr__(self):
         return "Setting(" + ", ".join(str(s) for s in (self.section, self.name, self.dtype, self.default))
-        
+
     def addObserver(self, target, attr = None, callback = None):
         addObserver(self.section, self.name, target, attr, self.dtype, callback, self.default)
-        
+
     def get(self):
         return _getProperty(self.section, self.name, self.dtype, self.default)
     def set(self, val):
@@ -232,22 +232,22 @@ class Setting(object):
         return _propertyRef(self.section, self.name, self.dtype, self.default)
     def configProperty(self, setter = None):
         return _configProperty(self.section, self.name, self.dtype, setter, self.default)
-    
+
     def __int__(self):
         return int(self.get())
     def __float__(self):
         return float(self.get())
     def __bool__(self):
         return bool(self.get())
-    
+
 class Settings(object):
     Setting = Setting
     def __init__(self, section):
         self.section = section
-        
+
     def __call__(self, name, default):
         assert default is not None
-        
+
         dtype = type(default)
         section = self.section
 
@@ -256,18 +256,18 @@ class Settings(object):
             config.add_section(section)
         if not config.has_option(section, name):
             s.set(default)
-            
+
         return s
-        
+
     def __setattr__(self, attr, val):
         if hasattr(self, attr):
             old = getattr(self, attr)
             if isinstance(old, Setting):
                 if isinstance(val, Setting):
                     raise ValueError, "Attempting to reassign setting %s with %s" % (old, val)
-                    
+
                 log.warn("Setting attr %s via __setattr__ instead of set()!", attr)
                 return old.set(val)
-                
+
         print "Setting", attr, val
         return object.__setattr__(self, attr, val)
