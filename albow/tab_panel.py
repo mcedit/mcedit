@@ -9,6 +9,7 @@ from widget import Widget
 from theme import ThemeProperty, FontProperty
 from utils import brighten
 
+
 class TabPanel(Widget):
     #  pages         [Widget]
     #  current_page  Widget
