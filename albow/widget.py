@@ -19,6 +19,7 @@ debug_tab = True
 root_widget = None
 current_cursor = None
 
+
 def overridable_property(name, doc=None):
     """Creates a property which calls methods get_xxx and set_xxx of
     the underlying object to get and set the property value, so that
@@ -31,6 +32,7 @@ def overridable_property(name, doc=None):
         lambda self, value: getattr(self, setter_name)(value),
         None,
         doc)
+
 
 def rect_property(name):
     def get(self):
@@ -45,6 +47,8 @@ def rect_property(name):
     return property(get, set)
 
 #noinspection PyPropertyAccess
+
+
 class Widget(object):
     #  rect            Rect       bounds in parent's coordinates
     #  parent          Widget     containing widget
