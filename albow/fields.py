@@ -65,7 +65,7 @@ class TextEditor(Widget):
                 c = event.unicode
             except ValueError:
                 c = ""
-            if self.insert_char(c) <> 'pass':
+            if self.insert_char(c) != 'pass':
                 return
         if event.cmd and event.unicode:
             if event.key == K_c:

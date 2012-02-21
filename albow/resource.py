@@ -153,7 +153,7 @@ def load_cursor(path):
                 mask.append(mb)
                 db = mb = 0
                 bit = 0x80
-        if bit <> 0x80:
+        if bit != 0x80:
             data.append(db)
             mask.append(mb)
     return (8 * rowbytes, height), hot, data, mask

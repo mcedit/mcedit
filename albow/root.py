@@ -89,7 +89,7 @@ class RootWidget(Widget):
         self.surface = surface
         root_widget = self
         widget.root_widget = self
-        self.is_gl = surface.get_flags() & OPENGL <> 0
+        self.is_gl = surface.get_flags() & OPENGL != 0
         self.idle_handlers = []
 
     def set_timer(self, ms):

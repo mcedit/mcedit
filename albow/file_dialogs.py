@@ -149,7 +149,7 @@ class FileDialog(Dialog):
                 x = os.getcwdu()
                 break
             x = y
-        if self._directory <> x:
+        if self._directory != x:
             self._directory = x
             self.list_box.update()
             self.update()
@@ -235,7 +235,7 @@ class FileSaveDialog(FileDialog):
         path = self.pathname
         if os.path.exists(path):
             answer = ask("Replace existing '%s'?" % os.path.basename(path))
-            if answer <> "OK":
+            if answer != "OK":
                 return
         #FileDialog.ok(self)
         self.dismiss(True)
@@ -244,7 +244,7 @@ class FileSaveDialog(FileDialog):
         FileDialog.update(self)
 
     def ok_enable(self):
-        return self.filename_box.text <> ""
+        return self.filename_box.text != ""
 
 
 class FileOpenDialog(FileDialog):
