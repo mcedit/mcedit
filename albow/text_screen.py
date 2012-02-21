@@ -12,6 +12,7 @@ from controls import Button
 
 #------------------------------------------------------------------------------
 
+
 class Page(object):
 
     def __init__(self, text_screen, heading, lines):
@@ -38,6 +39,7 @@ class Page(object):
             y += buf.get_rect().height
 
 #------------------------------------------------------------------------------
+
 
 class TextScreen(Screen):
 
