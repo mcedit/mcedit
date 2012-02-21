@@ -125,13 +125,13 @@ class Widget(object):
 #        else:
 #            chars += 't'
 #        return chars
-#    
+#
 #    def set_anchor(self, chars):
 #        self.hmove = 'r' in chars and not 'l' in chars
 #        self.vmove = 'b' in chars and not 't' in chars
 #        self.hstretch = 'r' in chars and 'l' in chars
 #        self.vstretch = 'b' in chars and 't' in chars
-#    
+#
 #    anchor = property(get_anchor, set_anchor)
 
     resizing_axes = {'h': 'lr', 'v': 'tb'}
@@ -629,7 +629,7 @@ class Widget(object):
 #            if debug_tab: print "...tabbing to next" ###
 #            self.tab_to_next(start or self)
 #        if debug_tab: print "Exit Widget.tab_to_first:", self ###
-#    
+#
 #    def tab_to_next(self, start = None):
 #        if debug_tab:
 #            print "Enter Widget.tab_to_next:", self ###
@@ -642,7 +642,7 @@ class Widget(object):
 #            if debug_tab: print "...tabbing to next in parent" ###
 #            self.tab_to_next_in_parent(start)
 #        if debug_tab: print "Exit Widget.tab_to_next:", self ###
-#    
+#
 #    def tab_to_next_in_parent(self, start):
 #        if debug_tab:
 #            print "Enter Widget.tab_to_next_in_parent:", self ###
@@ -656,7 +656,7 @@ class Widget(object):
 #                if debug_tab: print "...wrapping back to first" ###
 #                self.tab_to_first(start)
 #        if debug_tab: print "Exit Widget.tab_to_next_in_parent:", self ###
-#    
+#
 #    def tab_to_next_after(self, last, start):
 #        if debug_tab:
 #            print "Enter Widget.tab_to_next_after:", self, last ###
