@@ -214,4 +214,3 @@ def debugDrawPoint(point):
     GL.glPointSize(9.0)
     with gl.glBegin(GL.GL_POINTS):
         GL.glVertex3f(*point)
-
