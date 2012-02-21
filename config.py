@@ -271,7 +271,3 @@ class Settings(object):
                 
         print "Setting", attr, val
         return object.__setattr__(self, attr, val)
-        
-
-    
-                
