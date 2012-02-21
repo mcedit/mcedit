@@ -4,10 +4,10 @@ from pygame.locals import SRCALPHA
 
 def frame_rect(surface, color, rect, thick=1):
     o = 1
-    surface.fill(color, (rect.left+o, rect.top, rect.width-o-o, thick))
-    surface.fill(color, (rect.left+o, rect.bottom - thick, rect.width-o-o, thick))
-    surface.fill(color, (rect.left, rect.top+o, thick, rect.height-o-o))
-    surface.fill(color, (rect.right - thick, rect.top+o, thick, rect.height-o-o))
+    surface.fill(color, (rect.left + o, rect.top, rect.width - o - o, thick))
+    surface.fill(color, (rect.left + o, rect.bottom - thick, rect.width - o - o, thick))
+    surface.fill(color, (rect.left, rect.top + o, thick, rect.height - o - o))
+    surface.fill(color, (rect.right - thick, rect.top + o, thick, rect.height - o - o))
 
 
 def blit_tinted(surface, image, pos, tint, src_rect=None):
