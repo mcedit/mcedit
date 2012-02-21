@@ -8,6 +8,7 @@ from layout import Column
 from palette_view import PaletteView
 from utils import blit_in_rect
 
+
 class TableView(Column):
 
     columns = []
