@@ -89,7 +89,7 @@ class TableView(Column):
         print "click_column_header: ", col
 
     def click_header(self, n, e):
-        x,y = self.global_to_local(e.pos)
+        x, y = self.global_to_local(e.pos)
         width = 0
         for col in self.columns:
             width += col.width
