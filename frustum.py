@@ -116,33 +116,33 @@ class Frustum (object):
         clip = ravel(matrix)
         frustum = zeros((6, 4), 'd')
         # right
-        frustum[0][0] = clip[ 3] - clip[ 0]
-        frustum[0][1] = clip[ 7] - clip[ 4]
-        frustum[0][2] = clip[11] - clip[ 8]
+        frustum[0][0] = clip[3] - clip[0]
+        frustum[0][1] = clip[7] - clip[4]
+        frustum[0][2] = clip[11] - clip[8]
         frustum[0][3] = clip[15] - clip[12]
         # left
-        frustum[1][0] = clip[ 3] + clip[ 0]
-        frustum[1][1] = clip[ 7] + clip[ 4]
-        frustum[1][2] = clip[11] + clip[ 8]
+        frustum[1][0] = clip[3] + clip[0]
+        frustum[1][1] = clip[7] + clip[4]
+        frustum[1][2] = clip[11] + clip[8]
         frustum[1][3] = clip[15] + clip[12]
         # bottoming
-        frustum[2][0] = clip[ 3] + clip[ 1]
-        frustum[2][1] = clip[ 7] + clip[ 5]
-        frustum[2][2] = clip[11] + clip[ 9]
+        frustum[2][0] = clip[3] + clip[1]
+        frustum[2][1] = clip[7] + clip[5]
+        frustum[2][2] = clip[11] + clip[9]
         frustum[2][3] = clip[15] + clip[13]
         # top
-        frustum[3][0] = clip[ 3] - clip[ 1]
-        frustum[3][1] = clip[ 7] - clip[ 5]
-        frustum[3][2] = clip[11] - clip[ 9]
+        frustum[3][0] = clip[3] - clip[1]
+        frustum[3][1] = clip[7] - clip[5]
+        frustum[3][2] = clip[11] - clip[9]
         frustum[3][3] = clip[15] - clip[13]
         # far
-        frustum[4][0] = clip[ 3] - clip[ 2]
-        frustum[4][1] = clip[ 7] - clip[ 6]
+        frustum[4][0] = clip[3] - clip[2]
+        frustum[4][1] = clip[7] - clip[6]
         frustum[4][2] = clip[11] - clip[10]
         frustum[4][3] = clip[15] - clip[14]
         # near
-        frustum[5][0] = clip[ 3] + clip[ 2]
-        frustum[5][1] = clip[ 7] + clip[ 6]
+        frustum[5][0] = clip[3] + clip[2]
+        frustum[5][1] = clip[7] + clip[6]
         frustum[5][2] = clip[11] + clip[10]
         frustum[5][3] = (clip[15] + clip[14])
         if normalize:
