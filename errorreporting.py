@@ -96,7 +96,7 @@ def releaseInfo():
 
     info = """Release: MCEdit-{0}\n{1}
 Platform: {2}, Name: {3}, Version{4}, Arch: {5}
-Platform:{6}, Processor: {7}, 
+Platform:{6}, Processor: {7},
 uname: {8}
 """.format(release.release, datetime.now(), sys.platform, os.name, platform.version(), platform.architecture(), platform.platform(), platform.processor(), uname)
     try:
