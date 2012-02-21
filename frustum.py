@@ -71,13 +71,13 @@ class Frustum (object):
     """
     def visible(self, points, radius):
         """Determine whether this sphere is visible in frustum
-        
+
         frustum -- Frustum object holding the clipping planes
             for the view
         matrix -- a matrix which transforms the local
             coordinates to the (world-space) coordinate
             system in which the frustum is defined.
-        
+
         This version of the method uses a pure-python loop
         to do the actual culling once the points are
         multiplied by the matrix. (i.e. it does not use the
