@@ -24,6 +24,7 @@ from datetime import datetime
 import os
 import httplib
 
+
 def extract_tb(tb, limit=None):
     """Return list of up to limit pre-processed entries from traceback.
 
@@ -84,8 +85,10 @@ def format_list(extracted_list):
 traceback.extract_tb = extract_tb
 traceback.format_list = format_list
 
+
 def clamp(num, low, high):
     return min(high, max(low, num))
+
 
 def releaseInfo():
     import release
