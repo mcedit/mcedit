@@ -25,7 +25,7 @@ class TabPanel(Widget):
     tab_dimming = ThemeProperty('tab_dimming')
     #use_page_bg_color_for_tabs = ThemeProperty('use_page_bg_color_for_tabs')
 
-    def __init__(self, pages = None, **kwds):
+    def __init__(self, pages=None, **kwds):
         Widget.__init__(self, **kwds)
         self.pages = []
         self.current_page = None
