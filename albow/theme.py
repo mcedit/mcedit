@@ -6,6 +6,7 @@ import resource
 
 debug_theme = False
 
+
 class ThemeProperty(object):
 
     def __init__(self, name):
