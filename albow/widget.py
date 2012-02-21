@@ -37,6 +37,7 @@ def overridable_property(name, doc=None):
 def rect_property(name):
     def get(self):
         return getattr(self._rect, name)
+
     def set(self, value):
         r = self._rect
         old_size = r.size
