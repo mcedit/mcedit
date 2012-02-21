@@ -87,11 +87,11 @@ def clamp(num, low, high):
 
 def releaseInfo():
     import release
-    
+
     uname = platform.uname()
     uname = list(uname)
     uname[1] = hex(hash(uname[1]))
-    
+
     info = """Release: MCEdit-{0}\n{1}
 Platform: {2}, Name: {3}, Version{4}, Arch: {5}
 Platform:{6}, Processor: {7}, 
@@ -114,14 +114,14 @@ def reportCrash(crashlog):
         import mcplatform
         parentDir = mcplatform.parentDir
         minecraftDir = mcplatform.minecraftDir
-        
-        
+
+
         if hasattr(sys, 'frozen') or sys.platform != "win32":
             crashlog = crashlog.replace(parentDir, "[MCEdit folder]")
             crashlog = crashlog.replace(minecraftDir, "[Minecraft folder]")
     except Exception, e:
         print repr(e), "while scrubbing user directories from crash log!"
-        
+
     releaseString = releaseInfo()
     crashlog = releaseString + crashlog
     print crashlog
