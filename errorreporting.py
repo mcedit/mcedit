@@ -110,13 +110,11 @@ uname: {8}
         return info
 
 
-
 def reportCrash(crashlog):
     try:
         import mcplatform
         parentDir = mcplatform.parentDir
         minecraftDir = mcplatform.minecraftDir
-
 
         if hasattr(sys, 'frozen') or sys.platform != "win32":
             crashlog = crashlog.replace(parentDir, "[MCEdit folder]")
