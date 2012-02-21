@@ -168,7 +168,7 @@ class Widget(object):
         resize = False
         anchor = self.anchor
         if dw:
-            factors = [1, 1, 1] #left, width, right
+            factors = [1, 1, 1]  # left, width, right
             if 'r' in anchor: factors[2] = 0;
             if 'w' in anchor: factors[1] = 0;
             if 'l' in anchor: factors[0] = 0;
@@ -181,7 +181,7 @@ class Widget(object):
                 #left = (left + width) + factors[2] * dw / sum(factors) - width;
 
         if dh:
-            factors = [1, 1, 1] #bottom, height, top
+            factors = [1, 1, 1]  # bottom, height, top
             if 't' in anchor: factors[2] = 0;
             if 'h' in anchor: factors[1] = 0;
             if 'b' in anchor: factors[0] = 0;
