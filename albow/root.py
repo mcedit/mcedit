@@ -143,7 +143,6 @@ class RootWidget(Widget):
             last_click_button = 0
             self.do_draw = True
 
-
             while modal_widget.modal_result is None:
                 try:
                     self.hover_widget = self.find_widget(mouse.get_pos())
@@ -273,7 +272,6 @@ class RootWidget(Widget):
                 self.capture_mouse(old_captured_widget)
 
         clicked_widget = None
-
 
     def call_idle_handlers(self, event):
         def call(ref):
