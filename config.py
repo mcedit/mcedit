@@ -144,7 +144,7 @@ config = loadConfig()
 config.observers = {}
 
 
-def _propertyRef(section, name, dtype=str, default = None):
+def _propertyRef(section, name, dtype=str, default=None):
     class PropRef(object):
         def get(self):
             return _getProperty(section, name, dtype, default)
@@ -154,7 +154,7 @@ def _propertyRef(section, name, dtype=str, default = None):
     return PropRef()
 
 
-def _configProperty(section, name, dtype=str, setter=None, default = None):
+def _configProperty(section, name, dtype=str, setter=None, default=None):
     assert default is not None
 
     def _getter(self):
@@ -168,7 +168,7 @@ def _configProperty(section, name, dtype=str, setter=None, default = None):
     return property(_getter, _setter, None)
 
 
-def _getProperty(section, name, dtype=str, default = None):
+def _getProperty(section, name, dtype=str, default=None):
     try:
         if dtype is bool:
             return config.getboolean(section, name)
@@ -240,7 +240,7 @@ class Setting(object):
     def __repr__(self):
         return "Setting(" + ", ".join(str(s) for s in (self.section, self.name, self.dtype, self.default))
 
-    def addObserver(self, target, attr = None, callback = None):
+    def addObserver(self, target, attr=None, callback=None):
         addObserver(self.section, self.name, target, attr, self.dtype, callback, self.default)
 
     def get(self):
@@ -252,7 +252,7 @@ class Setting(object):
     def propertyRef(self):
         return _propertyRef(self.section, self.name, self.dtype, self.default)
 
-    def configProperty(self, setter = None):
+    def configProperty(self, setter=None):
         return _configProperty(self.section, self.name, self.dtype, setter, self.default)
 
     def __int__(self):
