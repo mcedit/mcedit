@@ -120,7 +120,7 @@ class TabPanel(Widget):
         width = self.width - 2 * m + s - b
         x0 = m
         for i, page in enumerate(pages):
-            x1 = m + (i + 1) * width // n #self.tab_boundary(i + 1)
+            x1 = m + (i + 1) * width // n  # self.tab_boundary(i + 1)
             selected = page is current_page
             yield i, page.tab_title, page, selected, Rect(x0, 0, x1 - x0 - s + b, h)
             x0 = x1
