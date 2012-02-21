@@ -170,34 +170,34 @@ class Widget(object):
         if dw:
             factors = [1, 1, 1]  # left, width, right
             if 'r' in anchor:
-                actors[2] = 0;
+                actors[2] = 0
             if 'w' in anchor:
-                actors[1] = 0;
+                actors[1] = 0
             if 'l' in anchor:
-                actors[0] = 0;
+                actors[0] = 0
             if any(factors):
                 resize = factors[1]
                 move = factors[0] or factors[2]
                 #print "lwr", factors
                 left += factors[0] * dw / sum(factors)
                 width += factors[1] * dw / sum(factors)
-                #left = (left + width) + factors[2] * dw / sum(factors) - width;
+                #left = (left + width) + factors[2] * dw / sum(factors) - width
 
         if dh:
             factors = [1, 1, 1]  # bottom, height, top
             if 't' in anchor:
-                actors[2] = 0;
+                actors[2] = 0
             if 'h' in anchor:
-                actors[1] = 0;
+                actors[1] = 0
             if 'b' in anchor:
-                actors[0] = 0;
+                actors[0] = 0
             if any(factors):
                 resize = factors[1]
                 move = factors[0] or factors[2]
                 #print "bht", factors
                 top += factors[2] * dh / sum(factors)
                 height += factors[1] * dh / sum(factors)
-                #top = (top + height) + factors[0] * dh / sum(factors) - height;
+                #top = (top + height) + factors[0] * dh / sum(factors) - height
 
         if resize:
             if debug_resize:
@@ -720,7 +720,7 @@ class Widget(object):
 
     def gl_draw_all(self, root, offset):
         if not self.visible:
-            return;
+            return
         from OpenGL import GL, GLU
         rect = self.rect.move(offset)
         if self.is_gl_container:
