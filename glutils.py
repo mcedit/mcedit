@@ -70,6 +70,7 @@ class gl(object):
             GL.glPopAttrib()
 
     listCount = 0
+
     @classmethod
     def glGenLists(cls, n):
         cls.listCount += n
@@ -87,12 +88,14 @@ class DisplayList(object):
     def __init__(self, drawFunc=None):
         self.drawFunc = drawFunc
         self._list = None
+
         def _delete(r):
             DisplayList.allLists.remove(r)
         self.allLists.append(weakref.ref(self, _delete))
 
     def __del__(self):
         self.invalidate()
+
     @classmethod
     def invalidateAllLists(self):
         allLists = []
@@ -147,6 +150,7 @@ class DisplayList(object):
 class Texture(object):
     allTextures = []
     defaultFilter = GL.GL_NEAREST
+
     def __init__(self, textureFunc=None, minFilter = None, magFilter = None):
         minFilter = minFilter or self.defaultFilter
         magFilter = magFilter or self.defaultFilter
