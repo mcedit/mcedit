@@ -83,10 +83,10 @@ class TableView(Column):
 
     def click_row(self, n, e):
         pass
-        
+
     def click_column_header(self, col):
         print "click_column_header: ", col
-        
+
     def click_header(self, n, e):
         x,y = self.global_to_local(e.pos)
         width = 0
@@ -94,8 +94,8 @@ class TableView(Column):
             width += col.width
             if x < width:
                 return self.click_column_header(col)
-            
-        
+
+
 class TableColumn(object):
     #  title           string
     #  width           int
@@ -177,6 +177,6 @@ class TableHeaderView(TableRowBase):
 
     def draw_table_cell(self, surf, i, data, cell_rect, column):
         self.parent.draw_header_cell(surf, i, cell_rect, column)
-    
+
     def click_item(self, n, e):
         self.parent.click_header(n, e)
