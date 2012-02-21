@@ -143,7 +143,6 @@ class DisplayList(object):
             GL.glCallLists(self._list)
 
 
-
 class Texture(object):
     allTextures = []
     defaultFilter = GL.GL_NEAREST
