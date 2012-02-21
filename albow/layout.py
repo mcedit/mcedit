@@ -156,4 +156,3 @@ class Frame(Widget):
         self.size = (w + 2 * d, h + 2 * d)
         client.topleft = (d, d)
         self.add(client)
-

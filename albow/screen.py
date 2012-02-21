@@ -21,4 +21,3 @@ class Screen(Widget):
 
     def leave_screen(self):
         pass
-
