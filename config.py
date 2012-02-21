@@ -66,7 +66,7 @@ def loadConfig():
                 self.keyorder.remove(k)
 
         def __contains__(self, k):
-            return self.dict.__contains__(k);
+            return self.dict.__contains__(k)
 
         def __len__(self):
             return self.dict.__len__()
