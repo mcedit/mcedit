@@ -62,9 +62,9 @@ class TextScreen(Screen):
             page_size = maximum(page_size, page.size)
         self.pages = pages
         bf = self.button_font
-        b1 = Button("Prev Page", font = bf, action = self.prev_page)
-        b2 = Button("Menu", font = bf, action = self.go_back)
-        b3 = Button("Next Page", font = bf, action = self.next_page)
+        b1 = Button("Prev Page", font=bf, action=self.prev_page)
+        b2 = Button("Menu", font=bf, action=self.go_back)
+        b3 = Button("Next Page", font=bf, action=self.next_page)
         b = self.margin
         page_rect = Rect((b, b), page_size)
         gap = (0, 18)
