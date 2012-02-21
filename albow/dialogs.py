@@ -13,7 +13,7 @@ class Modal(object):
 
     def ok(self):
         self.dismiss(True)
-    
+
     def cancel(self):
         self.dismiss(False)
 
@@ -51,13 +51,13 @@ class Dialog(Modal, Widget):
             self.enter_response = responses[default]
         if responses and cancel is not None:
             self.cancel_response = responses[cancel]
-    
+
     def mouse_down(self, e):
         if not e in self:
             response = self.click_outside_response
             if response is not None:
                 self.dismiss(response)
-    
+
 class QuickDialog(Dialog):
     """ Dialog that closes as soon as you click outside or press a key"""
     def mouse_down(self, evt):
@@ -65,11 +65,11 @@ class QuickDialog(Dialog):
             self.dismiss(-1)
             if evt.button != 1:
                 event.post(evt)
-            
+
     def key_down(self, evt):
         self.dismiss()
         event.post(evt)
-    
+
 def wrapped_label(text, wrap_width, **kwds):
     paras = text.split("\n")
     text = "\n".join([textwrap.fill(para, wrap_width) for para in paras])

@@ -91,7 +91,7 @@ class RootWidget(Widget):
         widget.root_widget = self
         self.is_gl = surface.get_flags() & OPENGL <> 0
         self.idle_handlers = []
-        
+
     def set_timer(self, ms):
         pygame.time.set_timer(USEREVENT, ms)
 
@@ -114,7 +114,7 @@ class RootWidget(Widget):
 
     frames = 0
     hover_widget = None
-    
+
     def run_modal(self, modal_widget):
         old_captured_widget = None
 
@@ -142,8 +142,8 @@ class RootWidget(Widget):
             last_click_time = start_time
             last_click_button = 0
             self.do_draw = True
-            
-            
+
+
             while modal_widget.modal_result is None:
                 try:
                     self.hover_widget = self.find_widget(mouse.get_pos())
@@ -163,7 +163,7 @@ class RootWidget(Widget):
                     for event in events:
                         if event.type:
                             log.debug("%s", event)
-                        
+
                         type = event.type
                         if type == QUIT:
                             self.quit()
@@ -218,7 +218,7 @@ class RootWidget(Widget):
                             else:
                                 last_mouse_event_handler = mouse_widget
                                 event.dict['clicked_widget'] = None
-                                
+
                             last_mouse_event = event
                             clicked_widget = None
                             last_mouse_event_handler.handle_mouse('mouse_up', event)
@@ -263,7 +263,7 @@ class RootWidget(Widget):
                         elif type == NOEVENT:
                             add_modifiers(event)
                             self.call_idle_handlers(event)
-                            
+
                 except Cancel:
                     pass
         finally:
@@ -281,16 +281,16 @@ class RootWidget(Widget):
             if widget: widget.idleevent(event)
             else: print "Idle ref died!"
             return bool(widget)
-            
+
         self.idle_handlers = filter(call, self.idle_handlers)
-        
+
     def add_idle_handler(self, widget):
         from weakref import ref
         self.idle_handlers.append(ref(widget))
     def remove_idle_handler(self, widget):
         from weakref import ref
         self.idle_handlers.remove(ref(widget))
-        
+
     def send_key(self, widget, name, event):
         add_modifiers(event)
         widget.dispatch_key(name, event)

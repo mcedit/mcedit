@@ -35,7 +35,7 @@ class Control(object):
             ref.set(x)
         else:
             self._value = x
-            
+
     def get_highlighted(self):
         return self._highlighted
 
@@ -144,9 +144,9 @@ class Label(Widget):
             if self.highlighted:
                 fg = self.highlight_color or fg
                 bg = self.highlight_bg_color or bg    
-                
+
         self.draw_with(surface, fg, bg)
-    
+
     is_default = False
     def draw_with(self, surface, fg, bg=None):
         if bg:
@@ -184,7 +184,7 @@ class GLLabel(Label):
     pass
 class SmallLabel(Label): 
     """Small text size. See theme.py"""
-    
+
 #---------------------------------------------------------------------------
 
 class ButtonBase(Control):
@@ -193,7 +193,7 @@ class ButtonBase(Control):
     action = None
     default_choice_color = ThemeProperty('default_choice_color')
     default_choice_bg_color = ThemeProperty('default_choice_bg_color')
-    
+
     def mouse_down(self, event):
         if self.enabled:
             self._highlighted = True
@@ -284,10 +284,10 @@ class ValueDisplay(Control, Label):
 #        buf = self.font.render(text, True, self.fg_color)
 #        frame = surf.get_rect()
 #        blit_in_rect(surf, buf, frame, self.align, self.margin)
-    
+
     def get_text(self):
         return self.format_value(self.value)
-        
+
     def format_value(self, value):
         if value is not None:
             return self.format % value
@@ -325,7 +325,7 @@ class CheckWidget(Widget):
 
     def __init__(self, **kwds):
         Widget.__init__(self, Rect((0, 0), self.default_size), **kwds)
-            
+
     def draw(self, surf):
         if self.highlighted:
             r = self.get_margin_rect()
