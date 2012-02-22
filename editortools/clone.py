@@ -156,13 +156,13 @@ class CloneOperation (Operation):
 
         if len(dirtyBoxes):
             def enclosingBox(dirtyBoxes):
-                minx = min(map(lambda x:x.minx, dirtyBoxes))
-                miny = min(map(lambda x:x.miny, dirtyBoxes))
-                minz = min(map(lambda x:x.minz, dirtyBoxes))
+                minx = min(map(lambda x: x.minx, dirtyBoxes))
+                miny = min(map(lambda x: x.miny, dirtyBoxes))
+                minz = min(map(lambda x: x.minz, dirtyBoxes))
 
-                maxx = max(map(lambda x:x.maxx, dirtyBoxes))
-                maxy = max(map(lambda x:x.maxy, dirtyBoxes))
-                maxz = max(map(lambda x:x.maxz, dirtyBoxes))
+                maxx = max(map(lambda x: x.maxx, dirtyBoxes))
+                maxy = max(map(lambda x: x.maxy, dirtyBoxes))
+                maxz = max(map(lambda x: x.maxz, dirtyBoxes))
 
                 origin = (minx, miny, minz)
                 maximum = (maxx, maxy, maxz)
@@ -175,7 +175,7 @@ class CloneOperation (Operation):
                 dirtyBoxes.append(originSourceBox)
 
             dirty = enclosingBox(dirtyBoxes)
-            points = (dirty.origin, map(lambda x:x - 1, dirty.maximum))
+            points = (dirty.origin, map(lambda x: x - 1, dirty.maximum))
 
             self.selectionOps = [SelectionOperation(editor.selectionTool, points)]
 
@@ -296,7 +296,7 @@ class CloneToolPanel(Panel):
         self.performButton = Button("Clone", width=100, align="c")
         self.performButton.tooltipText = "Shortcut: ENTER"
         self.performButton.action = tool.confirm
-        self.performButton.enable = lambda:(tool.destPoint is not None)
+        self.performButton.enable = lambda: (tool.destPoint is not None)
         if self.useOffsetInput:
             col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.offsetInput, repeatRow, scaleRow, copyAirRow, copyWaterRow, self.performButton))
         else:
@@ -404,7 +404,7 @@ class CloneTool(EditorTool):
             nudge = self.quickNudge(nudge)
 
         # self.panel.performButton.enabled = True
-        self.destPoint = map(lambda a, b:a + b, self.destPoint, nudge)
+        self.destPoint = map(lambda a, b: a + b, self.destPoint, nudge)
         self.updateOffsets()
 
     def selectionChanged(self):
@@ -495,14 +495,14 @@ class CloneTool(EditorTool):
         data = self.originalLevel.Data
 
         if factor < 1.0:
-            roundedShape = map(lambda x:int(int(x * factor) / factor), oldshape)
-            roundedSlices = map(lambda x:slice(0, x), roundedShape)
+            roundedShape = map(lambda x: int(int(x * factor) / factor), oldshape)
+            roundedSlices = map(lambda x: slice(0, x), roundedShape)
             blocks = blocks[roundedSlices]
             data = data[roundedSlices]
         else:
             roundedShape = oldshape
 
-        newshape = map(lambda x:int(x * factor), oldshape)
+        newshape = map(lambda x: int(x * factor), oldshape)
         xyzshape = newshape[0], newshape[2], newshape[1]
         newlevel = MCSchematic(xyzshape, mats=self.editor.level.materials)
 
@@ -620,9 +620,9 @@ class CloneTool(EditorTool):
 
         # print size; raise SystemExit
         if any(direction) and pos[1] >= 0:
-            x, y, z = map(lambda p, s, d:p - s / 2 + s * d / 2 + (d > 0), pos, size, direction)
+            x, y, z = map(lambda p, s, d: p - s / 2 + s * d / 2 + (d > 0), pos, size, direction)
         else:
-            x, y, z = map(lambda p, s:p - s / 2, pos, size)
+            x, y, z = map(lambda p, s: p - s / 2, pos, size)
 
         if self.chunkAlign:
             x = x & ~0xf
@@ -794,7 +794,7 @@ class CloneTool(EditorTool):
 
     def _draggingOrigin(self):
         dragPos = map(int, map(floor, self.positionOnDraggingPlane()))
-        delta = map(lambda s, e:e - int(floor(s)), self.draggingStartPoint, dragPos)
+        delta = map(lambda s, e: e - int(floor(s)), self.draggingStartPoint, dragPos)
 
         if key.get_mods() & KMOD_SHIFT:
             ad = map(abs, delta)
@@ -805,7 +805,7 @@ class CloneTool(EditorTool):
             d[dragY] = delta[dragY]
             delta = d
 
-        p = map(lambda a, b:a + b, delta, self.destPoint)
+        p = map(lambda a, b: a + b, delta, self.destPoint)
         if self.chunkAlign:
             p = [i // 16 * 16 for i in p]
         return p
@@ -821,7 +821,7 @@ class CloneTool(EditorTool):
 
         mouseVector = self.editor.mainViewport.mouseVector
         scale = distance / (mouseVector[dim] or 1)
-        point = map(lambda a, b:a * scale + b, mouseVector, pos)
+        point = map(lambda a, b: a * scale + b, mouseVector, pos)
         return point
 
     draggingY = 0
@@ -909,7 +909,7 @@ class CloneTool(EditorTool):
         box = self.selectionBox()
 
         # pick up the object. reset the tool distance to the object's distance from the camera
-        d = map(lambda a, b, c:abs(a - b - c / 2), self.editor.mainViewport.cameraPosition, self.destPoint, box.size)
+        d = map(lambda a, b, c: abs(a - b - c / 2), self.editor.mainViewport.cameraPosition, self.destPoint, box.size)
         self.cloneCameraDistance = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2])
         self.destPoint = None
         # self.panel.performButton.enabled = False
@@ -987,7 +987,7 @@ class ConstructionTool(CloneTool):
         pass
 
     def quickNudge(self, nudge):
-        return map(lambda x:x * 8, nudge)
+        return map(lambda x: x * 8, nudge)
 
     def __init__(self, *args):
         CloneTool.__init__(self, *args)
