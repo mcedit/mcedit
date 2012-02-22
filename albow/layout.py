@@ -77,9 +77,9 @@ class Row(RowOrColumn):
         'b': (2, 'bottomleft', 'bottomright'),
     }
 
-    def __init__(self, items, width = None, **kwds):
+    def __init__(self, items, width=None, **kwds):
         """
-        Row(items, align = alignment, spacing = 10, width = None, expand = None)
+        Row(items, align=alignment, spacing=10, width=None, expand=None)
         align = 't', 'c' or 'b'
         """
         RowOrColumn.__init__(self, width, items, kwds)
@@ -99,9 +99,9 @@ class Column(RowOrColumn):
         'r': (2, 'topright', 'bottomright'),
     }
 
-    def __init__(self, items, height = None, **kwds):
+    def __init__(self, items, height=None, **kwds):
         """
-        Column(items, align = alignment, spacing = 10, height = None, expand = None)
+        Column(items, align=alignment, spacing=10, height=None, expand=None)
         align = 'l', 'c' or 'r'
         """
         RowOrColumn.__init__(self, height, items, kwds)
@@ -113,7 +113,7 @@ class Grid(Widget):
 
     _is_gl_container = True
 
-    def __init__(self, rows, row_spacing = 10, column_spacing = 10, **kwds):
+    def __init__(self, rows, row_spacing=10, column_spacing=10, **kwds):
         col_widths = [0] * len(rows[0])
         row_heights = [0] * len(rows)
         for j, row in enumerate(rows):
@@ -151,7 +151,7 @@ class Frame(Widget):
     border_width = 1
     margin = 2
 
-    def __init__(self, client, border_spacing = None, **kwds):
+    def __init__(self, client, border_spacing=None, **kwds):
         Widget.__init__(self, **kwds)
         self.client = client
         if border_spacing is not None:

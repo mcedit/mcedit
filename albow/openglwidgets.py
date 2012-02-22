@@ -71,8 +71,8 @@ import numpy
 class GLOrtho(GLViewport):
 
     def __init__(self, rect=None,
-            xmin= -1, xmax=1, ymin= -1, ymax=1,
-            near= -1, far=1, **kwds):
+            xmin=-1, xmax=1, ymin=-1, ymax=1,
+            near=-1, far=1, **kwds):
         GLViewport.__init__(self, rect, **kwds)
         self.xmin = xmin
         self.xmax = xmax
@@ -87,7 +87,7 @@ class GLOrtho(GLViewport):
 
 
 class GLPixelOrtho(GLOrtho):
-    def __init__(self, rect=None, near= -1, far=1, **kwds):
+    def __init__(self, rect=None, near=-1, far=1, **kwds):
         GLOrtho.__init__(self, rect, near, far, **kwds)
         self.xmin = 0
         self.ymin = 0

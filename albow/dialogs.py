@@ -23,8 +23,8 @@ class Dialog(Modal, Widget):
 
     click_outside_response = None
 
-    def __init__(self, client = None, responses = None,
-            default = 0, cancel = -1, **kwds):
+    def __init__(self, client=None, responses=None,
+            default=0, cancel=-1, **kwds):
         Widget.__init__(self, **kwds)
         if client or responses:
             rows = []
@@ -35,7 +35,7 @@ class Dialog(Modal, Widget):
                 w1 = client.width
             if responses:
                 buttons = Row([
-                    Button(text, action = lambda t=text: self.dismiss(t))
+                    Button(text, action=lambda t=text: self.dismiss(t))
                         for text in responses])
                 rows.append(buttons)
                 w2 = buttons.width
@@ -43,7 +43,7 @@ class Dialog(Modal, Widget):
                 a = 'l'
             else:
                 a = 'r'
-            contents = Column(rows, align = a)
+            contents = Column(rows, align=a)
             m = self.margin
             contents.topleft = (m, m)
             self.add(contents)
@@ -92,19 +92,19 @@ def alert(mess, **kwds):
     ask(mess, ["OK"], **kwds)
 
 
-def ask(mess, responses = ["OK", "Cancel"], default = 0, cancel = -1,
-        wrap_width = 60, **kwds):
+def ask(mess, responses=["OK", "Cancel"], default=0, cancel=-1,
+        wrap_width=60, **kwds):
     box = Dialog(**kwds)
     d = box.margin
     lb = wrapped_label(mess, wrap_width)
     lb.topleft = (d, d)
     buts = []
     for caption in responses:
-        but = Button(caption, action = lambda x = caption: box.dismiss(x))
+        but = Button(caption, action=lambda x=caption: box.dismiss(x))
         buts.append(but)
-    brow = Row(buts, spacing = d)
+    brow = Row(buts, spacing=d)
     lb.width = max(lb.width, brow.width)
-    col = Column([lb, brow], spacing = d, align ='r')
+    col = Column([lb, brow], spacing=d, align='r')
     col.topleft = (d, d)
     if default is not None:
         box.enter_response = responses[default]
@@ -120,7 +120,7 @@ def ask(mess, responses = ["OK", "Cancel"], default = 0, cancel = -1,
     return box.present()
 
 
-def input_text(prompt, width, initial = None, **kwds):
+def input_text(prompt, width, initial=None, **kwds):
     box = Dialog(**kwds)
     d = box.margin
 

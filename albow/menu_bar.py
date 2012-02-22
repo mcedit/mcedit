@@ -10,7 +10,7 @@ class MenuBar(Widget):
 
     menus = overridable_property('menus', "List of Menu instances")
 
-    def __init__(self, menus = None, width = 0, **kwds):
+    def __init__(self, menus=None, width=0, **kwds):
         font = self.predict_font(kwds)
         height = font.get_linesize()
         Widget.__init__(self, Rect(0, 0, width, height), **kwds)

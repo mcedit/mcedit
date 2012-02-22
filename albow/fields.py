@@ -18,7 +18,7 @@ class TextEditor(Widget):
 
     _text = u""
 
-    def __init__(self, width, upper = None, **kwds):
+    def __init__(self, width, upper=None, **kwds):
         Widget.__init__(self, **kwds)
         self.set_size_for_text(width)
         if upper is not None:
@@ -193,7 +193,7 @@ class Field(Control, TextEditor):
     max = None
     enter_passes = False
 
-    def __init__(self, width = None, **kwds):
+    def __init__(self, width=None, **kwds):
         min = self.predict_attr(kwds, 'min')
         max = self.predict_attr(kwds, 'max')
         if 'format' in kwds:
@@ -258,7 +258,7 @@ class Field(Control, TextEditor):
         if self.min is not None: value = max(value, self.min)
         return value
 
-    def commit(self, notify = False):
+    def commit(self, notify=False):
         if self.editing:
             text = self._text
             if text:

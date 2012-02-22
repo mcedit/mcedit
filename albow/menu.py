@@ -27,7 +27,7 @@ class MenuItem(object):
         cmd_name = "Ctrl "
         option_name = "Alt "
 
-    def __init__(self, text = "", command = None):
+    def __init__(self, text="", command=None):
         self.command = command
         if "/" in text:
             text, key = text.split("/", 1)
@@ -86,7 +86,7 @@ class Menu(Dialog):
         root = get_root()
         self.rect.clamp_ip(root.rect)
 
-        return Dialog.present(self, centered = False)
+        return Dialog.present(self, centered=False)
 
     def command_is_enabled(self, item, focus):
         cmd = item.command

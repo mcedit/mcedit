@@ -42,7 +42,7 @@ class PlayList(object):
     If repeat is true, the list will be repeated indefinitely, otherwise
     each item will only be played once."""
 
-    def __init__(self, items, random = False, repeat = False):
+    def __init__(self, items, random=False, repeat=False):
         self.items = list(items)
         self.random = random
         self.repeat = repeat
@@ -98,13 +98,13 @@ def change_playlist(new_playlist):
             current_music = None
 
 
-def change_music(new_music, repeat = False):
+def change_music(new_music, repeat=False):
     """Fade out any currently playing music and start playing the given
     music file."""
     #print "albow.music: change_music" ###
     if music and new_music is not current_music:
         if new_music:
-            new_playlist = PlayList([new_music], repeat = repeat)
+            new_playlist = PlayList([new_music], repeat=repeat)
         else:
             new_playlist = None
         change_playlist(new_playlist)
@@ -209,7 +209,7 @@ class MusicOptionsDialog(Dialog):
             [Label("Music Volume"), mvc],
         ])
         buttons = Button("OK", self.ok)
-        contents = Column([controls, buttons], align = 'r', spacing = 20)
+        contents = Column([controls, buttons], align='r', spacing=20)
         contents.topleft = (20, 20)
         self.add(contents)
         self.shrink_wrap()
