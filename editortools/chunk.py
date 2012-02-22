@@ -134,7 +134,8 @@ class ChunkTool(EditorTool):
             import renderer
             sizedChunks = renderer.chunkMarkers(self._selectedChunks)
             for size, chunks in sizedChunks.iteritems():
-                if not len(chunks): continue
+                if not len(chunks):
+                    continue
                 chunks = array(chunks, dtype='float32')
 
                 chunkPosition = zeros(shape=(chunks.shape[0], 4, 3), dtype='float32')
@@ -148,7 +149,8 @@ class ChunkTool(EditorTool):
                 glDrawArrays(GL_QUADS, 0, len(chunkPosition) * 4)
 
         for d, points, positions in lines:
-            if 0 == len(positions): continue
+            if 0 == len(positions):
+                continue
             vertexArray = zeros((len(positions), 4, 3), dtype='float32')
             vertexArray[..., [0, 2]] = positions
             vertexArray.shape = len(positions), 2, 2, 3
@@ -208,13 +210,15 @@ class ChunkTool(EditorTool):
                 filetype='Folder\0*.*\0\0',
                 suffix="",
                 )
-        if not folder: return
+        if not folder:
+            return
 
         self.editor.level.extractChunksInBox(self.selectionBox(), folder)
 
     @alertException
     def destroyChunks(self, chunks = None):
-        if "No" == ask("Really delete these chunks? This cannot be undone.", ("Yes", "No")): return
+        if "No" == ask("Really delete these chunks? This cannot be undone.", ("Yes", "No")):
+            return
         if chunks is None:
             chunks = self.selectedChunks()
         chunks = list(chunks)
@@ -241,7 +245,8 @@ class ChunkTool(EditorTool):
 
     @alertException
     def pruneChunks(self):
-        if "No" == ask("Save these chunks and remove the rest? This cannot be undone.", ("Yes", "No")): return
+        if "No" == ask("Save these chunks and remove the rest? This cannot be undone.", ("Yes", "No")):
+            return
         self.editor.saveFile()
 
         def _pruneChunks():
@@ -287,7 +292,8 @@ class ChunkTool(EditorTool):
         col.append(Row([Label("")]))
         col.append(label)
         col = Column(col)
-        if Dialog(client=col, responses=["OK", "Cancel"]).present() == "Cancel": return
+        if Dialog(client=col, responses=["OK", "Cancel"]).present() == "Cancel":
+            return
         chunks = self.selectedChunks()
 
         createChunks = panel.generate(self.editor.level, chunks)

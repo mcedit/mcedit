@@ -255,7 +255,8 @@ class PlayerPositionTool(EditorTool):
         self.panel = None
 
     def drawToolReticle(self):
-        if self.movingPlayer is None: return
+        if self.movingPlayer is None:
+            return
 
         pos, direction = self.editor.blockFaceUnderCursor
         pos = (pos[0], pos[1] + 2, pos[2])
@@ -294,7 +295,8 @@ class PlayerPositionTool(EditorTool):
                 pos = self.editor.level.getPlayerPosition(player)
                 yaw,pitch = self.editor.level.getPlayerOrientation(player)
                 dim = self.editor.level.getPlayerDimension(player)
-                if dim != self.editor.level.dimNo: continue
+                if dim != self.editor.level.dimNo:
+                    continue
                 x, y, z = pos
                 glPushMatrix()
                 glTranslate(x, y, z)
@@ -329,7 +331,8 @@ class PlayerPositionTool(EditorTool):
 
     @property
     def statusText(self):
-        if not self.panel: return ""
+        if not self.panel:
+            return ""
         player = self.panel.selectedPlayer
         if player == "Player":
             return "Click to move the player"
@@ -338,7 +341,8 @@ class PlayerPositionTool(EditorTool):
 
     @alertException
     def mouseDown(self, evt, pos, direction):
-        if self.movingPlayer is None: return
+        if self.movingPlayer is None:
+            return
 
         pos = (pos[0] + 0.5, pos[1] + 2.75, pos[2] + 0.5)
 

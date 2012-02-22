@@ -105,7 +105,8 @@ class Operation(object):
 
         if sch == "Canceled":
             raise Cancel
-        if sch is None: sch = MCSchematic( (0,0,0) )
+        if sch is None:
+            sch = MCSchematic( (0,0,0) )
 
         sch.compress()
         return sch
@@ -217,9 +218,11 @@ class BlockThumbView(Widget):
     @blockInfo.setter
     def blockInfo(self, b):
         if self._blockInfo != b:
-            if self.thumb: self.thumb.set_parent(None)
+            if self.thumb:
+                self.thumb.set_parent(None)
             self._blockInfo = b
-            if b is None: return
+            if b is None:
+                return
 
             sch = MCSchematic(shape=(1,1,1), mats=self.materials)
             if b:
@@ -252,7 +255,8 @@ class BlockView(GLOrtho):
 
     def _gl_draw(self):
         blockInfo = self.blockInfo
-        if blockInfo.ID is 0: return
+        if blockInfo.ID is 0:
+            return
 
         glColor(1.0, 1.0, 1.0, 1.0)
         glEnable(GL_TEXTURE_2D)
@@ -634,7 +638,8 @@ class EditorTool(object):
         pass
 
     def drawTerrainPreview(self, origin):
-        if self.previewRenderer is None: return
+        if self.previewRenderer is None:
+            return
         self.previewRenderer.origin = map(lambda a, b:a - b, origin, self.level.bounds.origin)
 
         glPolygonOffset(DepthOffset.ClonePreview, DepthOffset.ClonePreview)
@@ -642,15 +647,20 @@ class EditorTool(object):
         self.previewRenderer.draw()
         glDisable(GL_POLYGON_OFFSET_FILL)
 
-    def rotate(self, amount=1): pass
+    def rotate(self, amount=1):
+        pass
 
-    def roll(self, amount=1): pass
+    def roll(self, amount=1):
+        pass
 
-    def flip(self, amount=1): pass
+    def flip(self, amount=1):
+        pass
 
-    def mirror(self, amount=1): pass
+    def mirror(self, amount=1):
+        pass
 
-    def swap(self, amount=1): pass
+    def swap(self, amount=1):
+        pass
 
     def mouseDown(self, evt, pos, direction):
         '''pos is the coordinates of the block under the cursor,
@@ -719,11 +729,13 @@ class EditorTool(object):
     edge_factor = 0.1
 
     def boxFaceUnderCursor(self, box):
-        if self.editor.mainViewport.mouseMovesCamera: return None, None
+        if self.editor.mainViewport.mouseMovesCamera:
+            return None, None
 
         p0 = self.editor.mainViewport.cameraPosition
         normal = self.editor.mainViewport.mouseVector
-        if normal is None: return None, None
+        if normal is None:
+            return None, None
 
         points = {}
 
@@ -758,11 +770,13 @@ class EditorTool(object):
 
 #        glEnd()
 
-        if not len(points): return None, None
+        if not len(points):
+            return None, None
 
         cp = self.editor.mainViewport.cameraPosition
         distances = dict((sum(map(lambda a, b: (b - a) ** 2, cp, point)), (face, point)) for face, point in points.iteritems())
-        if not len(distances): return None, None
+        if not len(distances):
+            return None, None
 
         #When holding alt, pick the face opposite the camera
         #if key.get_mods() & KMOD_ALT:
@@ -858,7 +872,8 @@ class EditorTool(object):
     def selectionSize(self):
         ''' returns a tuple containing the size of the selection (x,y,z)'''
         c = self.selectionBox()
-        if c is None: return None
+        if c is None:
+            return None
         return c.size
 
     @property
@@ -866,7 +881,8 @@ class EditorTool(object):
         from leveleditor import Settings
         return Settings.blockBuffer.get() / 2 #assume block buffer in megabytes
 
-    def showPanel(self): pass
+    def showPanel(self):
+        pass
 
     def hidePanel(self):
         if self.panel and self.panel.parent:

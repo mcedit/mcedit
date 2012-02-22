@@ -190,7 +190,8 @@ class FillTool(EditorTool):
 
     def toolSelected(self):
         box = self.selectionBox()
-        if None is box: return;
+        if None is box:
+            return;
 
         self.replacing = False
         self.showPanel()
@@ -217,7 +218,8 @@ class FillTool(EditorTool):
     @alertException
     def confirm(self):
         box = self.selectionBox()
-        if None is box: return;
+        if None is box:
+            return;
 
         with setWindowCaption("REPLACING - "):
             self.editor.freezeStatus("Replacing %0.1f million blocks" % (float(box.volume) / 1048576.,))
@@ -276,7 +278,8 @@ class FillTool(EditorTool):
         def blockTexFunc(type):
             def _func():
                 s, t = blockTextures[type][0]
-                if not hasattr(terrainTexture, "data"): return
+                if not hasattr(terrainTexture, "data"):
+                    return
                 w, h = terrainTexture.data.shape[:2]
                 s = s * w / 256
                 t = t * h / 256
@@ -293,7 +296,8 @@ class FillTool(EditorTool):
             self.editor.drawWireCubeReticle(color=(0.2, 0.6, 0.9, 1.0))
 
     def drawToolMarkers(self):
-        if self.editor.currentTool != self: return;
+        if self.editor.currentTool != self:
+            return;
 
         if self.panel and self.replacing:
             blockInfo = self.replaceBlockInfo
@@ -329,7 +333,8 @@ class FillTool(EditorTool):
     def worldTooltipText(self):
         if key.get_mods() & KMOD_ALT:
             try:
-                if self.editor.blockFaceUnderCursor is None: return
+                if self.editor.blockFaceUnderCursor is None:
+                    return
                 pos = self.editor.blockFaceUnderCursor[0]
                 blockID = self.editor.level.blockAt(*pos)
                 blockdata = self.editor.level.blockDataAt(*pos)

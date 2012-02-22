@@ -103,9 +103,12 @@ class BlockCopyOperation(Operation):
         blocksToCopy = None
         if not (self.copyAir and self.copyWater):
             blocksToCopy = range(256)
-            if not self.copyAir: blocksToCopy.remove(0)
-            if not self.copyWater: blocksToCopy.remove(8)
-            if not self.copyWater: blocksToCopy.remove(9)
+            if not self.copyAir:
+                blocksToCopy.remove(0)
+            if not self.copyWater:
+                blocksToCopy.remove(8)
+            if not self.copyWater:
+                blocksToCopy.remove(9)
 
         with setWindowCaption("Copying - "):
             i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox , self.destPoint, blocksToCopy, create=True)
@@ -182,7 +185,8 @@ class CloneOperation (Operation):
 
     selectOriginalAfterRepeat = True
 
-    def dirtyBox(self): return self._dirtyBox
+    def dirtyBox(self):
+        return self._dirtyBox
 
     def perform(self, recordUndo=True):
         if recordUndo:
@@ -332,7 +336,8 @@ class CloneTool(EditorTool):
     _chunkAlign = False
 
     @property
-    def scaleFactor(self): return self._scaleFactor
+    def scaleFactor(self):
+        return self._scaleFactor
 
     @scaleFactor.setter
     def scaleFactor(self, val):
@@ -387,7 +392,8 @@ class CloneTool(EditorTool):
 
     def nudge(self, nudge):
         if self.destPoint is None:
-            if self.selectionBox() is None: return
+            if self.selectionBox() is None:
+                return
             self.destPoint = self.selectionBox().origin
 
         if self.chunkAlign:
@@ -413,9 +419,11 @@ class CloneTool(EditorTool):
     def offsetChanged(self):
 
         if self.panel:
-            if not self.panel.useOffsetInput: return
+            if not self.panel.useOffsetInput:
+                return
             box = self.selectionBox()
-            if box is None: return
+            if box is None:
+                return
 
             delta = self.panel.offsetInput.coords
             self.destPoint = map(operator.add, box.origin, delta)
@@ -473,7 +481,8 @@ class CloneTool(EditorTool):
 
     @alertException
     def rescaleLevel(self, factor):
-        #if self.level.cloneToolScaleFactor == newFactor: return
+        #if self.level.cloneToolScaleFactor == newFactor:
+        #    return
         #oldfactor = self.level.cloneToolScaleFactor
         #factor = newFactor / oldfactor
         if factor == 1:
@@ -604,7 +613,8 @@ class CloneTool(EditorTool):
 
         lev = self.editor.level
         size = self.rotatedSelectionSize()
-        if not size: return
+        if not size:
+            return
         if size[1] >= self.editor.level.Height:
             direction = (0, 1, 0) #always use the upward face whenever we're splicing full-height pieces, to avoid "jitter"
 
@@ -647,7 +657,8 @@ class CloneTool(EditorTool):
         pos = self.getReticleOrigin()
         sizes = self.rotatedSelectionSize()
 
-        if None is sizes: return
+        if None is sizes:
+            return
 
         return BoundingBox(pos, sizes)
 
@@ -656,7 +667,8 @@ class CloneTool(EditorTool):
         return BoundingBox(self.destPoint, selectionSize)
 
     def drawTerrainReticle(self):
-        if self.level is None: return
+        if self.level is None:
+            return
 
         if self.destPoint != None:
             destPoint = self.destPoint
@@ -672,7 +684,8 @@ class CloneTool(EditorTool):
 
     def drawToolReticle(self):
 
-        if self.level is None: return
+        if self.level is None:
+            return
 
         glPolygonOffset(DepthOffset.CloneMarkers, DepthOffset.CloneMarkers)
 
@@ -685,7 +698,8 @@ class CloneTool(EditorTool):
                 box.origin = self.draggingOrigin()
                 guideBox = BoundingBox(box)
                 for i in range(3):
-                    if i == self.draggingFace >> 1: continue
+                    if i == self.draggingFace >> 1:
+                        continue
                     guideBox._origin[i] -= 1000
                     guideBox._size[i] += 2000
 
@@ -696,7 +710,8 @@ class CloneTool(EditorTool):
                     drawFace(guideBox, self.draggingFace ^ 1)
         else:
             box = self.getReticleBox()
-            if box is None: return
+            if box is None:
+                return
         self.drawRepeatedCube(box, color)
 
         glPolygonOffset(DepthOffset.CloneReticle, DepthOffset.CloneReticle)
@@ -814,7 +829,8 @@ class CloneTool(EditorTool):
     @alertException
     def mouseDown(self, evt, pos, direction):
         box = self.selectionBox()
-        if not box: return
+        if not box:
+            return
         self.draggingY = 0
 
         if self.destPoint is not None:
@@ -887,7 +903,8 @@ class CloneTool(EditorTool):
         return True
 
     def pickUp(self):
-        if self.destPoint == None: return
+        if self.destPoint == None:
+            return
 
         box = self.selectionBox()
 
@@ -901,7 +918,8 @@ class CloneTool(EditorTool):
     @alertException
     def confirm(self):
         destPoint = self.destPoint
-        if destPoint is None: return
+        if destPoint is None:
+            return
 
         sourceLevel = self.sourceLevel()
         sourceBox = sourceLevel.bounds
@@ -940,7 +958,8 @@ class CloneTool(EditorTool):
         self.level = None
 
     def discardPreviewer(self):
-        if self.previewRenderer is None: return
+        if self.previewRenderer is None:
+            return
         self.previewRenderer.stopWork()
         self.previewRenderer.discardAllChunks()
         self.editor.removeWorker(self.previewRenderer)
@@ -1080,11 +1099,13 @@ class ConstructionTool(CloneTool):
             return
 
     def selectionSize(self):
-        if not self.level: return None
+        if not self.level:
+            return None
         return  self.originalLevelSize
 
     def selectionBox(self):
-        if not self.level: return None
+        if not self.level:
+            return None
         return BoundingBox((0, 0, 0), self.selectionSize())
 
     def sourceLevel(self):
@@ -1093,6 +1114,7 @@ class ConstructionTool(CloneTool):
     def mouseDown(self, evt, pos, direction):
         #x,y,z = pos
         box = self.selectionBox()
-        if not box: return
+        if not box:
+            return
 
         CloneTool.mouseDown(self, evt, pos, direction)

@@ -92,7 +92,8 @@ class Modes:
             dirtyChunks = set()
 
             def saveUndoChunk(cx,cz):
-                if (cx,cz) in dirtyChunks: return
+                if (cx,cz) in dirtyChunks:
+                    return
                 dirtyChunks.add( (cx,cz) )
                 b = BoundingBox( (cx*16, 0, cz*16), (16,128,16) )
                 undoLevel.copyBlocksFrom(op.level, b, b.origin, create=True)
@@ -102,7 +103,8 @@ class Modes:
             checkData = (doomedBlock not in (8,9,10,11))
             indiscriminate = op.options['indiscriminate']
 
-            if doomedBlock == op.blockInfo.ID: return
+            if doomedBlock == op.blockInfo.ID:
+                return
             if indiscriminate:
                 checkData = False
                 if doomedBlock == 2: #grass
@@ -124,7 +126,8 @@ class Modes:
                         nx, ny, nz = p
                         b = op.level.blockAt(nx, ny, nz)
                         if indiscriminate:
-                            if b == 2: b = 3
+                            if b == 2:
+                                b = 3
                         if b == doomedBlock:
                             if checkData:
                                 if op.level.blockDataAt(nx, ny, nz) != doomedBlockData:
@@ -210,7 +213,8 @@ class Modes:
             strength = op.options["erosionStrength"]
 
             erosionArea = op.level.extractSchematic(box, entities=False)
-            if erosionArea is None: return
+            if erosionArea is None:
+                return
 
             blocks = erosionArea.Blocks
             data = erosionArea.Data
@@ -301,7 +305,8 @@ class Modes:
 
                 for x, z in itertools.product(*map(xrange, heightmap.shape)):
                     h = heightmap[x, z]
-                    if h >= box.height: continue
+                    if h >= box.height:
+                        continue
                     if depth > 0:
                         idx = x, z, slice(max(0, h - depth), h)
                     else:
@@ -371,8 +376,10 @@ class BrushOperation(Operation):
         self.brushStyle = options['brushStyle']
         self.brushMode = options['brushMode']
 
-        if max(self.brushSize) > BrushTool.maxBrushSize: self.brushSize = (BrushTool.maxBrushSize,)*3;
-        if max(self.brushSize) < 1: self.brushSize = (1, 1, 1);
+        if max(self.brushSize) > BrushTool.maxBrushSize:
+            self.brushSize = (BrushTool.maxBrushSize,)*3;
+        if max(self.brushSize) < 1:
+            self.brushSize = (1, 1, 1);
 
         boxes = [self.brushMode.dirtyBoxForPointAndOptions(p, options) for p in points]
         self._dirtyBox = reduce(lambda a,b: a.union(b), boxes)
@@ -390,10 +397,12 @@ class BrushOperation(Operation):
     ]
 
     @property
-    def noise(self): return self.options.get('brushNoise', 100)
+    def noise(self):
+        return self.options.get('brushNoise', 100)
 
     @property
-    def hollow(self): return self.options.get('brushHollow', False)
+    def hollow(self):
+        return self.options.get('brushHollow', False)
 
     @classmethod
     def createBrushMask(cls, shape, style="Round", offset=(0, 0, 0), box=None, chance=100, hollow=False):
@@ -479,7 +488,8 @@ class BrushOperation(Operation):
         else:
             return mask
 
-    def dirtyBox(self): return self._dirtyBox;
+    def dirtyBox(self):
+        return self._dirtyBox;
 
     def undo(self):
         if self.undoSchematic:
@@ -510,7 +520,8 @@ class BrushOperation(Operation):
                 yield i, len(self.points), "Applying {0} brush...".format(self.brushMode.name)
                 f = self.performAtPoint(point)
                 if hasattr(f, "__iter__"):
-                    for i in f: yield i
+                    for i in f:
+                        yield i
 
         if len(self.points) > 10:
             showProgress("Performing brush...", _perform(), cancel=True)
@@ -680,7 +691,8 @@ class BrushTool(CloneTool):
 
     @property
     def reticleOffset(self):
-        if self.brushMode.name == "Flood Fill": return 0
+        if self.brushMode.name == "Flood Fill":
+            return 0
         return self._reticleOffset
 
     @reticleOffset.setter
@@ -691,7 +703,8 @@ class BrushTool(CloneTool):
 
     @property
     def brushSize(self):
-        if self.brushMode.name == "Flood Fill": return 1,1,1
+        if self.brushMode.name == "Flood Fill":
+            return 1,1,1
         return [self.brushSizeW, self.brushSizeH, self.brushSizeL]
 
     @brushSize.setter
@@ -795,7 +808,8 @@ class BrushTool(CloneTool):
     def worldTooltipText(self):
         if key.get_mods() & KMOD_ALT:
             try:
-                if self.editor.blockFaceUnderCursor is None: return
+                if self.editor.blockFaceUnderCursor is None:
+                    return
                 pos = self.editor.blockFaceUnderCursor[0]
                 blockID = self.editor.level.blockAt(*pos)
                 blockdata = self.editor.level.blockDataAt(*pos)
@@ -806,7 +820,8 @@ class BrushTool(CloneTool):
 
         if self.brushMode.name == "Flood Fill":
             try:
-                if self.editor.blockFaceUnderCursor is None: return
+                if self.editor.blockFaceUnderCursor is None:
+                    return
                 pos = self.editor.blockFaceUnderCursor[0]
                 blockID = self.editor.level.blockAt(*pos)
                 blockdata = self.editor.level.blockDataAt(*pos)
@@ -884,7 +899,8 @@ class BrushTool(CloneTool):
 
     @alertException
     def mouseUp(self, evt, pos, direction):
-        if 0 == len(self.draggedPositions): return
+        if 0 == len(self.draggedPositions):
+            return
 
         size = self.brushSize
         #point = self.getReticlePoint(pos, direction);
@@ -905,7 +921,8 @@ class BrushTool(CloneTool):
 
         self.draggedPositions = []
 
-    def toolEnabled(self): return True;
+    def toolEnabled(self):
+        return True;
 
     def rotate(self):
         offs = self.reticleOffset
@@ -1105,9 +1122,11 @@ class BrushTool(CloneTool):
                     glVertex3f(*map(lambda a:a + 0.5, self.lastPosition))
                     glVertex3f(*map(lambda a:a + 0.5, reticlePoint))
 
-    def updateOffsets(self): pass
+    def updateOffsets(self):
+        pass
 
-    def selectionChanged(self): pass
+    def selectionChanged(self):
+        pass
 
     def option1(self):
         self.swapBrushStyles()

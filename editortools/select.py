@@ -275,7 +275,8 @@ class SelectionTool(EditorTool):
     @property
     def worldTooltipText(self):
         pos, face = self.editor.blockFaceUnderCursor
-        if pos is None: return
+        if pos is None:
+            return
         try:
 
             size = None
@@ -399,14 +400,16 @@ class SelectionTool(EditorTool):
         bounds = self.editor.level.bounds
 
         inbounds = [map(operator.add, dir, p) in bounds for p in points]
-        if not all(inbounds): return
+        if not all(inbounds):
+            return
 
         op = NudgeSelectionOperation(self, dir)
         self.performWithRetry(op)
         #self.editor.addOperation(op)
 
     def nudgePoint(self, p, n):
-        if self.selectionBox() is None: return
+        if self.selectionBox() is None:
+            return
         if key.get_mods() & KMOD_SHIFT:
             n = map(operator.mul, n, (16, 16, 16))
         self.setSelectionPoint(p, map(operator.add, self.getSelectionPoint(p), n))
@@ -426,7 +429,8 @@ class SelectionTool(EditorTool):
         return "{0}W x {2}L x {1}H".format(*size)
 
     def showPanel(self):
-        if self.selectionBox() is None: return
+        if self.selectionBox() is None:
+            return
 
         if self.nudgePanel is None:
             self.nudgePanel = Panel()
@@ -505,14 +509,20 @@ class SelectionTool(EditorTool):
         w, h, l = self.editor.level.Width, self.editor.level.Height, self.editor.level.Length
 
         if w > 0:
-            if x >= w: x = w - 1
-            if x < 0: x = 0
+            if x >= w:
+                x = w - 1
+            if x < 0:
+                x = 0
         if l > 0:
-            if z >= l: z = l - 1
-            if z < 0: z = 0
+            if z >= l:
+                z = l - 1
+            if z < 0:
+                z = 0
 
-        if y >= h: y = h - 1
-        if y < 0: y = 0
+        if y >= h:
+            y = h - 1
+        if y < 0:
+            y = 0
 
         pos = [x, y, z]
         return pos
@@ -595,7 +605,8 @@ class SelectionTool(EditorTool):
         if self.editor.viewMode == "Chunk":
             self.clickSelectionInProgress = True
 
-        if self.dragStartPoint is None and not self.clickSelectionInProgress: return
+        if self.dragStartPoint is None and not self.clickSelectionInProgress:
+            return
 
         if self.dragStartPoint != pos or self.clickSelectionInProgress:
             op = SelectionOperation(self, (self.dragStartPoint, pos))
@@ -632,7 +643,8 @@ class SelectionTool(EditorTool):
         return self.editor.viewMode == "Chunk" or self.editor.currentTool is self.editor.toolbar.tools[8]
 
     def selectionBoxInProgress(self):
-        if self.editor.blockFaceUnderCursor is None: return
+        if self.editor.blockFaceUnderCursor is None:
+            return
         pos = self.editor.blockFaceUnderCursor[0]
         if self.selectionInProgress or self.clickSelectionInProgress:
             return self.selectionBoxForCorners(pos, self.dragStartPoint)
@@ -732,7 +744,8 @@ class SelectionTool(EditorTool):
                         bt = self.editor.level.blockAt(sx, sy, sz)
                         if(bt):
                             alpha = 0.2
-                    except ChunkNotPresent: pass
+                    except ChunkNotPresent:
+                        pass
 
                     glLineWidth(lineWidth)
                     lineWidth += 1
@@ -888,7 +901,8 @@ class SelectionTool(EditorTool):
             if(bt):
 ##                textureCoords = materials[bt][0]
                 alpha = 0.12
-        except ChunkNotPresent: pass
+        except ChunkNotPresent:
+            pass
 
         #cube sides
         glColor(r, g, b, alpha)
@@ -957,7 +971,8 @@ class SelectionTool(EditorTool):
     @alertException
     def deleteBlocks(self):
         box = self.selectionBox()
-        if None is box: return
+        if None is box:
+            return
         if box == box.chunkBox(self.editor.level):
             resp = ask("You are deleting a chunk-shaped selection. Fill the selection with Air, or delete the chunks themselves?", responses=["Fill with Air", "Delete Chunks", "Cancel"])
             if resp == "Delete Chunks":
@@ -969,7 +984,8 @@ class SelectionTool(EditorTool):
 
     def _deleteBlocks(self, recordUndo = True):
         box = self.selectionBox()
-        if None is box: return
+        if None is box:
+            return
         op = BlockFillOperation(self.editor, self.editor.level, box, self.editor.level.materials.Air, [])
         with setWindowCaption("DELETING - "):
             self.editor.freezeStatus("Deleting {0} blocks".format(box.volume))
@@ -1056,7 +1072,8 @@ class SelectionTool(EditorTool):
             else:
                 schematic = showProgress(status,
                             self.editor.level.extractZipSchematicIter(box, filename), cancel=True)
-            if schematic == "Canceled": return None
+            if schematic == "Canceled":
+                return None
 
             return schematic
 

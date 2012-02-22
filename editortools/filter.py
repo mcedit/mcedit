@@ -225,7 +225,8 @@ class FilterOperation(Operation):
             self.level.removeTileEntitiesInBox(self.box)
             self.level.copyBlocksFrom(self.undoSchematic, BoundingBox((0, 0, 0), self.box.size), self.box.origin)
 
-    def dirtyBox(self): return self.box
+    def dirtyBox(self):
+        return self.box
 
 
 class FilterTool(EditorTool):
