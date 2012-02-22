@@ -68,7 +68,7 @@ def okayAt63(level, pos):
 
 def okayAboveSpawn(level, pos):
     """3 blocks above spawn must be open"""
-    return not any([level.blockAt(pos[0], pos[1]+i, pos[2]) for i in range(1, 4)])
+    return not any([level.blockAt(pos[0], pos[1] + i, pos[2]) for i in range(1, 4)])
 
 
 def positionValid(level, pos):
@@ -105,7 +105,7 @@ class PlayerPositionPanel(Panel):
         tableview.index = 0
         tableview.num_rows = lambda: len(players)
         tableview.row_data = lambda i: (players[i],)
-        tableview.row_is_selected = lambda x: x==tableview.index
+        tableview.row_is_selected = lambda x: x == tableview.index
         tableview.zebra_color = (0,0,0,48)
 
         def selectTableRow(i, evt):
@@ -306,7 +306,7 @@ class PlayerPositionTool(EditorTool):
                 self.drawCharacterHead(0, 0, 0)
                 glPopMatrix()
                 #glEnable(GL_BLEND)
-                drawTerrainCuttingWire(FloatBox((x-.5, y-.5, z-.5), (1,1,1)),
+                drawTerrainCuttingWire(FloatBox((x - .5, y - .5, z - .5), (1,1,1)),
                                        c0=(0.3, 0.9, 0.7, 1.0),
                                        c1=(0,0,0,0),
                                        )
@@ -487,13 +487,13 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
 
                 if not okayAboveSpawn(level, pos):
                     if pos[1] > 63 or pos[1] < 59:
-                        lpos = (pos[0], pos[1]-1, pos[2])
+                        lpos = (pos[0], pos[1] - 1, pos[2])
                         if level.blockAt(*pos) == 0 and level.blockAt(*lpos) != 0 and okayAboveSpawn(level, lpos):
                             pos = lpos
                             status += "Spawn point shifted down by one block.\n"
                     if not okayAboveSpawn(level, pos):
                         for i in range(1,4):
-                            level.setBlockAt(pos[0], pos[1]+i, pos[2], 0)
+                            level.setBlockAt(pos[0], pos[1] + i, pos[2], 0)
 
                             status += "Blocks above spawn point cleared.\n"
 
