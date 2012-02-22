@@ -458,7 +458,7 @@ class BlockPicker(Dialog):
         icons = Column(tableicons, spacing=2)
 
         # tableview.margin = 5
-        tableview.num_rows = lambda : len(self.matchingBlocks)
+        tableview.num_rows = lambda: len(self.matchingBlocks)
         tableview.row_data = lambda x: (self.matchingBlocks[x], x, x)
         tableview.row_is_selected = lambda x: x == self.selectedBlockIndex
         tableview.click_row = self.selectTableRow
