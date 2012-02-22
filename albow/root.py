@@ -292,6 +292,7 @@ class RootWidget(Widget):
     def add_idle_handler(self, widget):
         from weakref import ref
         self.idle_handlers.append(ref(widget))
+
     def remove_idle_handler(self, widget):
         from weakref import ref
         self.idle_handlers.remove(ref(widget))
@@ -307,6 +308,7 @@ class RootWidget(Widget):
         return self
 
     labelClass = lambda s, t:wrapped_label(t, 45)
+
     def show_tooltip(self, widget, pos):
 
         if hasattr(self, 'currentTooltip'):
