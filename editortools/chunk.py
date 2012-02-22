@@ -499,4 +499,3 @@ def GeneratorPanel():
 
     panel.generate = generate
     return panel
-    

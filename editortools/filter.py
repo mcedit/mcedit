@@ -299,4 +299,3 @@ class FilterTool(EditorTool):
             self.editor.addUnsavedEdit()
 
             self.editor.invalidateBox(self.selectionBox())
-

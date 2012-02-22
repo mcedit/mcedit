@@ -55,11 +55,3 @@ class CameraTool(EditorTool):
             writer.write_array(file(filename, "wb"), pixgrid[::-1,:].flatten());  #black magic!  no, an array slice with negative stepping
 
             # glLineWidth(1.0);"""
-
-
-
-
-
-
-
-
