@@ -199,7 +199,6 @@ class CloneOperation (Operation):
         [i.undo() for i in self.selectionOps]
 
 
-
 class CloneToolPanel(Panel):
     useOffsetInput = True
 
