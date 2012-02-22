@@ -1029,13 +1029,13 @@ class ConstructionTool(CloneTool):
         height = 3
 
         schematic = MCSchematic( (width, height, length), mats=self.editor.level.materials)
-        schematic.Blocks[:,:,0] = 1
+        schematic.Blocks[:, :, 0] = 1
 
         for i, block in enumerate(allBlocks):
             col = (i % blockWidth) * 3 + 1
             row = (i // blockWidth) * 3
-            schematic.Blocks[col:col+2,row:row+2, 2] = block.ID
-            schematic.Data[col:col+2,row:row+2, 2] = block.blockData
+            schematic.Blocks[col:col+2, row:row+2, 2] = block.ID
+            schematic.Data[col:col+2, row:row+2, 2] = block.blockData
 
         return schematic
 
