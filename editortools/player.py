@@ -20,7 +20,7 @@ from pymclevel.box import FloatBox
 class PlayerMoveOperation(Operation):
     undoPos = None
 
-    def __init__(self, tool, pos, player="Player", yp = (None, None)):
+    def __init__(self, tool, pos, player="Player", yp=(None, None)):
         self.tool, self.pos = tool, pos
         self.yp = yp
         self.player = player
