@@ -60,7 +60,7 @@ class GLViewport(Widget):
             p0 = up(x, y, 0.0, mv_mat, pr_mat, viewport)
             p1 = up(x, y, 1.0, mv_mat, pr_mat, viewport)
             event.dict['ray'] = (p0, p1)
-        except ValueError: #projection failed!
+        except ValueError:  # projection failed!
             pass
 
 import numpy

@@ -129,7 +129,7 @@ def start_next_music():
     if music_enabled and current_playlist:
         next_music = current_playlist.next()
         if next_music:
-            print "albow.music: loading", repr(next_music) ###
+            print "albow.music: loading", repr(next_music)  ###
             music.load(next_music)
             music.play()
             next_change_delay = change_delay
