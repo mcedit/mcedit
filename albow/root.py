@@ -283,8 +283,10 @@ class RootWidget(Widget):
     def call_idle_handlers(self, event):
         def call(ref):
             widget = ref()
-            if widget: widget.idleevent(event)
-            else: print "Idle ref died!"
+            if widget:
+                widget.idleevent(event)
+            else:
+                print "Idle ref died!"
             return bool(widget)
 
         self.idle_handlers = filter(call, self.idle_handlers)
