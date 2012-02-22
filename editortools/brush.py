@@ -34,7 +34,7 @@ class BrushMode(object):
     def dirtyBoxForPointAndOptions(self, point, options={}):
         # also used to position the preview reticle
         size = options['brushSize']
-        origin = map(lambda x, s:x - (s >> 1), point, size)
+        origin = map(lambda x, s: x - (s >> 1), point, size)
         return BoundingBox(origin, size)
 
     def performAtPoint(self, op, point, dirtyBox):
@@ -1086,7 +1086,7 @@ class BrushTool(CloneTool):
     def getReticlePoint(self, pos, direction):
         if len(self.draggedPositions):
             direction = self.draggedDirection
-        return map(lambda a, b:a + (b * self.getReticleOffset()), pos, direction)
+        return map(lambda a, b: a + (b * self.getReticleOffset()), pos, direction)
 
     def drawToolReticle(self):
         for pos in self.draggedPositions:
@@ -1108,8 +1108,8 @@ class BrushTool(CloneTool):
             if reticlePoint != pos:
                 glColor4f(1.0, 1.0, 0.0, 0.7)
                 with gl.glBegin(GL_LINES):
-                    glVertex3f(*map(lambda a:a + 0.5, reticlePoint))  # center of reticle block
-                    glVertex3f(*map(lambda a, b:a + 0.5 + b * 0.5, pos, direction))  # top side of surface block
+                    glVertex3f(*map(lambda a: a + 0.5, reticlePoint))  # center of reticle block
+                    glVertex3f(*map(lambda a, b: a + 0.5 + b * 0.5, pos, direction))  # top side of surface block
 
             if self.previewDirty:
                 self.setupPreview()
@@ -1119,8 +1119,8 @@ class BrushTool(CloneTool):
             if key.get_mods() & KMOD_SHIFT and self.lastPosition and self.brushMode.name != "Flood Fill":
                 glColor4f(1.0, 1.0, 1.0, 0.7)
                 with gl.glBegin(GL_LINES):
-                    glVertex3f(*map(lambda a:a + 0.5, self.lastPosition))
-                    glVertex3f(*map(lambda a:a + 0.5, reticlePoint))
+                    glVertex3f(*map(lambda a: a + 0.5, self.lastPosition))
+                    glVertex3f(*map(lambda a: a + 0.5, reticlePoint))
 
     def updateOffsets(self):
         pass
