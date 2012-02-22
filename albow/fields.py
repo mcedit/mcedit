@@ -115,7 +115,7 @@ class TextEditor(Widget):
                     text = ""
                     i = 0
                 else:
-                    text = text[:i-1] + text[i:]
+                    text = text[:i - 1] + text[i:]
                     i -= 1
                 self.change_text(text)
                 self.insertion_point = i
@@ -382,10 +382,10 @@ class TimeField(Field):
 
         if len(parts):
             h = int(parts[0])
-        if len(parts)>1:
+        if len(parts) > 1:
             m = int(parts[1])
 
-        if pm and h<12: h += 12
+        if pm and h < 12: h += 12
         h %= 24
         m %= 60
         return h,m
@@ -411,7 +411,7 @@ class TimeField(Field):
 
     def set_value(self, v):
         h,m = v
-        super(TimeField, self).set_value((h%24, m%60))
+        super(TimeField, self).set_value((h % 24, m % 60))
 
 from pygame import key
 from pygame.locals import KMOD_SHIFT
