@@ -290,7 +290,7 @@ class Modes:
                         blocktypeMask = blocks != 0
 
                 else:
-                    # topsoil any block;
+                    # topsoil any block
                     blocktypeMask = blocks != 0
 
                 if depth < 0:
@@ -377,16 +377,16 @@ class BrushOperation(Operation):
         self.brushMode = options['brushMode']
 
         if max(self.brushSize) > BrushTool.maxBrushSize:
-            self.brushSize = (BrushTool.maxBrushSize,)*3;
+            self.brushSize = (BrushTool.maxBrushSize,)*3
         if max(self.brushSize) < 1:
-            self.brushSize = (1, 1, 1);
+            self.brushSize = (1, 1, 1)
 
         boxes = [self.brushMode.dirtyBoxForPointAndOptions(p, options) for p in points]
         self._dirtyBox = reduce(lambda a,b: a.union(b), boxes)
 
     undoSchematic = None
     brushStyles = ["Round", "Square", "Diamond"]
-    # brushModeNames = ["Fill", "Flood Fill", "Replace", "Erode", "Topsoil", "Paste"]  # "Smooth", "Flatten", "Raise", "Lower", "Build", "Erode", "Evert"];
+    # brushModeNames = ["Fill", "Flood Fill", "Replace", "Erode", "Topsoil", "Paste"]  # "Smooth", "Flatten", "Raise", "Lower", "Build", "Erode", "Evert"]
     brushModeClasses = [
         Modes.Fill,
         Modes.FloodFill,
@@ -489,7 +489,7 @@ class BrushOperation(Operation):
             return mask
 
     def dirtyBox(self):
-        return self._dirtyBox;
+        return self._dirtyBox
 
     def undo(self):
         if self.undoSchematic:
@@ -903,7 +903,7 @@ class BrushTool(CloneTool):
             return
 
         size = self.brushSize
-        # point = self.getReticlePoint(pos, direction);
+        # point = self.getReticlePoint(pos, direction)
         if self.brushMode.name == "Flood Fill":
             self.draggedPositions = self.draggedPositions[-1:]
 
@@ -922,7 +922,7 @@ class BrushTool(CloneTool):
         self.draggedPositions = []
 
     def toolEnabled(self):
-        return True;
+        return True
 
     def rotate(self):
         offs = self.reticleOffset
@@ -957,7 +957,7 @@ class BrushTool(CloneTool):
 
     def decreaseBrushSize(self):
         self.brushSize = [i - 1 for i in self.brushSize]
-        # self.setupPreview();
+        # self.setupPreview()
 
     def increaseBrushSize(self):
         self.brushSize = [i + 1 for i in self.brushSize]
@@ -1040,7 +1040,7 @@ class BrushTool(CloneTool):
         self.showPanel()
 
 #    def cancel(self):
-#        self.hidePanel();
+#        self.hidePanel()
 #        super(BrushTool, self).cancel()
 
     def showPanel(self):

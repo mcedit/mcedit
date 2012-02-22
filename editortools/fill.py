@@ -75,7 +75,7 @@ class FillToolPanel(Panel):
         self.replaceLabel = replaceLabel = Label("Replace", width=self.blockButton.width)
         replaceLabel.mouse_down = lambda a: self.tool.toggleReplacing()
         replaceLabel.fg_color = (177, 177, 255, 255)
-        # replaceLabelRow = Row( (Label(rollkey), replaceLabel) );
+        # replaceLabelRow = Row( (Label(rollkey), replaceLabel) )
         replaceLabel.tooltipText = "Shortcut: {0}".format(rollkey)
         replaceLabel.align = "c"
 
@@ -191,7 +191,7 @@ class FillTool(EditorTool):
     def toolSelected(self):
         box = self.selectionBox()
         if None is box:
-            return;
+            return
 
         self.replacing = False
         self.showPanel()
@@ -219,7 +219,7 @@ class FillTool(EditorTool):
     def confirm(self):
         box = self.selectionBox()
         if None is box:
-            return;
+            return
 
         with setWindowCaption("REPLACING - "):
             self.editor.freezeStatus("Replacing %0.1f million blocks" % (float(box.volume) / 1048576.,))
@@ -297,7 +297,7 @@ class FillTool(EditorTool):
 
     def drawToolMarkers(self):
         if self.editor.currentTool != self:
-            return;
+            return
 
         if self.panel and self.replacing:
             blockInfo = self.replaceBlockInfo
