@@ -146,7 +146,7 @@ class SelectionToolPanel(Panel):
         deleteBlocksButton.tooltipText = "Fill the selection with Air. Shortcut: DELETE"
         deleteEntitiesButton = Button("Delete Entities", action=self.tool.deleteEntities)
         deleteEntitiesButton.tooltipText = "Remove all entities within the selection"
-        #deleteTileEntitiesButton = Button("Delete TileEntities", action=self.tool.deleteTileEntities)
+        # deleteTileEntitiesButton = Button("Delete TileEntities", action=self.tool.deleteTileEntities)
         analyzeButton = Button("Analyze", action=self.tool.analyzeSelection)
         analyzeButton.tooltipText = "Count the different blocks and entities in the selection and display the totals."
         cutButton = Button("Cut", action=self.tool.cutSelection)
@@ -228,7 +228,7 @@ class NudgeBlocksOperation (Operation) :
 
 
 class SelectionTool(EditorTool):
-    #selectionColor = (1.0, .9, .9)
+    # selectionColor = (1.0, .9, .9)
     color = (0.7, 0., 0.7)
     surfaceBuild = False
     toolIconName = "selection"
@@ -405,7 +405,7 @@ class SelectionTool(EditorTool):
 
         op = NudgeSelectionOperation(self, dir)
         self.performWithRetry(op)
-        #self.editor.addOperation(op)
+        # self.editor.addOperation(op)
 
     def nudgePoint(self, p, n):
         if self.selectionBox() is None:
@@ -461,7 +461,7 @@ class SelectionTool(EditorTool):
         self.sizeLabel.anchor = "twh"
         self.sizeLabel.tooltipText = "{0:n} blocks".format(self.selectionBox().volume)
 
-        #self.nudgePanelColumn = Column( (self.sizeLabel, self.nudgeRow) )
+        # self.nudgePanelColumn = Column( (self.sizeLabel, self.nudgeRow) )
         self.nudgePanel.top = self.nudgePanel.left = 0
 
         self.nudgePanel.add(self.sizeLabel)
@@ -500,7 +500,7 @@ class SelectionTool(EditorTool):
         self.selectOtherCorner()
 
     def toolSelected(self):
-        #if self.clearSelectionImmediately:
+        # if self.clearSelectionImmediately:
         #    self.setSelectionPoints(None)
         self.showPanel()
 
@@ -533,7 +533,7 @@ class SelectionTool(EditorTool):
 
     @property
     def statusText(self):
-        #return "selectionInProgress {0} clickSelectionInProgress {1}".format(self.selectionInProgress, self.clickSelectionInProgress)
+        # return "selectionInProgress {0} clickSelectionInProgress {1}".format(self.selectionInProgress, self.clickSelectionInProgress)
         if self.selectionInProgress:
             pd = self.editor.blockFaceUnderCursor
             if pd:
@@ -569,7 +569,7 @@ class SelectionTool(EditorTool):
     dragResizePosition = None
 
     def mouseDown(self, evt, pos, direction):
-        #self.selectNone()
+        # self.selectNone()
 
         pos = self.clampPos(pos)
         if self.selectionBox() and not self.selectionInProgress:
@@ -579,7 +579,7 @@ class SelectionTool(EditorTool):
                 self.dragResizeFace = face
                 self.dragResizeDimension = self.findBestTrackingPlane(face)
 
-                #point = map(int, point)
+                # point = map(int, point)
                 self.dragResizePosition = point[self.dragResizeDimension]
 
                 return
@@ -619,7 +619,7 @@ class SelectionTool(EditorTool):
         else:
             points = self.getSelectionPoints()
             if not all(points):
-                points = (pos, pos) #set both points on the first click
+                points = (pos, pos)  # set both points on the first click
             else:
                 points[self.currentCorner] = pos
 
@@ -649,10 +649,10 @@ class SelectionTool(EditorTool):
         if self.selectionInProgress or self.clickSelectionInProgress:
             return self.selectionBoxForCorners(pos, self.dragStartPoint)
 
-#requires a selection
+# requires a selection
     def dragResizePoint(self):
-        #returns a point representing the intersection between the mouse ray
-        #and an imaginary plane perpendicular to the dragged face
+        # returns a point representing the intersection between the mouse ray
+        # and an imaginary plane perpendicular to the dragged face
 
         pos = self.editor.mainViewport.cameraPosition
         dim = self.dragResizeDimension
@@ -737,7 +737,7 @@ class SelectionTool(EditorTool):
                         else:
                             sx, sy, sz = self.dragStartPoint
 
-                    #draw a blue or yellow wireframe box at the selection corner
+                    # draw a blue or yellow wireframe box at the selection corner
                     r, g, b = c
                     alpha = 0.4
                     try:
@@ -750,10 +750,10 @@ class SelectionTool(EditorTool):
                     glLineWidth(lineWidth)
                     lineWidth += 1
 
-                    #draw highlighted block faces when nudging
+                    # draw highlighted block faces when nudging
                     if (widg.parent == n or widg == n):
                         glEnable(GL_BLEND)
-                        #drawCube(BoundingBox((sx, sy, sz), (1,1,1)))
+                        # drawCube(BoundingBox((sx, sy, sz), (1,1,1)))
                         nudgefaces = array([
                                selectionBox.minx, selectionBox.miny, selectionBox.minz,
                                selectionBox.minx, selectionBox.maxy, selectionBox.minz,
@@ -788,7 +788,7 @@ class SelectionTool(EditorTool):
                     drawCube(BoundingBox((sx, sy, sz), (1, 1, 1)), GL_LINE_STRIP)
 
             if not (not self.showPreviousSelection and self.selectionInProgress):
-                #draw the current selection as a white box.  hangs around when you use other tools.
+                # draw the current selection as a white box.  hangs around when you use other tools.
                 glPolygonOffset(DepthOffset.Selection, DepthOffset.Selection)
                 color = self.selectionColor + (self.alpha,)
                 if self.dragResizeFace is not None:
@@ -800,7 +800,7 @@ class SelectionTool(EditorTool):
                     color = (0.3, 1.0, 0.3, self.alpha)
                 self.editor.drawConstructionCube(box, color)
 
-                #highlight the face under the cursor, or the face being dragged
+                # highlight the face under the cursor, or the face being dragged
                 if self.dragResizeFace is None:
                     if self.selectionInProgress or self.clickSelectionInProgress:
                         pass
@@ -811,7 +811,7 @@ class SelectionTool(EditorTool):
                             glEnable(GL_BLEND)
                             glColor(*color)
 
-                            #Shrink the highlighted face to show the click-through edges
+                            # Shrink the highlighted face to show the click-through edges
 
                             offs = [s * self.edge_factor for s in box.size]
                             offs[face >> 1] = 0
@@ -842,10 +842,10 @@ class SelectionTool(EditorTool):
 
                     side = face & 1
                     o, m = selectionBox.origin, selectionBox.maximum
-                    otherFacePos = (m, o)[side ^ 1][dim] #ugly
+                    otherFacePos = (m, o)[side ^ 1][dim]  # ugly
                     direction = (-1, 1)[side]
-                    #print "pos", pos, "otherFace", otherFacePos, "dir", direction
-                    #print "m", (pos - otherFacePos) * direction
+                    # print "pos", pos, "otherFace", otherFacePos, "dir", direction
+                    # print "m", (pos - otherFacePos) * direction
                     if (pos - otherFacePos) * direction > 0 :
                         face ^= 1
 
@@ -862,10 +862,10 @@ class SelectionTool(EditorTool):
         x, y, z = pos
         selectionColor = map(lambda a:a * a * a * a, self.selectionColor)
 
-        #draw a colored box representing the possible selection
+        # draw a colored box representing the possible selection
         otherCorner = self.dragStartPoint
         if self.dragResizeFace is not None:
-            self.showPanel() #xxx do this every frame while dragging because our UI kit is bad
+            self.showPanel()  # xxx do this every frame while dragging because our UI kit is bad
 
         if ((self.selectionInProgress or self.clickSelectionInProgress) and otherCorner != None) :
             glPolygonOffset(DepthOffset.PotentialSelection, DepthOffset.PotentialSelection)
@@ -877,7 +877,7 @@ class SelectionTool(EditorTool):
                     selectionColor = [1., 0., 0.]
             self.editor.drawConstructionCube(box, selectionColor + [self.alpha, ])
         else:
-            #don't draw anything at the mouse cursor if we're resizing the box
+            # don't draw anything at the mouse cursor if we're resizing the box
             if self.dragResizeFace is None:
                 box = self.selectionBox()
                 if box:
@@ -891,7 +891,7 @@ class SelectionTool(EditorTool):
         glPolygonOffset(DepthOffset.SelectionReticle, DepthOffset.SelectionReticle)
         pos, direction = self.editor.blockFaceUnderCursor
 
-        #draw a selection-colored box for the cursor reticle
+        # draw a selection-colored box for the cursor reticle
         selectionColor = map(lambda a:a * a * a * a, self.selectionColor)
         r, g, b = selectionColor
         alpha = 0.3
@@ -904,7 +904,7 @@ class SelectionTool(EditorTool):
         except ChunkNotPresent:
             pass
 
-        #cube sides
+        # cube sides
         glColor(r, g, b, alpha)
         glDepthMask(False)
         glEnable(GL_BLEND)
@@ -963,7 +963,7 @@ class SelectionTool(EditorTool):
             self.hideNudgePanel()
 
     def getSelectionPoint(self, pointNumber):
-        return (self.bottomLeftPoint, self.topRightPoint)[pointNumber] #lisp programmers think this doesn't evaluate 'self.topRightPoint' - lol!
+        return (self.bottomLeftPoint, self.topRightPoint)[pointNumber]  # lisp programmers think this doesn't evaluate 'self.topRightPoint' - lol!
 
     def getSelectionPoints(self):
         return [self.bottomLeftPoint, self.topRightPoint]

@@ -32,7 +32,7 @@ class BrushMode(object):
 #    def undo(self, op):
 #        pass
     def dirtyBoxForPointAndOptions(self, point, options = {}):
-        #also used to position the preview reticle
+        # also used to position the preview reticle
         size = options['brushSize']
         origin = map(lambda x, s:x - (s >> 1), point, size)
         return BoundingBox(origin, size)
@@ -63,13 +63,13 @@ class Modes:
                 worldPoint = [p + o for p, o in zip(point, dirtyBox.origin)]
                 blocks = chunk.Blocks[slices]
 
-                box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1])) #xzy reorder
+                box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1]))  # xzy reorder
 
                 brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
                 blocks[brushMask] = op.blockInfo.ID
 
                 chunk.Data[slices][brushMask] = op.blockInfo.blockData
-                #chunk.chunkChanged()
+                # chunk.chunkChanged()
 
     class FloodFill(BrushMode):
         name = "Flood Fill"
@@ -107,8 +107,8 @@ class Modes:
                 return
             if indiscriminate:
                 checkData = False
-                if doomedBlock == 2: #grass
-                    doomedBlock = 3 #dirt
+                if doomedBlock == 2:  # grass
+                    doomedBlock = 3  # dirt
 
             x,y,z = point
             saveUndoChunk(x//16, z//16)
@@ -168,8 +168,8 @@ class Modes:
                 worldPoint = [p + o for p, o in zip(point, dirtyBox.origin)]
                 blocks = chunk.Blocks[slices]
                 data = chunk.Data[slices]
-                #box = BoundingBox(worldPoint,
-                box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1])) #xzy reorder
+                # box = BoundingBox(worldPoint,
+                box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1]))  # xzy reorder
 
                 brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
 
@@ -185,13 +185,13 @@ class Modes:
 
                 replaceTable = op.level.blockReplaceTable(blocksToReplace)
                 replaceMask = replaceTable[blocks, data]
-                #replaceMask = blocks == op.blockInfo.ID
-                #replaceMask &= data == op.blockInfo.blockData
+                # replaceMask = blocks == op.blockInfo.ID
+                # replaceMask &= data == op.blockInfo.blockData
                 brushMask &= replaceMask
 
                 blocks[brushMask] = replaceWith.ID
                 data[brushMask] = replaceWith.blockData
-                #chunk.chunkChanged()
+                # chunk.chunkChanged()
 
     class Erode(BrushMode):
         name = "Erode"
@@ -271,7 +271,7 @@ class Modes:
 
                 worldPoint = [p + o for p, o in zip(point, dirtyBox.origin)]
 
-                box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1])) #xzy reorder
+                box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1]))  # xzy reorder
 
                 brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
 
@@ -279,8 +279,8 @@ class Modes:
 
                 if op.options['naturalEarth']:
                     try:
-                        #try to get the block mask from the topsoil filter
-                        import topsoil #@UnresolvedImport
+                        # try to get the block mask from the topsoil filter
+                        import topsoil  # @UnresolvedImport
                         blockmask = topsoil.naturalBlockmask()
                         blockmask[blocktype.ID] = True
                         blocktypeMask = blockmask[blocks]
@@ -290,7 +290,7 @@ class Modes:
                         blocktypeMask = blocks != 0
 
                 else:
-                    #topsoil any block;
+                    # topsoil any block;
                     blocktypeMask = blocks != 0
 
                 if depth < 0:
@@ -298,10 +298,10 @@ class Modes:
 
                 heightmap = extractHeights(blocktypeMask)
 
-                #logical_not(brushMask, brushMask)
+                # logical_not(brushMask, brushMask)
 
-                #masked_blocks = ma.masked_array(blocks, brushMask, hard_mask=True)
-                #masked_data = ma.masked_array(data, brushMask, hard_mask=True)
+                # masked_blocks = ma.masked_array(blocks, brushMask, hard_mask=True)
+                # masked_data = ma.masked_array(data, brushMask, hard_mask=True)
 
                 for x, z in itertools.product(*map(xrange, heightmap.shape)):
                     h = heightmap[x, z]
@@ -310,14 +310,14 @@ class Modes:
                     if depth > 0:
                         idx = x, z, slice(max(0, h - depth), h)
                     else:
-                        #negative depth values mean to put a layer above the surface
+                        # negative depth values mean to put a layer above the surface
                         idx = x, z, slice(h, min(blocks.shape[2], h - depth))
                     mask = brushMask[idx]
                     blocks[idx][mask] = blocktype.ID
                     data[idx][mask] = blocktype.blockData
 
-                #remember to do this to make sure the chunk is saved
-                #chunk.chunkChanged()
+                # remember to do this to make sure the chunk is saved
+                # chunk.chunkChanged()
     class Paste(BrushMode):
 
         name = "Paste"
@@ -361,7 +361,7 @@ class Modes:
 class BrushOperation(Operation):
 
     def __init__(self, editor, points, options):
-        #if options is None: options = {}
+        # if options is None: options = {}
 
         self.options = options
         self.editor = editor
@@ -386,7 +386,7 @@ class BrushOperation(Operation):
 
     undoSchematic = None
     brushStyles = ["Round", "Square", "Diamond"]
-    #brushModeNames = ["Fill", "Flood Fill", "Replace", "Erode", "Topsoil", "Paste"] #"Smooth", "Flatten", "Raise", "Lower", "Build", "Erode", "Evert"];
+    # brushModeNames = ["Fill", "Flood Fill", "Replace", "Erode", "Topsoil", "Paste"]  # "Smooth", "Flatten", "Raise", "Lower", "Build", "Erode", "Evert"];
     brushModeClasses = [
         Modes.Fill,
         Modes.FloodFill,
@@ -412,7 +412,7 @@ class BrushOperation(Operation):
         and only the part of the world contained in box is returned as an array
         """
 
-        #we are returning indices for a Blocks array, so swap axes
+        # we are returning indices for a Blocks array, so swap axes
         if box is None:
             box = BoundingBox(offset, shape)
         if chance < 100 or hollow:
@@ -431,13 +431,13 @@ class BrushOperation(Operation):
         blockCenters = inds - halfshape[:, newaxis, newaxis, newaxis]
         blockCenters -= offset[:, newaxis, newaxis, newaxis]
 
-        #odd diameter means measure from the center of the block at 0,0,0 to each block center
-        #even diameter means measure from the 0,0,0 grid point to each block center
+        # odd diameter means measure from the center of the block at 0,0,0 to each block center
+        # even diameter means measure from the 0,0,0 grid point to each block center
 
-        #if diameter & 1 == 0: blockCenters += 0.5
+        # if diameter & 1 == 0: blockCenters += 0.5
         shape = array(shape, dtype='float32')
 
-        #if not isSphere(shape):
+        # if not isSphere(shape):
         if style == "Round":
             blockCenters *= blockCenters
             shape /= 2
@@ -447,8 +447,8 @@ class BrushOperation(Operation):
             distances = sum(blockCenters, 0)
             mask = distances < 1
         elif style == "Square":
-            #mask = ones(outputShape, dtype=bool)
-            #mask = blockCenters[:, newaxis, newaxis, newaxis] < shape
+            # mask = ones(outputShape, dtype=bool)
+            # mask = blockCenters[:, newaxis, newaxis, newaxis] < shape
             blockCenters /= shape[:, newaxis, newaxis, newaxis]
 
             distances = absolute(blockCenters).max(0)
@@ -531,7 +531,7 @@ class BrushOperation(Operation):
         for cPos in self._dirtyBox.chunkPositions:
             if self.level.containsChunk(*cPos):
                 ch = self.level.getChunk(*cPos)
-                ch.chunkChanged() #xxxxxxx
+                ch.chunkChanged()  # xxxxxxx
 
     def performAtPoint(self, point):
         dirtyBox = self.brushMode.dirtyBoxForPointAndOptions(point, self.options)
@@ -588,7 +588,7 @@ class BrushPanel(Panel):
             recentBlocks=tool.recentFillBlocks,
             allowWildcards = (tool.brushMode.name == "Replace"))
 
-        #col = [modeStyleGrid, hollowRow, noiseInput, shapeRows, blockButton]
+        # col = [modeStyleGrid, hollowRow, noiseInput, shapeRows, blockButton]
 
         self.replaceBlockButton = replaceBlockButton = BlockButton(
             tool.editor.level.materials,
@@ -774,7 +774,7 @@ class BrushTool(CloneTool):
 
     def importPaste(self):
         clipFilename = mcplatform.askOpenFile(title='Choose a schematic or level...', schematics=True)
-        #xxx mouthful
+        # xxx mouthful
         if clipFilename:
             try:
                 self.loadLevel(fromFile(clipFilename))
@@ -879,7 +879,7 @@ class BrushTool(CloneTool):
     def mouseDrag(self, evt, pos, _dir):
         direction = self.draggedDirection
         if self.brushMode.name != "Flood Fill":
-            if len(self.draggedPositions): # if self.isDragging
+            if len(self.draggedPositions):  # if self.isDragging
                 self.lastPosition = lastPoint = self.draggedPositions[-1]
                 if any([abs(a-b) >= self.minimumSpacing
                         for a,b in zip(pos, lastPoint)]):
@@ -903,7 +903,7 @@ class BrushTool(CloneTool):
             return
 
         size = self.brushSize
-        #point = self.getReticlePoint(pos, direction);
+        # point = self.getReticlePoint(pos, direction);
         if self.brushMode.name == "Flood Fill":
             self.draggedPositions = self.draggedPositions[-1:]
 
@@ -957,7 +957,7 @@ class BrushTool(CloneTool):
 
     def decreaseBrushSize(self):
         self.brushSize = [i - 1 for i in self.brushSize]
-        #self.setupPreview();
+        # self.setupPreview();
 
     def increaseBrushSize(self):
         self.brushSize = [i + 1 for i in self.brushSize]
@@ -1019,7 +1019,7 @@ class BrushTool(CloneTool):
 
     def resetToolDistance(self):
         distance = max(self.editor.cameraToolDistance, 6 + max(self.brushSize) * 1.25)
-        #print "Adjusted distance", distance, max(self.brushSize) * 1.25
+        # print "Adjusted distance", distance, max(self.brushSize) * 1.25
         self.editor.cameraToolDistance = distance
 
     def toolSelected(self):
@@ -1056,7 +1056,7 @@ class BrushTool(CloneTool):
         self.editor.add(panel)
 
     def increaseToolReach(self):
-        #self.reticleOffset = max(self.reticleOffset-1, 0)
+        # self.reticleOffset = max(self.reticleOffset-1, 0)
         if self.editor.mainViewport.mouseMovesCamera and not self.editor.longDistanceMode:
             return False
         self.reticleOffset = self.reticleOffset + 1
@@ -1098,7 +1098,7 @@ class BrushTool(CloneTool):
 
     def drawTerrainReticle(self):
         if key.get_mods() & KMOD_ALT:
-            #eyedropper mode
+            # eyedropper mode
             self.editor.drawWireCubeReticle(color=(0.2, 0.6, 0.9, 1.0))
         else:
             pos, direction = self.editor.blockFaceUnderCursor
@@ -1108,8 +1108,8 @@ class BrushTool(CloneTool):
             if reticlePoint != pos:
                 glColor4f(1.0, 1.0, 0.0, 0.7)
                 with gl.glBegin(GL_LINES):
-                    glVertex3f(*map(lambda a:a + 0.5, reticlePoint)) #center of reticle block
-                    glVertex3f(*map(lambda a, b:a + 0.5 + b * 0.5, pos, direction)) #top side of surface block
+                    glVertex3f(*map(lambda a:a + 0.5, reticlePoint))  # center of reticle block
+                    glVertex3f(*map(lambda a, b:a + 0.5 + b * 0.5, pos, direction))  # top side of surface block
 
             if self.previewDirty:
                 self.setupPreview()

@@ -53,18 +53,18 @@ class NudgeButton(GLBackground):
         self.add(nudgeLabel)
         self.shrink_wrap()
 
-        #tooltipBacking = Panel()
-        #tooltipBacking.bg_color = (0, 0, 0, 0.6)
+        # tooltipBacking = Panel()
+        # tooltipBacking.bg_color = (0, 0, 0, 0.6)
         keys = [config.config.get("Keys", k).upper() for k in ("Forward", "Back", "Left", "Right", "Up", "Down")]
 
         nudgeLabel.tooltipText = "Click and hold.  While holding, use the movement keys ({0}{1}{2}{3}{4}{5}) to nudge. Hold SHIFT to nudge faster.".format(*keys)
-        #tooltipBacking.shrink_wrap()
+        # tooltipBacking.shrink_wrap()
 
     def mouse_down(self, event):
         self.focus()
 
     def mouse_up(self, event):
-        self.get_root().mcedit.editor.focus_switch = None #xxxx restore focus to editor better
+        self.get_root().mcedit.editor.focus_switch = None  # xxxx restore focus to editor better
 
     def key_down(self, evt):
         keyname = key.name(evt.key)
@@ -73,7 +73,7 @@ class NudgeButton(GLBackground):
         if keyname == config.config.get("Keys", "Down"):
             self.nudge((0, -1, 0))
 
-        Z = self.get_root().mcedit.editor.mainViewport.cameraVector #xxx mouthful
+        Z = self.get_root().mcedit.editor.mainViewport.cameraVector  # xxx mouthful
         absZ = map(abs, Z)
         if absZ[0] < absZ[2]:
             forward = (0, 0, (-1 if Z[2] < 0 else 1))
@@ -111,7 +111,7 @@ class Operation(object):
         sch.compress()
         return sch
 
-    #represents a single undoable operation
+    # represents a single undoable operation
     def perform(self, recordUndo=True):
         " Perform the operation. Record undo information if recordUndo"
 
@@ -137,12 +137,12 @@ class ToolOptions(Panel):
 class ThumbView(GLPerspective):
 
     def __init__(self, sch, **kw):
-        GLPerspective.__init__(self, **kw)#self, xmin= -32, xmax=32, ymin= -32, ymax=32, near= -1000, far=1000)
+        GLPerspective.__init__(self, **kw)  # self, xmin= -32, xmax=32, ymin= -32, ymax=32, near= -1000, far=1000)
         self.far = 16000
         self.schematic = sch
         self.renderer = PreviewRenderer(sch)
         self.fboSize = (128, 128)
-        #self.renderer.position = (sch.Length / 2, 0, sch.Height / 2)
+        # self.renderer.position = (sch.Length / 2, 0, sch.Height / 2)
 
     def setup_modelview(self):
         GLU.gluLookAt(-self.schematic.Width * 2.8, self.schematic.Height * 2.5 + 1, -self.schematic.Length * 1.5,
@@ -307,18 +307,18 @@ class BlockButton(ButtonBase, Panel):
         self.blockLabel = ValueDisplay(ref=AttrRef(self, 'labelText'), width=180, align="l")
         row = Row((self.blockView, self.blockLabel), align="b")
 
-        #col = Column( (self.blockButton, self.blockNameLabel) )
+        # col = Column( (self.blockButton, self.blockNameLabel) )
         self.add(row)
         self.shrink_wrap()
 
-        #self.blockLabel.bottom = self.blockButton.bottom
-        #self.blockLabel.centerx = self.blockButton.centerx
+        # self.blockLabel.bottom = self.blockButton.bottom
+        # self.blockLabel.centerx = self.blockButton.centerx
 
-        #self.add(self.blockLabel)
+        # self.add(self.blockLabel)
 
         self.materials = materials
         self.blockInfo = blockInfo
-        #self._ref = ref
+        # self._ref = ref
         self.updateRecentBlockView()
 
     recentBlockLimit = 7
@@ -350,7 +350,7 @@ class BlockButton(ButtonBase, Panel):
             labelText = labelText[:23] + "..."
         return labelText
 
-        #self.blockNameLabel.text = 
+        # self.blockNameLabel.text = 
 
     def createRecentBlockView(self):
         def makeBlockView(bi):
@@ -401,7 +401,7 @@ def anySubtype(self):
 from pymclevel.materials import Block
 
 Block.anySubtype = anySubtype
-Block.wildcard = False #True if
+Block.wildcard = False  # True if
 
 
 class BlockPicker(Dialog):
@@ -427,12 +427,12 @@ class BlockPicker(Dialog):
                     break
 
         lbl = Label("Search")
-        #lbl.rect.topleft = (0,0)
+        # lbl.rect.topleft = (0,0)
 
         fld = TextField(300)
-        #fld.rect.topleft = (100, 10)
-        #fld.centery = lbl.centery
-        #fld.left = lbl.right
+        # fld.rect.topleft = (100, 10)
+        # fld.centery = lbl.centery
+        # fld.left = lbl.right
 
         fld.change_action = self.textEntered
         fld.enter_action = self.ok
@@ -457,7 +457,7 @@ class BlockPicker(Dialog):
             t.margin = 0
         icons = Column(tableicons, spacing=2)
 
-        #tableview.margin = 5
+        # tableview.margin = 5
         tableview.num_rows = lambda : len(self.matchingBlocks)
         tableview.row_data = lambda x: (self.matchingBlocks[x], x, x)
         tableview.row_is_selected = lambda x: x == self.selectedBlockIndex
@@ -474,7 +474,7 @@ class BlockPicker(Dialog):
         tableview.draw_table_cell = draw_block_table_cell
         tableview.width = panelWidth
         tableview.anchor = "lrbt"
-        #self.add(tableview)
+        # self.add(tableview)
         self.tableview = tableview
         tableWidget = Widget()
         tableWidget.add(tableview)
@@ -490,7 +490,7 @@ class BlockPicker(Dialog):
         blockView.centerx = self.centerx
         blockView.top = tableview.bottom
 
-        #self.add(blockview)
+        # self.add(blockview)
 
         but = Button("OK")
         but.action = self.ok
@@ -500,7 +500,7 @@ class BlockPicker(Dialog):
         but.height = 30
 
         if self.allowWildcards:
-        #self.add(but)
+        # self.add(but)
             anyRow = CheckBoxLabel("Any Subtype", ref=AttrRef(self, 'anySubtype'), tooltipText="Replace blocks with any data value. Only useful for Replace operations.")
             col = Column((searchRow, tableWidget, anyRow, blockView, but))
         else:
@@ -778,15 +778,15 @@ class EditorTool(object):
         if not len(distances):
             return None, None
 
-        #When holding alt, pick the face opposite the camera
-        #if key.get_mods() & KMOD_ALT:
+        # When holding alt, pick the face opposite the camera
+        # if key.get_mods() & KMOD_ALT:
         #    minmax = max
-        #else:
+        # else:
 
         face, point = distances[min(distances.iterkeys())]
 
-        #if the point is near the edge of the face, and the edge is facing away,
-        #return the away-facing face
+        # if the point is near the edge of the face, and the edge is facing away,
+        # return the away-facing face
 
         dim = face // 2
         side = face & 1
@@ -795,8 +795,8 @@ class EditorTool(object):
         dim1, dim2 = dim1%3, dim2%3
         cv = self.editor.mainViewport.cameraVector
 
-        #determine if a click was within self.edge_factor of the edge of a selection box side. if so, click through
-        #to the opposite side
+        # determine if a click was within self.edge_factor of the edge of a selection box side. if so, click through
+        # to the opposite side
         for d in dim1, dim2:
             edge_width = box.size[d] * self.edge_factor
             facenormal = [0,0,0]
@@ -810,7 +810,7 @@ class EditorTool(object):
                 cameraBehind = cp[d] - box.maximum[d] < 0
 
             if dot(facenormal, cv) > 0 or cameraBehind:
-                #the face adjacent to the clicked edge faces away from the cam
+                # the face adjacent to the clicked edge faces away from the cam
                 return distances[max(distances.iterkeys())]
 
         return face, point
@@ -834,7 +834,7 @@ class EditorTool(object):
             return None
 
         p1, p2 = list(p1), list(p2)
-        #d = [(a-b) for a,b in zip(p1,p2)]
+        # d = [(a-b) for a,b in zip(p1,p2)]
         for i in range(3):
             if p1[i] > p2[i]:
                 t = p2[i]
@@ -879,7 +879,7 @@ class EditorTool(object):
     @property
     def maxBlocks(self):
         from leveleditor import Settings
-        return Settings.blockBuffer.get() / 2 #assume block buffer in megabytes
+        return Settings.blockBuffer.get() / 2  # assume block buffer in megabytes
 
     def showPanel(self):
         pass

@@ -75,15 +75,15 @@ class FillToolPanel(Panel):
         self.replaceLabel = replaceLabel = Label("Replace", width=self.blockButton.width)
         replaceLabel.mouse_down = lambda a: self.tool.toggleReplacing()
         replaceLabel.fg_color = (177, 177, 255, 255)
-        #replaceLabelRow = Row( (Label(rollkey), replaceLabel) );
+        # replaceLabelRow = Row( (Label(rollkey), replaceLabel) );
         replaceLabel.tooltipText = "Shortcut: {0}".format(rollkey)
         replaceLabel.align = "c"
 
         col = (self.fillWithLabel,
                 self.blockButton,
-                #swapRow,
+                # swapRow,
                 replaceLabel,
-                #self.replaceBlockButton,
+                # self.replaceBlockButton,
                 self.fillButton)
 
         if replacing:
@@ -122,7 +122,7 @@ class FillToolPanel(Panel):
         self.tool.blockInfo = t
 
         self.replaceBlockButton.blockInfo = self.tool.replaceBlockInfo
-        self.blockButton.blockInfo = self.tool.blockInfo #xxx put this in a property
+        self.blockButton.blockInfo = self.tool.blockInfo  # xxx put this in a property
 
     def pickReplaceBlock(self):
         blockPicker = BlockPicker(self.tool.replaceBlockInfo, self.tool.editor.level.materials)
@@ -292,7 +292,7 @@ class FillTool(EditorTool):
 
     def drawToolReticle(self):
         if key.get_mods() & KMOD_ALT:
-            #eyedropper mode
+            # eyedropper mode
             self.editor.drawWireCubeReticle(color=(0.2, 0.6, 0.9, 1.0))
 
     def drawToolMarkers(self):
@@ -307,14 +307,14 @@ class FillTool(EditorTool):
         color = 1.0, 1.0, 1.0, 0.35
         if blockInfo:
             tex = self.blockTextures[blockInfo.ID]
-            #color = (1.5 - alpha, 1.0, 1.5 - alpha, alpha - 0.35)
+            # color = (1.5 - alpha, 1.0, 1.5 - alpha, alpha - 0.35)
             glMatrixMode(GL_TEXTURE)
             glPushMatrix()
             glScale(16., 16., 16.)
 
         else:
             tex = None
-            #color = (1.0, 0.3, 0.3, alpha - 0.35)
+            # color = (1.0, 0.3, 0.3, alpha - 0.35)
 
         glPolygonOffset(DepthOffset.FillMarkers, DepthOffset.FillMarkers)
         self.editor.drawConstructionCube(self.selectionBox(),
