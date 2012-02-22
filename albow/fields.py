@@ -363,18 +363,18 @@ class TimeField(Field):
 
     def format_value(self, hm):
         format = "%d:%02d"
-        h,m = hm
+        h, m = hm
         if h >= 12:
             h -= 12
-            return format % (h or 12,m) + " PM"
+            return format % (h or 12, m) + " PM"
         else:
-            return format % (h or 12,m) + " AM"
+            return format % (h or 12, m) + " AM"
 
     def allow_char(self, c):
         return c in self.allowed_chars
 
     def type(self, i):
-        h,m = 0,0
+        h, m = 0, 0
         i = i.upper()
 
         pm = "PM" in i
@@ -392,7 +392,7 @@ class TimeField(Field):
             h += 12
         h %= 24
         m %= 60
-        return h,m
+        return h, m
 
     def mouse_down(self, evt):
         if evt.button == 5:
@@ -402,7 +402,7 @@ class TimeField(Field):
         else:
             return Field.mouse_down(self, evt)
 
-        (h,m) = self.value
+        (h, m) = self.value
         pos = self.pos_to_index(evt.local[0])
         if pos < 2:
             h += delta
@@ -411,10 +411,10 @@ class TimeField(Field):
         else:
             h = (h + 12) % 24
 
-        self.value = (h,m)
+        self.value = (h, m)
 
     def set_value(self, v):
-        h,m = v
+        h, m = v
         super(TimeField, self).set_value((h % 24, m % 60))
 
 from pygame import key
