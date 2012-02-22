@@ -106,7 +106,7 @@ class Operation(object):
         if sch == "Canceled":
             raise Cancel
         if sch is None:
-            sch = MCSchematic( (0,0,0) )
+            sch = MCSchematic( (0, 0, 0) )
 
         sch.compress()
         return sch
@@ -166,8 +166,8 @@ class ThumbView(GLPerspective):
             self.gl_draw_thumb()
         else:
             if self.fbo is None:
-                w,h = self.fboSize
-                self.fbo = FramebufferTexture(w,h, self.gl_draw_tex)
+                w, h = self.fboSize
+                self.fbo = FramebufferTexture(w, h, self.gl_draw_tex)
             GL.glMatrixMode(GL_PROJECTION)
             GL.glLoadIdentity()
             GL.glMatrixMode(GL_MODELVIEW)
@@ -224,7 +224,7 @@ class BlockThumbView(Widget):
             if b is None:
                 return
 
-            sch = MCSchematic(shape=(1,1,1), mats=self.materials)
+            sch = MCSchematic(shape=(1, 1, 1), mats=self.materials)
             if b:
                 sch.Blocks[:] = b.ID
                 sch.Data[:] = b.blockData
@@ -799,7 +799,7 @@ class EditorTool(object):
         # to the opposite side
         for d in dim1, dim2:
             edge_width = box.size[d] * self.edge_factor
-            facenormal = [0,0,0]
+            facenormal = [0, 0, 0]
             cameraBehind = False
 
             if point[d] - box.origin[d] < edge_width:
