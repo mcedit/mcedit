@@ -75,7 +75,7 @@ class SelectionToolOptions(ToolOptions):
         self.colorPopupButton.choices = [name.capitalize() for name in names]
 
         color = SelectSettings.color.get()
-        
+
         self.colorPopupButton.choiceIndex = names.index(color.lower())
 
     def __init__(self, tool):
@@ -240,7 +240,7 @@ class SelectionTool(EditorTool):
 
     nudgePanel = None
 
-     
+ 
     def __init__(self, editor):
         self.editor = editor
         editor.selectionTool = self;
@@ -299,11 +299,11 @@ class SelectionTool(EditorTool):
             return repr(e)
 
     def worldTooltipForBlock(self, pos):
-        
+
         x,y,z = pos
         cx,cz = x / 16, z / 16
         if isinstance(self.editor.level, MCInfdevOldLevel):
-            
+
             if y == 0:
                 try:
                     chunk = self.editor.level.getChunk(cx,cz)
@@ -314,7 +314,7 @@ class SelectionTool(EditorTool):
                         return "Chunk HeightMap is incorrect! Please relight this chunk as soon as possible!"
                     else:
                         return "Chunk is present and filled with air."
-            
+
         block = self.editor.level.blockAt(*pos)
         if block in (alphaMaterials.Chest.ID,
                      alphaMaterials.Furnace.ID,
@@ -363,8 +363,8 @@ class SelectionTool(EditorTool):
         absentTexture = (self.editor.level.materials.blockTextures[block, 0, 0] == materials.NOTEX).all()
         if absentTexture:
             return self.describeBlockAt(pos)
-            
-    
+
+
 
     @alertException
     def selectChunks(self):
@@ -552,7 +552,7 @@ class SelectionTool(EditorTool):
         self.clickSelectionInProgress = False
         self.dragResizeFace = None
         self.dragStartPoint = None
-        
+
     def cancel(self):
         self.endSelection()
         EditorTool.cancel(self)
@@ -600,7 +600,7 @@ class SelectionTool(EditorTool):
             self.clickSelectionInProgress = True
 
         if self.dragStartPoint is None and not self.clickSelectionInProgress: return
-        
+
         if self.dragStartPoint != pos or self.clickSelectionInProgress:
             op = SelectionOperation(self, (self.dragStartPoint, pos))
             self.performWithRetry(op)
@@ -706,7 +706,7 @@ class SelectionTool(EditorTool):
 
     showPreviousSelection = SelectSettings.showPreviousSelection.configProperty()
     alpha = 0.25
-    
+
     def drawToolMarkers(self):
 
         selectionBox = self.selectionBox();
@@ -980,7 +980,7 @@ class SelectionTool(EditorTool):
                 self._deleteBlocks()
         else:
             self._deleteBlocks()
-        
+
     def _deleteBlocks(self, recordUndo = True):
         box = self.selectionBox()
         if None is box: return
@@ -1034,7 +1034,7 @@ class SelectionTool(EditorTool):
         schematic = self._copySelection()
         if schematic:
             self.editor.addCopiedSchematic(schematic)
-            
+
     def _copySelection(self):
         box = self.selectionBox();
         if not box:
@@ -1073,7 +1073,7 @@ class SelectionTool(EditorTool):
             if schematic == "Canceled": return None
 
             return schematic
-            
+
 
     @alertException
     def exportSelection(self):

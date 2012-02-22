@@ -106,7 +106,7 @@ class Operation(object):
         if sch == "Canceled":
             raise Cancel
         if sch is None: sch = MCSchematic( (0,0,0) )
-        
+
         sch.compress()
         return sch
     #represents a single undoable operation
@@ -152,15 +152,15 @@ class ThumbView(GLPerspective):
     def gl_draw_tex(self):
         self.clear()
         self.renderer.draw()
-        
+
     def clear(self):
         if self.drawBackground:
             GL.glClearColor(0.25, 0.27, 0.77, 1.0)
         else:
             GL.glClearColor(0.0, 0.0, 0.0, 0.0)
         GL.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT)
-            
-        
+
+
 
     def gl_draw(self):
         if self.schematic.chunkCount > len(self.renderer.chunkRenderers):
@@ -201,12 +201,12 @@ class ThumbView(GLPerspective):
 
 class BlockThumbView(Widget):
     is_gl_container = True
-    
+
     def __init__(self, materials, blockInfo=None, **kw):
         Widget.__init__(self, **kw)
         self.materials = materials
         self.blockInfo = blockInfo
-        
+
     thumb = None
     _blockInfo = None
     @property    
@@ -218,19 +218,19 @@ class BlockThumbView(Widget):
             if self.thumb: self.thumb.set_parent(None)
             self._blockInfo = b
             if b is None: return
-            
+
             sch = MCSchematic(shape=(1,1,1), mats=self.materials)
             if b:
                 sch.Blocks[:] = b.ID
                 sch.Data[:] = b.blockData
-                
+
             self.thumb = ThumbView(sch)
             self.add(self.thumb)
             self.thumb.size = self.size
             self.thumb.drawBackground = False
             for i in self.thumb.renderer.chunkWorker:
                 pass
-                
+
 class BlockView(GLOrtho):
     def __init__(self, materials, blockInfo=None):
         GLOrtho.__init__(self)
@@ -283,7 +283,7 @@ class BlockButton(ButtonBase, Panel):
     def __init__(self, materials, blockInfo=None, ref=None, recentBlocks=None, *a, **kw):
         self.allowWildcards = False
         Panel.__init__(self, *a, **kw)
-        
+
         self.bg_color = (1, 1, 1, 0.25)
         self._ref = ref
         if blockInfo is None and ref is not None:
@@ -387,7 +387,7 @@ class BlockButton(ButtonBase, Panel):
             self.blockInfo = blockPicker.blockInfo
 
 
-    
+
 def anySubtype(self):
     bl = materials.Block(self.materials, self.ID, self.blockData)
     bl.wildcard = True
@@ -505,7 +505,7 @@ class BlockPicker(Dialog):
         panel.bg_color = [i/255. for i in self.bg_color]
         panel.anchor="tlbr"
         self.add(panel)
-        
+
         self.add(col)
         self.add(icons)
         icons.topleft = tableWidget.topleft
@@ -514,7 +514,7 @@ class BlockPicker(Dialog):
 
         self.shrink_wrap()
         panel.size = self.size
-        
+
         try:
             self.tableview.rows.scroll_to_item(self.selectedBlockIndex)
         except:
@@ -578,7 +578,7 @@ class BlockPicker(Dialog):
             if blockData:
                 ids = set(b.ID for b in matches)
                 matches = sorted([self.materials.blockWithID(id, blockData) for id in ids])
-                
+
             self.matchingBlocks = matches
         else:
             self.matchingBlocks = blocks
@@ -758,15 +758,15 @@ class EditorTool(object):
         #if key.get_mods() & KMOD_ALT:
         #    minmax = max
         #else:
-        
+
         face, point = distances[min(distances.iterkeys())]
-        
+
         #if the point is near the edge of the face, and the edge is facing away,
         #return the away-facing face
-        
+
         dim = face // 2
         side = face & 1
-        
+
         dim1, dim2 = dim+1, dim+2
         dim1, dim2 = dim1%3, dim2%3
         cv = self.editor.mainViewport.cameraVector
@@ -777,19 +777,19 @@ class EditorTool(object):
             edge_width = box.size[d] * self.edge_factor
             facenormal = [0,0,0]
             cameraBehind = False
-            
+
             if point[d] - box.origin[d] < edge_width:
                 facenormal[d] = -1
                 cameraBehind = cp[d] - box.origin[d] > 0
             if point[d] - box.maximum[d] > -edge_width:
                 facenormal[d] = 1
                 cameraBehind = cp[d] - box.maximum[d] < 0
-                
+
             if dot(facenormal, cv) > 0 or cameraBehind: 
                 #the face adjacent to the clicked edge faces away from the cam
                 return distances[max(distances.iterkeys())]
-                
-        
+
+
         return face, point
 
 

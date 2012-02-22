@@ -36,7 +36,7 @@ class BrushMode(object):
         origin = map(lambda x, s:x - (s >> 1), point, size)
         return BoundingBox(origin, size)
 
-    
+
     def performAtPoint(self, op, point, dirtyBox):
         pass
     def createOptions(self, panel, tool):
@@ -54,21 +54,21 @@ class Modes:
                 panel.blockButton,
             ]
             return col
-    
+
         def performAtPoint(self, op, point, dirtyBox):
             for chunk, slices, point in op.level.getChunkSlices(dirtyBox):
                 worldPoint = [p + o for p, o in zip(point, dirtyBox.origin)]
                 blocks = chunk.Blocks[slices]
-    
+
                 box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1])) #xzy reorder
-                
+
                 brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
                 blocks[brushMask] = op.blockInfo.ID
-                
+
                 chunk.Data[slices][brushMask] = op.blockInfo.blockData
                 #chunk.chunkChanged()
-                
-    
+
+
     class FloodFill(BrushMode):
         name = "Flood Fill"
         options = ['indiscriminate']
@@ -78,12 +78,12 @@ class Modes:
                 panel.blockButton
             ]
             indiscriminateButton = CheckBoxLabel("Indiscriminate", ref=AttrRef(tool, 'indiscriminate'))
-            
+
             col.append(indiscriminateButton)
             return col
-            
+
         def performAtPoint(self, op, point, dirtyBox):
-    
+
             tmpfile = tempfile.mkdtemp("FloodFillUndo")
             undoLevel = MCInfdevOldLevel(tmpfile,create=True)
             dirtyChunks = set()
@@ -92,33 +92,33 @@ class Modes:
                 dirtyChunks.add( (cx,cz) )
                 b = BoundingBox( (cx*16, 0, cz*16), (16,128,16) )
                 undoLevel.copyBlocksFrom(op.level, b, b.origin, create=True)
-                
+
             doomedBlock = op.level.blockAt(*point)
             doomedBlockData = op.level.blockDataAt(*point)
             checkData = (doomedBlock not in (8,9,10,11))
             indiscriminate = op.options['indiscriminate']
-            
+
             if doomedBlock == op.blockInfo.ID: return
             if indiscriminate:
                 checkData = False
                 if doomedBlock == 2: #grass
                     doomedBlock = 3 #dirt
-                    
+
             x,y,z = point
             saveUndoChunk(x//16, z//16)
             op.level.setBlockAt(x,y,z, op.blockInfo.ID)
             op.level.setBlockDataAt(x,y,z, op.blockInfo.blockData)
-                            
-            
-                             
+
+
+
             def processCoords(coords):
                 newcoords = deque()
-    
+
                 for (x, y, z) in coords:
                     for _dir, offsets in faceDirections:
                         dx, dy, dz = offsets
                         p = (x + dx, y + dy, z + dz)
-    
+
                         nx, ny, nz = p
                         b = op.level.blockAt(nx, ny, nz)
                         if indiscriminate:
@@ -127,25 +127,25 @@ class Modes:
                             if checkData:
                                 if op.level.blockDataAt(nx, ny, nz) != doomedBlockData:
                                     continue
-                                    
+
                             saveUndoChunk(nx//16, nz//16)
                             op.level.setBlockAt(nx, ny, nz, op.blockInfo.ID)
                             op.level.setBlockDataAt(nx, ny, nz, op.blockInfo.blockData)
                             newcoords.append(p)
-    
+
                 return newcoords
-    
+
             def spread(coords):
                 while len(coords):
                     start = datetime.now()
-    
+
                     num = len(coords)
                     coords = processCoords(coords)
                     d = datetime.now() - start
                     progress = "Did {0} coords in {1}".format(num, d)
                     debug(progress)
                     yield progress
-                    
+
             showProgress("Flood fill...", spread([point]), cancel=True)
             op.editor.invalidateChunks(dirtyChunks)
             op.undoSchematic = undoLevel
@@ -154,11 +154,11 @@ class Modes:
         name = "Replace"
         def createOptions(self, panel, tool):
             return Modes.Fill.createOptions(self, panel, tool) + [panel.replaceBlockButton]
-            
+
         def performAtPoint(self, op, point, dirtyBox):
             for i, (chunk, slices, point) in enumerate(op.level.getChunkSlices(dirtyBox)):
                 yield i, dirtyBox.chunkCount
-                
+
                 worldPoint = [p + o for p, o in zip(point, dirtyBox.origin)]
                 blocks = chunk.Blocks[slices]
                 data = chunk.Data[slices]
@@ -176,7 +176,7 @@ class Modes:
                         blocksToReplace.append(op.editor.level.materials.blockWithID(op.blockInfo.ID, i))
                 else:
                     blocksToReplace = [op.blockInfo]
-                    
+
                 replaceTable = op.level.blockReplaceTable(blocksToReplace)
                 replaceMask = replaceTable[blocks, data]
                 #replaceMask = blocks == op.blockInfo.ID
@@ -190,7 +190,7 @@ class Modes:
     class Erode(BrushMode):
         name = "Erode"
         options = ['erosionStrength']
-        
+
         def createOptions(self, panel, tool):
             col = [
                 panel.modeStyleGrid, 
@@ -198,7 +198,7 @@ class Modes:
             ]
             col.append(IntInputRow("Strength: ", ref=AttrRef(tool, 'erosionStrength'), min=1, max=20, tooltipText="Number of times to apply erosion. Larger numbers are slower."))
             return col
-            
+
         def performAtPoint(self, op, point, dirtyBox):
             if dirtyBox.volume > 1048576:
                 raise ValueError, "Affected area is too big for this brush mode"
@@ -208,7 +208,7 @@ class Modes:
 
             erosionArea = op.level.extractSchematic(box, entities=False)
             if erosionArea is None: return
-            
+
             blocks = erosionArea.Blocks
             data = erosionArea.Data
             bins = bincount(blocks.ravel())
@@ -244,8 +244,8 @@ class Modes:
                 blocks[fillBlocks] = fillBlockID
 
             op.level.copyBlocksFrom(erosionArea, erosionArea.bounds.expand(-1), dirtyBox.origin)
-            
-            
+
+
     class Topsoil(Fill):
         name = "Topsoil"
         options = ['naturalEarth', 'topsoilDepth']
@@ -255,9 +255,9 @@ class Modes:
             naturalRow = CheckBoxLabel("Only Change Natural Earth", ref=AttrRef(tool, 'naturalEarth'))
             col.extend([depthRow, naturalRow])
             return col
-            
+
         def performAtPoint(self, op, point, dirtyBox):
-            
+
             for chunk, slices, point in op.level.getChunkSlices(dirtyBox):
                 depth = op.options['topsoilDepth']
                 blocks = chunk.Blocks[slices]
@@ -291,7 +291,7 @@ class Modes:
 
                 if depth < 0:
                     blocktypeMask &= (blocks != blocktype.ID)
-                
+
                 heightmap = extractHeights(blocktypeMask)
 
                 #logical_not(brushMask, brushMask)
@@ -310,25 +310,25 @@ class Modes:
                     mask = brushMask[idx]
                     blocks[idx][mask] = blocktype.ID
                     data[idx][mask] = blocktype.blockData
-                        
+
                 #remember to do this to make sure the chunk is saved
                 #chunk.chunkChanged()
     class Paste(BrushMode):
 
         name = "Paste"
         options = ['level'] + ['center'+c for c in 'xyz']
-        
+
         def dirtyBoxForPointAndOptions(self, point, options = {}):
             point = [p + options.get('center' + c, 0) for p, c in zip(point, 'xyz')]
             return BoundingBox(point, options['brushSize'])
-   
+
         def createOptions(self, panel, tool):
             col = [panel.brushModeRow]
-            
+
             importButton = Button("Import", action=tool.importPaste)
             importLabel = ValueDisplay(width=150, ref=AttrRef(tool, "importFilename"))
             importRow = Row((importButton, importLabel))
-            
+
             stack = tool.editor.copyStack
             if len(stack) == 0:
                 tool.importPaste()
@@ -337,48 +337,48 @@ class Modes:
             tool.centery = 0
             tool.centerx = -(tool.level.Width / 2)
             tool.centerz = -(tool.level.Length / 2)
-            
+
             cx, cy, cz = [IntInputRow(c, ref=AttrRef(tool, "center"+c), max=a, min=-a) 
                           for a, c in zip(tool.level.size, "xyz")]
             centerRow = Row((cx, cy, cz))
-                
+
             col.extend([importRow, centerRow])
-            
+
             return col
-            
+
         def performAtPoint(self, op, point, dirtyBox):
             level = op.options['level']
             point = [p + op.options['center' + c] for p, c in zip(point, 'xyz')]
-            
-            
+
+
             return op.level.copyBlocksFromIter(level, level.bounds, point, create=True)
-            
+
 class BrushOperation(Operation):
 
     def __init__(self, editor, points, options):
         #if options is None: options = {}
-        
+
         self.options = options
         self.editor = editor
         self.level = editor.level
         if isinstance(points[0], (int, float)):
             points = [points]
-            
+
         self.points = points
 
         self.brushSize = options['brushSize']
         self.blockInfo = options['blockInfo']
         self.brushStyle = options['brushStyle']
         self.brushMode = options['brushMode']
-        
+
         if max(self.brushSize) > BrushTool.maxBrushSize: self.brushSize = (BrushTool.maxBrushSize,)*3;
         if max(self.brushSize) < 1: self.brushSize = (1, 1, 1);
 
         boxes = [self.brushMode.dirtyBoxForPointAndOptions(p, options) for p in points]
         self._dirtyBox = reduce(lambda a,b: a.union(b), boxes)
 
-            
-           
+
+
 
     undoSchematic = None
     brushStyles = ["Round", "Square", "Diamond"]
@@ -420,7 +420,7 @@ class BrushOperation(Operation):
 
         inds = indices(outputShape, dtype=float)
         halfshape = array([(i >> 1) - ((i & 1 == 0) and 0.5 or 0) for i in shape])
-        
+
         blockCenters = inds - halfshape[:, newaxis, newaxis, newaxis]
         blockCenters -= offset[:, newaxis, newaxis, newaxis]
 
@@ -487,51 +487,51 @@ class BrushOperation(Operation):
         if self.undoSchematic:
             self.level.removeEntitiesInBox(self._dirtyBox)
             self.level.removeTileEntitiesInBox(self._dirtyBox)
-            
+
             if self.brushMode.name == "Flood Fill":
                 i=self.level.copyBlocksFromIter(self.undoSchematic,
                                           self.undoSchematic.bounds,
                                           self.undoSchematic.bounds.origin
                                           )
-                
-                
+
+
             else:
                 i=self.level.copyBlocksFromIter(self.undoSchematic,
                                           BoundingBox((0, 0, 0), self._dirtyBox.size),
                                           self._dirtyBox.origin
                                           )
-            
+
             showProgress("Undoing brush...", i)
             self.editor.invalidateChunks(self.undoSchematic.allChunks)
-            
+
     def perform(self, recordUndo=True):
         if recordUndo:
             self.undoSchematic = self.extractUndoSchematicFrom(self.level, self._dirtyBox)
-        
+
         def _perform():
             for i, point in enumerate(self.points):
                 yield i, len(self.points), "Applying {0} brush...".format(self.brushMode.name)
                 f = self.performAtPoint(point)
                 if hasattr(f, "__iter__"):
                     for i in f: yield i
-                    
-        
+
+
         if len(self.points) > 10:
             showProgress("Performing brush...", _perform(), cancel=True)
         else:
             exhaust(_perform())
-            
+
         for cPos in self._dirtyBox.chunkPositions:
             if self.level.containsChunk(*cPos):
                 ch = self.level.getChunk(*cPos)
                 ch.chunkChanged() #xxxxxxx
-             
+
     def performAtPoint(self, point):
         dirtyBox = self.brushMode.dirtyBoxForPointAndOptions(point, self.options)
         return self.brushMode.performAtPoint(self, point, dirtyBox)
-        
+
 class BrushPanel(Panel):
-    
+
     def __init__(self, tool):
         Panel.__init__(self)
         self.tool = tool
@@ -539,23 +539,23 @@ class BrushPanel(Panel):
         self.brushModeButton = ChoiceButton([m.name for m in tool.brushModes],
                                             width=150,
                                             choose=self.brushModeChanged)
-        
+
         self.brushModeButton.selectedChoice = tool.brushMode.name
         self.brushModeRow = Row((Label("Mode:"), self.brushModeButton))
-        
+
         self.brushStyleButton = ValueButton(width=self.brushModeButton.width,
                                         ref=AttrRef(tool, "brushStyle"),
                                         action=tool.swapBrushStyles)
 
         self.brushStyleButton.tooltipText = "Shortcut: ALT-1"
-        
+
         self.brushStyleRow = Row((Label("Brush:"), self.brushStyleButton))
-        
+
         self.modeStyleGrid = Column([
             self.brushModeRow, 
             self.brushStyleRow,
         ])  
-    
+
         shapeRows = []
 
         for d in ["L", "W", "H"]:
@@ -563,14 +563,14 @@ class BrushPanel(Panel):
             f = IntField(ref=getattr(BrushSettings, "brushSize" + d).propertyRef(), min=1, max=tool.maxBrushSize)
             row = Row((l, f))
             shapeRows.append(row)
-    
-    
+
+
         self.brushSizeRows = Column(shapeRows)
- 
-        
+
+
         self.noiseInput = IntInputRow("Chance: ",ref=AttrRef(tool, "brushNoise"), min=0, max=100)
-        
-        
+
+
         hollowCheckBox = CheckBox(ref=AttrRef(tool, "brushHollow"))
         hollowLabel = Label("Hollow")
         hollowLabel.mouse_down = hollowCheckBox.mouse_down
@@ -585,7 +585,7 @@ class BrushPanel(Panel):
             allowWildcards = (tool.brushMode.name == "Replace"))
 
         #col = [modeStyleGrid, hollowRow, noiseInput, shapeRows, blockButton]
-        
+
         self.replaceBlockButton = replaceBlockButton = BlockButton(
             tool.editor.level.materials, 
             ref=AttrRef(tool, 'replaceBlockInfo'), 
@@ -656,17 +656,17 @@ class BrushTool(CloneTool):
         self.recentFillBlocks = []
         self.recentReplaceBlocks = []
         self.draggedPositions = []
-        
+
         self.brushModes = [c() for c in BrushOperation.brushModeClasses]
         for m in self.brushModes:
             self.options.extend(m.options) 
-        
+
         self._brushMode = self.brushModes[0]
         BrushSettings.updateBrushOffset.addObserver(self)
         BrushSettings.brushSizeW.addObserver(self, 'brushSizeW', callback=self._setBrushSize)
         BrushSettings.brushSizeH.addObserver(self, 'brushSizeH', callback=self._setBrushSize)
         BrushSettings.brushSizeL.addObserver(self, 'brushSizeL', callback=self._setBrushSize)
-        
+
     panel = None
 
     def _setBrushSize(self, _):
@@ -676,23 +676,23 @@ class BrushTool(CloneTool):
         self.previewDirty = True
 
     previewDirty = False
-    
+
     _reticleOffset = 1
     naturalEarth = True
     erosionStrength = 1
     indiscriminate = False
-    
+
     @property
     def reticleOffset(self):
         if self.brushMode.name == "Flood Fill": return 0
         return self._reticleOffset
-        
+
     @reticleOffset.setter
     def reticleOffset(self, val):
         self._reticleOffset = val
 
     brushSizeW, brushSizeH, brushSizeL = 1, 1, 1
-    
+
     @property
     def brushSize(self):
         if self.brushMode.name == "Flood Fill": return 1,1,1
@@ -704,7 +704,7 @@ class BrushTool(CloneTool):
         BrushSettings.brushSizeH.set(h)
         BrushSettings.brushSizeL.set(l)
         BrushSettings.brushSizeW.set(w)
-        
+
 
 
     maxBrushSize = 4096
@@ -712,7 +712,7 @@ class BrushTool(CloneTool):
     brushStyles = BrushOperation.brushStyles
     brushStyle = brushStyles[0]
     brushModes = None
-    
+
     @property
     def brushMode(self):
         return self._brushMode
@@ -721,12 +721,12 @@ class BrushTool(CloneTool):
     def brushMode(self, val):
         if isinstance(val, str):
             val = [b for b in self.brushModes if b.name == val][0]
-            
+
         self._brushMode = val
 
         self.hidePanel()
         self.showPanel()
-        
+
 
     brushNoise = 100
     brushHollow = False
@@ -776,21 +776,21 @@ class BrushTool(CloneTool):
                 alert("Failed to load file %s" % clipFilename)
                 self.brushMode = "Fill"
                 return
-                
+
     def loadLevel(self, level):
         self.level = level
         self.minimumSpacing = min([s/4 for s in level.size])
         self.centerx, self.centery, self.centerz = -level.Width / 2, 0, -level.Length / 2
         CloneTool.setupPreview(self)
-        
-        
+
+
     @property
     def importFilename(self):
         if self.level:
             return basename(self.level.filename or "No name")
         return "Nothing selected"
-        
-    
+
+
 
 
     @property
@@ -814,7 +814,7 @@ class BrushTool(CloneTool):
 
             except Exception, e:
                 return repr(e)
-                
+
         if self.brushMode.name == "Flood Fill":
             try:
                 if self.editor.blockFaceUnderCursor is None: return
@@ -825,8 +825,8 @@ class BrushTool(CloneTool):
 
             except Exception, e:
                 return repr(e)
-                
-        
+
+
     def swapBrushStyles(self):
         brushStyleIndex = self.brushStyles.index(self.brushStyle) + 1
         brushStyleIndex %= len(self.brushStyles)
@@ -837,7 +837,7 @@ class BrushTool(CloneTool):
         brushModeIndex = self.brushModes.index(self.brushMode) + 1
         brushModeIndex %= len(self.brushModes)
         self.brushMode = self.brushModes[brushModeIndex]
-    
+
     options = [
         'blockInfo',
         'brushStyle',
@@ -847,7 +847,7 @@ class BrushTool(CloneTool):
         'brushHollow',
         'replaceBlockInfo',
     ]
-    
+
     def getBrushOptions(self):
         return dict( ((key, getattr(self, key))
                        for key 
@@ -855,7 +855,7 @@ class BrushTool(CloneTool):
 
     draggedDirection = (0,0,0)
     centerx = centery = centerz = 0
-    
+
     @alertException
     def mouseDown(self, evt, pos, direction):
         if key.get_mods() & KMOD_ALT:
@@ -897,7 +897,7 @@ class BrushTool(CloneTool):
     @alertException
     def mouseUp(self, evt, pos, direction):
         if 0 == len(self.draggedPositions): return
-        
+
         size = self.brushSize
         #point = self.getReticlePoint(pos, direction);
         if self.brushMode.name == "Flood Fill":
@@ -914,9 +914,9 @@ class BrushTool(CloneTool):
 
         self.editor.invalidateBox(box)
         self.lastPosition = self.draggedPositions[-1]
-        
+
         self.draggedPositions = []
-        
+
     def toolEnabled(self): return True;
 
     def rotate(self):
@@ -1020,7 +1020,7 @@ class BrushTool(CloneTool):
         self.editor.cameraToolDistance = distance
 
     def toolSelected(self):
-        
+
         if self.chooseBlockImmediately:
             blockPicker = BlockPicker(
                 self.blockInfo, 
@@ -1090,10 +1090,10 @@ class BrushTool(CloneTool):
             drawTerrainCuttingWire(BoundingBox(pos, (1,1,1)), 
                                    (0.75, 0.75, 0.1, 0.4), 
                                    (1.0, 1.0, 0.5, 1.0))
-            
-            
+
+
     lastPosition = None
-    
+
     def drawTerrainReticle(self):
         if key.get_mods() & KMOD_ALT:
             #eyedropper mode

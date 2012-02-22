@@ -29,9 +29,9 @@ class CameraTool(EditorTool):
         glReadBuffer(GL_FRONT);
 
         (w, h) = self.editor.size
-        
+
         pixels = glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE);
-        
+
         try:
             (filename, customfilter, flags) = win32gui.GetSaveFileNameW(
                 hwndOwner = display.get_wm_info()['window'],                                                       

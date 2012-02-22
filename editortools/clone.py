@@ -110,18 +110,18 @@ class BlockCopyOperation(Operation):
         with setWindowCaption("Copying - "):
             i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox , self.destPoint, blocksToCopy, create=True)
             showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
-            
-            
-                            
+
+
+
     def undo(self):
         if self.undoSchematic:
             self.destLevel.removeEntitiesInBox(BoundingBox(self.destPoint, self.sourceBox.size))
             self.destLevel.removeTileEntitiesInBox(BoundingBox(self.destPoint, self.sourceBox.size))
-            
+
             with setWindowCaption("Undoing - "):
                 i=self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.sourceBox.size), self.destPoint, create=True)
                 showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
-            
+
     def bufferSize(self):
         return self.undoSchematic.compressedSize()
 
@@ -353,7 +353,7 @@ class CloneTool(EditorTool):
         if self.destPoint is not None:
             x, y, z = self.destPoint
             self.destPoint = (x >> 4) << 4, y, (z >> 4) << 4
-    
+
     placeImmediately = CloneSettings.placeImmediately.configProperty()
 
     panelClass = CloneToolPanel
@@ -498,7 +498,7 @@ class CloneTool(EditorTool):
         newshape = map(lambda x:int(x * factor), oldshape)
         xyzshape = newshape[0], newshape[2], newshape[1]
         newlevel = MCSchematic(xyzshape, mats=self.editor.level.materials)
-        
+
         srcgrid = mgrid[0:roundedShape[0]:1.0 / factor, 0:roundedShape[1]:1.0 / factor, 0:roundedShape[2]:1.0 / factor].astype('uint')
         dstgrid = mgrid[0:newshape[0], 0:newshape[1], 0:newshape[2]].astype('uint')
         srcgrid = srcgrid[map(slice, dstgrid.shape)]
@@ -789,7 +789,7 @@ class CloneTool(EditorTool):
     def _draggingOrigin(self):
         dragPos = map(int, map(floor, self.positionOnDraggingPlane()))
         delta = map(lambda s, e:e - int(floor(s)), self.draggingStartPoint, dragPos)
-        
+
         if key.get_mods() & KMOD_SHIFT:
             ad = map(abs, delta)
             midx = ad.index(max(ad))
@@ -862,7 +862,7 @@ class CloneTool(EditorTool):
             pos = [x, y, z]
             pos[self.draggingFace >> 1] += d
             self.editor.mainViewport.cameraPosition = tuple(pos)
-            
+
         else:
             self.cloneCameraDistance = self.editor._incrementReach(self.cloneCameraDistance)
         return True
@@ -1007,7 +1007,7 @@ class ConstructionTool(CloneTool):
 #        self.level = None
 #        super(ConstructionTool, self).cancel(self)
 #    
-    
+
     def createTestBoard(self, anyBlock = True):
         if anyBlock:
             allBlocks = [self.editor.level.materials[a, b] for a in range(256) for b in range(16)]
@@ -1016,31 +1016,31 @@ class ConstructionTool(CloneTool):
             allBlocks = self.editor.level.materials.allBlocks
             blockWidth = 16
         blockCount = len(allBlocks)
-            
+
         width = blockWidth * 3 + 1
         rows = blockCount // blockWidth + 1
         length = rows * 3 + 1
         height = 3
-        
+
         schematic = MCSchematic( (width, height, length), mats=self.editor.level.materials)
         schematic.Blocks[:,:,0] = 1
-        
+
         for i, block in enumerate(allBlocks):
             col = (i % blockWidth) * 3 + 1
             row = (i // blockWidth) * 3
             schematic.Blocks[col:col+2,row:row+2, 2] = block.ID
             schematic.Data[col:col+2,row:row+2, 2] = block.blockData
-        
+
         return schematic
-            
+
     def toolSelected(self):
         self.editor.mouseLookOff()
-    
+
         mods = key.get_mods()
         if mods & KMOD_ALT and mods & KMOD_SHIFT:
             self.loadLevel(self.createTestBoard())
             return
-        
+
         self.editor.mouseLookOff()
 
         clipFilename = mcplatform.askOpenFile(title='Import a schematic or level...', schematics=True)

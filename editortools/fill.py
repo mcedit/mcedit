@@ -39,7 +39,7 @@ class BlockFillOperation(Operation):
 
         fill = self.destLevel.fillBlocksIter(destBox, self.blockInfo, blocksToReplace=self.blocksToReplace)
         showProgress("Replacing blocks...", fill, cancel=True)
-        
+
 
     def undo(self):
         if self.undoSchematic:
@@ -48,7 +48,7 @@ class BlockFillOperation(Operation):
             with setWindowCaption("Undoing - "):
                 i=self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.destBox.size), self.destBox.origin)
                 showProgress("Copying {0:n} blocks...".format(self.destBox.volume), i)
-            
+
     def bufferSize(self):
         return self.destBox.volume * 2
 
@@ -316,7 +316,7 @@ class FillTool(EditorTool):
             blockInfo = self.replaceBlockInfo
         else:
             blockInfo = self.blockInfo
-            
+
         color = 1.0, 1.0, 1.0, 0.35
         if blockInfo:
             tex = self.blockTextures[blockInfo.ID]
@@ -355,10 +355,10 @@ class FillTool(EditorTool):
             except Exception, e:
                 return repr(e)
 
-        
+
     def mouseUp(self, *args):
         return self.editor.selectionTool.mouseUp(*args)
-    
+
     @alertException
     def mouseDown(self, evt, pos, dir):
         if key.get_mods() & KMOD_ALT:

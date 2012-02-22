@@ -32,7 +32,7 @@ class PlayerMoveOperation(Operation):
                 self.undoYP = level.getPlayerOrientation(self.player)
             except Exception, e:
                 info("Couldn't get player position! ({0!r})".format(e))
-            
+
             yaw, pitch = self.yp
             if yaw is not None and pitch is not None:
                 level.setPlayerOrientation((yaw, pitch), self.player)
@@ -63,14 +63,14 @@ class SpawnPositionInvalid(Exception):
 def okayAt63(level, pos):
     """blocks 63 or 64 must be occupied"""
     return level.blockAt(pos[0], 63, pos[2]) != 0 or level.blockAt(pos[0], 64, pos[2]) != 0
-    
+
 def okayAboveSpawn(level, pos):
     """3 blocks above spawn must be open"""
     return not any( [level.blockAt(pos[0], pos[1]+i, pos[2]) for i in range(1, 4)] )
-    
+
 def positionValid(level, pos):
     return okayAt63(level, pos) and okayAboveSpawn(level, pos)
-    
+
 class PlayerSpawnMoveOperation(PlayerMoveOperation):
     def perform(self, recordUndo=True):
         level = self.tool.editor.level
@@ -105,7 +105,7 @@ class PlayerPositionPanel(Panel):
         tableview.zebra_color = (0,0,0,48)
         def selectTableRow(i, evt):
             tableview.index = i
-            
+
         tableview.click_row = selectTableRow
         self.table = tableview
         l = Label("Player: ")
@@ -124,7 +124,7 @@ class PlayerPositionPanel(Panel):
     @property
     def selectedPlayer(self):
         return self.players[self.table.index]
-    
+
 
 
 class PlayerPositionTool(EditorTool):
@@ -132,14 +132,14 @@ class PlayerPositionTool(EditorTool):
     toolIconName = "player"
     tooltipText = "Move Player"
     movingPlayer = None
-    
+
     def reloadTextures(self):
         self.charTex = loadPNGTexture('char.png')
 
     @alertException
     def movePlayer(self):
         self.movingPlayer = self.panel.selectedPlayer
-    
+
     @alertException
     def movePlayerToCamera(self):
         player = self.panel.selectedPlayer
@@ -154,14 +154,14 @@ class PlayerPositionTool(EditorTool):
         self.editor.addOperation(op)
         self.editor.addUnsavedEdit()
 
-            
+
     def gotoPlayerCamera(self):
         player = self.panel.selectedPlayer
         try:
             pos = self.editor.level.getPlayerPosition(player)
             y, p = self.editor.level.getPlayerOrientation(player)
             self.editor.gotoDimension(self.editor.level.getPlayerDimension(player))
-            
+
             self.editor.mainViewport.cameraPosition = pos
             self.editor.mainViewport.yaw = y
             self.editor.mainViewport.pitch = p
@@ -169,10 +169,10 @@ class PlayerPositionTool(EditorTool):
             self.editor.mainViewport.invalidate()
         except PlayerNotFound:
             pass;
-            
+
     def gotoPlayer(self):
         player = self.panel.selectedPlayer
-        
+
         try:
             if self.editor.mainViewport.pitch < 0:
                 self.editor.mainViewport.pitch = -self.editor.mainViewport.pitch
@@ -182,12 +182,12 @@ class PlayerPositionTool(EditorTool):
             pos = self.editor.level.getPlayerPosition(player)
             pos = map(lambda p, c:p - c * 5, pos, cv)
             self.editor.gotoDimension(self.editor.level.getPlayerDimension(player))
-            
+
             self.editor.mainViewport.cameraPosition = pos
             self.editor.mainViewport.stopMoving()
         except PlayerNotFound:
             pass;
-            
+
     def __init__(self, *args):
         EditorTool.__init__(self, *args)
         self.reloadTextures()
@@ -252,7 +252,7 @@ class PlayerPositionTool(EditorTool):
 
     def drawToolReticle(self):
         if self.movingPlayer is None: return
-        
+
         pos, direction = self.editor.blockFaceUnderCursor
         pos = (pos[0], pos[1] + 2, pos[2])
 
@@ -284,7 +284,7 @@ class PlayerPositionTool(EditorTool):
 
         glEnable(GL_DEPTH_TEST)
         glMatrixMode(GL_MODELVIEW)
-        
+
         for player in self.editor.level.players:
             try:
                 pos = self.editor.level.getPlayerPosition(player)
@@ -304,9 +304,9 @@ class PlayerPositionTool(EditorTool):
                                        c0=(0.3, 0.9, 0.7, 1.0),
                                        c1=(0,0,0,0),
                                        )
-                
+
                 #glDisable(GL_BLEND)
-                
+
             except Exception, e:
                 print repr(e)
                 continue
@@ -336,7 +336,7 @@ class PlayerPositionTool(EditorTool):
     @alertException
     def mouseDown(self, evt, pos, direction):
         if self.movingPlayer is None: return
-        
+
         pos = (pos[0] + 0.5, pos[1] + 2.75, pos[2] + 0.5)
 
         op = PlayerMoveOperation(self, pos, self.movingPlayer)
@@ -353,7 +353,7 @@ class PlayerPositionTool(EditorTool):
     def toolSelected(self):
         self.showPanel()
         self.movingPlayer = None
-        
+
     @alertException
     def toolReselected(self):
         if self.panel:
@@ -472,13 +472,13 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
                 if not okayAt63(level, pos):
                     level.setBlockAt(pos[0], 63, pos[2], 1)
                     status += "Block added at y=63.\n"
-                    
+
                 if 59 < pos[1] < 63:
                     pos[1] = 63
                     status += "Spawn point moved upward to y=63.\n"
-                    
-                    
-                
+
+
+
                 if not okayAboveSpawn(level, pos):
                     if pos[1] > 63 or pos[1] < 59:
                         lpos = (pos[0], pos[1]-1, pos[2])
@@ -488,9 +488,9 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
                     if not okayAboveSpawn(level, pos):
                         for i in range(1,4):
                             level.setBlockAt(pos[0], pos[1]+i, pos[2], 0)
-                        
+
                             status += "Blocks above spawn point cleared.\n"
-                    
+
                 self.editor.invalidateChunks([(pos[0] // 16, pos[2] // 16)])
                 op = PlayerSpawnMoveOperation(self, pos)
                 try:
@@ -498,7 +498,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
                 except SpawnPositionInvalid, e:
                     alert(str(e))
                     return
-                    
+
                 self.editor.addOperation(op)
                 self.editor.addUnsavedEdit()
                 self.markerList.invalidate()
