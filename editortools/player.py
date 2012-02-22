@@ -106,7 +106,7 @@ class PlayerPositionPanel(Panel):
         tableview.num_rows = lambda: len(players)
         tableview.row_data = lambda i: (players[i],)
         tableview.row_is_selected = lambda x: x == tableview.index
-        tableview.zebra_color = (0,0,0,48)
+        tableview.zebra_color = (0, 0, 0, 48)
 
         def selectTableRow(i, evt):
             tableview.index = i
@@ -152,7 +152,7 @@ class PlayerPositionTool(EditorTool):
         p = self.editor.mainViewport.pitch
         d = self.editor.level.dimNo
 
-        op = PlayerMoveOperation(self, pos, player, (y,p))
+        op = PlayerMoveOperation(self, pos, player, (y, p))
         self.movingPlayer = None
         op.perform()
         self.editor.addOperation(op)
@@ -293,7 +293,7 @@ class PlayerPositionTool(EditorTool):
         for player in self.editor.level.players:
             try:
                 pos = self.editor.level.getPlayerPosition(player)
-                yaw,pitch = self.editor.level.getPlayerOrientation(player)
+                yaw, pitch = self.editor.level.getPlayerOrientation(player)
                 dim = self.editor.level.getPlayerDimension(player)
                 if dim != self.editor.level.dimNo:
                     continue
@@ -306,9 +306,9 @@ class PlayerPositionTool(EditorTool):
                 self.drawCharacterHead(0, 0, 0)
                 glPopMatrix()
                 #glEnable(GL_BLEND)
-                drawTerrainCuttingWire(FloatBox((x - .5, y - .5, z - .5), (1,1,1)),
+                drawTerrainCuttingWire(FloatBox((x - .5, y - .5, z - .5), (1, 1, 1)),
                                        c0=(0.3, 0.9, 0.7, 1.0),
-                                       c1=(0,0,0,0),
+                                       c1=(0, 0, 0, 0),
                                        )
 
                 #glDisable(GL_BLEND)
@@ -430,7 +430,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
 
         color = (1.0, 1.0, 1.0, 0.5)
         if isinstance(self.editor.level, MCInfdevOldLevel) and self.spawnProtection:
-            if not positionValid(self.editor.level, (x,y,z)):
+            if not positionValid(self.editor.level, (x, y, z)):
                 color = (1.0, 0.0, 0.0, 0.5)
 
         glColor(*color)
@@ -492,7 +492,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
                             pos = lpos
                             status += "Spawn point shifted down by one block.\n"
                     if not okayAboveSpawn(level, pos):
-                        for i in range(1,4):
+                        for i in range(1, 4):
                             level.setBlockAt(pos[0], pos[1] + i, pos[2], 0)
 
                             status += "Blocks above spawn point cleared.\n"
