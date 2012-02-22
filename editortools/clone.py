@@ -926,15 +926,15 @@ class CloneTool(EditorTool):
         destLevel = self.editor.level
         destVolume = BoundingBox(destPoint, sourceBox.size).volume
 
-        op = CloneOperation    (editor=self.editor,
-                                sourceLevel=sourceLevel,
-                                sourceBox=sourceBox,
-                                originSourceBox=self.selectionBox(),
-                                destLevel=destLevel,
-                                destPoint=self.destPoint,
-                                copyAir=self.copyAir,
-                                copyWater=self.copyWater,
-                                repeatCount=self.repeatCount)
+        op = CloneOperation(editor=self.editor,
+                            sourceLevel=sourceLevel,
+                            sourceBox=sourceBox,
+                            originSourceBox=self.selectionBox(),
+                            destLevel=destLevel,
+                            destPoint=self.destPoint,
+                            copyAir=self.copyAir,
+                            copyWater=self.copyWater,
+                            repeatCount=self.repeatCount)
 
         self.editor.toolbar.selectTool(-1)  # deselect tool so that the clone tool's selection change doesn't update its schematic
 
