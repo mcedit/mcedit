@@ -171,7 +171,8 @@ class Label(Widget):
         for line in lines:
             if len(line):
                 size = font.size(line)
-                if size[0] == 0: continue
+                if size[0] == 0:
+                    continue
 
                 image = font.render(line, True, fg)
                 r = image.get_rect()
@@ -308,7 +309,8 @@ class ValueDisplay(Control, Label):
             return ""
 
 
-class SmallValueDisplay(ValueDisplay): pass
+class SmallValueDisplay(ValueDisplay):
+    pass
 
 
 class ValueButton(ButtonBase, ValueDisplay):
