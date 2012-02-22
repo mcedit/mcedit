@@ -20,7 +20,7 @@ from albow.dialogs import wrapped_label
 start_time = datetime.now()
 
 mod_cmd = KMOD_LCTRL | KMOD_RCTRL | KMOD_LMETA | KMOD_RMETA
-double_click_time = timedelta(0, 0, 300000) # days, seconds, microseconds
+double_click_time = timedelta(0, 0, 300000)  # days, seconds, microseconds
 
 import logging
 log = logging.getLogger(__name__)
