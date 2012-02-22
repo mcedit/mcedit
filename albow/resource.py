@@ -33,14 +33,18 @@ sound_cache = {}
 text_cache = {}
 cursor_cache = {}
 
+
 def _resource_path(default_prefix, names, prefix=""):
     return os.path.join(resource_dir, prefix or default_prefix, *names)
+
 
 def resource_path(*names, **kwds):
     return _resource_path("", names, **kwds)
 
+
 def resource_exists(*names, **kwds):
     return os.path.exists(_resource_path("", names, **kwds))
+
 
 def _get_image(names, border=0, optimize=optimize_images, noalpha=False,
         rle=run_length_encode, prefix="images"):
@@ -62,8 +66,10 @@ def _get_image(names, border=0, optimize=optimize_images, noalpha=False,
         image_cache[path] = image
     return image
 
+
 def get_image(*names, **kwds):
     return _get_image(names, **kwds)
+
 
 def get_font(size, *names, **kwds):
     path = _resource_path("fonts", names, **kwds)
@@ -81,6 +87,7 @@ def get_font(size, *names, **kwds):
         font_cache[key] = font
     return font
 
+
 class DummySound(object):
     def fadeout(self, x): pass
     def get_length(self): return 0.0
@@ -91,6 +98,7 @@ class DummySound(object):
     def stop(self): pass
 
 dummy_sound = DummySound()
+
 
 def get_sound(*names, **kwds):
     if sound_cache is None:
@@ -111,14 +119,17 @@ def get_sound(*names, **kwds):
         sound_cache[path] = sound
     return sound
 
+
 def no_sound(e):
     global sound_cache
     print "albow.resource.get_sound: %s" % e
     print "albow.resource.get_sound: Sound not available, continuing without it"
     sound_cache = None
 
+
 def missing_sound(e, name):
     print "albow.resource.get_sound: %s: %s" % (name, e)
+
 
 def get_text(*names, **kwds):
     path = _resource_path("text", names, **kwds)
@@ -127,6 +138,7 @@ def get_text(*names, **kwds):
         text = open(path, "rU").read()
         text_cache[path] = text
     return text
+
 
 def load_cursor(path):
     image = get_image(path)
@@ -158,6 +170,7 @@ def load_cursor(path):
             data.append(db)
             mask.append(mb)
     return (8 * rowbytes, height), hot, data, mask
+
 
 def get_cursor(*names, **kwds):
     path = _resource_path("cursors", names, **kwds)
