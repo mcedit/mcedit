@@ -106,7 +106,7 @@ class ChunkTool(EditorTool):
 
         #print len(self._selectedChunks) if self._selectedChunks else None, "!=", len(self.editor.selectedChunks)
 
-        if self._selectedChunks != self.editor.selectedChunks or True:  #xxx
+        if self._selectedChunks != self.editor.selectedChunks or True:  # xxx
             self._selectedChunks = set(self.editor.selectedChunks)
             self._displayList.invalidate()
 
@@ -474,7 +474,7 @@ def GeneratorPanel():
                     #for cx, cz in :
                     try:
                         level.createChunk(cx, cz)
-                    except ValueError, e:  #chunk already present;
+                    except ValueError, e:  # chunk already present
                         print e
                         continue
                     else:
