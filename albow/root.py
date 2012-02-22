@@ -309,7 +309,7 @@ class RootWidget(Widget):
     def get_root(self):
         return self
 
-    labelClass = lambda s, t:wrapped_label(t, 45)
+    labelClass = lambda s, t: wrapped_label(t, 45)
 
     def show_tooltip(self, widget, pos):
 
