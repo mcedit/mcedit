@@ -183,7 +183,7 @@ class PlayerPositionTool(EditorTool):
             cv = self.editor.mainViewport.cameraVector
 
             pos = self.editor.level.getPlayerPosition(player)
-            pos = map(lambda p, c:p - c * 5, pos, cv)
+            pos = map(lambda p, c: p - c * 5, pos, cv)
             self.editor.gotoDimension(self.editor.level.getPlayerDimension(player))
 
             self.editor.mainViewport.cameraPosition = pos
@@ -263,7 +263,7 @@ class PlayerPositionTool(EditorTool):
 
         x, y, z = pos
 
-        #x,y,z=map(lambda p,d:p+d, pos, direction)
+        #x,y,z=map(lambda p,d: p+d, pos, direction)
         glEnable(GL_BLEND)
         glColor(1.0, 1.0, 1.0, 0.5)
         self.drawCharacterHead(x + 0.5, y + 0.75, z + 0.5)
@@ -413,7 +413,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
         cv = self.editor.mainViewport.cameraVector
 
         pos = self.editor.level.playerSpawnPosition()
-        pos = map(lambda p, c:p - c * 5, pos, cv)
+        pos = map(lambda p, c: p - c * 5, pos, cv)
 
         self.editor.mainViewport.cameraPosition = pos
         self.editor.mainViewport.stopMoving()
@@ -426,7 +426,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
 
     def drawToolReticle(self):
         pos, direction = self.editor.blockFaceUnderCursor
-        x, y, z = map(lambda p, d:p + d, pos, direction)
+        x, y, z = map(lambda p, d: p + d, pos, direction)
 
         color = (1.0, 1.0, 1.0, 0.5)
         if isinstance(self.editor.level, MCInfdevOldLevel) and self.spawnProtection:
@@ -442,7 +442,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
         glEnable(GL_DEPTH_TEST)
         self.drawCage(x, y, z)
         self.drawCharacterHead(x + 0.5, y + 0.5, z + 0.5)
-        color2 = map(lambda a:a * 0.4, color)
+        color2 = map(lambda a: a * 0.4, color)
         drawTerrainCuttingWire(BoundingBox((x, y, z), (1, 1, 1)), color2, color)
         glDisable(GL_DEPTH_TEST)
 
@@ -464,7 +464,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
 
     @alertException
     def mouseDown(self, evt, pos, direction):
-        pos = map(lambda p, d:p + d, pos, direction)
+        pos = map(lambda p, d: p + d, pos, direction)
         op = PlayerSpawnMoveOperation(self, pos)
         try:
             op.perform()
