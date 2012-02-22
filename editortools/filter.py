@@ -111,7 +111,8 @@ class FilterModuleOptions(Widget):
             ftype = IntField
 
         if min == max:
-            min = None; max = None
+            min = None
+            max = None
 
         field = ftype(value=val, width=100, min=min, max=max)
         self.optionDict[optionName] = AttrRef(field, 'value')

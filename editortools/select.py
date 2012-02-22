@@ -83,13 +83,13 @@ class SelectionToolOptions(ToolOptions):
 
     def __init__(self, tool):
         Panel.__init__(self)
-        self.tool = tool;
+        self.tool = tool
 
         self.colorPopupButton = ChoiceButton([], choose=self.colorChanged)
-        self.updateColors();
+        self.updateColors()
 
         colorRow = Row((Label("Color: ", align="r"), self.colorPopupButton))
-        okButton = Button("OK", action=self.dismiss);
+        okButton = Button("OK", action=self.dismiss)
         showPreviousRow = CheckBoxLabel("Show Previous Selection", ref=AttrRef(tool, 'showPreviousSelection'))
 
         def set_colorvalue(ch):
@@ -118,10 +118,10 @@ class SelectionToolOptions(ToolOptions):
                              for ch in "RGB"]
 
         colorValuesRow = Row(colorValuesInputs)
-        col = Column((Label("Selection Options"), colorRow, colorValuesRow, showPreviousRow, okButton));
+        col = Column((Label("Selection Options"), colorRow, colorValuesRow, showPreviousRow, okButton))
 
-        self.add(col);
-        self.shrink_wrap();
+        self.add(col)
+        self.shrink_wrap()
 
     def colorChanged(self):
         SelectSettings.color.set(self.colorPopupButton.selectedChoice)
@@ -130,8 +130,8 @@ class SelectionToolOptions(ToolOptions):
 
 class SelectionToolPanel(Panel):
     def __init__(self, tool):
-        Panel.__init__(self);
-        self.tool = tool;
+        Panel.__init__(self)
+        self.tool = tool
 
         nudgeBlocksButton = NudgeButton()
         nudgeBlocksButton.nudge = tool.nudgeBlocks
@@ -142,20 +142,20 @@ class SelectionToolPanel(Panel):
         nudgeSelectionButton.nudge = tool.nudgeSelection
         nudgeSelectionButton.bg_color = tool.selectionColor + (0.7,)
 
-        deleteBlocksButton = Button("Delete Blocks", action=self.tool.deleteBlocks);
+        deleteBlocksButton = Button("Delete Blocks", action=self.tool.deleteBlocks)
         deleteBlocksButton.tooltipText = "Fill the selection with Air. Shortcut: DELETE"
-        deleteEntitiesButton = Button("Delete Entities", action=self.tool.deleteEntities);
+        deleteEntitiesButton = Button("Delete Entities", action=self.tool.deleteEntities)
         deleteEntitiesButton.tooltipText = "Remove all entities within the selection"
-        #deleteTileEntitiesButton = Button("Delete TileEntities", action=self.tool.deleteTileEntities);
-        analyzeButton = Button("Analyze", action=self.tool.analyzeSelection);
+        #deleteTileEntitiesButton = Button("Delete TileEntities", action=self.tool.deleteTileEntities)
+        analyzeButton = Button("Analyze", action=self.tool.analyzeSelection)
         analyzeButton.tooltipText = "Count the different blocks and entities in the selection and display the totals."
-        cutButton = Button("Cut", action=self.tool.cutSelection);
+        cutButton = Button("Cut", action=self.tool.cutSelection)
         cutButton.tooltipText = "Take a copy of all blocks and entities within the selection, then delete everything within the selection. Shortcut: {0}-X".format(mcplatform.cmd_name)
-        copyButton = Button("Copy", action=self.tool.copySelection);
+        copyButton = Button("Copy", action=self.tool.copySelection)
         copyButton.tooltipText = "Take a copy of all blocks and entities within the selection. Shortcut: {0}-C".format(mcplatform.cmd_name)
-        pasteButton = Button("Paste", action=self.tool.editor.pasteSelection);
+        pasteButton = Button("Paste", action=self.tool.editor.pasteSelection)
         pasteButton.tooltipText = "Import the last item taken by Cut or Copy. Shortcut: {0}-V".format(mcplatform.cmd_name)
-        exportButton = Button("Export", action=self.tool.exportSelection);
+        exportButton = Button("Export", action=self.tool.exportSelection)
         exportButton.tooltipText = "Export the selection to a .schematic file. Shortcut: {0}-E".format(mcplatform.cmd_name)
 
         selectButton = Button("Select Chunks")
@@ -182,17 +182,17 @@ class SelectionToolPanel(Panel):
             exportButton,
         )
 
-        buttonsColumn = Column(buttonsColumn);
+        buttonsColumn = Column(buttonsColumn)
 
-        self.add(buttonsColumn);
+        self.add(buttonsColumn)
         self.shrink_wrap()
 
 
 class NudgeBlocksOperation (Operation) :
     def __init__(self, editor, sourceBox, direction):
-        self.editor = editor;
+        self.editor = editor
         self.sourceBox = sourceBox
-        self.destBox = BoundingBox(sourceBox.origin, sourceBox.size);
+        self.destBox = BoundingBox(sourceBox.origin, sourceBox.size)
         self.destBox.origin = map(operator.add, self.destBox.origin, direction)
         self.nudgeSelection = NudgeSelectionOperation(editor.selectionTool, direction)
 
@@ -201,7 +201,7 @@ class NudgeBlocksOperation (Operation) :
 
     def perform(self, recordUndo=True):
         level = self.editor.level
-        tempSchematic = level.extractSchematic(self.sourceBox);
+        tempSchematic = level.extractSchematic(self.sourceBox)
         if tempSchematic:
             dirtyBox = self.dirtyBox()
             if recordUndo:
@@ -216,7 +216,7 @@ class NudgeBlocksOperation (Operation) :
             level.copyBlocksFrom(tempSchematic, tempSchematic.bounds, self.destBox.origin)
             self.editor.invalidateBox(dirtyBox)
 
-            self.nudgeSelection.perform(recordUndo);
+            self.nudgeSelection.perform(recordUndo)
 
     def undo(self):
         if self.undoSchematic:
@@ -228,10 +228,10 @@ class NudgeBlocksOperation (Operation) :
 
 
 class SelectionTool(EditorTool):
-    #selectionColor = (1.0, .9, .9);
+    #selectionColor = (1.0, .9, .9)
     color = (0.7, 0., 0.7)
-    surfaceBuild = False;
-    toolIconName = "selection";
+    surfaceBuild = False
+    toolIconName = "selection"
     tooltipText = "Select\nRight-click for options"
 
     bottomLeftPoint = topRightPoint = None
@@ -246,12 +246,12 @@ class SelectionTool(EditorTool):
 
     def __init__(self, editor):
         self.editor = editor
-        editor.selectionTool = self;
-        self.selectionPoint = None;
+        editor.selectionTool = self
+        self.selectionPoint = None
 
         self.optionsPanel = SelectionToolOptions(self)
 
-        self.updateSelectionColor();
+        self.updateSelectionColor()
 
     # --- Tooltips ---
 
@@ -369,7 +369,7 @@ class SelectionTool(EditorTool):
 
     @alertException
     def selectChunks(self):
-        box = self.selectionBox();
+        box = self.selectionBox()
         newBox = BoundingBox((box.mincx << 4, 0, box.mincz << 4), (box.maxcx - box.mincx << 4, self.editor.level.Height, box.maxcz - box.mincz << 4))
         self.editor.selectionTool.setSelection(newBox)
 
@@ -384,16 +384,16 @@ class SelectionTool(EditorTool):
     @alertException
     def nudgeBlocks(self, dir):
         if key.get_mods() & KMOD_SHIFT:
-            dir = map(operator.mul, dir, (16, 16, 16));
+            dir = map(operator.mul, dir, (16, 16, 16))
         op = NudgeBlocksOperation(self.editor, self.selectionBox(), dir)
 
-        self.performWithRetry(op);
+        self.performWithRetry(op)
         self.editor.addOperation(op)
         self.editor.addUnsavedEdit()
 
     def nudgeSelection(self, dir):
         if key.get_mods() & KMOD_SHIFT:
-            dir = map(operator.mul, dir, (16, 16, 16));
+            dir = map(operator.mul, dir, (16, 16, 16))
 
         points = self.getSelectionPoints()
         bounds = self.editor.level.bounds
@@ -402,20 +402,20 @@ class SelectionTool(EditorTool):
         if not all(inbounds): return
 
         op = NudgeSelectionOperation(self, dir)
-        self.performWithRetry(op);
+        self.performWithRetry(op)
         #self.editor.addOperation(op)
 
     def nudgePoint(self, p, n):
-        if self.selectionBox() is None: return;
+        if self.selectionBox() is None: return
         if key.get_mods() & KMOD_SHIFT:
-            n = map(operator.mul, n, (16, 16, 16));
+            n = map(operator.mul, n, (16, 16, 16))
         self.setSelectionPoint(p, map(operator.add, self.getSelectionPoint(p), n))
 
     def nudgeBottomLeft(self, n):
-        return self.nudgePoint(0, n);
+        return self.nudgePoint(0, n)
 
     def nudgeTopRight(self, n):
-        return self.nudgePoint(1, n);
+        return self.nudgePoint(1, n)
 
     # --- Panel functions ---
     def sizeLabelText(self):
@@ -423,33 +423,33 @@ class SelectionTool(EditorTool):
         if self.dragResizeFace is not None:
             size = self.draggingSelectionBox().size
 
-        return "{0}W x {2}L x {1}H".format(*size);
+        return "{0}W x {2}L x {1}H".format(*size)
 
     def showPanel(self):
-        if self.selectionBox() is None: return;
+        if self.selectionBox() is None: return
 
         if self.nudgePanel is None:
             self.nudgePanel = Panel()
 
             self.nudgePanel.bg_color = map(lambda x:x * 0.5, self.selectionColor) + [0.5, ]
 
-            self.bottomLeftNudge = bottomLeftNudge = NudgeButton();
+            self.bottomLeftNudge = bottomLeftNudge = NudgeButton()
             bottomLeftNudge.nudge = self.nudgeBottomLeft
             bottomLeftNudge.anchor = "brwh"
 
             bottomLeftNudge.bg_color = self.bottomLeftColor + (0.33,)
 
-            self.topRightNudge = topRightNudge = NudgeButton();
+            self.topRightNudge = topRightNudge = NudgeButton()
             topRightNudge.nudge = self.nudgeTopRight
             topRightNudge.anchor = "blwh"
 
             topRightNudge.bg_color = self.topRightColor + (0.33,)
 
-            self.nudgeRow = Row((bottomLeftNudge, topRightNudge));
+            self.nudgeRow = Row((bottomLeftNudge, topRightNudge))
             self.nudgeRow.anchor = "blrh"
-            self.nudgePanel.add(self.nudgeRow);
+            self.nudgePanel.add(self.nudgeRow)
 
-            self.editor.add(self.nudgePanel);
+            self.editor.add(self.nudgePanel)
 
         if hasattr(self, 'sizeLabel'):
             self.nudgePanel.remove(self.sizeLabel)
@@ -457,35 +457,35 @@ class SelectionTool(EditorTool):
         self.sizeLabel.anchor = "twh"
         self.sizeLabel.tooltipText = "{0:n} blocks".format(self.selectionBox().volume)
 
-        #self.nudgePanelColumn = Column( (self.sizeLabel, self.nudgeRow) );
-        self.nudgePanel.top = self.nudgePanel.left = 0;
+        #self.nudgePanelColumn = Column( (self.sizeLabel, self.nudgeRow) )
+        self.nudgePanel.top = self.nudgePanel.left = 0
 
-        self.nudgePanel.add(self.sizeLabel);
+        self.nudgePanel.add(self.sizeLabel)
         self.nudgeRow.top = self.sizeLabel.bottom
 
-        self.nudgePanel.shrink_wrap();
+        self.nudgePanel.shrink_wrap()
         self.sizeLabel.centerx = self.nudgePanel.centerx
         self.nudgeRow.centerx = self.nudgePanel.centerx
 
-        self.nudgePanel.bottom = self.editor.toolbar.top;
-        self.nudgePanel.centerx = self.editor.centerx;
+        self.nudgePanel.bottom = self.editor.toolbar.top
+        self.nudgePanel.centerx = self.editor.centerx
 
         self.nudgePanel.anchor = "bwh"
 
         if self.panel is None and self.editor.currentTool in (self, None):
             if self.bottomLeftPoint is not None and self.topRightPoint is not None:
-                self.panel = SelectionToolPanel(self);
-                self.panel.left = self.editor.left;
-                self.panel.centery = self.editor.centery;
-                self.editor.add(self.panel);
+                self.panel = SelectionToolPanel(self)
+                self.panel.left = self.editor.left
+                self.panel.centery = self.editor.centery
+                self.editor.add(self.panel)
 
     def hidePanel(self):
-        self.editor.remove(self.panel);
-        self.panel = None;
+        self.editor.remove(self.panel)
+        self.panel = None
 
     def hideNudgePanel(self):
-        self.editor.remove(self.nudgePanel);
-        self.nudgePanel = None;
+        self.editor.remove(self.nudgePanel)
+        self.nudgePanel = None
 
     selectionInProgress = False
     dragStartPoint = None
@@ -493,7 +493,7 @@ class SelectionTool(EditorTool):
     # --- Event handlers ---
 
     def toolReselected(self):
-        self.selectOtherCorner();
+        self.selectOtherCorner()
 
     def toolSelected(self):
         #if self.clearSelectionImmediately:
@@ -505,13 +505,13 @@ class SelectionTool(EditorTool):
         w, h, l = self.editor.level.Width, self.editor.level.Height, self.editor.level.Length
 
         if w > 0:
-            if x >= w: x = w - 1;
+            if x >= w: x = w - 1
             if x < 0: x = 0
         if l > 0:
-            if z >= l: z = l - 1;
+            if z >= l: z = l - 1
             if z < 0: z = 0
 
-        if y >= h: y = h - 1;
+        if y >= h: y = h - 1
         if y < 0: y = 0
 
         pos = [x, y, z]
@@ -527,7 +527,7 @@ class SelectionTool(EditorTool):
         if self.selectionInProgress:
             pd = self.editor.blockFaceUnderCursor
             if pd:
-                p, d = pd;
+                p, d = pd
                 if self.dragStartPoint == p:
                     if self.clickSelectionInProgress:
 
@@ -696,7 +696,7 @@ class SelectionTool(EditorTool):
     def currentCorner(self, value):
         self._currentCorner = value & 1
         self.toolIconName = ("selection", "selection2")[self._currentCorner]
-        self.editor.toolbar.toolTextureChanged();
+        self.editor.toolbar.toolTextureChanged()
 
     def selectOtherCorner(self):
         self.currentCorner = 1 - self.currentCorner
@@ -706,19 +706,19 @@ class SelectionTool(EditorTool):
 
     def drawToolMarkers(self):
 
-        selectionBox = self.selectionBox();
+        selectionBox = self.selectionBox()
         if(selectionBox):
             widg = self.editor.find_widget(mouse.get_pos())
 
             # these corners stay even while using the chunk tool.
-            glPolygonOffset(DepthOffset.SelectionCorners, DepthOffset.SelectionCorners);
-            lineWidth = 3;
+            glPolygonOffset(DepthOffset.SelectionCorners, DepthOffset.SelectionCorners)
+            lineWidth = 3
             for t, c, n in ((self.bottomLeftPoint, self.bottomLeftColor, self.bottomLeftNudge), (self.topRightPoint, self.topRightColor, self.topRightNudge)):
                 if t != None:
-                    (sx, sy, sz) = t;
+                    (sx, sy, sz) = t
                     if self.selectionInProgress:
                         if t == self.getSelectionPoint(self.currentCorner):
-                            blockFace = self.editor.blockFaceUnderCursor;
+                            blockFace = self.editor.blockFaceUnderCursor
                             if blockFace:
                                 p, d = blockFace
                                 (sx, sy, sz) = p
@@ -726,21 +726,21 @@ class SelectionTool(EditorTool):
                             sx, sy, sz = self.dragStartPoint
 
                     #draw a blue or yellow wireframe box at the selection corner
-                    r, g, b = c;
-                    alpha = 0.4;
+                    r, g, b = c
+                    alpha = 0.4
                     try:
                         bt = self.editor.level.blockAt(sx, sy, sz)
                         if(bt):
-                            alpha = 0.2;
-                    except ChunkNotPresent: pass;
+                            alpha = 0.2
+                    except ChunkNotPresent: pass
 
                     glLineWidth(lineWidth)
-                    lineWidth += 1;
+                    lineWidth += 1
 
                     #draw highlighted block faces when nudging
                     if (widg.parent == n or widg == n):
-                        glEnable(GL_BLEND);
-                        #drawCube(BoundingBox((sx, sy, sz), (1,1,1)));
+                        glEnable(GL_BLEND)
+                        #drawCube(BoundingBox((sx, sy, sz), (1,1,1)))
                         nudgefaces = array([
                                selectionBox.minx, selectionBox.miny, selectionBox.minz,
                                selectionBox.minx, selectionBox.maxy, selectionBox.minz,
@@ -754,37 +754,37 @@ class SelectionTool(EditorTool):
                                selectionBox.minx, selectionBox.maxy, selectionBox.minz,
                                selectionBox.maxx, selectionBox.maxy, selectionBox.minz,
                                selectionBox.maxx, selectionBox.miny, selectionBox.minz,
-                               ], dtype=float32);
+                               ], dtype=float32)
 
                         if sx != selectionBox.minx:
-                            nudgefaces[0:12:3] = selectionBox.maxx;
+                            nudgefaces[0:12:3] = selectionBox.maxx
                         if sy != selectionBox.miny:
-                            nudgefaces[13:24:3] = selectionBox.maxy;
+                            nudgefaces[13:24:3] = selectionBox.maxy
                         if sz != selectionBox.minz:
-                            nudgefaces[26:36:3] = selectionBox.maxz;
+                            nudgefaces[26:36:3] = selectionBox.maxz
 
-                        glColor(r, g, b, 0.3);
-                        glVertexPointer(3, GL_FLOAT, 0, nudgefaces);
+                        glColor(r, g, b, 0.3)
+                        glVertexPointer(3, GL_FLOAT, 0, nudgefaces)
                         glEnable(GL_DEPTH_TEST)
                         glDrawArrays(GL_QUADS, 0, 12)
                         glDisable(GL_DEPTH_TEST)
 
-                        glDisable(GL_BLEND);
+                        glDisable(GL_BLEND)
 
-                    glColor(r, g, b, alpha);
-                    drawCube(BoundingBox((sx, sy, sz), (1, 1, 1)), GL_LINE_STRIP);
+                    glColor(r, g, b, alpha)
+                    drawCube(BoundingBox((sx, sy, sz), (1, 1, 1)), GL_LINE_STRIP)
 
             if not (not self.showPreviousSelection and self.selectionInProgress):
                 #draw the current selection as a white box.  hangs around when you use other tools.
-                glPolygonOffset(DepthOffset.Selection, DepthOffset.Selection);
-                color = self.selectionColor + (self.alpha,);
+                glPolygonOffset(DepthOffset.Selection, DepthOffset.Selection)
+                color = self.selectionColor + (self.alpha,)
                 if self.dragResizeFace is not None:
                     box = self.draggingSelectionBox()
                 else:
                     box = selectionBox
 
                 if self.panel and (widg is self.panel.nudgeBlocksButton or widg.parent is self.panel.nudgeBlocksButton):
-                    color = (0.3, 1.0, 0.3, self.alpha);
+                    color = (0.3, 1.0, 0.3, self.alpha)
                 self.editor.drawConstructionCube(box, color)
 
                 #highlight the face under the cursor, or the face being dragged
@@ -795,7 +795,7 @@ class SelectionTool(EditorTool):
                         face, point = self.boxFaceUnderCursor(box)
 
                         if face is not None:
-                            glEnable(GL_BLEND);
+                            glEnable(GL_BLEND)
                             glColor(*color)
 
                             #Shrink the highlighted face to show the click-through edges
@@ -820,7 +820,7 @@ class SelectionTool(EditorTool):
                             glColor(0.9, 0.6, 0.2, 0.8)
                             glLineWidth(2.0)
                             drawFace(box, face, type=GL.GL_LINE_STRIP)
-                            glDisable(GL_BLEND);
+                            glDisable(GL_BLEND)
                 else:
                     face = self.dragResizeFace
                     point = self.dragResizePoint()
@@ -838,11 +838,11 @@ class SelectionTool(EditorTool):
 
                     glColor(0.9, 0.6, 0.2, 0.5)
                     drawFace(box, face, type=GL_LINE_STRIP)
-                    glEnable(GL_BLEND);
+                    glEnable(GL_BLEND)
                     glEnable(GL_DEPTH_TEST)
 
                     drawFace(box, face)
-                    glDisable(GL_BLEND);
+                    glDisable(GL_BLEND)
                     glDisable(GL_DEPTH_TEST)
 
         pos, direction = self.editor.blockFaceUnderCursor
@@ -855,14 +855,14 @@ class SelectionTool(EditorTool):
             self.showPanel() #xxx do this every frame while dragging because our UI kit is bad
 
         if ((self.selectionInProgress or self.clickSelectionInProgress) and otherCorner != None) :
-            glPolygonOffset(DepthOffset.PotentialSelection, DepthOffset.PotentialSelection);
+            glPolygonOffset(DepthOffset.PotentialSelection, DepthOffset.PotentialSelection)
 
-            box = self.selectionBoxForCorners(otherCorner, pos);
+            box = self.selectionBoxForCorners(otherCorner, pos)
             if self.chunkMode:
                 box = box.chunkBox(self.editor.level)
                 if key.get_mods() & KMOD_ALT:
                     selectionColor = [1., 0., 0.]
-            self.editor.drawConstructionCube(box, selectionColor + [self.alpha, ]);
+            self.editor.drawConstructionCube(box, selectionColor + [self.alpha, ])
         else:
             #don't draw anything at the mouse cursor if we're resizing the box
             if self.dragResizeFace is None:
@@ -875,34 +875,34 @@ class SelectionTool(EditorTool):
                 return
 
     def drawToolReticle(self):
-        glPolygonOffset(DepthOffset.SelectionReticle, DepthOffset.SelectionReticle);
+        glPolygonOffset(DepthOffset.SelectionReticle, DepthOffset.SelectionReticle)
         pos, direction = self.editor.blockFaceUnderCursor
 
         #draw a selection-colored box for the cursor reticle
         selectionColor = map(lambda a:a * a * a * a, self.selectionColor)
-        r, g, b = selectionColor;
+        r, g, b = selectionColor
         alpha = 0.3
 
         try:
             bt = self.editor.level.blockAt(*pos)
             if(bt):
 ##                textureCoords = materials[bt][0]
-                alpha = 0.12;
-        except ChunkNotPresent: pass;
+                alpha = 0.12
+        except ChunkNotPresent: pass
 
         #cube sides
-        glColor(r, g, b, alpha);
-        glDepthMask(False);
-        glEnable(GL_BLEND);
+        glColor(r, g, b, alpha)
+        glDepthMask(False)
+        glEnable(GL_BLEND)
         drawCube(BoundingBox(pos, (1, 1, 1)))
-        glDepthMask(True);
+        glDepthMask(True)
 
         drawTerrainCuttingWire(BoundingBox(pos, (1, 1, 1)),
                                (r, g, b, 0.4),
                                (1., 1., 1., 1.0)
                                )
 
-        glDisable(GL_BLEND);
+        glDisable(GL_BLEND)
 
     def setSelection(self, box):
         if box is None:
@@ -928,25 +928,25 @@ class SelectionTool(EditorTool):
         self.editor.addOperation(op)
 
     def setSelectionPoint(self, pointNumber, newPoint):
-        points = self.getSelectionPoints();
+        points = self.getSelectionPoints()
         points[pointNumber] = newPoint
         self.setSelectionPoints(points)
 
     def setSelectionPoints(self, points):
         if points:
-            self.bottomLeftPoint, self.topRightPoint = points;
+            self.bottomLeftPoint, self.topRightPoint = points
         else:
             self.bottomLeftPoint = self.topRightPoint = None
 
-        self._selectionChanged();
-        self.editor.selectionChanged();
+        self._selectionChanged()
+        self.editor.selectionChanged()
 
     def _selectionChanged(self):
         if self.selectionBox():
             self.showPanel()
         else:
-            self.hidePanel();
-            self.hideNudgePanel();
+            self.hidePanel()
+            self.hideNudgePanel()
 
     def getSelectionPoint(self, pointNumber):
         return (self.bottomLeftPoint, self.topRightPoint)[pointNumber] #lisp programmers think this doesn't evaluate 'self.topRightPoint' - lol!
@@ -972,11 +972,11 @@ class SelectionTool(EditorTool):
         if None is box: return
         op = BlockFillOperation(self.editor, self.editor.level, box, self.editor.level.materials.Air, [])
         with setWindowCaption("DELETING - "):
-            self.editor.freezeStatus("Deleting {0} blocks".format(box.volume));
+            self.editor.freezeStatus("Deleting {0} blocks".format(box.volume))
             self.performWithRetry(op, recordUndo)
 
-            self.editor.addOperation(op);
-            self.editor.invalidateBox(box);
+            self.editor.addOperation(op)
+            self.editor.invalidateBox(box)
             self.editor.addUnsavedEdit()
 
     @alertException
@@ -991,7 +991,7 @@ class SelectionTool(EditorTool):
             class DeleteEntitiesOperation(Operation):
                 def perform(self, recordUndo=True):
                     self.undoEntities = level.getEntitiesInBox(box)
-                    level.removeEntitiesInBox(box);
+                    level.removeEntitiesInBox(box)
                     editor.renderer.invalidateEntitiesInBox(box)
 
                 def undo(self):
@@ -1023,7 +1023,7 @@ class SelectionTool(EditorTool):
             self.editor.addCopiedSchematic(schematic)
 
     def _copySelection(self):
-        box = self.selectionBox();
+        box = self.selectionBox()
         if not box:
             return
 
@@ -1072,25 +1072,25 @@ class SelectionOperation(Operation):
 
     def __init__(self, selectionTool, points):
         self.selectionTool = selectionTool
-        self.points = points;
+        self.points = points
 
     def perform(self, recordUndo=True):
-        self.undoPoints = self.selectionTool.getSelectionPoints();
-        self.selectionTool.setSelectionPoints(self.points);
+        self.undoPoints = self.selectionTool.getSelectionPoints()
+        self.selectionTool.setSelectionPoints(self.points)
 
     def undo(self):
         points = self.points
         self.points = self.undoPoints
-        self.perform();
-        self.points = points;
+        self.perform()
+        self.points = points
 
 
 class NudgeSelectionOperation (Operation) :
     changedLevel = False
 
     def __init__(self, selectionTool, direction):
-        self.selectionTool = selectionTool;
-        self.direction = direction;
+        self.selectionTool = selectionTool
+        self.direction = direction
         self.oldPoints = selectionTool.getSelectionPoints()
 
         self.newPoints = map(lambda p:map(operator.add, p, direction), self.oldPoints)

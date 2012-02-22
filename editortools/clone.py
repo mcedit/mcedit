@@ -387,7 +387,7 @@ class CloneTool(EditorTool):
 
     def nudge(self, nudge):
         if self.destPoint is None:
-            if self.selectionBox() is None: return;
+            if self.selectionBox() is None: return
             self.destPoint = self.selectionBox().origin
 
         if self.chunkAlign:
@@ -397,7 +397,7 @@ class CloneTool(EditorTool):
         if key.get_mods() & KMOD_SHIFT:
             nudge = self.quickNudge(nudge)
 
-        #self.panel.performButton.enabled = True;
+        #self.panel.performButton.enabled = True
         self.destPoint = map(lambda a, b:a + b, self.destPoint, nudge)
         self.updateOffsets()
 
@@ -413,7 +413,7 @@ class CloneTool(EditorTool):
     def offsetChanged(self):
 
         if self.panel:
-            if not self.panel.useOffsetInput: return;
+            if not self.panel.useOffsetInput: return
             box = self.selectionBox()
             if box is None: return
 
@@ -564,7 +564,7 @@ class CloneTool(EditorTool):
             self.panel.set_parent(None)
 
         self.panel = self.panelClass(self)
-        #self.panel.performButton.enabled = False;
+        #self.panel.performButton.enabled = False
 
         self.panel.centery = self.editor.centery
         self.panel.left = self.editor.left
@@ -592,7 +592,7 @@ class CloneTool(EditorTool):
 
     #===========================================================================
     # def getSelectionRanges(self):
-    #    return self.editor.selectionTool.selectionBox();
+    #    return self.editor.selectionTool.selectionBox()
     #
     #===========================================================================
     def getBlockAt(self):
@@ -656,7 +656,7 @@ class CloneTool(EditorTool):
         return BoundingBox(self.destPoint, selectionSize)
 
     def drawTerrainReticle(self):
-        if self.level is None: return;
+        if self.level is None: return
 
         if self.destPoint != None:
             destPoint = self.destPoint
@@ -672,7 +672,7 @@ class CloneTool(EditorTool):
 
     def drawToolReticle(self):
 
-        if self.level is None: return;
+        if self.level is None: return
 
         glPolygonOffset(DepthOffset.CloneMarkers, DepthOffset.CloneMarkers)
 
@@ -887,7 +887,7 @@ class CloneTool(EditorTool):
         return True
 
     def pickUp(self):
-        if self.destPoint == None: return;
+        if self.destPoint == None: return
 
         box = self.selectionBox()
 
@@ -895,13 +895,13 @@ class CloneTool(EditorTool):
         d = map(lambda a, b, c:abs(a - b - c / 2), self.editor.mainViewport.cameraPosition, self.destPoint, box.size)
         self.cloneCameraDistance = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2])
         self.destPoint = None
-        #self.panel.performButton.enabled = False;
+        #self.panel.performButton.enabled = False
         print "Picked up"
 
     @alertException
     def confirm(self):
         destPoint = self.destPoint
-        if destPoint is None: return;
+        if destPoint is None: return
 
         sourceLevel = self.sourceLevel()
         sourceBox = sourceLevel.bounds
@@ -940,7 +940,7 @@ class CloneTool(EditorTool):
         self.level = None
 
     def discardPreviewer(self):
-        if self.previewRenderer is None: return;
+        if self.previewRenderer is None: return
         self.previewRenderer.stopWork()
         self.previewRenderer.discardAllChunks()
         self.editor.removeWorker(self.previewRenderer)
@@ -962,10 +962,10 @@ class ConstructionTool(CloneTool):
         return True
 
     def selectionChanged(self):
-        pass;
+        pass
 
     def updateSchematic(self):
-        pass;
+        pass
 
     def quickNudge(self, nudge):
         return map(lambda x:x * 8, nudge)
@@ -1042,7 +1042,7 @@ class ConstructionTool(CloneTool):
 
             self.editor.toolbar.selectTool(-1)
 
-        #CloneTool.toolSelected(self);
+        #CloneTool.toolSelected(self)
 
     originalLevelSize = (0, 0, 0)
 
@@ -1080,11 +1080,11 @@ class ConstructionTool(CloneTool):
             return
 
     def selectionSize(self):
-        if not self.level: return None;
+        if not self.level: return None
         return  self.originalLevelSize
 
     def selectionBox(self):
-        if not self.level: return None;
+        if not self.level: return None
         return BoundingBox((0, 0, 0), self.selectionSize())
 
     def sourceLevel(self):

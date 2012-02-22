@@ -171,7 +171,7 @@ class PlayerPositionTool(EditorTool):
             self.editor.mainViewport.stopMoving()
             self.editor.mainViewport.invalidate()
         except PlayerNotFound:
-            pass;
+            pass
 
     def gotoPlayer(self):
         player = self.panel.selectedPlayer
@@ -189,7 +189,7 @@ class PlayerPositionTool(EditorTool):
             self.editor.mainViewport.cameraPosition = pos
             self.editor.mainViewport.stopMoving()
         except PlayerNotFound:
-            pass;
+            pass
 
     def __init__(self, *args):
         EditorTool.__init__(self, *args)
@@ -294,7 +294,7 @@ class PlayerPositionTool(EditorTool):
                 pos = self.editor.level.getPlayerPosition(player)
                 yaw,pitch = self.editor.level.getPlayerOrientation(player)
                 dim = self.editor.level.getPlayerDimension(player)
-                if dim != self.editor.level.dimNo: continue;
+                if dim != self.editor.level.dimNo: continue
                 x, y, z = pos
                 glPushMatrix()
                 glTranslate(x, y, z)

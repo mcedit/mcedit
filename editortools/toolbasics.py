@@ -53,12 +53,12 @@ class NudgeButton(GLBackground):
         self.add(nudgeLabel)
         self.shrink_wrap()
 
-        #tooltipBacking = Panel();
-        #tooltipBacking.bg_color = (0, 0, 0, 0.6);
+        #tooltipBacking = Panel()
+        #tooltipBacking.bg_color = (0, 0, 0, 0.6)
         keys = [config.config.get("Keys", k).upper() for k in ("Forward", "Back", "Left", "Right", "Up", "Down")]
 
         nudgeLabel.tooltipText = "Click and hold.  While holding, use the movement keys ({0}{1}{2}{3}{4}{5}) to nudge. Hold SHIFT to nudge faster.".format(*keys)
-        #tooltipBacking.shrink_wrap();
+        #tooltipBacking.shrink_wrap()
 
     def mouse_down(self, event):
         self.focus()
@@ -310,7 +310,7 @@ class BlockButton(ButtonBase, Panel):
         #self.blockLabel.bottom = self.blockButton.bottom
         #self.blockLabel.centerx = self.blockButton.centerx
 
-        #self.add(self.blockLabel);
+        #self.add(self.blockLabel)
 
         self.materials = materials
         self.blockInfo = blockInfo
@@ -346,7 +346,7 @@ class BlockButton(ButtonBase, Panel):
             labelText = labelText[:23] + "..."
         return labelText
 
-        #self.blockNameLabel.text = ;
+        #self.blockNameLabel.text = 
 
     def createRecentBlockView(self):
         def makeBlockView(bi):
@@ -622,7 +622,7 @@ class EditorTool(object):
         self.editor = editor
 
     def toolReselected(self):
-        pass;
+        pass
 
     def toolSelected(self):
         pass
@@ -634,7 +634,7 @@ class EditorTool(object):
         pass
 
     def drawTerrainPreview(self, origin):
-        if self.previewRenderer is None: return;
+        if self.previewRenderer is None: return
         self.previewRenderer.origin = map(lambda a, b:a - b, origin, self.level.bounds.origin)
 
         glPolygonOffset(DepthOffset.ClonePreview, DepthOffset.ClonePreview)
@@ -657,13 +657,13 @@ class EditorTool(object):
         direction indicates which face is under it.  the tool performs
         its action on the specified block'''
 
-        pass;
+        pass
 
     def mouseUp(self, evt, pos, direction):
-        pass;
+        pass
 
     def mouseDrag(self, evt, pos, direction):
-        pass;
+        pass
 
     def increaseToolReach(self):
         "Return True if the tool handles its own reach"
@@ -686,7 +686,7 @@ class EditorTool(object):
         is picked, escape is pressed, or etc etc'''
         self.hidePanel()
 
-    #        pass;
+    #        pass
 
     def findBestTrackingPlane(self, face):
         cv = list(self.editor.mainViewport.cameraVector)
@@ -703,14 +703,14 @@ class EditorTool(object):
         let the user know where the tool is going to act.  e.g. a
         transparent block for the block placing tool.'''
 
-        pass;
+        pass
 
     def drawToolMarkers(self):
         ''' draw any markers the tool wants to leave in the field
         while another tool is out.  e.g. the current selection for
         SelectionTool'''
 
-        pass;
+        pass
 
     def selectionChanged(self):
         """ called when the selection changes due to nudge. other tools can be active. """
@@ -820,7 +820,7 @@ class EditorTool(object):
             return None
 
         p1, p2 = list(p1), list(p2)
-        #d = [(a-b) for a,b in zip(p1,p2)];
+        #d = [(a-b) for a,b in zip(p1,p2)]
         for i in range(3):
             if p1[i] > p2[i]:
                 t = p2[i]
@@ -858,7 +858,7 @@ class EditorTool(object):
     def selectionSize(self):
         ''' returns a tuple containing the size of the selection (x,y,z)'''
         c = self.selectionBox()
-        if c is None: return None;
+        if c is None: return None
         return c.size
 
     @property
