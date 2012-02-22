@@ -77,7 +77,7 @@ class FilterModuleOptions(Widget):
                     rows.append(wrapped_label(optionName, 50))
 
                 else:
-                    raise ValueError, ("Unknown option type", optionType)
+                    raise ValueError( ("Unknown option type", optionType) )
 
             height = sum(r.height for r in rows)
 
@@ -164,7 +164,7 @@ class FilterToolPanel(Panel):
                 self.selectedFilterName = tool.filterNames[0]
 
             if len(tool.filterNames) == 0:
-                raise ValueError, "No filters loaded!"
+                raise ValueError("No filters loaded!")
 
         self.filterSelect = ChoiceButton(tool.filterNames, choose=self.filterChanged)
         self.filterSelect.selectedChoice = self.selectedFilterName

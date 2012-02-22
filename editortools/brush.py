@@ -201,7 +201,7 @@ class Modes:
 
         def performAtPoint(self, op, point, dirtyBox):
             if dirtyBox.volume > 1048576:
-                raise ValueError, "Affected area is too big for this brush mode"
+                raise ValueError("Affected area is too big for this brush mode")
             box = dirtyBox.expand(1)
 
             strength = op.options["erosionStrength"]

@@ -77,7 +77,7 @@ class PlayerSpawnMoveOperation(PlayerMoveOperation):
         if isinstance(level, MCInfdevOldLevel):
             if not positionValid(level, self.pos):
                 if SpawnSettings.spawnProtection.get():
-                    raise SpawnPositionInvalid, "You cannot have two air blocks at Y=63 and Y=64 in your spawn point's column. Additionally, you cannot have a solid block in the three blocks above your spawn point. It's weird, I know."
+                    raise SpawnPositionInvalid("You cannot have two air blocks at Y=63 and Y=64 in your spawn point's column. Additionally, you cannot have a solid block in the three blocks above your spawn point. It's weird, I know.")
 
         self.undoPos = level.playerSpawnPosition()
         level.setPlayerSpawnPosition(self.pos)
