@@ -40,7 +40,6 @@ class Control(object):
     def get_highlighted(self):
         return self._highlighted
 
-
     def get_enabled(self):
         enable = self.enable
         if enable:
