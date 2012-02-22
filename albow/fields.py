@@ -154,8 +154,10 @@ class TextEditor(Widget):
     def pos_to_index(self, x):
         text = self.get_text()
         font = self.font
+
         def width(i):
             return font.size(text[:i])[0]
+
         i1 = 0
         i2 = len(text)
         x1 = 0
@@ -298,6 +300,7 @@ class TextField(Field):
 
 class IntField(Field):
     tooltipText = "Point here and use mousewheel to adjust"
+
     def type(self, i):
         try:
             return eval(i)
@@ -309,6 +312,7 @@ class IntField(Field):
 
     _shift_increment = 16
     _increment = 1
+
     @property
     def increment(self):
         if key.get_mods() & KMOD_SHIFT:

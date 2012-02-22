@@ -120,6 +120,7 @@ class Label(Widget):
 
     def __repr__(self):
         return "Label {0}, child of {1}".format(self.text, self.parent)
+
     def get_text(self):
         return self._text
 
@@ -152,6 +153,7 @@ class Label(Widget):
         self.draw_with(surface, fg, bg)
 
     is_default = False
+
     def draw_with(self, surface, fg, bg=None):
         if bg:
             r = surface.get_rect()
@@ -313,6 +315,7 @@ class SmallValueDisplay(ValueDisplay): pass
 class ValueButton(ButtonBase, ValueDisplay):
 
     align = 'c'
+
     def get_text(self):
         return self.format_value(self.value)
 

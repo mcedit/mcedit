@@ -51,9 +51,11 @@ class FileListView(PaletteView):
         client = self.client
         dir = client.directory
         suffixes = client.suffixes
+
         def filter(name):
             path = os.path.join(dir, name)
             return os.path.isdir(path) or self.client.filter(path)
+
         try:
             names = [name for name in os.listdir(dir) if filter(name)]
                 #if not name.startswith(".") and filter(name)]

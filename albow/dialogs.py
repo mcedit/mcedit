@@ -123,10 +123,13 @@ def ask(mess, responses = ["OK", "Cancel"], default = 0, cancel = -1,
 def input_text(prompt, width, initial = None, **kwds):
     box = Dialog(**kwds)
     d = box.margin
+
     def ok():
         box.dismiss(True)
+
     def cancel():
         box.dismiss(False)
+
     lb = Label(prompt)
     lb.topleft = (d, d)
     tf = TextField(width)
