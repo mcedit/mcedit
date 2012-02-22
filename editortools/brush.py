@@ -88,19 +88,19 @@ class Modes:
         def performAtPoint(self, op, point, dirtyBox):
 
             tmpfile = tempfile.mkdtemp("FloodFillUndo")
-            undoLevel = MCInfdevOldLevel(tmpfile,create=True)
+            undoLevel = MCInfdevOldLevel(tmpfile, create=True)
             dirtyChunks = set()
 
-            def saveUndoChunk(cx,cz):
-                if (cx,cz) in dirtyChunks:
+            def saveUndoChunk(cx, cz):
+                if (cx, cz) in dirtyChunks:
                     return
-                dirtyChunks.add( (cx,cz) )
-                b = BoundingBox( (cx*16, 0, cz*16), (16,128,16) )
+                dirtyChunks.add( (cx, cz) )
+                b = BoundingBox( (cx*16, 0, cz*16), (16, 128, 16) )
                 undoLevel.copyBlocksFrom(op.level, b, b.origin, create=True)
 
             doomedBlock = op.level.blockAt(*point)
             doomedBlockData = op.level.blockDataAt(*point)
-            checkData = (doomedBlock not in (8,9,10,11))
+            checkData = (doomedBlock not in (8, 9, 10, 11))
             indiscriminate = op.options['indiscriminate']
 
             if doomedBlock == op.blockInfo.ID:
@@ -110,10 +110,10 @@ class Modes:
                 if doomedBlock == 2:  # grass
                     doomedBlock = 3  # dirt
 
-            x,y,z = point
+            x, y, z = point
             saveUndoChunk(x//16, z//16)
-            op.level.setBlockAt(x,y,z, op.blockInfo.ID)
-            op.level.setBlockDataAt(x,y,z, op.blockInfo.blockData)
+            op.level.setBlockAt(x, y, z, op.blockInfo.ID)
+            op.level.setBlockDataAt(x, y, z, op.blockInfo.blockData)
 
             def processCoords(coords):
                 newcoords = deque()
@@ -382,7 +382,7 @@ class BrushOperation(Operation):
             self.brushSize = (1, 1, 1)
 
         boxes = [self.brushMode.dirtyBoxForPointAndOptions(p, options) for p in points]
-        self._dirtyBox = reduce(lambda a,b: a.union(b), boxes)
+        self._dirtyBox = reduce(lambda a, b: a.union(b), boxes)
 
     undoSchematic = None
     brushStyles = ["Round", "Square", "Diamond"]
@@ -573,7 +573,7 @@ class BrushPanel(Panel):
 
         self.brushSizeRows = Column(shapeRows)
 
-        self.noiseInput = IntInputRow("Chance: ",ref=AttrRef(tool, "brushNoise"), min=0, max=100)
+        self.noiseInput = IntInputRow("Chance: ", ref=AttrRef(tool, "brushNoise"), min=0, max=100)
 
         hollowCheckBox = CheckBox(ref=AttrRef(tool, "brushHollow"))
         hollowLabel = Label("Hollow")
@@ -704,7 +704,7 @@ class BrushTool(CloneTool):
     @property
     def brushSize(self):
         if self.brushMode.name == "Flood Fill":
-            return 1,1,1
+            return 1, 1, 1
         return [self.brushSizeW, self.brushSizeH, self.brushSizeL]
 
     @brushSize.setter
@@ -856,7 +856,7 @@ class BrushTool(CloneTool):
                        for key
                        in self.options) )
 
-    draggedDirection = (0,0,0)
+    draggedDirection = (0, 0, 0)
     centerx = centery = centerz = 0
 
     @alertException
@@ -872,7 +872,7 @@ class BrushTool(CloneTool):
             return
 
         self.draggedDirection = direction
-        point = [p+d*self.reticleOffset for p,d in zip(pos, direction)]
+        point = [p+d*self.reticleOffset for p, d in zip(pos, direction)]
         self.dragLineToPoint(point)
 
     @alertException
@@ -882,8 +882,8 @@ class BrushTool(CloneTool):
             if len(self.draggedPositions):  # if self.isDragging
                 self.lastPosition = lastPoint = self.draggedPositions[-1]
                 if any([abs(a-b) >= self.minimumSpacing
-                        for a,b in zip(pos, lastPoint)]):
-                    point = [p+d*self.reticleOffset for p,d in zip(pos, direction)]
+                        for a, b in zip(pos, lastPoint)]):
+                    point = [p+d*self.reticleOffset for p, d in zip(pos, direction)]
                     self.dragLineToPoint(point)
 
     def dragLineToPoint(self, point):
@@ -1090,7 +1090,7 @@ class BrushTool(CloneTool):
 
     def drawToolReticle(self):
         for pos in self.draggedPositions:
-            drawTerrainCuttingWire(BoundingBox(pos, (1,1,1)),
+            drawTerrainCuttingWire(BoundingBox(pos, (1, 1, 1)),
                                    (0.75, 0.75, 0.1, 0.4),
                                    (1.0, 1.0, 0.5, 1.0))
 
