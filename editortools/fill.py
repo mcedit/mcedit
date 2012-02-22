@@ -40,7 +40,6 @@ class BlockFillOperation(Operation):
         fill = self.destLevel.fillBlocksIter(destBox, self.blockInfo, blocksToReplace=self.blocksToReplace)
         showProgress("Replacing blocks...", fill, cancel=True)
 
-
     def undo(self):
         if self.undoSchematic:
             self.destLevel.removeEntitiesInBox(self.destBox)
@@ -54,8 +53,6 @@ class BlockFillOperation(Operation):
 
     def dirtyBox(self):
         return self.destBox
-
-
 
 
 class FillToolPanel(Panel):
@@ -89,7 +86,6 @@ class FillToolPanel(Panel):
                 #self.replaceBlockButton,
                 self.fillButton)
 
-
         if replacing:
             self.fillWithLabel = Label("Find:", width=self.blockButton.width, align="c")
 
@@ -115,13 +111,10 @@ class FillToolPanel(Panel):
                     self.swapButton,
                     self.fillButton)
 
-
-
         col = Column(col)
 
         self.add(col)
         self.shrink_wrap()
-
 
     def swapBlockTypes(self):
         t = self.tool.replaceBlockInfo
@@ -131,12 +124,10 @@ class FillToolPanel(Panel):
         self.replaceBlockButton.blockInfo = self.tool.replaceBlockInfo
         self.blockButton.blockInfo = self.tool.blockInfo #xxx put this in a property
 
-
     def pickReplaceBlock(self):
         blockPicker = BlockPicker(self.tool.replaceBlockInfo, self.tool.editor.level.materials)
         if blockPicker.present():
             self.replaceBlockButton.blockInfo = self.tool.replaceBlockInfo = blockPicker.blockInfo
-
 
     def pickFillBlock(self):
         blockPicker = BlockPicker(self.tool.blockInfo, self.tool.editor.level.materials, allowWildcards=True)
@@ -214,7 +205,6 @@ class FillTool(EditorTool):
             else:
                 self.editor.toolbar.selectTool(-1)
 
-
     chooseBlockImmediately = FillSettings.chooseBlockImmediately.configProperty()
 
     def toolReselected(self):
@@ -281,7 +271,6 @@ class FillTool(EditorTool):
             for tex in self.blockTextures.itervalues():
                 tex.delete()
 
-
         self.blockTextures = {}
 
         def blockTexFunc(type):
@@ -296,21 +285,15 @@ class FillTool(EditorTool):
             return _func
 
         for type in range(256):
-
-
             self.blockTextures[type] = Texture(blockTexFunc(type))
-
 
     def drawToolReticle(self):
         if key.get_mods() & KMOD_ALT:
             #eyedropper mode
             self.editor.drawWireCubeReticle(color=(0.2, 0.6, 0.9, 1.0))
 
-
     def drawToolMarkers(self):
         if self.editor.currentTool != self: return;
-
-
 
         if self.panel and self.replacing:
             blockInfo = self.replaceBlockInfo
@@ -354,7 +337,6 @@ class FillTool(EditorTool):
 
             except Exception, e:
                 return repr(e)
-
 
     def mouseUp(self, *args):
         return self.editor.selectionTool.mouseUp(*args)

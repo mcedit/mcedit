@@ -36,7 +36,6 @@ class BrushMode(object):
         origin = map(lambda x, s:x - (s >> 1), point, size)
         return BoundingBox(origin, size)
 
-
     def performAtPoint(self, op, point, dirtyBox):
         pass
     def createOptions(self, panel, tool):
@@ -67,7 +66,6 @@ class Modes:
 
                 chunk.Data[slices][brushMask] = op.blockInfo.blockData
                 #chunk.chunkChanged()
-
 
     class FloodFill(BrushMode):
         name = "Flood Fill"
@@ -108,8 +106,6 @@ class Modes:
             saveUndoChunk(x//16, z//16)
             op.level.setBlockAt(x,y,z, op.blockInfo.ID)
             op.level.setBlockDataAt(x,y,z, op.blockInfo.blockData)
-
-
 
             def processCoords(coords):
                 newcoords = deque()
@@ -214,7 +210,6 @@ class Modes:
             bins = bincount(blocks.ravel())
             fillBlockID = bins.argmax()
 
-
             def getNeighbors(solidBlocks):
                 neighbors = zeros(solidBlocks.shape, dtype='uint8')
                 neighbors[1:-1, 1:-1, 1:-1] += solidBlocks[:-2, 1:-1, 1:-1]
@@ -245,7 +240,6 @@ class Modes:
 
             op.level.copyBlocksFrom(erosionArea, erosionArea.bounds.expand(-1), dirtyBox.origin)
 
-
     class Topsoil(Fill):
         name = "Topsoil"
         options = ['naturalEarth', 'topsoilDepth']
@@ -263,9 +257,7 @@ class Modes:
                 blocks = chunk.Blocks[slices]
                 data = chunk.Data[slices]
 
-
                 worldPoint = [p + o for p, o in zip(point, dirtyBox.origin)]
-
 
                 box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1])) #xzy reorder
 
@@ -350,7 +342,6 @@ class Modes:
             level = op.options['level']
             point = [p + op.options['center' + c] for p, c in zip(point, 'xyz')]
 
-
             return op.level.copyBlocksFromIter(level, level.bounds, point, create=True)
 
 class BrushOperation(Operation):
@@ -376,9 +367,6 @@ class BrushOperation(Operation):
 
         boxes = [self.brushMode.dirtyBoxForPointAndOptions(p, options) for p in points]
         self._dirtyBox = reduce(lambda a,b: a.union(b), boxes)
-
-
-
 
     undoSchematic = None
     brushStyles = ["Round", "Square", "Diamond"]
@@ -409,7 +397,6 @@ class BrushOperation(Operation):
             box = BoundingBox(offset, shape)
         if chance < 100 or hollow:
             box = box.expand(1)
-
 
         outputShape = box.size
         outputShape = (outputShape[0], outputShape[2], outputShape[1])
@@ -494,7 +481,6 @@ class BrushOperation(Operation):
                                           self.undoSchematic.bounds.origin
                                           )
 
-
             else:
                 i=self.level.copyBlocksFromIter(self.undoSchematic,
                                           BoundingBox((0, 0, 0), self._dirtyBox.size),
@@ -514,7 +500,6 @@ class BrushOperation(Operation):
                 f = self.performAtPoint(point)
                 if hasattr(f, "__iter__"):
                     for i in f: yield i
-
 
         if len(self.points) > 10:
             showProgress("Performing brush...", _perform(), cancel=True)
@@ -564,12 +549,9 @@ class BrushPanel(Panel):
             row = Row((l, f))
             shapeRows.append(row)
 
-
         self.brushSizeRows = Column(shapeRows)
 
-
         self.noiseInput = IntInputRow("Chance: ",ref=AttrRef(tool, "brushNoise"), min=0, max=100)
-
 
         hollowCheckBox = CheckBox(ref=AttrRef(tool, "brushHollow"))
         hollowLabel = Label("Hollow")
@@ -705,8 +687,6 @@ class BrushTool(CloneTool):
         BrushSettings.brushSizeL.set(l)
         BrushSettings.brushSizeW.set(w)
 
-
-
     maxBrushSize = 4096
 
     brushStyles = BrushOperation.brushStyles
@@ -726,7 +706,6 @@ class BrushTool(CloneTool):
 
         self.hidePanel()
         self.showPanel()
-
 
     brushNoise = 100
     brushHollow = False
@@ -783,15 +762,11 @@ class BrushTool(CloneTool):
         self.centerx, self.centery, self.centerz = -level.Width / 2, 0, -level.Length / 2
         CloneTool.setupPreview(self)
 
-
     @property
     def importFilename(self):
         if self.level:
             return basename(self.level.filename or "No name")
         return "Nothing selected"
-
-
-
 
     @property
     def statusText(self):
@@ -825,7 +800,6 @@ class BrushTool(CloneTool):
 
             except Exception, e:
                 return repr(e)
-
 
     def swapBrushStyles(self):
         brushStyleIndex = self.brushStyles.index(self.brushStyle) + 1
@@ -949,15 +923,12 @@ class BrushTool(CloneTool):
     def swap(self):
         self.panel.swap()
 
-
     def decreaseBrushSize(self):
         self.brushSize = [i - 1 for i in self.brushSize]
         #self.setupPreview();
 
-
     def increaseBrushSize(self):
         self.brushSize = [i + 1 for i in self.brushSize]
-
 
     @alertException
     def setupPreview(self):
@@ -997,8 +968,6 @@ class BrushTool(CloneTool):
                 f.BlockLight = self.zerolight
                 f.SkyLight = self.zerolight
 
-
-
                 if blockInfo.ID:
                     f.Blocks[mask] = blockInfo.ID
                     f.Data[mask] = blockInfo.blockData
@@ -1009,8 +978,6 @@ class BrushTool(CloneTool):
                 return f
 
         self.level = FakeLevel()
-
-
 
         CloneTool.setupPreview(self, alpha=self.brushAlpha)
 
@@ -1090,7 +1057,6 @@ class BrushTool(CloneTool):
             drawTerrainCuttingWire(BoundingBox(pos, (1,1,1)),
                                    (0.75, 0.75, 0.1, 0.4),
                                    (1.0, 1.0, 0.5, 1.0))
-
 
     lastPosition = None
 

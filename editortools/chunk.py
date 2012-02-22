@@ -125,7 +125,6 @@ class ChunkTool(EditorTool):
                 if n not in self._selectedChunks:
                     positions.append([ch])
 
-
         color = self.editor.selectionTool.selectionColor + (0.3, )
         glColor(*color)
         with gl.glEnable(GL_BLEND):
@@ -180,8 +179,6 @@ class ChunkTool(EditorTool):
             box = box.chunkBox(self.editor.level)
             l, w= box.length // 16, box.width // 16
             return "%s x %s chunks" % (l,w)
-
-
 
     def toolSelected(self):
 
@@ -270,7 +267,6 @@ class ChunkTool(EditorTool):
             for i in self.editor.level.generateLightsIter(self.selectedChunks()):
                 yield i
 
-
         with setWindowCaption("RELIGHTING - "):
 
             showProgress("Lighting {0} chunks...".format(len(self.selectedChunks())),
@@ -334,7 +330,6 @@ def GeneratorPanel():
     if jarStorage:
         jarStorage.reloadVersions()
 
-
     generatorChoice = ChoiceButton(["Minecraft Server", "Flatland"])
     panel.generatorChoice = generatorChoice
     col = [Row((Label("Generator:"), generatorChoice))]
@@ -343,7 +338,6 @@ def GeneratorPanel():
 
     heightinput = IntInputRow("Height: ", ref=AttrRef(panel, "chunkHeight"), min=0, max=128)
     grassinput = CheckBoxLabel("Grass", ref=AttrRef(panel, "grass"))
-
 
     flatPanel = Column([heightinput, grassinput], align="l")
 
@@ -378,7 +372,6 @@ def GeneratorPanel():
 
     versionContainer.shrink_wrap()
 
-
     menu = Menu("Advanced", [
         ("Open Server Storage", "revealStorage"),
         ("Reveal World Cache", "revealCache"),
@@ -405,7 +398,6 @@ def GeneratorPanel():
     def clearCache():
         MCServerChunkGenerator.clearWorldCache()
     simRow = CheckBoxLabel("Simulate world", ref=AttrRef(panel, "simulate"), tooltipText = "Simulate the world for a few seconds after generating it. Reduces the save file size by processing all of the TileTicks.")
-
 
     simRow = Row((simRow, advancedButton), anchor="lrh")
     #deleteCacheRow = Row((Label("Delete Temporary World File Cache?"), Button("Delete Cache!", action=clearCache, tooltipText="Click me if you think your chunks are stale.")))
@@ -480,7 +472,6 @@ def GeneratorPanel():
                             ch.Blocks[:, :, stoneHeight:grassHeight] = alphaMaterials.Dirt.ID
                             ch.Blocks[:, :, :stoneHeight] = alphaMaterials.Stone.ID
 
-
                             ch.Blocks[:, :, 0] = alphaMaterials.Bedrock.ID
                             ch.SkyLight[:, :, height:] = maxskylight
                             if maxskylight:
@@ -495,7 +486,6 @@ def GeneratorPanel():
                         ch.unload()
 
         return _createChunks()
-
 
     panel.generate = generate
     return panel

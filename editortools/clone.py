@@ -70,8 +70,6 @@ class CoordsInput(Widget):
         #nudge is a 3-tuple where one of the elements is -1 or 1, and the others are 0.
         pass
 
-
-
 class BlockCopyOperation(Operation):
     def __init__(self, editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater):
         self.editor = editor
@@ -110,8 +108,6 @@ class BlockCopyOperation(Operation):
         with setWindowCaption("Copying - "):
             i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox , self.destPoint, blocksToCopy, create=True)
             showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
-
-
 
     def undo(self):
         if self.undoSchematic:
@@ -173,7 +169,6 @@ class CloneOperation (Operation):
             if repeatCount > 1 and self.selectOriginalAfterRepeat:
                 dirtyBoxes.append(originSourceBox)
 
-
             dirty = enclosingBox(dirtyBoxes)
             points = (dirty.origin, map(lambda x:x - 1, dirty.maximum))
 
@@ -192,7 +187,6 @@ class CloneOperation (Operation):
             [i.recordUndo() for i in self.blockCopyOps]
         [i.perform(False) for i in self.blockCopyOps]
         [i.perform(recordUndo) for i in self.selectionOps]
-
 
     def undo(self):
         [i.undo() for i in self.blockCopyOps]
@@ -299,7 +293,6 @@ class CloneToolPanel(Panel):
         else:
             col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.nudgeButton, copyAirRow, copyWaterRow, self.performButton))
 
-
         self.add(col)
         self.anchor = "lwh"
 
@@ -401,7 +394,6 @@ class CloneTool(EditorTool):
         self.destPoint = map(lambda a, b:a + b, self.destPoint, nudge)
         self.updateOffsets()
 
-
     def selectionChanged(self):
         if self.selectionBox() is not None:
             self.updateSchematic()
@@ -413,7 +405,6 @@ class CloneTool(EditorTool):
 
     def offsetChanged(self):
 
-
         if self.panel:
             if not self.panel.useOffsetInput: return;
             box = self.selectionBox()
@@ -421,7 +412,6 @@ class CloneTool(EditorTool):
 
             delta = self.panel.offsetInput.coords
             self.destPoint = map(operator.add, box.origin, delta)
-
 
     def toolEnabled(self):
         return not (self.selectionBox() is None)
@@ -504,15 +494,11 @@ class CloneTool(EditorTool):
         srcgrid = srcgrid[map(slice, dstgrid.shape)]
         dstgrid = dstgrid[map(slice, srcgrid.shape)]
 
-
         def copyArray(dest, src):
             dest[dstgrid[0], dstgrid[1], dstgrid[2]] = src[srcgrid[0], srcgrid[1], srcgrid[2]]
 
-
         copyArray(newlevel.Blocks, blocks)
         copyArray(newlevel.Data, data)
-
-
 
         self.level = newlevel
         self.setupPreview()
@@ -552,7 +538,6 @@ class CloneTool(EditorTool):
 #        newlevel.cloneToolScaleFactor = newFactor
 #
 
-
     @alertException
     def updateSchematic(self):
         #extract blocks
@@ -576,7 +561,6 @@ class CloneTool(EditorTool):
         self.panel.left = self.editor.left
         self.editor.add(self.panel)
 
-
     def setupPreview(self, alpha=1.0):
         self.discardPreviewer()
         if self.level:
@@ -597,7 +581,6 @@ class CloneTool(EditorTool):
         else:
             return self.level.size
 
-
     #===========================================================================
     # def getSelectionRanges(self):
     #    return self.editor.selectionTool.selectionBox();
@@ -606,11 +589,9 @@ class CloneTool(EditorTool):
     def getBlockAt(self):
         return None #use level's blockAt
 
-
     def getReticleOrigin(self):
         #returns a new origin for the current selection, where the old origin is at the new selection's center.
         pos, direction = self.editor.blockFaceUnderCursor
-
 
         lev = self.editor.level
         size = self.rotatedSelectionSize()
@@ -804,7 +785,6 @@ class CloneTool(EditorTool):
             p = [i // 16 * 16 for i in p]
         return p
 
-
     def positionOnDraggingPlane(self):
         pos = self.editor.mainViewport.cameraPosition
         dim = self.draggingFace >> 1
@@ -883,7 +863,6 @@ class CloneTool(EditorTool):
             self.cloneCameraDistance = self.editor._decrementReach(self.cloneCameraDistance)
         return True
 
-
     def resetToolReach(self):
         if self.draggingFace is not None:
             x, y, z = self.editor.mainViewport.cameraPosition
@@ -891,8 +870,6 @@ class CloneTool(EditorTool):
             pos[self.draggingFace >> 1] += (1, -1)[self.draggingFace & 1] * -self.draggingY
             self.editor.mainViewport.cameraPosition = tuple(pos)
             self.draggingY = 0
-
-
 
         else:
             self.cloneCameraDistance = max(self.editor.defaultCameraToolDistance, self.safeToolDistance())
@@ -951,7 +928,6 @@ class CloneTool(EditorTool):
 
         self.destPoint = None
         self.level = None
-
 
     def discardPreviewer(self):
         if self.previewRenderer is None: return;
@@ -1049,7 +1025,6 @@ class ConstructionTool(CloneTool):
 
             self.loadSchematic(clipFilename)
 
-
         print "Canceled"
         if self.level is None:
             print "No level selected."
@@ -1059,7 +1034,6 @@ class ConstructionTool(CloneTool):
         #CloneTool.toolSelected(self);
 
     originalLevelSize = (0, 0, 0)
-
 
     def loadSchematic(self, filename):
         """ actually loads a schematic or a level """
@@ -1089,13 +1063,10 @@ class ConstructionTool(CloneTool):
 
             self.chunkAlign = isinstance(self.level, MCInfdevOldLevel) and all(b % 16 == 0 for b in self.level.bounds.size)
 
-
             self.setupPreview()
             self.originalLevelSize = (self.level.Width, self.level.Height, self.level.Length)
             self.showPanel()
             return
-
-
 
     def selectionSize(self):
         if not self.level: return None;

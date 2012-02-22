@@ -92,7 +92,6 @@ class FilterModuleOptions(Widget):
                 rows = rows[i:]
             #cols.append(Column(rows))
 
-
             if len(rows):
                 cols.append(Column(rows))
 
@@ -195,8 +194,6 @@ class FilterToolPanel(Panel):
         if self.filterOptionsPanel:
             self.savedOptions[self.selectedFilterName] = self.filterOptionsPanel.options
 
-
-
 class FilterOperation(Operation):
     def __init__(self, level, box, filter, options):
         self.box = box
@@ -263,12 +260,10 @@ class FilterTool(EditorTool):
         if self.panel.parent:
             self.panel.parent.remove(self.panel)
 
-
     def reloadFilters(self):
         filterDir = mcplatform.filtersDir
         filterFiles = os.listdir(filterDir)
         filterPyfiles = filter(lambda x:x.endswith(".py"), filterFiles)
-
 
         filterModules = (__import__(x[:-3]) for x in filterPyfiles)
         filterModules = filter(lambda module:hasattr(module, "perform"), filterModules)

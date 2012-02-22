@@ -40,10 +40,8 @@ class PlayerMoveOperation(Operation):
             level.setPlayerDimension(level.dimNo, self.player)
             self.tool.markerList.invalidate()
 
-
         except PlayerNotFound, e:
             print "Player move failed: ", e
-
 
     def undo(self):
         if not (self.undoPos is None):
@@ -125,8 +123,6 @@ class PlayerPositionPanel(Panel):
     def selectedPlayer(self):
         return self.players[self.table.index]
 
-
-
 class PlayerPositionTool(EditorTool):
     surfaceBuild = True
     toolIconName = "player"
@@ -153,7 +149,6 @@ class PlayerPositionTool(EditorTool):
         op.perform()
         self.editor.addOperation(op)
         self.editor.addUnsavedEdit()
-
 
     def gotoPlayerCamera(self):
         player = self.panel.selectedPlayer
@@ -311,7 +306,6 @@ class PlayerPositionTool(EditorTool):
                 print repr(e)
                 continue
 
-
         glDisable(GL_DEPTH_TEST)
 
     def drawCharacterHead(self, x, y, z):
@@ -347,7 +341,6 @@ class PlayerPositionTool(EditorTool):
 
     def levelChanged(self):
         self.markerList.invalidate()
-
 
     @alertException
     def toolSelected(self):
@@ -476,8 +469,6 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
                 if 59 < pos[1] < 63:
                     pos[1] = 63
                     status += "Spawn point moved upward to y=63.\n"
-
-
 
                 if not okayAboveSpawn(level, pos):
                     if pos[1] > 63 or pos[1] < 59:

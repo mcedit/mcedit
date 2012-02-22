@@ -59,7 +59,6 @@ class NudgeButton(GLBackground):
         nudgeLabel.tooltipText = "Click and hold.  While holding, use the movement keys ({0}{1}{2}{3}{4}{5}) to nudge. Hold SHIFT to nudge faster.".format(*keys)
         #tooltipBacking.shrink_wrap();
 
-
     def mouse_down(self, event):
         self.focus()
 
@@ -113,7 +112,6 @@ class Operation(object):
     def perform(self, recordUndo=True):
         " Perform the operation. Record undo information if recordUndo"
 
-
     def undo(self):
         """ Undo the operation. Ought to leave the Operation in a state where it can be performed again.
             Returns a BoundingBox containing all of the modified areas of the level. """
@@ -142,7 +140,6 @@ class ThumbView(GLPerspective):
         self.fboSize = (128, 128)
         #self.renderer.position = (sch.Length / 2, 0, sch.Height / 2)
 
-
     def setup_modelview(self):
         GLU.gluLookAt(-self.schematic.Width * 2.8, self.schematic.Height * 2.5 + 1, -self.schematic.Length * 1.5,
                       self.schematic.Width, 0, self.schematic.Length,
@@ -159,8 +156,6 @@ class ThumbView(GLPerspective):
         else:
             GL.glClearColor(0.0, 0.0, 0.0, 0.0)
         GL.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT)
-
-
 
     def gl_draw(self):
         if self.schematic.chunkCount > len(self.renderer.chunkRenderers):
@@ -238,7 +233,6 @@ class BlockView(GLOrtho):
         self.blockInfo = blockInfo or materials.Air
         self.materials = materials
 
-
     listBlockInfo = None
 
     def gl_draw(self):
@@ -290,7 +284,6 @@ class BlockButton(ButtonBase, Panel):
             blockInfo = ref.get()
         blockInfo = blockInfo or materials.Air
 
-
         if recentBlocks is not None:
             self.recentBlocks = recentBlocks
         else:
@@ -299,7 +292,6 @@ class BlockButton(ButtonBase, Panel):
         self.blockView = BlockThumbView(materials, blockInfo, size=(48, 48))
         self.blockLabel = ValueDisplay(ref=AttrRef(self, 'labelText'), width=180, align="l")
         row = Row((self.blockView, self.blockLabel), align="b")
-
 
         #col = Column( (self.blockButton, self.blockNameLabel) )
         self.add(row)
@@ -314,7 +306,6 @@ class BlockButton(ButtonBase, Panel):
         self.blockInfo = blockInfo
         #self._ref = ref
         self.updateRecentBlockView()
-
 
     recentBlockLimit = 7
 
@@ -386,8 +377,6 @@ class BlockButton(ButtonBase, Panel):
         if blockPicker.present():
             self.blockInfo = blockPicker.blockInfo
 
-
-
 def anySubtype(self):
     bl = materials.Block(self.materials, self.ID, self.blockData)
     bl.wildcard = True
@@ -421,7 +410,6 @@ class BlockPicker(Dialog):
                     self.selectedBlockIndex = i
                     break
 
-
         lbl = Label("Search")
         #lbl.rect.topleft = (0,0)
 
@@ -437,7 +425,6 @@ class BlockPicker(Dialog):
         self.awesomeField = fld
 
         searchRow = Row((lbl, fld))
-
 
         def formatBlockName(x):
             block = self.matchingBlocks[x]
@@ -532,7 +519,6 @@ class BlockPicker(Dialog):
         else:
             return self.materials.Air
 
-
     def selectTableRow(self, i, e):
         oldIndex = self.selectedBlockIndex
 
@@ -566,7 +552,6 @@ class BlockPicker(Dialog):
             print repr(e)
 
         blocks = self.materials.allBlocks
-
 
         matches = blocks
         oldBlock = self.materials.Air
@@ -637,8 +622,6 @@ class EditorTool(object):
         glEnable(GL_POLYGON_OFFSET_FILL)
         self.previewRenderer.draw()
         glDisable(GL_POLYGON_OFFSET_FILL)
-
-
 
     def rotate(self, amount=1): pass
     def roll(self, amount=1): pass
@@ -742,7 +725,6 @@ class EditorTool(object):
                         point = map(lambda a, p:(a * scale + p), normal, p0)
     #                    glVertex3f(*point)
 
-
                         if pointInBounds(point, dim1) and pointInBounds(point, dim2):
                             points[ dim * 2 + side ] = point
 
@@ -789,9 +771,7 @@ class EditorTool(object):
                 #the face adjacent to the clicked edge faces away from the cam
                 return distances[max(distances.iterkeys())]
 
-
         return face, point
-
 
     def selectionCorners(self):
         """ returns the positions of the two selection corners as a pair of 3-tuples, each ordered x,y,z """
@@ -839,13 +819,10 @@ class EditorTool(object):
 
         return box
 
-
     def selectionBox(self):
         ''' selection corners, ordered, with the greater point moved up one block for use as the ending value of an array slice '''
         c = self.selectionCorners()
         if c:
-
-
             return self.selectionBoxForCorners(*c)
 
         return None
