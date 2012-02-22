@@ -111,7 +111,7 @@ class BlockCopyOperation(Operation):
                 blocksToCopy.remove(9)
 
         with setWindowCaption("Copying - "):
-            i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox , self.destPoint, blocksToCopy, create=True)
+            i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox, self.destPoint, blocksToCopy, create=True)
             showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
 
     def undo(self):
@@ -362,7 +362,7 @@ class CloneTool(EditorTool):
 
     panelClass = CloneToolPanel
     # color = (0.89, 0.65, 0.35, 0.33)
-    color = (0.3 , 1.0, 0.3, 0.19)
+    color = (0.3, 1.0, 0.3, 0.19)
 
     def __init__(self, *args):
         self.rotation = 0
