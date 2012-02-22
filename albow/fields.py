@@ -254,8 +254,10 @@ class Field(Control, TextEditor):
         self.commit(notify=True)
 
     def clamp_value(self, value):
-        if self.max is not None: value = min(value, self.max)
-        if self.min is not None: value = max(value, self.min)
+        if self.max is not None:
+            value = min(value, self.max)
+        if self.min is not None:
+            value = max(value, self.min)
         return value
 
     def commit(self, notify=False):
@@ -341,7 +343,8 @@ class IntField(Field):
             self.increase_value()
             self.change_text(str(self.value))
 
-        else: Field.mouse_down(self, evt)
+        else:
+            Field.mouse_down(self, evt)
 
     allowed_chars = '-+*/<>()0123456789'
 
@@ -385,7 +388,8 @@ class TimeField(Field):
         if len(parts) > 1:
             m = int(parts[1])
 
-        if pm and h < 12: h += 12
+        if pm and h < 12:
+            h += 12
         h %= 24
         m %= 60
         return h,m
@@ -454,6 +458,7 @@ class FloatField(Field):
             self.increase_value()
             self.change_text(str(self.value))
 
-        else: Field.mouse_down(self, evt)
+        else:
+            Field.mouse_down(self, evt)
 
 #---------------------------------------------------------------------------
