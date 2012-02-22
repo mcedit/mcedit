@@ -183,7 +183,7 @@ class ChunkTool(EditorTool):
         if box:
             box = box.chunkBox(self.editor.level)
             l, w = box.length // 16, box.width // 16
-            return "%s x %s chunks" % (l,w)
+            return "%s x %s chunks" % (l, w)
 
     def toolSelected(self):
 
