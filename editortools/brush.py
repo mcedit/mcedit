@@ -94,8 +94,8 @@ class Modes:
             def saveUndoChunk(cx, cz):
                 if (cx, cz) in dirtyChunks:
                     return
-                dirtyChunks.add( (cx, cz) )
-                b = BoundingBox( (cx*16, 0, cz*16), (16, 128, 16) )
+                dirtyChunks.add((cx, cz))
+                b = BoundingBox((cx*16, 0, cz*16), (16, 128, 16))
                 undoLevel.copyBlocksFrom(op.level, b, b.origin, create=True)
 
             doomedBlock = op.level.blockAt(*point)
@@ -852,9 +852,9 @@ class BrushTool(CloneTool):
     ]
 
     def getBrushOptions(self):
-        return dict( ((key, getattr(self, key))
+        return dict(((key, getattr(self, key))
                        for key
-                       in self.options) )
+                       in self.options))
 
     draggedDirection = (0, 0, 0)
     centerx = centery = centerz = 0
