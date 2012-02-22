@@ -95,7 +95,7 @@ class Modes:
                 if (cx, cz) in dirtyChunks:
                     return
                 dirtyChunks.add((cx, cz))
-                b = BoundingBox((cx*16, 0, cz*16), (16, 128, 16))
+                b = BoundingBox((cx * 16, 0, cz * 16), (16, 128, 16))
                 undoLevel.copyBlocksFrom(op.level, b, b.origin, create=True)
 
             doomedBlock = op.level.blockAt(*point)
@@ -111,7 +111,7 @@ class Modes:
                     doomedBlock = 3  # dirt
 
             x, y, z = point
-            saveUndoChunk(x//16, z//16)
+            saveUndoChunk(x // 16, z // 16)
             op.level.setBlockAt(x, y, z, op.blockInfo.ID)
             op.level.setBlockDataAt(x, y, z, op.blockInfo.blockData)
 
@@ -133,7 +133,7 @@ class Modes:
                                 if op.level.blockDataAt(nx, ny, nz) != doomedBlockData:
                                     continue
 
-                            saveUndoChunk(nx//16, nz//16)
+                            saveUndoChunk(nx // 16, nz // 16)
                             op.level.setBlockAt(nx, ny, nz, op.blockInfo.ID)
                             op.level.setBlockDataAt(nx, ny, nz, op.blockInfo.blockData)
                             newcoords.append(p)
@@ -321,7 +321,7 @@ class Modes:
     class Paste(BrushMode):
 
         name = "Paste"
-        options = ['level'] + ['center'+c for c in 'xyz']
+        options = ['level'] + ['center' + c for c in 'xyz']
 
         def dirtyBoxForPointAndOptions(self, point, options={}):
             point = [p + options.get('center' + c, 0) for p, c in zip(point, 'xyz')]
@@ -343,7 +343,7 @@ class Modes:
             tool.centerx = -(tool.level.Width / 2)
             tool.centerz = -(tool.level.Length / 2)
 
-            cx, cy, cz = [IntInputRow(c, ref=AttrRef(tool, "center"+c), max=a, min=-a)
+            cx, cy, cz = [IntInputRow(c, ref=AttrRef(tool, "center" + c), max=a, min=-a)
                           for a, c in zip(tool.level.size, "xyz")]
             centerRow = Row((cx, cy, cz))
 
@@ -377,7 +377,7 @@ class BrushOperation(Operation):
         self.brushMode = options['brushMode']
 
         if max(self.brushSize) > BrushTool.maxBrushSize:
-            self.brushSize = (BrushTool.maxBrushSize,)*3
+            self.brushSize = (BrushTool.maxBrushSize,) * 3
         if max(self.brushSize) < 1:
             self.brushSize = (1, 1, 1)
 
@@ -497,13 +497,13 @@ class BrushOperation(Operation):
             self.level.removeTileEntitiesInBox(self._dirtyBox)
 
             if self.brushMode.name == "Flood Fill":
-                i=self.level.copyBlocksFromIter(self.undoSchematic,
+                i = self.level.copyBlocksFromIter(self.undoSchematic,
                                           self.undoSchematic.bounds,
                                           self.undoSchematic.bounds.origin
                                           )
 
             else:
-                i=self.level.copyBlocksFromIter(self.undoSchematic,
+                i = self.level.copyBlocksFromIter(self.undoSchematic,
                                           BoundingBox((0, 0, 0), self._dirtyBox.size),
                                           self._dirtyBox.origin
                                           )
@@ -785,7 +785,7 @@ class BrushTool(CloneTool):
 
     def loadLevel(self, level):
         self.level = level
-        self.minimumSpacing = min([s/4 for s in level.size])
+        self.minimumSpacing = min([s / 4 for s in level.size])
         self.centerx, self.centery, self.centerz = -level.Width / 2, 0, -level.Length / 2
         CloneTool.setupPreview(self)
 
@@ -872,7 +872,7 @@ class BrushTool(CloneTool):
             return
 
         self.draggedDirection = direction
-        point = [p+d*self.reticleOffset for p, d in zip(pos, direction)]
+        point = [p + d * self.reticleOffset for p, d in zip(pos, direction)]
         self.dragLineToPoint(point)
 
     @alertException
@@ -881,9 +881,9 @@ class BrushTool(CloneTool):
         if self.brushMode.name != "Flood Fill":
             if len(self.draggedPositions):  # if self.isDragging
                 self.lastPosition = lastPoint = self.draggedPositions[-1]
-                if any([abs(a-b) >= self.minimumSpacing
+                if any([abs(a - b) >= self.minimumSpacing
                         for a, b in zip(pos, lastPoint)]):
-                    point = [p+d*self.reticleOffset for p, d in zip(pos, direction)]
+                    point = [p + d * self.reticleOffset for p, d in zip(pos, direction)]
                     self.dragLineToPoint(point)
 
     def dragLineToPoint(self, point):
