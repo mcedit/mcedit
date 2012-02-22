@@ -38,7 +38,7 @@ class ChunkToolPanel(Panel):
         extractButton.highlight_color = (255, 255, 255)
 
         deselectButton = Button("Deselect",
-            tooltipText = None,
+            tooltipText=None,
             action=tool.editor.deselect,
         )
 
@@ -216,7 +216,7 @@ class ChunkTool(EditorTool):
         self.editor.level.extractChunksInBox(self.selectionBox(), folder)
 
     @alertException
-    def destroyChunks(self, chunks = None):
+    def destroyChunks(self, chunks=None):
         if "No" == ask("Really delete these chunks? This cannot be undone.", ("Yes", "No")):
             return
         if chunks is None:
@@ -412,7 +412,7 @@ def GeneratorPanel():
     def clearCache():
         MCServerChunkGenerator.clearWorldCache()
 
-    simRow = CheckBoxLabel("Simulate world", ref=AttrRef(panel, "simulate"), tooltipText = "Simulate the world for a few seconds after generating it. Reduces the save file size by processing all of the TileTicks.")
+    simRow = CheckBoxLabel("Simulate world", ref=AttrRef(panel, "simulate"), tooltipText="Simulate the world for a few seconds after generating it. Reduces the save file size by processing all of the TileTicks.")
 
     simRow = Row((simRow, advancedButton), anchor="lrh")
     #deleteCacheRow = Row((Label("Delete Temporary World File Cache?"), Button("Delete Cache!", action=clearCache, tooltipText="Click me if you think your chunks are stale.")))
