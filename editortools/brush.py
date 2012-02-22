@@ -31,7 +31,7 @@ class BrushMode(object):
 
 #    def undo(self, op):
 #        pass
-    def dirtyBoxForPointAndOptions(self, point, options = {}):
+    def dirtyBoxForPointAndOptions(self, point, options={}):
         # also used to position the preview reticle
         size = options['brushSize']
         origin = map(lambda x, s:x - (s >> 1), point, size)
@@ -323,7 +323,7 @@ class Modes:
         name = "Paste"
         options = ['level'] + ['center'+c for c in 'xyz']
 
-        def dirtyBoxForPointAndOptions(self, point, options = {}):
+        def dirtyBoxForPointAndOptions(self, point, options={}):
             point = [p + options.get('center' + c, 0) for p, c in zip(point, 'xyz')]
             return BoundingBox(point, options['brushSize'])
 
@@ -586,7 +586,7 @@ class BrushPanel(Panel):
             tool.editor.level.materials,
             ref=AttrRef(tool, 'blockInfo'),
             recentBlocks=tool.recentFillBlocks,
-            allowWildcards = (tool.brushMode.name == "Replace"))
+            allowWildcards=(tool.brushMode.name == "Replace"))
 
         # col = [modeStyleGrid, hollowRow, noiseInput, shapeRows, blockButton]
 
@@ -1028,7 +1028,7 @@ class BrushTool(CloneTool):
             blockPicker = BlockPicker(
                 self.blockInfo,
                 self.editor.level.materials,
-                allowWildcards = self.brushMode.name == "Replace")
+                allowWildcards=self.brushMode.name == "Replace")
 
             if blockPicker.present():
                 self.blockInfo = blockPicker.blockInfo
