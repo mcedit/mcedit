@@ -19,6 +19,7 @@ from pymclevel.box import FloatBox
 
 class PlayerMoveOperation(Operation):
     undoPos = None
+
     def __init__(self, tool, pos, player="Player", yp = (None, None)):
         self.tool, self.pos = tool, pos
         self.yp = yp
@@ -106,6 +107,7 @@ class PlayerPositionPanel(Panel):
         tableview.row_data = lambda i: (players[i],)
         tableview.row_is_selected = lambda x: x==tableview.index
         tableview.zebra_color = (0,0,0,48)
+
         def selectTableRow(i, evt):
             tableview.index = i
 
@@ -237,6 +239,7 @@ class PlayerPositionTool(EditorTool):
         self.markerList = DisplayList()
 
     panel = None
+
     def showPanel(self):
         if not self.panel:
             self.panel = PlayerPositionPanel(self)
@@ -391,6 +394,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
 
     def toolEnabled(self):
         return self.editor.level.dimNo == 0
+
     def showPanel(self):
         self.panel = Panel()
         button = Button("Goto Spawn", action=self.gotoSpawn)
@@ -502,6 +506,7 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
                 self.markerList.invalidate()
                 if len(status):
                     alert("Spawn point fixed. Changes: \n\n" + status)
+
     @alertException
     def toolReselected(self):
         self.gotoSpawn()

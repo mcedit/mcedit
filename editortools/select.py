@@ -73,7 +73,6 @@ def GetSelectionColor(colorWord = None):
 
 
 class SelectionToolOptions(ToolOptions):
-
     def updateColors(self):
         names = [name.lower() for (name, value) in config.config.items("Selection Colors")]
         self.colorPopupButton.choices = [name.capitalize() for name in names]
@@ -95,6 +94,7 @@ class SelectionToolOptions(ToolOptions):
 
         def set_colorvalue(ch):
             i = "RGB".index(ch)
+
             def _set(val):
                 choice = self.colorPopupButton.selectedChoice
                 values = GetSelectionColor(choice)
@@ -107,6 +107,7 @@ class SelectionToolOptions(ToolOptions):
 
         def get_colorvalue(ch):
             i = "RGB".index(ch)
+
             def _get():
                 return int(GetSelectionColor()[i] * 255)
             return _get
@@ -686,6 +687,7 @@ class SelectionTool(EditorTool):
         self.selectOtherCorner()
 
     _currentCorner = 0
+
     @property
     def currentCorner(self):
         return self._currentCorner
@@ -985,6 +987,7 @@ class SelectionTool(EditorTool):
             self.editor.freezeStatus("Removing entities...")
             level = self.editor.level
             editor = self.editor
+
             class DeleteEntitiesOperation(Operation):
                 def perform(self, recordUndo=True):
                     self.undoEntities = level.getEntitiesInBox(box)
@@ -1066,6 +1069,7 @@ class SelectionTool(EditorTool):
 
 class SelectionOperation(Operation):
     changedLevel = False
+
     def __init__(self, selectionTool, points):
         self.selectionTool = selectionTool
         self.points = points;
@@ -1083,6 +1087,7 @@ class SelectionOperation(Operation):
 
 class NudgeSelectionOperation (Operation) :
     changedLevel = False
+
     def __init__(self, selectionTool, direction):
         self.selectionTool = selectionTool;
         self.direction = direction;

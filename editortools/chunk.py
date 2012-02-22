@@ -99,6 +99,7 @@ class ChunkTool(EditorTool):
 
     _selectedChunks = None
     _displayList = None
+
     def drawToolMarkers(self):
         if self._displayList is None:
             self._displayList = DisplayList(self._drawToolMarkers)
@@ -173,6 +174,7 @@ class ChunkTool(EditorTool):
                 glDepthMask(False)
                 glDrawArrays(GL_QUADS, 0, len(positions) * 4)
                 glDepthMask(True)
+
     @property
     def worldTooltipText(self):
         box = self.editor.selectionTool.selectionBoxInProgress()
@@ -216,6 +218,7 @@ class ChunkTool(EditorTool):
         if chunks is None:
             chunks = self.selectedChunks()
         chunks = list(chunks)
+
         def _destroyChunks():
             i = 0
             chunkCount = len(chunks)
@@ -318,6 +321,7 @@ class ChunkTool(EditorTool):
 
     def mouseDown(self, *args):
         return self.editor.selectionTool.mouseDown(*args)
+
     def mouseUp(self, evt, *args):
         self.editor.selectionTool.mouseUp(evt, *args)
 
@@ -357,6 +361,7 @@ def GeneratorPanel():
                 yield
                 jarStorage.downloadCurrentServer()
                 yield
+
             showProgress("Checking for server updates...", _check())
             versionChoice.choices = sorted(jarStorage.versions, reverse=True)
             versionChoice.choiceIndex = 0
@@ -386,6 +391,7 @@ def GeneratorPanel():
             (revealStorage, revealCache, clearCache)[i]()
 
     advancedButton = Button("Advanced...", presentMenu)
+
     @alertException
     def revealStorage():
         mcplatform.platform_open(jarStorage.cacheDir)
@@ -399,6 +405,7 @@ def GeneratorPanel():
     @alertException
     def clearCache():
         MCServerChunkGenerator.clearWorldCache()
+
     simRow = CheckBoxLabel("Simulate world", ref=AttrRef(panel, "simulate"), tooltipText = "Simulate the world for a few seconds after generating it. Reduces the save file size by processing all of the TileTicks.")
 
     simRow = Row((simRow, advancedButton), anchor="lrh")

@@ -28,6 +28,7 @@ def alertFilterException(func):
 
 class FilterModuleOptions(Widget):
     is_gl_container = True
+
     def __init__(self, tool, module, *args, **kw):
         Widget.__init__(self, *args, **kw)
         rows = []
@@ -193,6 +194,7 @@ class FilterToolPanel(Panel):
         self.reload()
 
     filterOptionsPanel = None
+
     def saveOptions(self):
         if self.filterOptionsPanel:
             self.savedOptions[self.selectedFilterName] = self.filterOptionsPanel.options

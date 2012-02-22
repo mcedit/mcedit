@@ -109,6 +109,7 @@ class Operation(object):
 
         sch.compress()
         return sch
+
     #represents a single undoable operation
     def perform(self, recordUndo=True):
         " Perform the operation. Record undo information if recordUndo"
@@ -186,6 +187,7 @@ class ThumbView(GLPerspective):
             GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
     drawBackground = True
+
     def gl_draw_thumb(self):
         GL.glPushAttrib(GL.GL_SCISSOR_BIT)
         r = self.rect
@@ -207,9 +209,11 @@ class BlockThumbView(Widget):
 
     thumb = None
     _blockInfo = None
+
     @property
     def blockInfo(self):
         return self._blockInfo
+
     @blockInfo.setter
     def blockInfo(self, b):
         if self._blockInfo != b:
@@ -271,6 +275,7 @@ class BlockView(GLOrtho):
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         glDisable(GL_ALPHA_TEST)
         glDisable(GL_TEXTURE_2D)
+
     @property
     def tooltipText(self):
         return "{0}".format(self.blockInfo.name)
@@ -278,6 +283,7 @@ class BlockView(GLOrtho):
 
 class BlockButton(ButtonBase, Panel):
     _ref = None
+
     def __init__(self, materials, blockInfo=None, ref=None, recentBlocks=None, *a, **kw):
         self.allowWildcards = False
         Panel.__init__(self, *a, **kw)
@@ -346,6 +352,7 @@ class BlockButton(ButtonBase, Panel):
         def makeBlockView(bi):
             bv = BlockView(self.materials, bi)
             bv.size = (16, 16)
+
             def action(evt):
                 self.blockInfo = bi
             bv.mouse_up = action
@@ -452,12 +459,14 @@ class BlockPicker(Dialog):
         tableview.row_is_selected = lambda x: x == self.selectedBlockIndex
         tableview.click_row = self.selectTableRow
         draw_table_cell = tableview.draw_table_cell
+
         def draw_block_table_cell(surf, i, data, cell_rect, column):
             if isinstance(data, Block):
 
                 tableicons[i - tableview.rows.scroll].blockInfo = data
             else:
                 draw_table_cell(surf, i, data, cell_rect, column)
+
         tableview.draw_table_cell = draw_block_table_cell
         tableview.width = panelWidth
         tableview.anchor = "lrbt"
@@ -466,9 +475,11 @@ class BlockPicker(Dialog):
         tableWidget = Widget()
         tableWidget.add(tableview)
         tableWidget.shrink_wrap()
+
         def wdraw(*args):
             for t in tableicons:
                 t.blockInfo = materials.Air
+
         tableWidget.draw = wdraw
         self.blockButton = blockView = BlockThumbView(materials, self.blockInfo)
 
@@ -591,6 +602,7 @@ class EditorTool(object):
     previewRenderer = None
 
     tooltipText = "???"
+
     def levelChanged(self):
         """ called after a level change """
         pass
@@ -598,6 +610,7 @@ class EditorTool(object):
     @property
     def statusText(self):
         return ""
+
     @property
     def cameraDistance(self):
         return self.editor.cameraToolDistance
@@ -616,6 +629,7 @@ class EditorTool(object):
 
     def drawTerrainReticle(self):
         pass
+
     def drawTerrainMarkers(self):
         pass
 
@@ -629,9 +643,13 @@ class EditorTool(object):
         glDisable(GL_POLYGON_OFFSET_FILL)
 
     def rotate(self, amount=1): pass
+
     def roll(self, amount=1): pass
+
     def flip(self, amount=1): pass
+
     def mirror(self, amount=1): pass
+
     def swap(self, amount=1): pass
 
     def mouseDown(self, evt, pos, direction):
@@ -640,6 +658,7 @@ class EditorTool(object):
         its action on the specified block'''
 
         pass;
+
     def mouseUp(self, evt, pos, direction):
         pass;
 
@@ -649,9 +668,11 @@ class EditorTool(object):
     def increaseToolReach(self):
         "Return True if the tool handles its own reach"
         return False
+
     def decreaseToolReach(self):
         "Return True if the tool handles its own reach"
         return False
+
     def resetToolReach(self):
         "Return True if the tool handles its own reach"
         return False
@@ -659,6 +680,7 @@ class EditorTool(object):
     def confirm(self):
         ''' called when user presses enter '''
         pass
+
     def cancel(self):
         '''cancel the current operation.  called when a different tool
         is picked, escape is pressed, or etc etc'''
@@ -714,6 +736,7 @@ class EditorTool(object):
             dim2 = dim + 2
             dim1 %= 3
             dim2 %= 3
+
             def pointInBounds(point, x):
                 return box.origin[x] <= point[x] <= box.maximum[x]
 
@@ -844,6 +867,7 @@ class EditorTool(object):
         return Settings.blockBuffer.get() / 2 #assume block buffer in megabytes
 
     def showPanel(self): pass
+
     def hidePanel(self):
         if self.panel and self.panel.parent:
             self.panel.parent.remove(self.panel)

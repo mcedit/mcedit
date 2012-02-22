@@ -251,11 +251,13 @@ class CloneToolPanel(Panel):
         scaleField.max = 8
         dv = scaleField.decrease_value
         iv = scaleField.increase_value
+
         def scaleFieldDecrease():
             if scaleField.value > 1 / 8.0 and scaleField.value <= 1.0:
                 scaleField.value *= 0.5
             else:
                 dv()
+
         def scaleFieldIncrease():
             if scaleField.value < 1.0:
                 scaleField.value *= 2.0
@@ -331,6 +333,7 @@ class CloneTool(EditorTool):
 
     @property
     def scaleFactor(self): return self._scaleFactor
+
     @scaleFactor.setter
     def scaleFactor(self, val):
         self.rescaleLevel(val)
@@ -355,6 +358,7 @@ class CloneTool(EditorTool):
     panelClass = CloneToolPanel
     #color = (0.89, 0.65, 0.35, 0.33)
     color = (0.3 , 1.0, 0.3, 0.19)
+
     def __init__(self, *args):
         self.rotation = 0
 
@@ -462,6 +466,7 @@ class CloneTool(EditorTool):
         self.showPanel()
 
     cloneCameraDistance = 0
+
     @property
     def cameraDistance(self):
         return self.cloneCameraDistance
@@ -527,6 +532,7 @@ class CloneTool(EditorTool):
 #        srcshape = roundedShape[0]/srcfactor, srcfactor, roundedShape[1]/srcfactor, srcfactor, roundedShape[2]/srcfactor, srcfactor
 #
 #        newlevel = MCSchematic(xyzshape)
+#
 #        def copyArray(dest, src):
 #            dest.shape = intershape
 #            src.shape = srcshape
@@ -760,6 +766,7 @@ class CloneTool(EditorTool):
 
     def option1(self):
         self.copyAir = not self.copyAir
+
     def option2(self):
         self.copyWater = not self.copyWater
 
@@ -950,6 +957,7 @@ class ConstructionTool(CloneTool):
     tooltipText = "Import"
 
     panelClass = ConstructionToolPanel
+
     def toolEnabled(self):
         return True
 

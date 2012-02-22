@@ -39,6 +39,7 @@ class BrushMode(object):
 
     def performAtPoint(self, op, point, dirtyBox):
         pass
+
     def createOptions(self, panel, tool):
         pass
 
@@ -46,6 +47,7 @@ class BrushMode(object):
 class Modes:
     class Fill(BrushMode):
         name = "Fill"
+
         def createOptions(self, panel, tool):
             col = [
                 panel.modeStyleGrid,
@@ -72,6 +74,7 @@ class Modes:
     class FloodFill(BrushMode):
         name = "Flood Fill"
         options = ['indiscriminate']
+
         def createOptions(self, panel, tool):
             col = [
                 panel.brushModeRow,
@@ -87,6 +90,7 @@ class Modes:
             tmpfile = tempfile.mkdtemp("FloodFillUndo")
             undoLevel = MCInfdevOldLevel(tmpfile,create=True)
             dirtyChunks = set()
+
             def saveUndoChunk(cx,cz):
                 if (cx,cz) in dirtyChunks: return
                 dirtyChunks.add( (cx,cz) )
@@ -150,6 +154,7 @@ class Modes:
 
     class Replace(Fill):
         name = "Replace"
+
         def createOptions(self, panel, tool):
             return Modes.Fill.createOptions(self, panel, tool) + [panel.replaceBlockButton]
 
@@ -245,6 +250,7 @@ class Modes:
     class Topsoil(Fill):
         name = "Topsoil"
         options = ['naturalEarth', 'topsoilDepth']
+
         def createOptions(self, panel, tool):
             col = Modes.Fill.createOptions(self, panel, tool)
             depthRow = IntInputRow("Depth: ", ref=AttrRef(tool, 'topsoilDepth'))
@@ -382,8 +388,10 @@ class BrushOperation(Operation):
         Modes.Topsoil,
         Modes.Paste
     ]
+
     @property
     def noise(self): return self.options.get('brushNoise', 100)
+
     @property
     def hollow(self): return self.options.get('brushHollow', False)
 
@@ -520,7 +528,6 @@ class BrushOperation(Operation):
 
 
 class BrushPanel(Panel):
-
     def __init__(self, tool):
         Panel.__init__(self)
         self.tool = tool
@@ -638,6 +645,7 @@ class BrushTool(CloneTool):
     tooltipText = "Brush\nRight-click for options"
     toolIconName = "brush"
     minimumSpacing = 1
+
     def __init__(self, *args):
         CloneTool.__init__(self, *args)
         self.optionsPanel = BrushToolOptions(self)
@@ -923,6 +931,7 @@ class BrushTool(CloneTool):
 
     def flip(self):
         self.decreaseBrushSize()
+
     def roll(self):
         self.increaseBrushSize()
 
@@ -945,9 +954,11 @@ class BrushTool(CloneTool):
             blockInfo = self.replaceBlockInfo
         else:
             blockInfo = self.blockInfo
+
         class FakeLevel(MCLevel):
             filename = "Fake Level"
             materials = self.editor.level.materials
+
             def __init__(self):
                 self.chunkCache = {}
 
@@ -955,9 +966,11 @@ class BrushTool(CloneTool):
 
             zerolight = zeros((16, 16, Height), dtype='uint8')
             zerolight[:] = 15
+
             def getChunk(self, cx, cz):
                 if (cx, cz) in self.chunkCache:
                     return self.chunkCache[cx, cz]
+
                 class FakeBrushChunk(pymclevel.level.FakeChunk):
                     def compress(self):
                         del self.world.chunkCache[self.chunkPosition]
@@ -1093,10 +1106,12 @@ class BrushTool(CloneTool):
                     glVertex3f(*map(lambda a:a + 0.5, reticlePoint))
 
     def updateOffsets(self): pass
+
     def selectionChanged(self): pass
 
     def option1(self):
         self.swapBrushStyles()
+
     def option2(self):
         self.swapBrushModes()
 
