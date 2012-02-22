@@ -123,7 +123,7 @@ class ChunkTool(EditorTool):
         for ch in self._selectedChunks:
             cx, cz = ch
             for (dx, dz), points, positions in lines:
-                n = (cx+dx, cz+dz)
+                n = (cx + dx, cz + dz)
                 if n not in self._selectedChunks:
                     positions.append([ch])
 
@@ -182,7 +182,7 @@ class ChunkTool(EditorTool):
         box = self.editor.selectionTool.selectionBoxInProgress()
         if box:
             box = box.chunkBox(self.editor.level)
-            l, w= box.length // 16, box.width // 16
+            l, w = box.length // 16, box.width // 16
             return "%s x %s chunks" % (l,w)
 
     def toolSelected(self):
