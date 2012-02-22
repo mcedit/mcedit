@@ -6,6 +6,7 @@ from controls import Label, Button
 from layout import Row, Column
 from fields import TextField
 
+
 class Modal(object):
 
     enter_response = True
@@ -58,6 +59,7 @@ class Dialog(Modal, Widget):
             if response is not None:
                 self.dismiss(response)
 
+
 class QuickDialog(Dialog):
     """ Dialog that closes as soon as you click outside or press a key"""
     def mouse_down(self, evt):
@@ -69,6 +71,7 @@ class QuickDialog(Dialog):
     def key_down(self, evt):
         self.dismiss()
         event.post(evt)
+
 
 def wrapped_label(text, wrap_width, **kwds):
     paras = text.split("\n")
@@ -84,8 +87,10 @@ def wrapped_label(text, wrap_width, **kwds):
 #    box.shrink_wrap()
 #    return box.present()
 
+
 def alert(mess, **kwds):
     ask(mess, ["OK"], **kwds)
+
 
 def ask(mess, responses = ["OK", "Cancel"], default = 0, cancel = -1,
         wrap_width = 60, **kwds):
@@ -113,6 +118,7 @@ def ask(mess, responses = ["OK", "Cancel"], default = 0, cancel = -1,
     box.add(col)
     box.shrink_wrap()
     return box.present()
+
 
 def input_text(prompt, width, initial = None, **kwds):
     box = Dialog(**kwds)

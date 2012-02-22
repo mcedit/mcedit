@@ -10,6 +10,7 @@ import resource
 
 #---------------------------------------------------------------------------
 
+
 class Control(object):
 
     highlighted = overridable_property('highlighted')
@@ -52,6 +53,7 @@ class Control(object):
 
 #---------------------------------------------------------------------------
 
+
 class AttrRef(object):
 
     def __init__(self, obj, attr):
@@ -66,6 +68,7 @@ class AttrRef(object):
 
 #---------------------------------------------------------------------------
 
+
 class ItemRef(object):
 
     def __init__(self, obj, item):
@@ -79,6 +82,7 @@ class ItemRef(object):
         self.obj[self.item] = x
 
 #---------------------------------------------------------------------------
+
 
 class Label(Widget):
 
@@ -180,12 +184,16 @@ class Label(Widget):
                 surface.blit(image, r)
             y += dy
 
+
 class GLLabel(Label):
     pass
+
+
 class SmallLabel(Label):
     """Small text size. See theme.py"""
 
 #---------------------------------------------------------------------------
+
 
 class ButtonBase(Control):
 
@@ -213,6 +221,7 @@ class ButtonBase(Control):
 
 #---------------------------------------------------------------------------
 
+
 class Button(ButtonBase, Label):
 
     def __init__(self, text, action=None, enable=None, **kwds):
@@ -223,6 +232,7 @@ class Button(ButtonBase, Label):
         Label.__init__(self, text, **kwds)
 
 #---------------------------------------------------------------------------
+
 
 class Image(Widget):
     #  image   Image to display
@@ -264,10 +274,12 @@ class Image(Widget):
 
 #---------------------------------------------------------------------------
 
+
 class ImageButton(ButtonBase, Image):
     pass
 
 #---------------------------------------------------------------------------
+
 
 class ValueDisplay(Control, Label):
 
@@ -294,7 +306,9 @@ class ValueDisplay(Control, Label):
         else:
             return ""
 
+
 class SmallValueDisplay(ValueDisplay): pass
+
 
 class ValueButton(ButtonBase, ValueDisplay):
 
@@ -303,6 +317,7 @@ class ValueButton(ButtonBase, ValueDisplay):
         return self.format_value(self.value)
 
 #---------------------------------------------------------------------------
+
 
 class CheckControl(Control):
 
@@ -313,6 +328,7 @@ class CheckControl(Control):
         return self.value
 
 #---------------------------------------------------------------------------
+
 
 class CheckWidget(Widget):
 
@@ -341,10 +357,12 @@ class CheckWidget(Widget):
 
 #---------------------------------------------------------------------------
 
+
 class CheckBox(CheckControl, CheckWidget):
     pass
 
 #---------------------------------------------------------------------------
+
 
 class RadioControl(Control):
 
@@ -357,6 +375,7 @@ class RadioControl(Control):
         self.value = self.setting
 
 #---------------------------------------------------------------------------
+
 
 class RadioButton(RadioControl, CheckWidget):
     pass

@@ -5,6 +5,7 @@
 from pygame import Rect
 from widget import Widget
 
+
 class RowOrColumn(Widget):
 
     _is_gl_container = True
@@ -63,6 +64,7 @@ class RowOrColumn(Widget):
 
 #---------------------------------------------------------------------------
 
+
 class Row(RowOrColumn):
 
     d = (1, 0)
@@ -84,6 +86,7 @@ class Row(RowOrColumn):
 
 #---------------------------------------------------------------------------
 
+
 class Column(RowOrColumn):
 
     d = (0, 1)
@@ -104,6 +107,7 @@ class Column(RowOrColumn):
         RowOrColumn.__init__(self, height, items, kwds)
 
 #---------------------------------------------------------------------------
+
 
 class Grid(Widget):
 
@@ -139,6 +143,7 @@ class Grid(Widget):
         self.add(rows)
 
 #---------------------------------------------------------------------------
+
 
 class Frame(Widget):
     #  margin  int        spacing between border and widget

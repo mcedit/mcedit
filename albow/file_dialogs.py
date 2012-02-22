@@ -14,6 +14,7 @@ from albow.layout import Row, Column
 from albow.palette_view import PaletteView
 from albow.theme import ThemeProperty
 
+
 class DirPathView(Widget):
 
     def __init__(self, width, client, **kwds):
@@ -311,6 +312,7 @@ def request_new_filename(prompt = None, suffix = None, extra_suffixes = None,
     else:
         return None
 
+
 def request_old_filename(suffixes = None, directory = None):
     dlog = FileOpenDialog(suffixes = suffixes)
     if directory:
@@ -319,6 +321,7 @@ def request_old_filename(suffixes = None, directory = None):
         return dlog.pathname
     else:
         return None
+
 
 def look_for_file_or_directory(target, prompt = None, directory = None):
     dlog = LookForFileDialog(target = target, prompt = prompt)

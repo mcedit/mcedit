@@ -10,6 +10,7 @@ from controls import Control
 
 #---------------------------------------------------------------------------
 
+
 class TextEditor(Widget):
 
     upper = False
@@ -179,6 +180,7 @@ class TextEditor(Widget):
 
 #---------------------------------------------------------------------------
 
+
 class Field(Control, TextEditor):
     #  type      func(string) -> value
     #  editing   boolean
@@ -288,9 +290,11 @@ class Field(Control, TextEditor):
 
 #---------------------------------------------------------------------------
 
+
 class TextField(Field):
     type = unicode
     _value = u""
+
 
 class IntField(Field):
     tooltipText = "Point here and use mousewheel to adjust"
@@ -407,6 +411,7 @@ class TimeField(Field):
 
 from pygame import key
 from pygame.locals import KMOD_SHIFT
+
 
 class FloatField(Field):
     type = float

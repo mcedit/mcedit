@@ -8,6 +8,7 @@ from __future__ import division
 from OpenGL import GL, GLU
 from widget import Widget
 
+
 class GLViewport(Widget):
 
     is_gl_container = True
@@ -66,6 +67,7 @@ import numpy
 
 #-------------------------------------------------------------------------
 
+
 class GLOrtho(GLViewport):
 
     def __init__(self, rect=None,
@@ -83,6 +85,7 @@ class GLOrtho(GLViewport):
         GL.glOrtho(self.xmin, self.xmax, self.ymin, self.ymax,
             self.near, self.far)
 
+
 class GLPixelOrtho(GLOrtho):
     def __init__(self, rect=None, near= -1, far=1, **kwds):
         GLOrtho.__init__(self, rect, near, far, **kwds)
@@ -93,6 +96,7 @@ class GLPixelOrtho(GLOrtho):
 
 
 #-------------------------------------------------------------------------
+
 
 class GLPerspective(GLViewport):
 

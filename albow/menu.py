@@ -11,6 +11,7 @@ from theme import ThemeProperty
 
 #---------------------------------------------------------------------------
 
+
 class MenuItem(object):
 
     keyname = ""
@@ -46,6 +47,7 @@ class MenuItem(object):
             self.keyname = self.cmd_name + keyname
 
 #---------------------------------------------------------------------------
+
 
 class Menu(Dialog):
 

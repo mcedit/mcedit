@@ -1,6 +1,7 @@
 from pygame import Rect
 from albow.resource import get_image
 
+
 class ImageArray(object):
 
     def __init__(self, image, shape):
@@ -40,6 +41,7 @@ class ImageArray(object):
 
 
 image_array_cache = {}
+
 
 def get_image_array(name, shape, **kwds):
     result = image_array_cache.get(name)

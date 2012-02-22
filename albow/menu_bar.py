@@ -5,6 +5,7 @@
 from pygame import Rect
 from widget import Widget, overridable_property
 
+
 class MenuBar(Widget):
 
     menus = overridable_property('menus', "List of Menu instances")
