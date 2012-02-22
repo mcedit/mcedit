@@ -49,31 +49,38 @@ clicked_widget = None  # Target of mouse_drag and mouse_up events
 
 #---------------------------------------------------------------------------
 
+
 class Cancel(Exception):
     pass
 
 #---------------------------------------------------------------------------
+
 
 def set_modifier(key, value):
     attr = modkeys.get(key)
     if attr:
         modifiers[attr] = value
 
+
 def add_modifiers(event):
     d = event.dict
     d.update(modifiers)
     d['cmd'] = event.ctrl or event.meta
 
+
 def get_root():
     return root_widget
 
+
 def get_top_widget():
     return top_widget
+
 
 def get_focus():
     return top_widget.get_focus()
 
 #---------------------------------------------------------------------------
+
 
 class RootWidget(Widget):
     #  surface   Pygame display surface
@@ -388,12 +395,14 @@ from bisect import insort
 
 scheduled_calls = []
 
+
 def make_scheduled_calls():
     sched = scheduled_calls
     t = time()
     while sched and sched[0][0] <= t:
         sched[0][1]()
         sched.pop(0)
+
 
 def schedule(delay, func):
     """Arrange for the given function to be called after the specified
