@@ -8,6 +8,7 @@ from __future__ import division
 from OpenGL import GL, GLU
 from widget import Widget
 
+
 class GLViewport(Widget):
 
     is_gl_container = True
@@ -59,18 +60,19 @@ class GLViewport(Widget):
             p0 = up(x, y, 0.0, mv_mat, pr_mat, viewport)
             p1 = up(x, y, 1.0, mv_mat, pr_mat, viewport)
             event.dict['ray'] = (p0, p1)
-        except ValueError: #projection failed!
+        except ValueError:  # projection failed!
             pass
 
 import numpy
 
 #-------------------------------------------------------------------------
 
+
 class GLOrtho(GLViewport):
 
     def __init__(self, rect=None,
-            xmin= -1, xmax=1, ymin= -1, ymax=1,
-            near= -1, far=1, **kwds):
+            xmin=-1, xmax=1, ymin=-1, ymax=1,
+            near=-1, far=1, **kwds):
         GLViewport.__init__(self, rect, **kwds)
         self.xmin = xmin
         self.xmax = xmax
@@ -83,8 +85,9 @@ class GLOrtho(GLViewport):
         GL.glOrtho(self.xmin, self.xmax, self.ymin, self.ymax,
             self.near, self.far)
 
+
 class GLPixelOrtho(GLOrtho):
-    def __init__(self, rect=None, near= -1, far=1, **kwds):
+    def __init__(self, rect=None, near=-1, far=1, **kwds):
         GLOrtho.__init__(self, rect, near, far, **kwds)
         self.xmin = 0
         self.ymin = 0
@@ -93,6 +96,7 @@ class GLPixelOrtho(GLOrtho):
 
 
 #-------------------------------------------------------------------------
+
 
 class GLPerspective(GLViewport):
 

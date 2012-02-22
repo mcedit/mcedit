@@ -21,6 +21,7 @@ CloneSettings.copyAir = CloneSettings("Copy Air", True)
 CloneSettings.copyWater = CloneSettings("Copy Water", True)
 CloneSettings.placeImmediately = CloneSettings("Place Immediately", True)
 
+
 class CoordsInput(Widget):
     is_gl_container = True
 
@@ -60,16 +61,15 @@ class CoordsInput(Widget):
         self.coordsChanged()
 
     def coordsChanged(self):
-        #called when the inputs change.  override or replace
+        # called when the inputs change.  override or replace
         pass
 
     def _nudge(self, nudge):
         self.nudge(nudge)
 
     def nudge(self, nudge):
-        #nudge is a 3-tuple where one of the elements is -1 or 1, and the others are 0.
+        # nudge is a 3-tuple where one of the elements is -1 or 1, and the others are 0.
         pass
-
 
 
 class BlockCopyOperation(Operation):
@@ -103,25 +103,26 @@ class BlockCopyOperation(Operation):
         blocksToCopy = None
         if not (self.copyAir and self.copyWater):
             blocksToCopy = range(256)
-            if not self.copyAir: blocksToCopy.remove(0)
-            if not self.copyWater: blocksToCopy.remove(8)
-            if not self.copyWater: blocksToCopy.remove(9)
+            if not self.copyAir:
+                blocksToCopy.remove(0)
+            if not self.copyWater:
+                blocksToCopy.remove(8)
+            if not self.copyWater:
+                blocksToCopy.remove(9)
 
         with setWindowCaption("Copying - "):
-            i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox , self.destPoint, blocksToCopy, create=True)
+            i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox, self.destPoint, blocksToCopy, create=True)
             showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
-            
-            
-                            
+
     def undo(self):
         if self.undoSchematic:
             self.destLevel.removeEntitiesInBox(BoundingBox(self.destPoint, self.sourceBox.size))
             self.destLevel.removeTileEntitiesInBox(BoundingBox(self.destPoint, self.sourceBox.size))
-            
+
             with setWindowCaption("Undoing - "):
-                i=self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.sourceBox.size), self.destPoint, create=True)
+                i = self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.sourceBox.size), self.destPoint, create=True)
                 showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
-            
+
     def bufferSize(self):
         return self.undoSchematic.compressedSize()
 
@@ -130,7 +131,7 @@ class CloneOperation (Operation):
     def __init__(self, editor, sourceLevel, sourceBox, originSourceBox, destLevel, destPoint, copyAir, copyWater, repeatCount):
         self.blockCopyOps = []
         dirtyBoxes = []
-        if repeatCount > 1: #clone tool only
+        if repeatCount > 1:  # clone tool only
             delta = map(operator.sub, destPoint, editor.toolbar.tools[0].selectionBox().origin)
         else:
             delta = (0, 0, 0)
@@ -139,7 +140,7 @@ class CloneOperation (Operation):
             op = BlockCopyOperation(editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater)
             dirty = op.dirtyBox()
 
-            #bounds check - xxx move to BoundingBox
+            # bounds check - xxx move to BoundingBox
             if dirty.miny >= destLevel.Height or dirty.maxy < 0:
                 continue
             if destLevel.Width != 0:
@@ -155,13 +156,13 @@ class CloneOperation (Operation):
 
         if len(dirtyBoxes):
             def enclosingBox(dirtyBoxes):
-                minx = min(map(lambda x:x.minx, dirtyBoxes))
-                miny = min(map(lambda x:x.miny, dirtyBoxes))
-                minz = min(map(lambda x:x.minz, dirtyBoxes))
+                minx = min(map(lambda x: x.minx, dirtyBoxes))
+                miny = min(map(lambda x: x.miny, dirtyBoxes))
+                minz = min(map(lambda x: x.minz, dirtyBoxes))
 
-                maxx = max(map(lambda x:x.maxx, dirtyBoxes))
-                maxy = max(map(lambda x:x.maxy, dirtyBoxes))
-                maxz = max(map(lambda x:x.maxz, dirtyBoxes))
+                maxx = max(map(lambda x: x.maxx, dirtyBoxes))
+                maxy = max(map(lambda x: x.maxy, dirtyBoxes))
+                maxz = max(map(lambda x: x.maxz, dirtyBoxes))
 
                 origin = (minx, miny, minz)
                 maximum = (maxx, maxy, maxz)
@@ -173,9 +174,8 @@ class CloneOperation (Operation):
             if repeatCount > 1 and self.selectOriginalAfterRepeat:
                 dirtyBoxes.append(originSourceBox)
 
-
             dirty = enclosingBox(dirtyBoxes)
-            points = (dirty.origin, map(lambda x:x - 1, dirty.maximum))
+            points = (dirty.origin, map(lambda x: x - 1, dirty.maximum))
 
             self.selectionOps = [SelectionOperation(editor.selectionTool, points)]
 
@@ -185,14 +185,14 @@ class CloneOperation (Operation):
 
     selectOriginalAfterRepeat = True
 
-    def dirtyBox(self): return self._dirtyBox
+    def dirtyBox(self):
+        return self._dirtyBox
 
     def perform(self, recordUndo=True):
         if recordUndo:
             [i.recordUndo() for i in self.blockCopyOps]
         [i.perform(False) for i in self.blockCopyOps]
         [i.perform(recordUndo) for i in self.selectionOps]
-
 
     def undo(self):
         [i.undo() for i in self.blockCopyOps]
@@ -229,7 +229,7 @@ class CloneToolPanel(Panel):
             CheckBox(ref=AttrRef(self.tool, 'chunkAlign')), Label("Chunk Align")
         ))
 
-        #headerLabel = Label("Clone Offset")
+        # headerLabel = Label("Clone Offset")
         if self.useOffsetInput:
             self.offsetInput = CoordsInput()
             self.offsetInput.coordsChanged = tool.offsetChanged
@@ -254,11 +254,13 @@ class CloneToolPanel(Panel):
         scaleField.max = 8
         dv = scaleField.decrease_value
         iv = scaleField.increase_value
+
         def scaleFieldDecrease():
             if scaleField.value > 1 / 8.0 and scaleField.value <= 1.0:
                 scaleField.value *= 0.5
             else:
                 dv()
+
         def scaleFieldIncrease():
             if scaleField.value < 1.0:
                 scaleField.value *= 2.0
@@ -293,12 +295,11 @@ class CloneToolPanel(Panel):
         self.performButton = Button("Clone", width=100, align="c")
         self.performButton.tooltipText = "Shortcut: ENTER"
         self.performButton.action = tool.confirm
-        self.performButton.enable = lambda:(tool.destPoint is not None)
+        self.performButton.enable = lambda: (tool.destPoint is not None)
         if self.useOffsetInput:
             col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.offsetInput, repeatRow, scaleRow, copyAirRow, copyWaterRow, self.performButton))
         else:
             col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.nudgeButton, copyAirRow, copyWaterRow, self.performButton))
-
 
         self.add(col)
         self.anchor = "lwh"
@@ -334,7 +335,9 @@ class CloneTool(EditorTool):
     _chunkAlign = False
 
     @property
-    def scaleFactor(self): return self._scaleFactor
+    def scaleFactor(self):
+        return self._scaleFactor
+
     @scaleFactor.setter
     def scaleFactor(self, val):
         self.rescaleLevel(val)
@@ -353,12 +356,13 @@ class CloneTool(EditorTool):
         if self.destPoint is not None:
             x, y, z = self.destPoint
             self.destPoint = (x >> 4) << 4, y, (z >> 4) << 4
-    
+
     placeImmediately = CloneSettings.placeImmediately.configProperty()
 
     panelClass = CloneToolPanel
-    #color = (0.89, 0.65, 0.35, 0.33)
-    color = (0.3 , 1.0, 0.3, 0.19)
+    # color = (0.89, 0.65, 0.35, 0.33)
+    color = (0.3, 1.0, 0.3, 0.19)
+
     def __init__(self, *args):
         self.rotation = 0
 
@@ -387,7 +391,8 @@ class CloneTool(EditorTool):
 
     def nudge(self, nudge):
         if self.destPoint is None:
-            if self.selectionBox() is None: return;
+            if self.selectionBox() is None:
+                return
             self.destPoint = self.selectionBox().origin
 
         if self.chunkAlign:
@@ -397,10 +402,9 @@ class CloneTool(EditorTool):
         if key.get_mods() & KMOD_SHIFT:
             nudge = self.quickNudge(nudge)
 
-        #self.panel.performButton.enabled = True;
-        self.destPoint = map(lambda a, b:a + b, self.destPoint, nudge)
+        # self.panel.performButton.enabled = True
+        self.destPoint = map(lambda a, b: a + b, self.destPoint, nudge)
         self.updateOffsets()
-
 
     def selectionChanged(self):
         if self.selectionBox() is not None:
@@ -413,15 +417,15 @@ class CloneTool(EditorTool):
 
     def offsetChanged(self):
 
-
         if self.panel:
-            if not self.panel.useOffsetInput: return;
+            if not self.panel.useOffsetInput:
+                return
             box = self.selectionBox()
-            if box is None: return
+            if box is None:
+                return
 
             delta = self.panel.offsetInput.coords
             self.destPoint = map(operator.add, box.origin, delta)
-
 
     def toolEnabled(self):
         return not (self.selectionBox() is None)
@@ -469,15 +473,17 @@ class CloneTool(EditorTool):
         self.showPanel()
 
     cloneCameraDistance = 0
+
     @property
     def cameraDistance(self):
         return self.cloneCameraDistance
 
     @alertException
     def rescaleLevel(self, factor):
-        #if self.level.cloneToolScaleFactor == newFactor: return
-        #oldfactor = self.level.cloneToolScaleFactor
-        #factor = newFactor / oldfactor
+        # if self.level.cloneToolScaleFactor == newFactor:
+        #    return
+        # oldfactor = self.level.cloneToolScaleFactor
+        # factor = newFactor / oldfactor
         if factor == 1:
             self.level = self.originalLevel
             self.setupPreview()
@@ -488,80 +494,76 @@ class CloneTool(EditorTool):
         data = self.originalLevel.Data
 
         if factor < 1.0:
-            roundedShape = map(lambda x:int(int(x * factor) / factor), oldshape)
-            roundedSlices = map(lambda x:slice(0, x), roundedShape)
+            roundedShape = map(lambda x: int(int(x * factor) / factor), oldshape)
+            roundedSlices = map(lambda x: slice(0, x), roundedShape)
             blocks = blocks[roundedSlices]
             data = data[roundedSlices]
         else:
             roundedShape = oldshape
 
-        newshape = map(lambda x:int(x * factor), oldshape)
+        newshape = map(lambda x: int(x * factor), oldshape)
         xyzshape = newshape[0], newshape[2], newshape[1]
         newlevel = MCSchematic(xyzshape, mats=self.editor.level.materials)
-        
+
         srcgrid = mgrid[0:roundedShape[0]:1.0 / factor, 0:roundedShape[1]:1.0 / factor, 0:roundedShape[2]:1.0 / factor].astype('uint')
         dstgrid = mgrid[0:newshape[0], 0:newshape[1], 0:newshape[2]].astype('uint')
         srcgrid = srcgrid[map(slice, dstgrid.shape)]
         dstgrid = dstgrid[map(slice, srcgrid.shape)]
 
-
         def copyArray(dest, src):
             dest[dstgrid[0], dstgrid[1], dstgrid[2]] = src[srcgrid[0], srcgrid[1], srcgrid[2]]
-
 
         copyArray(newlevel.Blocks, blocks)
         copyArray(newlevel.Data, data)
 
-
-
         self.level = newlevel
         self.setupPreview()
-#        
+#
 #        """
 #        use array broadcasting to fill in the extra dimensions with copies of the
-#        existing ones, then later change the shape to "fold" the extras back 
+#        existing ones, then later change the shape to "fold" the extras back
 #        into the original three
 #        """
-#        #if factor > 1.0:
+#        # if factor > 1.0:
 #        sourceSlice = slice(0, 1)
 #        destSlice = slice(None)
-#        
-#        #if factor < 1.0:
-#            
+#
+#        # if factor < 1.0:
+#
 #        destfactor = factor
 #        srcfactor = 1
 #        if factor < 1.0:
 #            destfactor = 1.0
 #            srcfactor = 1.0 / factor
-#            
+#
 #        intershape = newshape[0]/destfactor, destfactor, newshape[1]/destfactor, destfactor, newshape[2]/destfactor, destfactor
 #        srcshape = roundedShape[0]/srcfactor, srcfactor, roundedShape[1]/srcfactor, srcfactor, roundedShape[2]/srcfactor, srcfactor
-#        
+#
 #        newlevel = MCSchematic(xyzshape)
+#
 #        def copyArray(dest, src):
 #            dest.shape = intershape
 #            src.shape = srcshape
-#            
+#
 #            dest[:, destSlice, :, destSlice, :, destSlice] = src[:, sourceSlice, :, sourceSlice, :, sourceSlice]
 #            dest.shape = newshape
 #            src.shape = roundedShape
-#            
+#
 #        copyArray(newlevel.Blocks, blocks)
 #        copyArray(newlevel.Data, data)
-#        
+#
 #        newlevel.cloneToolScaleFactor = newFactor
-#        
-
+#
 
     @alertException
     def updateSchematic(self):
-        #extract blocks
+        # extract blocks
         with setWindowCaption("COPYING - "):
             self.editor.freezeStatus("Copying to clone buffer...")
             box = self.selectionBox()
             self.level = self.editor.level.extractSchematic(box)
             self.originalLevel = self.level
-            #self.level.cloneToolScaleFactor = 1.0
+            # self.level.cloneToolScaleFactor = 1.0
             self.rescaleLevel(self.scaleFactor)
             self.setupPreview()
 
@@ -570,12 +572,11 @@ class CloneTool(EditorTool):
             self.panel.set_parent(None)
 
         self.panel = self.panelClass(self)
-        #self.panel.performButton.enabled = False;
+        # self.panel.performButton.enabled = False
 
         self.panel.centery = self.editor.centery
         self.panel.left = self.editor.left
         self.editor.add(self.panel)
-
 
     def setupPreview(self, alpha=1.0):
         self.discardPreviewer()
@@ -597,39 +598,37 @@ class CloneTool(EditorTool):
         else:
             return self.level.size
 
-
-    #===========================================================================
+    # ===========================================================================
     # def getSelectionRanges(self):
-    #    return self.editor.selectionTool.selectionBox();
-    #    
-    #===========================================================================
+    #    return self.editor.selectionTool.selectionBox()
+    #
+    # ===========================================================================
     def getBlockAt(self):
-        return None #use level's blockAt
-
+        return None  # use level's blockAt
 
     def getReticleOrigin(self):
-        #returns a new origin for the current selection, where the old origin is at the new selection's center.
+        # returns a new origin for the current selection, where the old origin is at the new selection's center.
         pos, direction = self.editor.blockFaceUnderCursor
-
 
         lev = self.editor.level
         size = self.rotatedSelectionSize()
-        if not size: return
+        if not size:
+            return
         if size[1] >= self.editor.level.Height:
-            direction = (0, 1, 0) #always use the upward face whenever we're splicing full-height pieces, to avoid "jitter"
+            direction = (0, 1, 0)  # always use the upward face whenever we're splicing full-height pieces, to avoid "jitter"
 
-        #print size; raise SystemExit
+        # print size; raise SystemExit
         if any(direction) and pos[1] >= 0:
-            x, y, z = map(lambda p, s, d:p - s / 2 + s * d / 2 + (d > 0), pos, size, direction)
+            x, y, z = map(lambda p, s, d: p - s / 2 + s * d / 2 + (d > 0), pos, size, direction)
         else:
-            x, y, z = map(lambda p, s:p - s / 2, pos, size)
+            x, y, z = map(lambda p, s: p - s / 2, pos, size)
 
         if self.chunkAlign:
             x = x & ~0xf
             z = z & ~0xf
 
         sy = size[1]
-        if sy > lev.Height: #don't snap really tall stuff to the height
+        if sy > lev.Height:  # don't snap really tall stuff to the height
             return x, y, z
 
         if y + sy > lev.Height:
@@ -657,7 +656,8 @@ class CloneTool(EditorTool):
         pos = self.getReticleOrigin()
         sizes = self.rotatedSelectionSize()
 
-        if None is sizes: return
+        if None is sizes:
+            return
 
         return BoundingBox(pos, sizes)
 
@@ -666,12 +666,13 @@ class CloneTool(EditorTool):
         return BoundingBox(self.destPoint, selectionSize)
 
     def drawTerrainReticle(self):
-        if self.level is None: return;
+        if self.level is None:
+            return
 
         if self.destPoint != None:
             destPoint = self.destPoint
             if self.draggingFace is not None:
-                #debugDrawPoint()
+                # debugDrawPoint()
                 destPoint = self.draggingOrigin()
 
             self.drawTerrainPreview(destPoint)
@@ -682,7 +683,8 @@ class CloneTool(EditorTool):
 
     def drawToolReticle(self):
 
-        if self.level is None: return;
+        if self.level is None:
+            return
 
         glPolygonOffset(DepthOffset.CloneMarkers, DepthOffset.CloneMarkers)
 
@@ -695,7 +697,8 @@ class CloneTool(EditorTool):
                 box.origin = self.draggingOrigin()
                 guideBox = BoundingBox(box)
                 for i in range(3):
-                    if i == self.draggingFace >> 1: continue
+                    if i == self.draggingFace >> 1:
+                        continue
                     guideBox._origin[i] -= 1000
                     guideBox._size[i] += 2000
 
@@ -706,7 +709,8 @@ class CloneTool(EditorTool):
                     drawFace(guideBox, self.draggingFace ^ 1)
         else:
             box = self.getReticleBox()
-            if box is None: return
+            if box is None:
+                return
         self.drawRepeatedCube(box, color)
 
         glPolygonOffset(DepthOffset.CloneReticle, DepthOffset.CloneReticle)
@@ -726,8 +730,8 @@ class CloneTool(EditorTool):
                 glEnable(GL_DEPTH_TEST)
 
     def drawRepeatedCube(self, box, color):
-        #draw several cubes according to the repeat count
-        #it's not really sensible to repeat a crane because the origin point is literally out of this world.
+        # draw several cubes according to the repeat count
+        # it's not really sensible to repeat a crane because the origin point is literally out of this world.
         delta = map(operator.sub, box.origin, self.selectionBox().origin)
 
         for i in range(self.repeatCount):
@@ -776,6 +780,7 @@ class CloneTool(EditorTool):
 
     def option1(self):
         self.copyAir = not self.copyAir
+
     def option2(self):
         self.copyWater = not self.copyWater
 
@@ -788,8 +793,8 @@ class CloneTool(EditorTool):
 
     def _draggingOrigin(self):
         dragPos = map(int, map(floor, self.positionOnDraggingPlane()))
-        delta = map(lambda s, e:e - int(floor(s)), self.draggingStartPoint, dragPos)
-        
+        delta = map(lambda s, e: e - int(floor(s)), self.draggingStartPoint, dragPos)
+
         if key.get_mods() & KMOD_SHIFT:
             ad = map(abs, delta)
             midx = ad.index(max(ad))
@@ -799,24 +804,23 @@ class CloneTool(EditorTool):
             d[dragY] = delta[dragY]
             delta = d
 
-        p = map(lambda a, b:a + b, delta, self.destPoint)
+        p = map(lambda a, b: a + b, delta, self.destPoint)
         if self.chunkAlign:
             p = [i // 16 * 16 for i in p]
         return p
-
 
     def positionOnDraggingPlane(self):
         pos = self.editor.mainViewport.cameraPosition
         dim = self.draggingFace >> 1
 #        if key.get_mods() & KMOD_SHIFT:
 #            dim = self.findBestTrackingPlane(self.draggingFace)
-#        
+#
         distance = self.draggingStartPoint[dim] - pos[dim]
         distance += self.draggingY
 
         mouseVector = self.editor.mainViewport.mouseVector
         scale = distance / (mouseVector[dim] or 1)
-        point = map(lambda a, b:a * scale + b, mouseVector, pos)
+        point = map(lambda a, b: a * scale + b, mouseVector, pos)
         return point
 
     draggingY = 0
@@ -824,7 +828,8 @@ class CloneTool(EditorTool):
     @alertException
     def mouseDown(self, evt, pos, direction):
         box = self.selectionBox()
-        if not box: return
+        if not box:
+            return
         self.draggingY = 0
 
         if self.destPoint is not None:
@@ -855,14 +860,14 @@ class CloneTool(EditorTool):
     def increaseToolReach(self):
         if self.draggingFace is not None:
             d = (1, -1)[self.draggingFace & 1]
-            if self.draggingFace >> 1 != 1: #xxxxx y
+            if self.draggingFace >> 1 != 1:  # xxxxx y
                 d = -d
             self.draggingY += d
             x, y, z = self.editor.mainViewport.cameraPosition
             pos = [x, y, z]
             pos[self.draggingFace >> 1] += d
             self.editor.mainViewport.cameraPosition = tuple(pos)
-            
+
         else:
             self.cloneCameraDistance = self.editor._incrementReach(self.cloneCameraDistance)
         return True
@@ -870,7 +875,7 @@ class CloneTool(EditorTool):
     def decreaseToolReach(self):
         if self.draggingFace is not None:
             d = (1, -1)[self.draggingFace & 1]
-            if self.draggingFace >> 1 != 1: #xxxxx y
+            if self.draggingFace >> 1 != 1:  # xxxxx y
                 d = -d
 
             self.draggingY -= d
@@ -883,7 +888,6 @@ class CloneTool(EditorTool):
             self.cloneCameraDistance = self.editor._decrementReach(self.cloneCameraDistance)
         return True
 
-
     def resetToolReach(self):
         if self.draggingFace is not None:
             x, y, z = self.editor.mainViewport.cameraPosition
@@ -892,29 +896,29 @@ class CloneTool(EditorTool):
             self.editor.mainViewport.cameraPosition = tuple(pos)
             self.draggingY = 0
 
-
-
         else:
             self.cloneCameraDistance = max(self.editor.defaultCameraToolDistance, self.safeToolDistance())
 
         return True
 
     def pickUp(self):
-        if self.destPoint == None: return;
+        if self.destPoint == None:
+            return
 
         box = self.selectionBox()
 
-        #pick up the object. reset the tool distance to the object's distance from the camera
-        d = map(lambda a, b, c:abs(a - b - c / 2), self.editor.mainViewport.cameraPosition, self.destPoint, box.size)
+        # pick up the object. reset the tool distance to the object's distance from the camera
+        d = map(lambda a, b, c: abs(a - b - c / 2), self.editor.mainViewport.cameraPosition, self.destPoint, box.size)
         self.cloneCameraDistance = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2])
         self.destPoint = None
-        #self.panel.performButton.enabled = False;
+        # self.panel.performButton.enabled = False
         print "Picked up"
 
     @alertException
     def confirm(self):
         destPoint = self.destPoint
-        if destPoint is None: return;
+        if destPoint is None:
+            return
 
         sourceLevel = self.sourceLevel()
         sourceBox = sourceLevel.bounds
@@ -922,17 +926,17 @@ class CloneTool(EditorTool):
         destLevel = self.editor.level
         destVolume = BoundingBox(destPoint, sourceBox.size).volume
 
-        op = CloneOperation    (editor=self.editor,
-                                sourceLevel=sourceLevel,
-                                sourceBox=sourceBox,
-                                originSourceBox=self.selectionBox(),
-                                destLevel=destLevel,
-                                destPoint=self.destPoint,
-                                copyAir=self.copyAir,
-                                copyWater=self.copyWater,
-                                repeatCount=self.repeatCount)
+        op = CloneOperation(editor=self.editor,
+                            sourceLevel=sourceLevel,
+                            sourceBox=sourceBox,
+                            originSourceBox=self.selectionBox(),
+                            destLevel=destLevel,
+                            destPoint=self.destPoint,
+                            copyAir=self.copyAir,
+                            copyWater=self.copyWater,
+                            repeatCount=self.repeatCount)
 
-        self.editor.toolbar.selectTool(-1) #deselect tool so that the clone tool's selection change doesn't update its schematic
+        self.editor.toolbar.selectTool(-1)  # deselect tool so that the clone tool's selection change doesn't update its schematic
 
         with setWindowCaption("COPYING - "):
             self.editor.freezeStatus("Copying %0.1f million blocks" % (float(destVolume) / 1048576.,))
@@ -952,9 +956,9 @@ class CloneTool(EditorTool):
         self.destPoint = None
         self.level = None
 
-
     def discardPreviewer(self):
-        if self.previewRenderer is None: return;
+        if self.previewRenderer is None:
+            return
         self.previewRenderer.stopWork()
         self.previewRenderer.discardAllChunks()
         self.editor.removeWorker(self.previewRenderer)
@@ -971,17 +975,18 @@ class ConstructionTool(CloneTool):
     tooltipText = "Import"
 
     panelClass = ConstructionToolPanel
+
     def toolEnabled(self):
         return True
 
     def selectionChanged(self):
-        pass;
+        pass
 
     def updateSchematic(self):
-        pass;
+        pass
 
     def quickNudge(self, nudge):
-        return map(lambda x:x * 8, nudge)
+        return map(lambda x: x * 8, nudge)
 
     def __init__(self, *args):
         CloneTool.__init__(self, *args)
@@ -1006,9 +1011,9 @@ class ConstructionTool(CloneTool):
 #        print "Cancelled Clone"
 #        self.level = None
 #        super(ConstructionTool, self).cancel(self)
-#    
-    
-    def createTestBoard(self, anyBlock = True):
+#
+
+    def createTestBoard(self, anyBlock=True):
         if anyBlock:
             allBlocks = [self.editor.level.materials[a, b] for a in range(256) for b in range(16)]
             blockWidth = 64
@@ -1016,39 +1021,38 @@ class ConstructionTool(CloneTool):
             allBlocks = self.editor.level.materials.allBlocks
             blockWidth = 16
         blockCount = len(allBlocks)
-            
+
         width = blockWidth * 3 + 1
         rows = blockCount // blockWidth + 1
         length = rows * 3 + 1
         height = 3
-        
-        schematic = MCSchematic( (width, height, length), mats=self.editor.level.materials)
-        schematic.Blocks[:,:,0] = 1
-        
+
+        schematic = MCSchematic((width, height, length), mats=self.editor.level.materials)
+        schematic.Blocks[:, :, 0] = 1
+
         for i, block in enumerate(allBlocks):
             col = (i % blockWidth) * 3 + 1
             row = (i // blockWidth) * 3
-            schematic.Blocks[col:col+2,row:row+2, 2] = block.ID
-            schematic.Data[col:col+2,row:row+2, 2] = block.blockData
-        
+            schematic.Blocks[col:col + 2, row:row + 2, 2] = block.ID
+            schematic.Data[col:col + 2, row:row + 2, 2] = block.blockData
+
         return schematic
-            
+
     def toolSelected(self):
         self.editor.mouseLookOff()
-    
+
         mods = key.get_mods()
         if mods & KMOD_ALT and mods & KMOD_SHIFT:
             self.loadLevel(self.createTestBoard())
             return
-        
+
         self.editor.mouseLookOff()
 
         clipFilename = mcplatform.askOpenFile(title='Import a schematic or level...', schematics=True)
-        #xxx mouthful
+        # xxx mouthful
         if clipFilename:
 
             self.loadSchematic(clipFilename)
-
 
         print "Canceled"
         if self.level is None:
@@ -1056,10 +1060,9 @@ class ConstructionTool(CloneTool):
 
             self.editor.toolbar.selectTool(-1)
 
-        #CloneTool.toolSelected(self);
+        # CloneTool.toolSelected(self)
 
     originalLevelSize = (0, 0, 0)
-
 
     def loadSchematic(self, filename):
         """ actually loads a schematic or a level """
@@ -1071,7 +1074,7 @@ class ConstructionTool(CloneTool):
 
             traceback.print_exc()
             if filename:
-                #self.editor.toolbar.selectTool(-1)
+                # self.editor.toolbar.selectTool(-1)
                 alert(u"I don't know how to import this file: {0}.\n\nError: {1!r}".format(os.path.basename(filename), e))
 
             return
@@ -1083,34 +1086,34 @@ class ConstructionTool(CloneTool):
             self.repeatCount = 1
             self.destPoint = None
 
-            self.editor.currentTool = self # because save window triggers loseFocus, which triggers tool.cancel... hmmmmmm
+            self.editor.currentTool = self  # because save window triggers loseFocus, which triggers tool.cancel... hmmmmmm
 
             self.cloneCameraDistance = self.safeToolDistance()
 
             self.chunkAlign = isinstance(self.level, MCInfdevOldLevel) and all(b % 16 == 0 for b in self.level.bounds.size)
-
 
             self.setupPreview()
             self.originalLevelSize = (self.level.Width, self.level.Height, self.level.Length)
             self.showPanel()
             return
 
-
-
     def selectionSize(self):
-        if not self.level: return None;
+        if not self.level:
+            return None
         return  self.originalLevelSize
 
     def selectionBox(self):
-        if not self.level: return None;
+        if not self.level:
+            return None
         return BoundingBox((0, 0, 0), self.selectionSize())
 
     def sourceLevel(self):
         return self.level
 
     def mouseDown(self, evt, pos, direction):
-        #x,y,z = pos
+        # x,y,z = pos
         box = self.selectionBox()
-        if not box: return
+        if not box:
+            return
 
         CloneTool.mouseDown(self, evt, pos, direction)

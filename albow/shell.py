@@ -6,6 +6,7 @@ from root import RootWidget
 
 #------------------------------------------------------------------------------
 
+
 class Shell(RootWidget):
 
     def __init__(self, surface, **kwds):

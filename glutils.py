@@ -70,6 +70,7 @@ class gl(object):
             GL.glPopAttrib()
 
     listCount = 0
+
     @classmethod
     def glGenLists(cls, n):
         cls.listCount += n
@@ -80,18 +81,21 @@ class gl(object):
         cls.listCount -= n
         return GL.glDeleteLists(base, n)
 
+
 class DisplayList(object):
     allLists = []
 
     def __init__(self, drawFunc=None):
         self.drawFunc = drawFunc
         self._list = None
+
         def _delete(r):
             DisplayList.allLists.remove(r)
         self.allLists.append(weakref.ref(self, _delete))
 
     def __del__(self):
         self.invalidate()
+
     @classmethod
     def invalidateAllLists(self):
         allLists = []
@@ -109,10 +113,12 @@ class DisplayList(object):
             self._list = None
 
     def makeList(self, drawFunc):
-        if self._list: return
+        if self._list:
+            return
 
         drawFunc = (drawFunc or self.drawFunc)
-        if drawFunc is None: return
+        if drawFunc is None:
+            return
 
         l = gl.glGenLists(1)
         GL.glNewList(l, GL.GL_COMPILE)
@@ -132,7 +138,8 @@ class DisplayList(object):
     if "-debuglists" in sys.argv:
         def call(self, drawFunc=None):
             drawFunc = (drawFunc or self.drawFunc)
-            if drawFunc is None: return
+            if drawFunc is None:
+                return
             drawFunc()
     else:
         def call(self, drawFunc=None):
@@ -140,15 +147,15 @@ class DisplayList(object):
             GL.glCallLists(self._list)
 
 
-
 class Texture(object):
     allTextures = []
     defaultFilter = GL.GL_NEAREST
-    def __init__(self, textureFunc=None, minFilter = None, magFilter = None):
+
+    def __init__(self, textureFunc=None, minFilter=None, magFilter=None):
         minFilter = minFilter or self.defaultFilter
         magFilter = magFilter or self.defaultFilter
         if textureFunc is None:
-            textureFunc = lambda:None
+            textureFunc = lambda: None
 
         self.textureFunc = textureFunc
         self._texID = GL.glGenTextures(1)
@@ -174,6 +181,7 @@ class Texture(object):
 
     def invalidate(self):
         self.dirty = True
+
 
 class FramebufferTexture(Texture):
     def __init__(self, width, height, drawFunc):
@@ -209,9 +217,9 @@ class FramebufferTexture(Texture):
             FBO.glDeleteRenderbuffersEXT(1, [depthbuffer])
             self.enabled = True
 
+
 def debugDrawPoint(point):
     GL.glColor(1.0, 1.0, 0.0, 1.0)
     GL.glPointSize(9.0)
     with gl.glBegin(GL.GL_POINTS):
         GL.glVertex3f(*point)
-

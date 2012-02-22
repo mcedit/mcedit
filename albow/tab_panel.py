@@ -9,6 +9,7 @@ from widget import Widget
 from theme import ThemeProperty, FontProperty
 from utils import brighten
 
+
 class TabPanel(Widget):
     #  pages         [Widget]
     #  current_page  Widget
@@ -24,7 +25,7 @@ class TabPanel(Widget):
     tab_dimming = ThemeProperty('tab_dimming')
     #use_page_bg_color_for_tabs = ThemeProperty('use_page_bg_color_for_tabs')
 
-    def __init__(self, pages = None, **kwds):
+    def __init__(self, pages=None, **kwds):
         Widget.__init__(self, **kwds)
         self.pages = []
         self.current_page = None
@@ -119,7 +120,7 @@ class TabPanel(Widget):
         width = self.width - 2 * m + s - b
         x0 = m
         for i, page in enumerate(pages):
-            x1 = m + (i + 1) * width // n #self.tab_boundary(i + 1)
+            x1 = m + (i + 1) * width // n  # self.tab_boundary(i + 1)
             selected = page is current_page
             yield i, page.tab_title, page, selected, Rect(x0, 0, x1 - x0 - s + b, h)
             x0 = x1

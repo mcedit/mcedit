@@ -6,6 +6,7 @@ import resource
 
 debug_theme = False
 
+
 class ThemeProperty(object):
 
     def __init__(self, name):
@@ -15,7 +16,7 @@ class ThemeProperty(object):
     def __get__(self, obj, owner):
         if debug_theme:
             print "%s(%r).__get__(%r)" % (self.__class__.__name__, self.name, obj)
-        try: ###
+        try:  ###
             cache_name = self.cache_name
             try:
                 return getattr(obj, cache_name)
@@ -25,16 +26,16 @@ class ThemeProperty(object):
                 value = self.get_from_theme(obj.__class__, self.name)
                 obj.__dict__[cache_name] = value
                 return value
-        except: ###
+        except:  ###
             if debug_theme:
                 import traceback
                 traceback.print_exc()
                 print "-------------------------------------------------------"
-            raise ###
+            raise  ###
 
     def __set__(self, obj, value):
         if debug_theme:
-            print "Setting %r.%s = %r" % (obj, self.cache_name, value) ###
+            print "Setting %r.%s = %r" % (obj, self.cache_name, value)  ###
         obj.__dict__[self.cache_name] = value
 
     def get_from_theme(self, cls, name):
@@ -55,7 +56,7 @@ class Theme(object):
     #  name   string          Name of theme, for debugging
     #  base   Theme or None   Theme on which this theme is based
 
-    def __init__(self, name, base = None):
+    def __init__(self, name, base=None):
         self.name = name
         self.base = base
 
@@ -155,7 +156,7 @@ framed = Theme('framed')
 framed.border_width = 1
 framed.margin = 3
 
-root.Field = Theme('Field', base = framed)
+root.Field = Theme('Field', base=framed)
 root.Field.border_color = (128, 128, 128)
 
 root.CheckWidget = Theme('CheckWidget')
@@ -167,9 +168,9 @@ root.Dialog.bg_color = (40, 40, 40)
 root.Dialog.border_width = 1
 root.Dialog.margin = 15
 
-root.DirPathView = Theme('DirPathView', base = framed)
+root.DirPathView = Theme('DirPathView', base=framed)
 
-root.FileListView = Theme('FileListView', base = framed)
+root.FileListView = Theme('FileListView', base=framed)
 root.FileListView.scroll_button_color = (255, 255, 0)
 
 root.FileDialog = Theme("FileDialog")
@@ -206,11 +207,11 @@ menu.disabled_color = (0, 0, 0)
 menu.margin = 8
 menu.border_color = (192, 192, 192)
 
-root.MenuBar = Theme('MenuBar', base = menu)
+root.MenuBar = Theme('MenuBar', base=menu)
 root.MenuBar.border_width = 0
 
-root.Menu = Theme('Menu', base = menu)
+root.Menu = Theme('Menu', base=menu)
 root.Menu.border_width = 1
 
-root.MusicVolumeControl = Theme('MusicVolumeControl', base = framed)
+root.MusicVolumeControl = Theme('MusicVolumeControl', base=framed)
 root.MusicVolumeControl.fg_color = (0x40, 0x40, 0x40)

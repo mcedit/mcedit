@@ -6,6 +6,7 @@ from widget import Widget
 
 #------------------------------------------------------------------------------
 
+
 class Screen(Widget):
 
     def __init__(self, shell, **kwds):
@@ -21,4 +22,3 @@ class Screen(Widget):
 
     def leave_screen(self):
         pass
-

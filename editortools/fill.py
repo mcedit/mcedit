@@ -39,23 +39,20 @@ class BlockFillOperation(Operation):
 
         fill = self.destLevel.fillBlocksIter(destBox, self.blockInfo, blocksToReplace=self.blocksToReplace)
         showProgress("Replacing blocks...", fill, cancel=True)
-        
 
     def undo(self):
         if self.undoSchematic:
             self.destLevel.removeEntitiesInBox(self.destBox)
             self.destLevel.removeTileEntitiesInBox(self.destBox)
             with setWindowCaption("Undoing - "):
-                i=self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.destBox.size), self.destBox.origin)
+                i = self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.destBox.size), self.destBox.origin)
                 showProgress("Copying {0:n} blocks...".format(self.destBox.volume), i)
-            
+
     def bufferSize(self):
         return self.destBox.volume * 2
 
     def dirtyBox(self):
         return self.destBox
-
-
 
 
 class FillToolPanel(Panel):
@@ -78,17 +75,16 @@ class FillToolPanel(Panel):
         self.replaceLabel = replaceLabel = Label("Replace", width=self.blockButton.width)
         replaceLabel.mouse_down = lambda a: self.tool.toggleReplacing()
         replaceLabel.fg_color = (177, 177, 255, 255)
-        #replaceLabelRow = Row( (Label(rollkey), replaceLabel) );
+        # replaceLabelRow = Row( (Label(rollkey), replaceLabel) )
         replaceLabel.tooltipText = "Shortcut: {0}".format(rollkey)
         replaceLabel.align = "c"
 
         col = (self.fillWithLabel,
                 self.blockButton,
-                #swapRow, 
+                # swapRow,
                 replaceLabel,
-                #self.replaceBlockButton, 
+                # self.replaceBlockButton,
                 self.fillButton)
-
 
         if replacing:
             self.fillWithLabel = Label("Find:", width=self.blockButton.width, align="c")
@@ -115,13 +111,10 @@ class FillToolPanel(Panel):
                     self.swapButton,
                     self.fillButton)
 
-
-
         col = Column(col)
 
         self.add(col)
         self.shrink_wrap()
-
 
     def swapBlockTypes(self):
         t = self.tool.replaceBlockInfo
@@ -129,14 +122,12 @@ class FillToolPanel(Panel):
         self.tool.blockInfo = t
 
         self.replaceBlockButton.blockInfo = self.tool.replaceBlockInfo
-        self.blockButton.blockInfo = self.tool.blockInfo #xxx put this in a property
-
+        self.blockButton.blockInfo = self.tool.blockInfo  # xxx put this in a property
 
     def pickReplaceBlock(self):
         blockPicker = BlockPicker(self.tool.replaceBlockInfo, self.tool.editor.level.materials)
         if blockPicker.present():
             self.replaceBlockButton.blockInfo = self.tool.replaceBlockInfo = blockPicker.blockInfo
-
 
     def pickFillBlock(self):
         blockPicker = BlockPicker(self.tool.blockInfo, self.tool.editor.level.materials, allowWildcards=True)
@@ -199,7 +190,8 @@ class FillTool(EditorTool):
 
     def toolSelected(self):
         box = self.selectionBox()
-        if None is box: return;
+        if None is box:
+            return
 
         self.replacing = False
         self.showPanel()
@@ -214,7 +206,6 @@ class FillTool(EditorTool):
             else:
                 self.editor.toolbar.selectTool(-1)
 
-
     chooseBlockImmediately = FillSettings.chooseBlockImmediately.configProperty()
 
     def toolReselected(self):
@@ -227,7 +218,8 @@ class FillTool(EditorTool):
     @alertException
     def confirm(self):
         box = self.selectionBox()
-        if None is box: return;
+        if None is box:
+            return
 
         with setWindowCaption("REPLACING - "):
             self.editor.freezeStatus("Replacing %0.1f million blocks" % (float(box.volume) / 1048576.,))
@@ -281,13 +273,13 @@ class FillTool(EditorTool):
             for tex in self.blockTextures.itervalues():
                 tex.delete()
 
-
         self.blockTextures = {}
 
         def blockTexFunc(type):
             def _func():
                 s, t = blockTextures[type][0]
-                if not hasattr(terrainTexture, "data"): return
+                if not hasattr(terrainTexture, "data"):
+                    return
                 w, h = terrainTexture.data.shape[:2]
                 s = s * w / 256
                 t = t * h / 256
@@ -296,38 +288,33 @@ class FillTool(EditorTool):
             return _func
 
         for type in range(256):
-
-
             self.blockTextures[type] = Texture(blockTexFunc(type))
-
 
     def drawToolReticle(self):
         if key.get_mods() & KMOD_ALT:
-            #eyedropper mode
+            # eyedropper mode
             self.editor.drawWireCubeReticle(color=(0.2, 0.6, 0.9, 1.0))
 
-
     def drawToolMarkers(self):
-        if self.editor.currentTool != self: return;
-
-
+        if self.editor.currentTool != self:
+            return
 
         if self.panel and self.replacing:
             blockInfo = self.replaceBlockInfo
         else:
             blockInfo = self.blockInfo
-            
+
         color = 1.0, 1.0, 1.0, 0.35
         if blockInfo:
             tex = self.blockTextures[blockInfo.ID]
-            #color = (1.5 - alpha, 1.0, 1.5 - alpha, alpha - 0.35)
+            # color = (1.5 - alpha, 1.0, 1.5 - alpha, alpha - 0.35)
             glMatrixMode(GL_TEXTURE)
             glPushMatrix()
             glScale(16., 16., 16.)
 
         else:
             tex = None
-            #color = (1.0, 0.3, 0.3, alpha - 0.35)
+            # color = (1.0, 0.3, 0.3, alpha - 0.35)
 
         glPolygonOffset(DepthOffset.FillMarkers, DepthOffset.FillMarkers)
         self.editor.drawConstructionCube(self.selectionBox(),
@@ -346,7 +333,8 @@ class FillTool(EditorTool):
     def worldTooltipText(self):
         if key.get_mods() & KMOD_ALT:
             try:
-                if self.editor.blockFaceUnderCursor is None: return
+                if self.editor.blockFaceUnderCursor is None:
+                    return
                 pos = self.editor.blockFaceUnderCursor[0]
                 blockID = self.editor.level.blockAt(*pos)
                 blockdata = self.editor.level.blockDataAt(*pos)
@@ -355,10 +343,9 @@ class FillTool(EditorTool):
             except Exception, e:
                 return repr(e)
 
-        
     def mouseUp(self, *args):
         return self.editor.selectionTool.mouseUp(*args)
-    
+
     @alertException
     def mouseDown(self, evt, pos, dir):
         if key.get_mods() & KMOD_ALT:

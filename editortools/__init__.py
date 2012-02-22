@@ -12,8 +12,6 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 
-
-
 from toolbasics import *
 from select import SelectionTool
 from brush import BrushTool
@@ -22,19 +20,19 @@ from clone import CloneTool, ConstructionTool
 from filter import FilterTool
 from player import PlayerPositionTool, PlayerSpawnPositionTool
 from chunk import ChunkTool
-"""   
+"""
 class CameraTool(EditorTool):
     snapshotCounter = 0;
     def toolSelected(self, *args):
         glReadBuffer(GL_FRONT);
 
         (w, h) = self.editor.size
-        
+
         pixels = glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE);
-        
+
         try:
             (filename, customfilter, flags) = win32gui.GetSaveFileNameW(
-                hwndOwner = display.get_wm_info()['window'],                                                       
+                hwndOwner = display.get_wm_info()['window'],
                 InitialDir='My Documents',
                 Flags=win32con.OFN_EXPLORER | win32con.OFN_OVERWRITEPROMPT,
                 File='.'.join(self.editor.level.filename.split('.')[:-1]) + '-Snapshot%04d'% self.snapshotCounter,
@@ -55,11 +53,3 @@ class CameraTool(EditorTool):
             writer.write_array(file(filename, "wb"), pixgrid[::-1,:].flatten());  #black magic!  no, an array slice with negative stepping
 
             # glLineWidth(1.0);"""
-
-
-
-
-
-
-
-

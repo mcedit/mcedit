@@ -6,6 +6,7 @@ from controls import Label, Button
 from layout import Row, Column
 from fields import TextField
 
+
 class Modal(object):
 
     enter_response = True
@@ -13,7 +14,7 @@ class Modal(object):
 
     def ok(self):
         self.dismiss(True)
-    
+
     def cancel(self):
         self.dismiss(False)
 
@@ -22,8 +23,8 @@ class Dialog(Modal, Widget):
 
     click_outside_response = None
 
-    def __init__(self, client = None, responses = None,
-            default = 0, cancel = -1, **kwds):
+    def __init__(self, client=None, responses=None,
+            default=0, cancel=-1, **kwds):
         Widget.__init__(self, **kwds)
         if client or responses:
             rows = []
@@ -34,7 +35,7 @@ class Dialog(Modal, Widget):
                 w1 = client.width
             if responses:
                 buttons = Row([
-                    Button(text, action = lambda t=text: self.dismiss(t))
+                    Button(text, action=lambda t=text: self.dismiss(t))
                         for text in responses])
                 rows.append(buttons)
                 w2 = buttons.width
@@ -42,7 +43,7 @@ class Dialog(Modal, Widget):
                 a = 'l'
             else:
                 a = 'r'
-            contents = Column(rows, align = a)
+            contents = Column(rows, align=a)
             m = self.margin
             contents.topleft = (m, m)
             self.add(contents)
@@ -51,13 +52,14 @@ class Dialog(Modal, Widget):
             self.enter_response = responses[default]
         if responses and cancel is not None:
             self.cancel_response = responses[cancel]
-    
+
     def mouse_down(self, e):
         if not e in self:
             response = self.click_outside_response
             if response is not None:
                 self.dismiss(response)
-    
+
+
 class QuickDialog(Dialog):
     """ Dialog that closes as soon as you click outside or press a key"""
     def mouse_down(self, evt):
@@ -65,11 +67,12 @@ class QuickDialog(Dialog):
             self.dismiss(-1)
             if evt.button != 1:
                 event.post(evt)
-            
+
     def key_down(self, evt):
         self.dismiss()
         event.post(evt)
-    
+
+
 def wrapped_label(text, wrap_width, **kwds):
     paras = text.split("\n")
     text = "\n".join([textwrap.fill(para, wrap_width) for para in paras])
@@ -84,22 +87,24 @@ def wrapped_label(text, wrap_width, **kwds):
 #    box.shrink_wrap()
 #    return box.present()
 
+
 def alert(mess, **kwds):
     ask(mess, ["OK"], **kwds)
 
-def ask(mess, responses = ["OK", "Cancel"], default = 0, cancel = -1,
-        wrap_width = 60, **kwds):
+
+def ask(mess, responses=["OK", "Cancel"], default=0, cancel=-1,
+        wrap_width=60, **kwds):
     box = Dialog(**kwds)
     d = box.margin
     lb = wrapped_label(mess, wrap_width)
     lb.topleft = (d, d)
     buts = []
     for caption in responses:
-        but = Button(caption, action = lambda x = caption: box.dismiss(x))
+        but = Button(caption, action=lambda x=caption: box.dismiss(x))
         buts.append(but)
-    brow = Row(buts, spacing = d)
+    brow = Row(buts, spacing=d)
     lb.width = max(lb.width, brow.width)
-    col = Column([lb, brow], spacing = d, align ='r')
+    col = Column([lb, brow], spacing=d, align='r')
     col.topleft = (d, d)
     if default is not None:
         box.enter_response = responses[default]
@@ -114,13 +119,17 @@ def ask(mess, responses = ["OK", "Cancel"], default = 0, cancel = -1,
     box.shrink_wrap()
     return box.present()
 
-def input_text(prompt, width, initial = None, **kwds):
+
+def input_text(prompt, width, initial=None, **kwds):
     box = Dialog(**kwds)
     d = box.margin
+
     def ok():
         box.dismiss(True)
+
     def cancel():
         box.dismiss(False)
+
     lb = Label(prompt)
     lb.topleft = (d, d)
     tf = TextField(width)

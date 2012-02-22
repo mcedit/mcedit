@@ -20,7 +20,7 @@ from albow.dialogs import wrapped_label
 start_time = datetime.now()
 
 mod_cmd = KMOD_LCTRL | KMOD_RCTRL | KMOD_LMETA | KMOD_RMETA
-double_click_time = timedelta(0, 0, 300000) # days, seconds, microseconds
+double_click_time = timedelta(0, 0, 300000)  # days, seconds, microseconds
 
 import logging
 log = logging.getLogger(__name__)
@@ -49,31 +49,38 @@ clicked_widget = None  # Target of mouse_drag and mouse_up events
 
 #---------------------------------------------------------------------------
 
+
 class Cancel(Exception):
     pass
 
 #---------------------------------------------------------------------------
+
 
 def set_modifier(key, value):
     attr = modkeys.get(key)
     if attr:
         modifiers[attr] = value
 
+
 def add_modifiers(event):
     d = event.dict
     d.update(modifiers)
     d['cmd'] = event.ctrl or event.meta
 
+
 def get_root():
     return root_widget
 
+
 def get_top_widget():
     return top_widget
+
 
 def get_focus():
     return top_widget.get_focus()
 
 #---------------------------------------------------------------------------
+
 
 class RootWidget(Widget):
     #  surface   Pygame display surface
@@ -89,9 +96,9 @@ class RootWidget(Widget):
         self.surface = surface
         root_widget = self
         widget.root_widget = self
-        self.is_gl = surface.get_flags() & OPENGL <> 0
+        self.is_gl = surface.get_flags() & OPENGL != 0
         self.idle_handlers = []
-        
+
     def set_timer(self, ms):
         pygame.time.set_timer(USEREVENT, ms)
 
@@ -101,7 +108,7 @@ class RootWidget(Widget):
     captured_widget = None
 
     def capture_mouse(self, widget):
-        #put the mouse in "virtual mode" and pass mouse moved events to the 
+        #put the mouse in "virtual mode" and pass mouse moved events to the
         #specified widget
         if widget:
             pygame.mouse.set_visible(False)
@@ -114,7 +121,7 @@ class RootWidget(Widget):
 
     frames = 0
     hover_widget = None
-    
+
     def run_modal(self, modal_widget):
         old_captured_widget = None
 
@@ -142,8 +149,7 @@ class RootWidget(Widget):
             last_click_time = start_time
             last_click_button = 0
             self.do_draw = True
-            
-            
+
             while modal_widget.modal_result is None:
                 try:
                     self.hover_widget = self.find_widget(mouse.get_pos())
@@ -163,7 +169,7 @@ class RootWidget(Widget):
                     for event in events:
                         if event.type:
                             log.debug("%s", event)
-                        
+
                         type = event.type
                         if type == QUIT:
                             self.quit()
@@ -218,7 +224,7 @@ class RootWidget(Widget):
                             else:
                                 last_mouse_event_handler = mouse_widget
                                 event.dict['clicked_widget'] = None
-                                
+
                             last_mouse_event = event
                             clicked_widget = None
                             last_mouse_event_handler.handle_mouse('mouse_up', event)
@@ -263,7 +269,7 @@ class RootWidget(Widget):
                         elif type == NOEVENT:
                             add_modifiers(event)
                             self.call_idle_handlers(event)
-                            
+
                 except Cancel:
                     pass
         finally:
@@ -274,23 +280,25 @@ class RootWidget(Widget):
 
         clicked_widget = None
 
-
     def call_idle_handlers(self, event):
         def call(ref):
             widget = ref()
-            if widget: widget.idleevent(event)
-            else: print "Idle ref died!"
+            if widget:
+                widget.idleevent(event)
+            else:
+                print "Idle ref died!"
             return bool(widget)
-            
+
         self.idle_handlers = filter(call, self.idle_handlers)
-        
+
     def add_idle_handler(self, widget):
         from weakref import ref
         self.idle_handlers.append(ref(widget))
+
     def remove_idle_handler(self, widget):
         from weakref import ref
         self.idle_handlers.remove(ref(widget))
-        
+
     def send_key(self, widget, name, event):
         add_modifiers(event)
         widget.dispatch_key(name, event)
@@ -301,7 +309,8 @@ class RootWidget(Widget):
     def get_root(self):
         return self
 
-    labelClass = lambda s, t:wrapped_label(t, 45)
+    labelClass = lambda s, t: wrapped_label(t, 45)
+
     def show_tooltip(self, widget, pos):
 
         if hasattr(self, 'currentTooltip'):
@@ -390,12 +399,14 @@ from bisect import insort
 
 scheduled_calls = []
 
+
 def make_scheduled_calls():
     sched = scheduled_calls
     t = time()
     while sched and sched[0][0] <= t:
         sched[0][1]()
         sched.pop(0)
+
 
 def schedule(delay, func):
     """Arrange for the given function to be called after the specified

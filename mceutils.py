@@ -42,6 +42,7 @@ from pymclevel import materials
 
 from errorreporting import reportException, reportCrash
 
+
 def alertException(func):
     def _alertException(*args, **kw):
         try:
@@ -56,6 +57,7 @@ def alertException(func):
 
 from pymclevel.faces import *
 
+
 def drawFace(box, face, type=GL.GL_QUADS):
     x, y, z, = box.origin
     x2, y2, z2 = box.maximum
@@ -63,51 +65,51 @@ def drawFace(box, face, type=GL.GL_QUADS):
     if face == FaceXDecreasing:
 
         faceVertices = numpy.array(
-            (x  , y2 , z2 ,
-            x  , y2 , z  ,
-            x  , y  , z  ,
-            x  , y  , z2 ,
+            (x, y2, z2,
+            x, y2, z,
+            x, y, z,
+            x, y, z2,
             ), dtype='f4')
 
     elif face == FaceXIncreasing:
 
         faceVertices = numpy.array(
-            (x2 , y  , z2 ,
-            x2 , y  , z  ,
-            x2 , y2 , z  ,
-            x2 , y2 , z2 ,
+            (x2, y, z2,
+            x2, y, z,
+            x2, y2, z,
+            x2, y2, z2,
             ), dtype='f4')
 
     elif face == FaceYDecreasing:
         faceVertices = numpy.array(
-            (x2 , y  , z2 ,
-            x  , y  , z2 ,
-            x  , y  , z  ,
-            x2 , y  , z  ,
+            (x2, y, z2,
+            x, y, z2,
+            x, y, z,
+            x2, y, z,
             ), dtype='f4')
 
     elif face == FaceYIncreasing:
         faceVertices = numpy.array(
-            (x2 , y2 , z  ,
-            x, y2 , z  ,
-            x  , y2 , z2 ,
-            x2 , y2 , z2 ,
+            (x2, y2, z,
+            x, y2, z,
+            x, y2, z2,
+            x2, y2, z2,
             ), dtype='f4')
 
     elif face == FaceZDecreasing:
         faceVertices = numpy.array(
             (x, y, z,
-            x  , y2 , z,
-            x2 , y2 , z,
-            x2 , y, z,
+            x, y2, z,
+            x2, y2, z,
+            x2, y, z,
             ), dtype='f4')
 
     elif face == FaceZIncreasing:
         faceVertices = numpy.array(
-            (x2 , y, z2 ,
-            x2 , y2 , z2 ,
-            x  , y2 , z2 ,
-            x, y, z2 ,
+            (x2, y, z2,
+            x2, y2, z2,
+            x, y2, z2,
+            x, y, z2,
             ), dtype='f4')
 
     faceVertices.shape = (4, 3)
@@ -140,7 +142,6 @@ def drawFace(box, face, type=GL.GL_QUADS):
     GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
 
-
 def drawCube(box, cubeType=GL.GL_QUADS, blockType=0, texture=None, textureVertices=None, selectionBox=False):
     """ pass a different cubeType e.g. GL_LINE_STRIP for wireframes """
     x, y, z, = box.origin
@@ -149,34 +150,34 @@ def drawCube(box, cubeType=GL.GL_QUADS, blockType=0, texture=None, textureVertic
     cubeVertices = numpy.array(
         (
         x, y, z,
-        x  , y2 , z,
-        x2 , y2 , z,
-        x2 , y, z,
+        x, y2, z,
+        x2, y2, z,
+        x2, y, z,
 
-        x2 , y, z2 ,
-        x2 , y2 , z2 ,
-        x  , y2 , z2 ,
-        x, y, z2 ,
+        x2, y, z2,
+        x2, y2, z2,
+        x, y2, z2,
+        x, y, z2,
 
-        x2 , y  , z2 ,
-        x  , y  , z2 ,
-        x  , y  , z  ,
-        x2 , y  , z  ,
+        x2, y, z2,
+        x, y, z2,
+        x, y, z,
+        x2, y, z,
 
-        x2 , y2 , z  ,
-        x, y2 , z  ,
-        x  , y2 , z2 ,
-        x2 , y2 , z2 ,
+        x2, y2, z,
+        x, y2, z,
+        x, y2, z2,
+        x2, y2, z2,
 
-        x  , y2 , z2 ,
-        x  , y2 , z  ,
-        x  , y  , z  ,
-        x  , y  , z2 ,
+        x, y2, z2,
+        x, y2, z,
+        x, y, z,
+        x, y, z2,
 
-        x2 , y  , z2 ,
-        x2 , y  , z  ,
-        x2 , y2 , z  ,
-        x2 , y2 , z2 ,
+        x2, y, z2,
+        x2, y, z,
+        x2, y2, z,
+        x2, y2, z2,
                             ), dtype='f4')
     if textureVertices == None:
         textureVertices = numpy.array(
@@ -240,11 +241,12 @@ def drawCube(box, cubeType=GL.GL_QUADS, blockType=0, texture=None, textureVertic
         GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
         GL.glDisable(GL.GL_TEXTURE_2D)
 
+
 def drawTerrainCuttingWire(box,
                            c0=(0.75, 0.75, 0.75, 0.4),
                            c1=(1.0, 1.0, 1.0, 1.0)):
 
-    #glDepthMask(False);
+    # glDepthMask(False)
     GL.glEnable(GL.GL_DEPTH_TEST)
 
     GL.glDepthFunc(GL.GL_LEQUAL)
@@ -259,9 +261,10 @@ def drawTerrainCuttingWire(box,
 
     GL.glDepthFunc(GL.GL_LEQUAL)
     GL.glDisable(GL.GL_DEPTH_TEST)
-    #glDepthMask(True);
+    # glDepthMask(True)
 
-#texturePacksDir = os.path.join(pymclevel.minecraftDir, "texturepacks")
+# texturePacksDir = os.path.join(pymclevel.minecraftDir, "texturepacks")
+
 
 def loadAlphaTerrainTexture():
     pngFile = None
@@ -299,7 +302,6 @@ def loadAlphaTerrainTexture():
                     grassColorFile = zf.open("misc/grasscolor.png")
                 zf.close()
 
-
             except Exception, e:
                 print repr(e), "while reading terrain.png from ", repr(pack)
 
@@ -309,7 +311,7 @@ def loadAlphaTerrainTexture():
     texW, texH, terraindata = loadPNGFile("terrain.png")
 
     def slurpZipExt(zipextfile):
-        #zipextfile.read() doesn't read all available data
+        # zipextfile.read() doesn't read all available data
         alldata = ""
         data = zipextfile.read()
         while len(data):
@@ -331,11 +333,11 @@ def loadAlphaTerrainTexture():
 
         w, h, data = loadPNGData(slurpZipExt(customWaterFile))
         if w == texW / 16:
-            #only handle the easy case for now
+            # only handle the easy case for now
             texdata = data[:w, :w]
             terraindata[t:t + w, s:s + w] = texdata
 
-            #GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
+            # GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
     if customLavaFile is not None:
         s, t = pymclevel.materials.alphaMaterials.blockTextures[pymclevel.materials.alphaMaterials.Lava.ID, 0, 0]
         s = s * texW / 256
@@ -343,19 +345,19 @@ def loadAlphaTerrainTexture():
 
         w, h, data = loadPNGData(slurpZipExt(customLavaFile))
         if w == texW / 16:
-            #only handle the easy case for now
+            # only handle the easy case for now
             texdata = data[:w, :w]
             terraindata[t:t + w, s:s + w] = texdata
 
-            #GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
+            # GL.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, s, t, w, w, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texdata)
 
     from renderer import LeafBlockRenderer
     from renderer import GenericBlockRenderer
     if foliageColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(foliageColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[17, 0, :3] = color #xxxxxxx
-                
+        materials.alphaMaterials.flatColors[17, 0, :3] = color  # xxxxxxx
+
         color = [c / 255.0 for c in color]
         LeafBlockRenderer.leafColor = color
     else:
@@ -364,7 +366,7 @@ def loadAlphaTerrainTexture():
     if grassColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(grassColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[2, 0, :3] = color #xxxxxxx
+        materials.alphaMaterials.flatColors[2, 0, :3] = color  # xxxxxxx
         color = [c / 255.0 for c in color]
 
         GenericBlockRenderer.grassColor = color
@@ -380,12 +382,12 @@ def loadAlphaTerrainTexture():
 
 
 def loadPNGData(filename_or_data):
-    #if filename[1:4] != "PNG":
+    # if filename[1:4] != "PNG":
     if isinstance(filename_or_data, basestring):
         filename_or_data = os.path.join(mcplatform.dataDir, filename_or_data)
         filename_or_data = filename_or_data.encode(sys.getfilesystemencoding())
     else:
-        #path = numpy.fromstring(filename, 'uint8')
+        # path = numpy.fromstring(filename, 'uint8')
         pass
     try:
         img = image.load(filename_or_data)
@@ -394,7 +396,7 @@ def loadPNGData(filename_or_data):
 
         data = numpy.fromstring(img.get_buffer().raw, 'uint8')
         w, h = img.get_size()
-        data.shape = (h, w, 4) #xxx 32-bit images
+        data.shape = (h, w, 4)  # xxx 32-bit images
 
         format = GL.GL_BGRA
 
@@ -406,7 +408,7 @@ def loadPNGData(filename_or_data):
         data = numpy.array(data, dtype='uint8')
         data.shape = (h, w, metadata['planes'])
         if data.shape[2] == 1:
-            #indexed color. remarkably straightforward.
+            # indexed color. remarkably straightforward.
             data.shape = data.shape[:2]
             data = numpy.array(reader.palette(), dtype='uint8')[data]
 
@@ -422,21 +424,22 @@ def loadPNGData(filename_or_data):
 
     return w, h, data
 
+
 def loadPNGFile(filename):
     (w, h, data) = loadPNGData(filename)
 
     powers = (16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
-    assert (w in powers) and (h in powers) #how crude
+    assert (w in powers) and (h in powers)  # how crude
 
     ndata = numpy.array(data, dtype='uint8')
 
     return w, h, data
 
+
 def loadTextureFunc(w, h, ndata):
-
-
     GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, ndata)
     return w, h
+
 
 def loadPNGTexture(filename):
     try:
@@ -452,31 +455,37 @@ def loadPNGTexture(filename):
 
 import glutils
 
+
 def normalize(x):
     l = x[0] * x[0] + x[1] * x[1] + x[2] * x[2]
-    if l <= 0.0: return [0, 0, 0]
+    if l <= 0.0:
+        return [0, 0, 0]
     size = numpy.sqrt(l)
     if size <= 0.0:
         return [0, 0, 0]
-    return map(lambda a:a / size, x)
+    return map(lambda a: a / size, x)
+
 
 def normalize_size(x):
     l = x[0] * x[0] + x[1] * x[1] + x[2] * x[2]
-    if l <= 0.0: return [0., 0., 0.], 0.
+    if l <= 0.0:
+        return [0., 0., 0.], 0.
     size = numpy.sqrt(l)
     if size <= 0.0:
         return [0, 0, 0], 0
     return (x / size), size
 
 
-#Label = GLLabel
+# Label = GLLabel
 
 class HotkeyColumn(Widget):
     is_gl_container = True
 
     def __init__(self, items, keysColumn=None, buttonsColumn=None):
-        if keysColumn is None: keysColumn = []
-        if buttonsColumn is None: buttonsColumn = []
+        if keysColumn is None:
+            keysColumn = []
+        if buttonsColumn is None:
+            buttonsColumn = []
 
         Widget.__init__(self)
         for (hotkey, title, action) in items:
@@ -506,25 +515,30 @@ class HotkeyColumn(Widget):
 
 
 from albow import CheckBox, AttrRef, Menu
+
+
 class MenuButton(Button):
     def __init__(self, title, choices, **kw):
         Button.__init__(self, title, **kw)
         self.choices = choices
-        self.menu = Menu(title, ((c,c) for c in choices))
-        
+        self.menu = Menu(title, ((c, c) for c in choices))
+
     def action(self):
-        index = self.menu.present(self, (0,0))
-        if index == -1: return
+        index = self.menu.present(self, (0, 0))
+        if index == -1:
+            return
         self.menu_picked(index)
-        
+
     def menu_picked(self, index):
         pass
-        
+
+
 class ChoiceButton(ValueButton):
-    align="c"
+    align = "c"
     choose = None
+
     def __init__(self, choices, **kw):
-        #passing an empty list of choices is ill-advised
+        # passing an empty list of choices is ill-advised
 
         if 'choose' in kw:
             self.choose = kw.pop('choose')
@@ -540,17 +554,19 @@ class ChoiceButton(ValueButton):
         self.choiceIndex = 0
 
     def showMenu(self):
-        choiceIndex = self.menu.present(self, (0,0))
+        choiceIndex = self.menu.present(self, (0, 0))
         if choiceIndex != -1:
             self.choiceIndex = choiceIndex
             if self.choose:
                 self.choose()
-    
-    def get_value(self): return self.selectedChoice
-    
+
+    def get_value(self):
+        return self.selectedChoice
+
     @property
     def selectedChoice(self):
-        if self.choiceIndex >= len(self.choices) or self.choiceIndex < 0: return ""
+        if self.choiceIndex >= len(self.choices) or self.choiceIndex < 0:
+            return ""
         return self.choices[self.choiceIndex]
 
     @selectedChoice.setter
@@ -573,17 +589,20 @@ def CheckBoxLabel(title, *args, **kw):
     tooltipText = kw.pop('tooltipText', None)
 
     cb = CheckBox(*args, **kw)
-    lab = Label(title, fg_color = cb.fg_color)
+    lab = Label(title, fg_color=cb.fg_color)
     lab.mouse_down = cb.mouse_down
 
     if tooltipText:
         cb.tooltipText = tooltipText
         lab.tooltipText = tooltipText
+
     class CBRow(Row):
         margin = 0
+
         @property
         def value(self):
             return self.checkbox.value
+
         @value.setter
         def value(self, val):
             self.checkbox.value = val
@@ -593,13 +612,18 @@ def CheckBoxLabel(title, *args, **kw):
     return row
 
 from albow import FloatField, IntField
+
+
 def FloatInputRow(title, *args, **kw):
     return Row((Label(title, tooltipText=kw.get('tooltipText')), FloatField(*args, **kw)))
+
+
 def IntInputRow(title, *args, **kw):
     return Row((Label(title, tooltipText=kw.get('tooltipText')), IntField(*args, **kw)))
 
 from albow.dialogs import Dialog
 from datetime import timedelta
+
 
 def setWindowCaption(prefix):
     caption = display.get_caption()[0]
@@ -607,12 +631,14 @@ def setWindowCaption(prefix):
     class ctx:
         def __enter__(self):
             display.set_caption(prefix + caption)
+
         def __exit__(self, *args):
             display.set_caption(caption)
     return ctx()
 
+
 def showProgress(progressText, progressIterator, cancel=False):
-    """Show the progress for a long-running synchronous operation. 
+    """Show the progress for a long-running synchronous operation.
     progressIterator should be a generator-like object that can return
     either None, for an indeterminate indicator,
     A float value between 0.0 and 1.0 for a determinate indicator,
@@ -621,31 +647,32 @@ def showProgress(progressText, progressIterator, cancel=False):
     class ProgressWidget(Dialog):
         progressFraction = 0.0
         firstDraw = False
-        
+
         def draw(self, surface):
             Widget.draw(self, surface)
             frameStart = datetime.now()
             frameInterval = timedelta(0, 1, 0) / 2
             amount = None
-            
+
             try:
                 while datetime.now() < frameStart + frameInterval:
                     amount = progressIterator.next()
                     if self.firstDraw is False:
                         self.firstDraw = True
                         break
-                        
+
             except StopIteration:
                 self.dismiss()
-                
+
             infoText = ""
             if amount is not None:
-                
+
                 if isinstance(amount, tuple):
-                    if len(amount)>2: infoText = ": " + amount[2]
-                    
-                    amount, max = amount[:2] 
-                    
+                    if len(amount) > 2:
+                        infoText = ": " + amount[2]
+
+                    amount, max = amount[:2]
+
                 else:
                     max = amount
                 maxwidth = (self.width - self.margin * 2)
@@ -662,21 +689,24 @@ def showProgress(progressText, progressIterator, cancel=False):
                         self.statusText = str("{0} / {1}".format(amount, max))
                     else:
                         self.statusText = str(amount)
-                
-                if infoText: self.statusText += infoText
-                
+
+                if infoText:
+                    self.statusText += infoText
+
         @property
         def estimateText(self):
             delta = ((datetime.now() - self.startTime))
             progressPercent = (int(self.progressFraction * 10000))
             left = delta * (10000 - progressPercent) / (progressPercent or 1)
             return "Time left: {0}".format(left)
+
         def cancel(self):
-            if cancel: self.dismiss(False)
-        
+            if cancel:
+                self.dismiss(False)
+
         def idleevent(self, evt):
             self.invalidate()
-            
+
     widget = ProgressWidget()
     widget.progressText = progressText
     widget.statusText = ""
@@ -700,7 +730,7 @@ def showProgress(progressText, progressIterator, cancel=False):
         return widget.progressAmount
     else:
         return "Canceled"
-        
+
 from glutils import DisplayList
 
 import functools

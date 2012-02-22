@@ -35,13 +35,14 @@ next_change_delay = 0
 
 #---------------------------------------------------------------------------
 
+
 class PlayList(object):
     """A collection of music filenames to be played sequentially or
     randomly. If random is true, items will be played in a random order.
     If repeat is true, the list will be repeated indefinitely, otherwise
     each item will only be played once."""
 
-    def __init__(self, items, random = False, repeat = False):
+    def __init__(self, items, random=False, repeat=False):
         self.items = list(items)
         self.random = random
         self.repeat = repeat
@@ -64,11 +65,13 @@ class PlayList(object):
 
 #---------------------------------------------------------------------------
 
+
 def get_music(*names, **kwds):
     """Return the full pathname of a music file from the "music" resource
     subdirectory."""
     prefix = kwds.pop('prefix', "music")
     return resource_path(prefix, *names)
+
 
 def get_playlist(*names, **kwds):
     prefix = kwds.pop('prefix', "music")
@@ -78,6 +81,7 @@ def get_playlist(*names, **kwds):
             if not filename.startswith(".")]
     items.sort()
     return PlayList(items, **kwds)
+
 
 def change_playlist(new_playlist):
     """Fade out any currently playing music and start playing from the given
@@ -93,26 +97,30 @@ def change_playlist(new_playlist):
         else:
             current_music = None
 
-def change_music(new_music, repeat = False):
+
+def change_music(new_music, repeat=False):
     """Fade out any currently playing music and start playing the given
     music file."""
     #print "albow.music: change_music" ###
     if music and new_music is not current_music:
         if new_music:
-            new_playlist = PlayList([new_music], repeat = repeat)
+            new_playlist = PlayList([new_music], repeat=repeat)
         else:
             new_playlist = None
         change_playlist(new_playlist)
 
+
 def music_end():
     #print "albow.music: music_end" ###
     schedule(next_change_delay, jog_music)
+
 
 def jog_music():
     """If no music is currently playing, start playing the next item
     from the current playlist."""
     if music_enabled and not music.get_busy():
         start_next_music()
+
 
 def start_next_music():
     """Start playing the next item from the current playlist immediately."""
@@ -121,14 +129,16 @@ def start_next_music():
     if music_enabled and current_playlist:
         next_music = current_playlist.next()
         if next_music:
-            print "albow.music: loading", repr(next_music) ###
+            print "albow.music: loading", repr(next_music)  ###
             music.load(next_music)
             music.play()
             next_change_delay = change_delay
         current_music = next_music
 
+
 def get_music_enabled():
     return music_enabled
+
 
 def set_music_enabled(state):
     global music_enabled
@@ -157,6 +167,7 @@ from albow.controls import Label, Button, CheckBox
 from albow.layout import Row, Column, Grid
 from albow.dialogs import Dialog
 
+
 class EnableMusicControl(CheckBox):
 
     def get_value(self):
@@ -164,6 +175,7 @@ class EnableMusicControl(CheckBox):
 
     def set_value(self, x):
         set_music_enabled(x)
+
 
 class MusicVolumeControl(Widget):
 
@@ -185,6 +197,7 @@ class MusicVolumeControl(Widget):
         music.set_volume(x)
         self.invalidate()
 
+
 class MusicOptionsDialog(Dialog):
 
     def __init__(self):
@@ -196,10 +209,11 @@ class MusicOptionsDialog(Dialog):
             [Label("Music Volume"), mvc],
         ])
         buttons = Button("OK", self.ok)
-        contents = Column([controls, buttons], align = 'r', spacing = 20)
+        contents = Column([controls, buttons], align='r', spacing=20)
         contents.topleft = (20, 20)
         self.add(contents)
         self.shrink_wrap()
+
 
 def show_music_options_dialog():
     dlog = MusicOptionsDialog()

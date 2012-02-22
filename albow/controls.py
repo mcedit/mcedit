@@ -10,6 +10,7 @@ import resource
 
 #---------------------------------------------------------------------------
 
+
 class Control(object):
 
     highlighted = overridable_property('highlighted')
@@ -35,10 +36,9 @@ class Control(object):
             ref.set(x)
         else:
             self._value = x
-            
+
     def get_highlighted(self):
         return self._highlighted
-
 
     def get_enabled(self):
         enable = self.enable
@@ -51,6 +51,7 @@ class Control(object):
         self._enabled = x
 
 #---------------------------------------------------------------------------
+
 
 class AttrRef(object):
 
@@ -66,6 +67,7 @@ class AttrRef(object):
 
 #---------------------------------------------------------------------------
 
+
 class ItemRef(object):
 
     def __init__(self, obj, item):
@@ -79,6 +81,7 @@ class ItemRef(object):
         self.obj[self.item] = x
 
 #---------------------------------------------------------------------------
+
 
 class Label(Widget):
 
@@ -116,6 +119,7 @@ class Label(Widget):
 
     def __repr__(self):
         return "Label {0}, child of {1}".format(self.text, self.parent)
+
     def get_text(self):
         return self._text
 
@@ -143,11 +147,12 @@ class Label(Widget):
                 bg = self.hover_bg_color or bg
             if self.highlighted:
                 fg = self.highlight_color or fg
-                bg = self.highlight_bg_color or bg    
-                
+                bg = self.highlight_bg_color or bg
+
         self.draw_with(surface, fg, bg)
-    
+
     is_default = False
+
     def draw_with(self, surface, fg, bg=None):
         if bg:
             r = surface.get_rect()
@@ -166,7 +171,8 @@ class Label(Widget):
         for line in lines:
             if len(line):
                 size = font.size(line)
-                if size[0] == 0: continue
+                if size[0] == 0:
+                    continue
 
                 image = font.render(line, True, fg)
                 r = image.get_rect()
@@ -180,12 +186,16 @@ class Label(Widget):
                 surface.blit(image, r)
             y += dy
 
+
 class GLLabel(Label):
     pass
-class SmallLabel(Label): 
+
+
+class SmallLabel(Label):
     """Small text size. See theme.py"""
-    
+
 #---------------------------------------------------------------------------
+
 
 class ButtonBase(Control):
 
@@ -193,14 +203,14 @@ class ButtonBase(Control):
     action = None
     default_choice_color = ThemeProperty('default_choice_color')
     default_choice_bg_color = ThemeProperty('default_choice_bg_color')
-    
+
     def mouse_down(self, event):
         if self.enabled:
             self._highlighted = True
 
     def mouse_drag(self, event):
         state = event in self
-        if state <> self._highlighted:
+        if state != self._highlighted:
             self._highlighted = state
             self.invalidate()
 
@@ -213,6 +223,7 @@ class ButtonBase(Control):
 
 #---------------------------------------------------------------------------
 
+
 class Button(ButtonBase, Label):
 
     def __init__(self, text, action=None, enable=None, **kwds):
@@ -223,6 +234,7 @@ class Button(ButtonBase, Label):
         Label.__init__(self, text, **kwds)
 
 #---------------------------------------------------------------------------
+
 
 class Image(Widget):
     #  image   Image to display
@@ -264,10 +276,12 @@ class Image(Widget):
 
 #---------------------------------------------------------------------------
 
+
 class ImageButton(ButtonBase, Image):
     pass
 
 #---------------------------------------------------------------------------
+
 
 class ValueDisplay(Control, Label):
 
@@ -284,25 +298,30 @@ class ValueDisplay(Control, Label):
 #        buf = self.font.render(text, True, self.fg_color)
 #        frame = surf.get_rect()
 #        blit_in_rect(surf, buf, frame, self.align, self.margin)
-    
+
     def get_text(self):
         return self.format_value(self.value)
-        
+
     def format_value(self, value):
         if value is not None:
             return self.format % value
         else:
             return ""
 
-class SmallValueDisplay(ValueDisplay): pass
+
+class SmallValueDisplay(ValueDisplay):
+    pass
+
 
 class ValueButton(ButtonBase, ValueDisplay):
 
     align = 'c'
+
     def get_text(self):
         return self.format_value(self.value)
 
 #---------------------------------------------------------------------------
+
 
 class CheckControl(Control):
 
@@ -313,6 +332,7 @@ class CheckControl(Control):
         return self.value
 
 #---------------------------------------------------------------------------
+
 
 class CheckWidget(Widget):
 
@@ -325,7 +345,7 @@ class CheckWidget(Widget):
 
     def __init__(self, **kwds):
         Widget.__init__(self, Rect((0, 0), self.default_size), **kwds)
-            
+
     def draw(self, surf):
         if self.highlighted:
             r = self.get_margin_rect()
@@ -341,10 +361,12 @@ class CheckWidget(Widget):
 
 #---------------------------------------------------------------------------
 
+
 class CheckBox(CheckControl, CheckWidget):
     pass
 
 #---------------------------------------------------------------------------
+
 
 class RadioControl(Control):
 
@@ -357,6 +379,7 @@ class RadioControl(Control):
         self.value = self.setting
 
 #---------------------------------------------------------------------------
+
 
 class RadioButton(RadioControl, CheckWidget):
     pass

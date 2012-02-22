@@ -8,11 +8,12 @@ from pygame import draw, Rect
 from pygame.locals import *
 from albow.widget import Widget
 from albow.dialogs import Dialog, ask, alert
-from albow.controls import Label, Button 
+from albow.controls import Label, Button
 from albow.fields import TextField
 from albow.layout import Row, Column
 from albow.palette_view import PaletteView
 from albow.theme import ThemeProperty
+
 
 class DirPathView(Widget):
 
@@ -41,7 +42,7 @@ class FileListView(PaletteView):
         font = self.predict_font(kwds)
         h = font.get_linesize()
         d = 2 * self.predict(kwds, 'margin')
-        PaletteView.__init__(self, (width - d, h), 10, 1, scrolling = True, **kwds)
+        PaletteView.__init__(self, (width - d, h), 10, 1, scrolling=True, **kwds)
         self.client = client
         self.selection = None
         self.names = []
@@ -50,9 +51,11 @@ class FileListView(PaletteView):
         client = self.client
         dir = client.directory
         suffixes = client.suffixes
+
         def filter(name):
             path = os.path.join(dir, name)
             return os.path.isdir(path) or self.client.filter(path)
+
         try:
             names = [name for name in os.listdir(dir) if filter(name)]
                 #if not name.startswith(".") and filter(name)]
@@ -95,12 +98,12 @@ class FileDialog(Dialog):
     default_prompt = None
     up_button_text = ThemeProperty("up_button_text")
 
-    def __init__(self, prompt = None, suffixes = None, **kwds):
+    def __init__(self, prompt=None, suffixes=None, **kwds):
         Dialog.__init__(self, **kwds)
         label = None
         d = self.margin
         self.suffixes = suffixes or ("",)
-        up_button = Button(self.up_button_text, action = self.go_up)
+        up_button = Button(self.up_button_text, action=self.go_up)
         dir_box = DirPathView(self.box_width - up_button.width - 10, self)
         self.dir_box = dir_box
         top_row = Row([dir_box, up_button])
@@ -116,14 +119,14 @@ class FileDialog(Dialog):
             filename_box._enter_action = filename_box.enter_action
             filename_box.enter_action = self.enter_action
             self.filename_box = filename_box
-            ctrls.append(Column([label, filename_box], align = 'l', spacing = 0))
+            ctrls.append(Column([label, filename_box], align='l', spacing=0))
         else:
             if label:
                 ctrls.insert(0, label)
-        ok_button = Button(self.ok_label, action = self.ok, enable = self.ok_enable)
+        ok_button = Button(self.ok_label, action=self.ok, enable=self.ok_enable)
         self.ok_button = ok_button
-        cancel_button = Button("Cancel", action = self.cancel)
-        vbox = Column(ctrls, align = 'l', spacing = d)
+        cancel_button = Button("Cancel", action=self.cancel)
+        vbox = Column(ctrls, align='l', spacing=d)
         vbox.topleft = (d, d)
         y = vbox.bottom + d
         ok_button.topleft = (vbox.left, y)
@@ -149,7 +152,7 @@ class FileDialog(Dialog):
                 x = os.getcwdu()
                 break
             x = y
-        if self._directory <> x:
+        if self._directory != x:
             self._directory = x
             self.list_box.update()
             self.update()
@@ -235,7 +238,7 @@ class FileSaveDialog(FileDialog):
         path = self.pathname
         if os.path.exists(path):
             answer = ask("Replace existing '%s'?" % os.path.basename(path))
-            if answer <> "OK":
+            if answer != "OK":
                 return
         #FileDialog.ok(self)
         self.dismiss(True)
@@ -244,7 +247,7 @@ class FileSaveDialog(FileDialog):
         FileDialog.update(self)
 
     def ok_enable(self):
-        return self.filename_box.text <> ""
+        return self.filename_box.text != ""
 
 
 class FileOpenDialog(FileDialog):
@@ -291,8 +294,8 @@ class LookForFileDialog(FileOpenDialog):
         return name and os.path.basename(name) == self.target
 
 
-def request_new_filename(prompt = None, suffix = None, extra_suffixes = None,
-        directory = None, filename = None, pathname = None):
+def request_new_filename(prompt=None, suffix=None, extra_suffixes=None,
+        directory=None, filename=None, pathname=None):
     if pathname:
         directory, filename = os.path.split(pathname)
     if extra_suffixes:
@@ -301,7 +304,7 @@ def request_new_filename(prompt = None, suffix = None, extra_suffixes = None,
         suffixes = []
     if suffix:
         suffixes = [suffix] + suffixes
-    dlog = FileSaveDialog(prompt = prompt, suffixes = suffixes)
+    dlog = FileSaveDialog(prompt=prompt, suffixes=suffixes)
     if directory:
         dlog.directory = directory
     if filename:
@@ -311,8 +314,9 @@ def request_new_filename(prompt = None, suffix = None, extra_suffixes = None,
     else:
         return None
 
-def request_old_filename(suffixes = None, directory = None):
-    dlog = FileOpenDialog(suffixes = suffixes)
+
+def request_old_filename(suffixes=None, directory=None):
+    dlog = FileOpenDialog(suffixes=suffixes)
     if directory:
         dlog.directory = directory
     if dlog.present():
@@ -320,8 +324,9 @@ def request_old_filename(suffixes = None, directory = None):
     else:
         return None
 
-def look_for_file_or_directory(target, prompt = None, directory = None):
-    dlog = LookForFileDialog(target = target, prompt = prompt)
+
+def look_for_file_or_directory(target, prompt=None, directory=None):
+    dlog = LookForFileDialog(target=target, prompt=prompt)
     if directory:
         dlog.directory = directory
     if dlog.present():

@@ -12,6 +12,7 @@ from controls import Button
 
 #------------------------------------------------------------------------------
 
+
 class Page(object):
 
     def __init__(self, text_screen, heading, lines):
@@ -39,6 +40,7 @@ class Page(object):
 
 #------------------------------------------------------------------------------
 
+
 class TextScreen(Screen):
 
 #    bg_color = (0, 0, 0)
@@ -60,9 +62,9 @@ class TextScreen(Screen):
             page_size = maximum(page_size, page.size)
         self.pages = pages
         bf = self.button_font
-        b1 = Button("Prev Page", font = bf, action = self.prev_page)
-        b2 = Button("Menu", font = bf, action = self.go_back)
-        b3 = Button("Next Page", font = bf, action = self.next_page)
+        b1 = Button("Prev Page", font=bf, action=self.prev_page)
+        b2 = Button("Menu", font=bf, action=self.go_back)
+        b3 = Button("Next Page", font=bf, action=self.next_page)
         b = self.margin
         page_rect = Rect((b, b), page_size)
         gap = (0, 18)
@@ -70,7 +72,7 @@ class TextScreen(Screen):
         b2.midtop = add(page_rect.midbottom, gap)
         b3.topright = add(page_rect.bottomright, gap)
         Screen.__init__(self, shell, **kwds)
-        self.size =  add(b3.bottomright, (b, b))
+        self.size = add(b3.bottomright, (b, b))
         self.add(b1)
         self.add(b2)
         self.add(b3)
@@ -103,4 +105,3 @@ class TextScreen(Screen):
 
     def go_back(self):
         self.parent.show_menu()
-

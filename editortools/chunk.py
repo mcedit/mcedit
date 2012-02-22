@@ -16,6 +16,7 @@ from toolbasics import *
 from pymclevel.infiniteworld import MCServerChunkGenerator
 from albow.dialogs import Dialog
 
+
 class ChunkToolPanel(Panel):
 
     def __init__(self, tool, *a, **kw):
@@ -37,7 +38,7 @@ class ChunkToolPanel(Panel):
         extractButton.highlight_color = (255, 255, 255)
 
         deselectButton = Button("Deselect",
-            tooltipText = None,
+            tooltipText=None,
             action=tool.editor.deselect,
         )
 
@@ -98,44 +99,45 @@ class ChunkTool(EditorTool):
 
     _selectedChunks = None
     _displayList = None
+
     def drawToolMarkers(self):
         if self._displayList is None:
             self._displayList = DisplayList(self._drawToolMarkers)
-            
+
         #print len(self._selectedChunks) if self._selectedChunks else None, "!=", len(self.editor.selectedChunks)
-        
-        if self._selectedChunks != self.editor.selectedChunks or True: #xxx
+
+        if self._selectedChunks != self.editor.selectedChunks or True:  # xxx
             self._selectedChunks = set(self.editor.selectedChunks)
             self._displayList.invalidate()
-        
+
         self._displayList.call()
-        
+
     def _drawToolMarkers(self):
-        
+
         lines = (
-            ( (-1, 0), (0, 0, 0, 1), [] ),
-            ( (1, 0),  (1, 0, 1, 1), [] ),
-            ( (0, -1), (0, 0, 1, 0), [] ),
-            ( (0, 1),  (0, 1, 1, 1), [] ),
+            ((-1, 0), (0, 0, 0, 1), []),
+            ((1, 0),  (1, 0, 1, 1), []),
+            ((0, -1), (0, 0, 1, 0), []),
+            ((0, 1),  (0, 1, 1, 1), []),
         )
         for ch in self._selectedChunks:
             cx, cz = ch
             for (dx, dz), points, positions in lines:
-                n = (cx+dx, cz+dz)
+                n = (cx + dx, cz + dz)
                 if n not in self._selectedChunks:
                     positions.append([ch])
-        
-        
+
         color = self.editor.selectionTool.selectionColor + (0.3, )
         glColor(*color)
         with gl.glEnable(GL_BLEND):
-        
+
             import renderer
             sizedChunks = renderer.chunkMarkers(self._selectedChunks)
             for size, chunks in sizedChunks.iteritems():
-                if not len(chunks): continue
+                if not len(chunks):
+                    continue
                 chunks = array(chunks, dtype='float32')
-    
+
                 chunkPosition = zeros(shape=(chunks.shape[0], 4, 3), dtype='float32')
                 chunkPosition[..., (0, 2)] = array(((0, 0), (0, 1), (1, 1), (1, 0)), dtype='float32')
                 chunkPosition[..., (0, 2)] *= size
@@ -145,9 +147,10 @@ class ChunkTool(EditorTool):
                 glVertexPointer(3, GL_FLOAT, 0, chunkPosition.ravel())
                 #chunkPosition *= 8
                 glDrawArrays(GL_QUADS, 0, len(chunkPosition) * 4)
-                
+
         for d, points, positions in lines:
-            if 0 == len(positions): continue
+            if 0 == len(positions):
+                continue
             vertexArray = zeros((len(positions), 4, 3), dtype='float32')
             vertexArray[..., [0, 2]] = positions
             vertexArray.shape = len(positions), 2, 2, 3
@@ -164,7 +167,7 @@ class ChunkTool(EditorTool):
             vertexArray *= 16
 
             vertexArray[..., 1, :, 1] = self.editor.level.Height
-            
+
             glVertexPointer(3, GL_FLOAT, 0, vertexArray)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             glDrawArrays(GL_QUADS, 0, len(positions) * 4)
@@ -173,20 +176,19 @@ class ChunkTool(EditorTool):
                 glDepthMask(False)
                 glDrawArrays(GL_QUADS, 0, len(positions) * 4)
                 glDepthMask(True)
+
     @property
     def worldTooltipText(self):
         box = self.editor.selectionTool.selectionBoxInProgress()
         if box:
             box = box.chunkBox(self.editor.level)
-            l, w= box.length // 16, box.width // 16
-            return "%s x %s chunks" % (l,w)
-
-
+            l, w = box.length // 16, box.width // 16
+            return "%s x %s chunks" % (l, w)
 
     def toolSelected(self):
 
         self.editor.selectionToChunks()
-            
+
         self.panel = ChunkToolPanel(self)
 
         self.panel.centery = self.editor.centery
@@ -208,16 +210,19 @@ class ChunkTool(EditorTool):
                 filetype='Folder\0*.*\0\0',
                 suffix="",
                 )
-        if not folder: return
+        if not folder:
+            return
 
         self.editor.level.extractChunksInBox(self.selectionBox(), folder)
 
     @alertException
-    def destroyChunks(self, chunks = None):
-        if "No" == ask("Really delete these chunks? This cannot be undone.", ("Yes", "No")): return
+    def destroyChunks(self, chunks=None):
+        if "No" == ask("Really delete these chunks? This cannot be undone.", ("Yes", "No")):
+            return
         if chunks is None:
             chunks = self.selectedChunks()
         chunks = list(chunks)
+
         def _destroyChunks():
             i = 0
             chunkCount = len(chunks)
@@ -240,7 +245,8 @@ class ChunkTool(EditorTool):
 
     @alertException
     def pruneChunks(self):
-        if "No" == ask("Save these chunks and remove the rest? This cannot be undone.", ("Yes", "No")): return
+        if "No" == ask("Save these chunks and remove the rest? This cannot be undone.", ("Yes", "No")):
+            return
         self.editor.saveFile()
 
         def _pruneChunks():
@@ -262,14 +268,13 @@ class ChunkTool(EditorTool):
         self.editor.discardAllChunks()
 
         #self.editor.addUnsavedEdit()
-    
+
     @alertException
     def relightChunks(self):
 
         def _relightChunks():
             for i in self.editor.level.generateLightsIter(self.selectedChunks()):
                 yield i
-
 
         with setWindowCaption("RELIGHTING - "):
 
@@ -287,18 +292,19 @@ class ChunkTool(EditorTool):
         col.append(Row([Label("")]))
         col.append(label)
         col = Column(col)
-        if Dialog(client=col, responses=["OK", "Cancel"]).present() == "Cancel": return
+        if Dialog(client=col, responses=["OK", "Cancel"]).present() == "Cancel":
+            return
         chunks = self.selectedChunks()
-        
+
         createChunks = panel.generate(self.editor.level, chunks)
-        
+
         try:
             with setWindowCaption("CREATING - "):
                 showProgress("Creating {0} chunks...".format(len(chunks)), createChunks, cancel=True)
         finally:
             self.editor.renderer.invalidateChunkMarkers()
             self.editor.renderer.loadNearbyChunks()
-    
+
     @alertException
     def repopChunks(self):
         for cpos in self.selectedChunks():
@@ -308,7 +314,7 @@ class ChunkTool(EditorTool):
             except ChunkNotPresent:
                 continue
         self.editor.renderer.invalidateChunks(self.selectedChunks(), layers=["TerrainPopulated"])
-        
+
     @alertException
     def dontRepopChunks(self):
         for cpos in self.selectedChunks():
@@ -321,32 +327,32 @@ class ChunkTool(EditorTool):
 
     def mouseDown(self, *args):
         return self.editor.selectionTool.mouseDown(*args)
+
     def mouseUp(self, evt, *args):
         self.editor.selectionTool.mouseUp(evt, *args)
+
 
 def GeneratorPanel():
     panel = Widget()
     panel.chunkHeight = 64
     panel.grass = True
     panel.simulate = False
-    
+
     jarStorage = MCServerChunkGenerator.getDefaultJarStorage()
     if jarStorage:
         jarStorage.reloadVersions()
-    
-    
+
     generatorChoice = ChoiceButton(["Minecraft Server", "Flatland"])
     panel.generatorChoice = generatorChoice
     col = [Row((Label("Generator:"), generatorChoice))]
     noVersionsRow = Label("Will automatically download and use the latest version")
     versionContainer = Widget()
-    
+
     heightinput = IntInputRow("Height: ", ref=AttrRef(panel, "chunkHeight"), min=0, max=128)
     grassinput = CheckBoxLabel("Grass", ref=AttrRef(panel, "grass"))
-        
-    
+
     flatPanel = Column([heightinput, grassinput], align="l")
-    
+
     def generatorChoiceChanged():
         serverPanel.visible = generatorChoice.selectedChoice == "Minecraft Server"
         flatPanel.visible = not serverPanel.visible
@@ -361,10 +367,11 @@ def GeneratorPanel():
                 yield
                 jarStorage.downloadCurrentServer()
                 yield
+
             showProgress("Checking for server updates...", _check())
             versionChoice.choices = sorted(jarStorage.versions, reverse=True)
             versionChoice.choiceIndex = 0
-            
+
         versionChoice = ChoiceButton(sorted(jarStorage.versions, reverse=True))
         versionChoiceRow = (Row((
             Label("Server version:"),
@@ -375,52 +382,52 @@ def GeneratorPanel():
         versionContainer.add(versionChoiceRow)
     else:
         versionContainer.add(noVersionsRow)
-        
+
     versionContainer.shrink_wrap()
-    
-    
+
     menu = Menu("Advanced", [
-        ("Open Server Storage", "revealStorage"), 
-        ("Reveal World Cache", "revealCache"), 
+        ("Open Server Storage", "revealStorage"),
+        ("Reveal World Cache", "revealCache"),
         ("Delete World Cache", "clearCache")
         ])
-    
+
     def presentMenu():
         i = menu.present(advancedButton.parent, advancedButton.topleft)
         if i != -1:
             (revealStorage, revealCache, clearCache)[i]()
-        
+
     advancedButton = Button("Advanced...", presentMenu)
+
     @alertException
     def revealStorage():
         mcplatform.platform_open(jarStorage.cacheDir)
-    
+
     @alertException
     def revealCache():
         mcplatform.platform_open(MCServerChunkGenerator.worldCacheDir)
-    
+
     #revealCacheRow = Row((Label("Minecraft Server Storage: "), Button("Open Folder", action=revealCache, tooltipText="Click me to install your own minecraft_server.jar if you have any.")))
-    
+
     @alertException
     def clearCache():
         MCServerChunkGenerator.clearWorldCache()
-    simRow = CheckBoxLabel("Simulate world", ref=AttrRef(panel, "simulate"), tooltipText = "Simulate the world for a few seconds after generating it. Reduces the save file size by processing all of the TileTicks.")
-    
-        
+
+    simRow = CheckBoxLabel("Simulate world", ref=AttrRef(panel, "simulate"), tooltipText="Simulate the world for a few seconds after generating it. Reduces the save file size by processing all of the TileTicks.")
+
     simRow = Row((simRow, advancedButton), anchor="lrh")
     #deleteCacheRow = Row((Label("Delete Temporary World File Cache?"), Button("Delete Cache!", action=clearCache, tooltipText="Click me if you think your chunks are stale.")))
-    
+
     serverPanel = Column([versionContainer, simRow, ], align="l")
-    
+
     col.append(serverPanel)
     col = Column(col, align="l")
     col.add(flatPanel)
     flatPanel.topleft = serverPanel.topleft
     flatPanel.visible = False
     panel.add(col)
-    
+
     panel.shrink_wrap()
-    
+
     def generate(level, arg):
         useServer = generatorChoice.selectedChoice == "Minecraft Server"
 
@@ -460,14 +467,14 @@ def GeneratorPanel():
                     maxskylight = 15
 
                 for i, (cx, cz) in enumerate(chunks):
-                    
+
                     yield i, len(chunks)
                     #surface = blockInput.blockInfo
-            
+
                     #for cx, cz in :
                     try:
                         level.createChunk(cx, cz)
-                    except ValueError, e: #chunk already present;
+                    except ValueError, e:  # chunk already present
                         print e
                         continue
                     else:
@@ -475,28 +482,25 @@ def GeneratorPanel():
                         if height > 0:
                             stoneHeight = max(0, height - 5)
                             grassHeight = max(0, height - 1)
-        
+
                             ch.Blocks[:, :, grassHeight] = grass
                             ch.Blocks[:, :, stoneHeight:grassHeight] = alphaMaterials.Dirt.ID
                             ch.Blocks[:, :, :stoneHeight] = alphaMaterials.Stone.ID
-        
-        
+
                             ch.Blocks[:, :, 0] = alphaMaterials.Bedrock.ID
                             ch.SkyLight[:, :, height:] = maxskylight
                             if maxskylight:
                                 ch.HeightMap[:] = height
-                            
+
                         else:
                             ch.SkyLight[:] = maxskylight
-                            
+
                         ch.needsLighting = False
                         ch.dirty = True
                         ch.save()
                         ch.unload()
-                
+
         return _createChunks()
-        
 
     panel.generate = generate
     return panel
-    

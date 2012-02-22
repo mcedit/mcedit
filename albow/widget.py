@@ -19,6 +19,7 @@ debug_tab = True
 root_widget = None
 current_cursor = None
 
+
 def overridable_property(name, doc=None):
     """Creates a property which calls methods get_xxx and set_xxx of
     the underlying object to get and set the property value, so that
@@ -32,19 +33,23 @@ def overridable_property(name, doc=None):
         None,
         doc)
 
+
 def rect_property(name):
     def get(self):
         return getattr(self._rect, name)
+
     def set(self, value):
         r = self._rect
         old_size = r.size
         setattr(r, name, value)
         new_size = r.size
-        if old_size <> new_size:
+        if old_size != new_size:
             self._resized(old_size)
     return property(get, set)
 
 #noinspection PyPropertyAccess
+
+
 class Widget(object):
     #  rect            Rect       bounds in parent's coordinates
     #  parent          Widget     containing widget
@@ -120,13 +125,13 @@ class Widget(object):
 #        else:
 #            chars += 't'
 #        return chars
-#    
+#
 #    def set_anchor(self, chars):
 #        self.hmove = 'r' in chars and not 'l' in chars
 #        self.vmove = 'b' in chars and not 't' in chars
 #        self.hstretch = 'r' in chars and 'l' in chars
 #        self.vstretch = 'b' in chars and 't' in chars
-#    
+#
 #    anchor = property(get_anchor, set_anchor)
 
     resizing_axes = {'h': 'lr', 'v': 'tb'}
@@ -163,33 +168,36 @@ class Widget(object):
         resize = False
         anchor = self.anchor
         if dw:
-            factors = [1, 1, 1] #left, width, right
-            if 'r' in anchor: factors[2] = 0;
-            if 'w' in anchor: factors[1] = 0;
-            if 'l' in anchor: factors[0] = 0;
+            factors = [1, 1, 1]  # left, width, right
+            if 'r' in anchor:
+                factors[2] = 0
+            if 'w' in anchor:
+                factors[1] = 0
+            if 'l' in anchor:
+                factors[0] = 0
             if any(factors):
                 resize = factors[1]
                 move = factors[0] or factors[2]
                 #print "lwr", factors
                 left += factors[0] * dw / sum(factors)
                 width += factors[1] * dw / sum(factors)
-                #left = (left + width) + factors[2] * dw / sum(factors) - width;
-
+                #left = (left + width) + factors[2] * dw / sum(factors) - width
 
         if dh:
-            factors = [1, 1, 1] #bottom, height, top
-            if 't' in anchor: factors[2] = 0;
-            if 'h' in anchor: factors[1] = 0;
-            if 'b' in anchor: factors[0] = 0;
+            factors = [1, 1, 1]  # bottom, height, top
+            if 't' in anchor:
+                factors[2] = 0
+            if 'h' in anchor:
+                factors[1] = 0
+            if 'b' in anchor:
+                factors[0] = 0
             if any(factors):
                 resize = factors[1]
                 move = factors[0] or factors[2]
                 #print "bht", factors
                 top += factors[2] * dh / sum(factors)
                 height += factors[1] * dh / sum(factors)
-                #top = (top + height) + factors[0] * dh / sum(factors) - height;
-
-
+                #top = (top + height) + factors[0] * dh / sum(factors) - height
 
         if resize:
             if debug_resize:
@@ -268,14 +276,12 @@ class Widget(object):
             print "Adding idle handler for ", widget
             self.get_root().add_idle_handler(widget)
 
-        
-
     def _remove(self, widget):
         if hasattr(widget, "idleevent"):
             print "Removing idle handler for ", widget
             self.get_root().remove_idle_handler(widget)
         self.subwidgets.remove(widget)
-            
+
         if self.focus_switch is widget:
             self.focus_switch = None
 
@@ -346,13 +352,13 @@ class Widget(object):
         self.augment_mouse_event(event)
         self.call_handler(name, event)
         self.setup_cursor(event)
-    
+
     def mouse_down(self, event):
         self.call_parent_handler("mouse_down", event)
-        
+
     def mouse_up(self, event):
         self.call_parent_handler("mouse_up", event)
-        
+
     def augment_mouse_event(self, event):
         event.dict['local'] = self.global_to_local(event.pos)
 
@@ -473,11 +479,11 @@ class Widget(object):
                 return True
             widget = widget.parent
         return False
-    
+
     @property
     def is_hover(self):
         return self.get_root().hover_widget is self
-        
+
     def present(self, centered=True):
         #print "Widget: presenting with rect", self.rect
         root = self.get_root()
@@ -629,7 +635,7 @@ class Widget(object):
 #            if debug_tab: print "...tabbing to next" ###
 #            self.tab_to_next(start or self)
 #        if debug_tab: print "Exit Widget.tab_to_first:", self ###
-#    
+#
 #    def tab_to_next(self, start = None):
 #        if debug_tab:
 #            print "Enter Widget.tab_to_next:", self ###
@@ -642,7 +648,7 @@ class Widget(object):
 #            if debug_tab: print "...tabbing to next in parent" ###
 #            self.tab_to_next_in_parent(start)
 #        if debug_tab: print "Exit Widget.tab_to_next:", self ###
-#    
+#
 #    def tab_to_next_in_parent(self, start):
 #        if debug_tab:
 #            print "Enter Widget.tab_to_next_in_parent:", self ###
@@ -656,7 +662,7 @@ class Widget(object):
 #                if debug_tab: print "...wrapping back to first" ###
 #                self.tab_to_first(start)
 #        if debug_tab: print "Exit Widget.tab_to_next_in_parent:", self ###
-#    
+#
 #    def tab_to_next_after(self, last, start):
 #        if debug_tab:
 #            print "Enter Widget.tab_to_next_after:", self, last ###
@@ -713,7 +719,8 @@ class Widget(object):
         self._is_gl_container = x
 
     def gl_draw_all(self, root, offset):
-        if not self.visible: return;
+        if not self.visible:
+            return
         from OpenGL import GL, GLU
         rect = self.rect.move(offset)
         if self.is_gl_container:

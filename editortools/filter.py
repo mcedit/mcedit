@@ -14,6 +14,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from toolbasics import *
 from albow.dialogs import wrapped_label
 
+
 def alertFilterException(func):
     def _func(*args, **kw):
         try:
@@ -24,8 +25,10 @@ def alertFilterException(func):
 
     return _func
 
+
 class FilterModuleOptions(Widget):
     is_gl_container = True
+
     def __init__(self, tool, module, *args, **kw):
         Widget.__init__(self, *args, **kw)
         rows = []
@@ -77,7 +80,7 @@ class FilterModuleOptions(Widget):
                     rows.append(wrapped_label(optionName, 50))
 
                 else:
-                    raise ValueError, ("Unknown option type", optionType)
+                    raise ValueError(("Unknown option type", optionType))
 
             height = sum(r.height for r in rows)
 
@@ -91,7 +94,6 @@ class FilterModuleOptions(Widget):
                 cols.append(Column(rows[:i]))
                 rows = rows[i:]
             #cols.append(Column(rows))
-
 
             if len(rows):
                 cols.append(Column(rows))
@@ -109,7 +111,8 @@ class FilterModuleOptions(Widget):
             ftype = IntField
 
         if min == max:
-            min = None; max = None
+            min = None
+            max = None
 
         field = ftype(value=val, width=100, min=min, max=max)
         self.optionDict[optionName] = AttrRef(field, 'value')
@@ -126,6 +129,7 @@ class FilterModuleOptions(Widget):
         for k in val:
             if k in self.optionDict:
                 self.optionDict[k].set(val[k])
+
 
 class FilterToolPanel(Panel):
     def __init__(self, tool):
@@ -164,7 +168,7 @@ class FilterToolPanel(Panel):
                 self.selectedFilterName = tool.filterNames[0]
 
             if len(tool.filterNames) == 0:
-                raise ValueError, "No filters loaded!"
+                raise ValueError("No filters loaded!")
 
         self.filterSelect = ChoiceButton(tool.filterNames, choose=self.filterChanged)
         self.filterSelect.selectedChoice = self.selectedFilterName
@@ -191,10 +195,10 @@ class FilterToolPanel(Panel):
         self.reload()
 
     filterOptionsPanel = None
+
     def saveOptions(self):
         if self.filterOptionsPanel:
             self.savedOptions[self.selectedFilterName] = self.filterOptionsPanel.options
-
 
 
 class FilterOperation(Operation):
@@ -221,7 +225,9 @@ class FilterOperation(Operation):
             self.level.removeTileEntitiesInBox(self.box)
             self.level.copyBlocksFrom(self.undoSchematic, BoundingBox((0, 0, 0), self.box.size), self.box.origin)
 
-    def dirtyBox(self): return self.box
+    def dirtyBox(self):
+        return self.box
+
 
 class FilterTool(EditorTool):
     tooltipText = "Filter"
@@ -263,15 +269,13 @@ class FilterTool(EditorTool):
         if self.panel.parent:
             self.panel.parent.remove(self.panel)
 
-
     def reloadFilters(self):
         filterDir = mcplatform.filtersDir
         filterFiles = os.listdir(filterDir)
-        filterPyfiles = filter(lambda x:x.endswith(".py"), filterFiles)
-
+        filterPyfiles = filter(lambda x: x.endswith(".py"), filterFiles)
 
         filterModules = (__import__(x[:-3]) for x in filterPyfiles)
-        filterModules = filter(lambda module:hasattr(module, "perform"), filterModules)
+        filterModules = filter(lambda module: hasattr(module, "perform"), filterModules)
 
         self.filterModules = dict((self.moduleDisplayName(x), x) for x in filterModules)
         [reload(m) for m in self.filterModules.itervalues()]
@@ -299,4 +303,3 @@ class FilterTool(EditorTool):
             self.editor.addUnsavedEdit()
 
             self.editor.invalidateBox(self.selectionBox())
-

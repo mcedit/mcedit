@@ -23,6 +23,7 @@ from OpenGL.GL import glEnable, glColor, glVertexPointer, glDrawArrays, glDisabl
 from numpy import array
 from pygame import mouse
 
+
 class GLBackground(GLOrtho):
     margin = 8
     bg_color = (0.0, 0.0, 0.0, 0.6)
@@ -39,6 +40,7 @@ class GLBackground(GLOrtho):
         glVertexPointer(2, GL_FLOAT, 0, array([-1, -1, -1, 1, 1, 1, 1, -1], dtype='float32'))
         glDrawArrays(GL_QUADS, 0, 4)
         glDisable(GL_BLEND)
+
 
 class Panel(GLBackground):
     pass

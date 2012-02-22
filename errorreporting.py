@@ -24,6 +24,7 @@ from datetime import datetime
 import os
 import httplib
 
+
 def extract_tb(tb, limit=None):
     """Return list of up to limit pre-processed entries from traceback.
 
@@ -53,8 +54,10 @@ def extract_tb(tb, limit=None):
             selfstr = " "
         traceback.linecache.checkcache(filename)
         line = traceback.linecache.getline(filename, lineno, f.f_globals)
-        if line: line = line.strip()
-        else: line = None
+        if line:
+            line = line.strip()
+        else:
+            line = None
         list.append((filename, lineno, name, line, selfstr))
         tb = tb.tb_next
         n = n + 1
@@ -82,19 +85,21 @@ def format_list(extracted_list):
 traceback.extract_tb = extract_tb
 traceback.format_list = format_list
 
+
 def clamp(num, low, high):
     return min(high, max(low, num))
 
+
 def releaseInfo():
     import release
-    
+
     uname = platform.uname()
     uname = list(uname)
     uname[1] = hex(hash(uname[1]))
-    
+
     info = """Release: MCEdit-{0}\n{1}
 Platform: {2}, Name: {3}, Version{4}, Arch: {5}
-Platform:{6}, Processor: {7}, 
+Platform:{6}, Processor: {7},
 uname: {8}
 """.format(release.release, datetime.now(), sys.platform, os.name, platform.version(), platform.architecture(), platform.platform(), platform.processor(), uname)
     try:
@@ -108,20 +113,18 @@ uname: {8}
         return info
 
 
-
 def reportCrash(crashlog):
     try:
         import mcplatform
         parentDir = mcplatform.parentDir
         minecraftDir = mcplatform.minecraftDir
-        
-        
+
         if hasattr(sys, 'frozen') or sys.platform != "win32":
             crashlog = crashlog.replace(parentDir, "[MCEdit folder]")
             crashlog = crashlog.replace(minecraftDir, "[Minecraft folder]")
     except Exception, e:
         print repr(e), "while scrubbing user directories from crash log!"
-        
+
     releaseString = releaseInfo()
     crashlog = releaseString + crashlog
     print crashlog
