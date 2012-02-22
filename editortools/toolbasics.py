@@ -99,7 +99,7 @@ class Operation(object):
 
     def extractUndoSchematicFrom(self, level, box):
         if box.volume > 131072:
-            sch = showProgress("Recording undo...", level.extractAnySchematicIter(box), cancel = True)
+            sch = showProgress("Recording undo...", level.extractAnySchematicIter(box), cancel=True)
         else:
             sch = level.extractAnySchematic(box)
 
@@ -388,7 +388,7 @@ class BlockButton(ButtonBase, Panel):
         return "{0}".format(self.blockInfo.name)
 
     def action(self):
-        blockPicker = BlockPicker(self.blockInfo, self.materials, allowWildcards = self.allowWildcards)
+        blockPicker = BlockPicker(self.blockInfo, self.materials, allowWildcards=self.allowWildcards)
         if blockPicker.present():
             self.blockInfo = blockPicker.blockInfo
 
@@ -889,7 +889,7 @@ class EditorTool(object):
             self.panel.parent.remove(self.panel)
             self.panel = None
 
-    def performWithRetry(self, op, recordUndo = True):
+    def performWithRetry(self, op, recordUndo=True):
         try:
             op.perform(recordUndo)
         except MemoryError:
