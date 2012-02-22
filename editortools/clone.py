@@ -1013,7 +1013,7 @@ class ConstructionTool(CloneTool):
 #        super(ConstructionTool, self).cancel(self)
 #
 
-    def createTestBoard(self, anyBlock = True):
+    def createTestBoard(self, anyBlock=True):
         if anyBlock:
             allBlocks = [self.editor.level.materials[a, b] for a in range(256) for b in range(16)]
             blockWidth = 64
