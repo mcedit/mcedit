@@ -121,7 +121,7 @@ class Operation(object):
     undoSchematic = None
 
     def dirtyBox(self):
-        """ The region modified by the operation.  
+        """ The region modified by the operation.
         Return None to indicate no blocks were changed.
         """
         return None
@@ -209,10 +209,10 @@ class BlockThumbView(Widget):
 
     thumb = None
     _blockInfo = None
-    @property    
+    @property
     def blockInfo(self):
         return self._blockInfo
-    @blockInfo.setter    
+    @blockInfo.setter
     def blockInfo(self, b):
         if self._blockInfo != b:
             if self.thumb: self.thumb.set_parent(None)
@@ -785,7 +785,7 @@ class EditorTool(object):
                 facenormal[d] = 1
                 cameraBehind = cp[d] - box.maximum[d] < 0
 
-            if dot(facenormal, cv) > 0 or cameraBehind: 
+            if dot(facenormal, cv) > 0 or cameraBehind:
                 #the face adjacent to the clicked edge faces away from the cam
                 return distances[max(distances.iterkeys())]
 
@@ -805,7 +805,7 @@ class EditorTool(object):
         return None
 
     def selectionBoxForCorners(self, p1, p2):
-        ''' considers p1,p2 as the marked corners of a selection. 
+        ''' considers p1,p2 as the marked corners of a selection.
         returns a BoundingBox containing all the blocks within.'''
 
         if self.editor.level is None:
@@ -857,7 +857,7 @@ class EditorTool(object):
         return c.size
 
     @property
-    def maxBlocks(self): 
+    def maxBlocks(self):
         from leveleditor import Settings
         return Settings.blockBuffer.get() / 2 #assume block buffer in megabytes
 

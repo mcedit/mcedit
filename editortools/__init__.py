@@ -22,7 +22,7 @@ from clone import CloneTool, ConstructionTool
 from filter import FilterTool
 from player import PlayerPositionTool, PlayerSpawnPositionTool
 from chunk import ChunkTool
-"""   
+"""
 class CameraTool(EditorTool):
     snapshotCounter = 0;
     def toolSelected(self, *args):
@@ -34,7 +34,7 @@ class CameraTool(EditorTool):
 
         try:
             (filename, customfilter, flags) = win32gui.GetSaveFileNameW(
-                hwndOwner = display.get_wm_info()['window'],                                                       
+                hwndOwner = display.get_wm_info()['window'],
                 InitialDir='My Documents',
                 Flags=win32con.OFN_EXPLORER | win32con.OFN_OVERWRITEPROMPT,
                 File='.'.join(self.editor.level.filename.split('.')[:-1]) + '-Snapshot%04d'% self.snapshotCounter,

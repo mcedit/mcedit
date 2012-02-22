@@ -84,9 +84,9 @@ class FillToolPanel(Panel):
 
         col = (self.fillWithLabel,
                 self.blockButton,
-                #swapRow, 
+                #swapRow,
                 replaceLabel,
-                #self.replaceBlockButton, 
+                #self.replaceBlockButton,
                 self.fillButton)
 
 

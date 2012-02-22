@@ -240,7 +240,7 @@ class SelectionTool(EditorTool):
 
     nudgePanel = None
 
- 
+
     def __init__(self, editor):
         self.editor = editor
         editor.selectionTool = self;
@@ -643,7 +643,7 @@ class SelectionTool(EditorTool):
 
 #requires a selection
     def dragResizePoint(self):
-        #returns a point representing the intersection between the mouse ray 
+        #returns a point representing the intersection between the mouse ray
         #and an imaginary plane perpendicular to the dragged face
 
         pos = self.editor.mainViewport.cameraPosition
@@ -667,17 +667,17 @@ class SelectionTool(EditorTool):
 #        glBegin(GL_POINTS)
 #        glVertex3f(*point)
 #        glEnd()
-#        
+#
 
 #        facebox = BoundingBox(box.origin, box.size)
 #        facebox.origin[dim] = self.dragResizePosition
 #        facebox.size[dim] = 0
 #        glEnable(GL_BLEND)
-#        
+#
 #        drawFace(facebox, dim * 2)
-#        
+#
 #        glDisable(GL_BLEND)
-#        
+#
         side = self.dragResizeFace & 1
         dragdim = self.dragResizeFace >> 1
         box = self.selectionBox()

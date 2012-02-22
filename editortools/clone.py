@@ -516,41 +516,41 @@ class CloneTool(EditorTool):
 
         self.level = newlevel
         self.setupPreview()
-#        
+#
 #        """
 #        use array broadcasting to fill in the extra dimensions with copies of the
-#        existing ones, then later change the shape to "fold" the extras back 
+#        existing ones, then later change the shape to "fold" the extras back
 #        into the original three
 #        """
 #        #if factor > 1.0:
 #        sourceSlice = slice(0, 1)
 #        destSlice = slice(None)
-#        
+#
 #        #if factor < 1.0:
-#            
+#
 #        destfactor = factor
 #        srcfactor = 1
 #        if factor < 1.0:
 #            destfactor = 1.0
 #            srcfactor = 1.0 / factor
-#            
+#
 #        intershape = newshape[0]/destfactor, destfactor, newshape[1]/destfactor, destfactor, newshape[2]/destfactor, destfactor
 #        srcshape = roundedShape[0]/srcfactor, srcfactor, roundedShape[1]/srcfactor, srcfactor, roundedShape[2]/srcfactor, srcfactor
-#        
+#
 #        newlevel = MCSchematic(xyzshape)
 #        def copyArray(dest, src):
 #            dest.shape = intershape
 #            src.shape = srcshape
-#            
+#
 #            dest[:, destSlice, :, destSlice, :, destSlice] = src[:, sourceSlice, :, sourceSlice, :, sourceSlice]
 #            dest.shape = newshape
 #            src.shape = roundedShape
-#            
+#
 #        copyArray(newlevel.Blocks, blocks)
 #        copyArray(newlevel.Data, data)
-#        
+#
 #        newlevel.cloneToolScaleFactor = newFactor
-#        
+#
 
 
     @alertException
@@ -601,7 +601,7 @@ class CloneTool(EditorTool):
     #===========================================================================
     # def getSelectionRanges(self):
     #    return self.editor.selectionTool.selectionBox();
-    #    
+    #
     #===========================================================================
     def getBlockAt(self):
         return None #use level's blockAt
@@ -810,7 +810,7 @@ class CloneTool(EditorTool):
         dim = self.draggingFace >> 1
 #        if key.get_mods() & KMOD_SHIFT:
 #            dim = self.findBestTrackingPlane(self.draggingFace)
-#        
+#
         distance = self.draggingStartPoint[dim] - pos[dim]
         distance += self.draggingY
 
@@ -1006,7 +1006,7 @@ class ConstructionTool(CloneTool):
 #        print "Cancelled Clone"
 #        self.level = None
 #        super(ConstructionTool, self).cancel(self)
-#    
+#
 
     def createTestBoard(self, anyBlock = True):
         if anyBlock:

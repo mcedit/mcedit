@@ -380,8 +380,8 @@ def GeneratorPanel():
 
 
     menu = Menu("Advanced", [
-        ("Open Server Storage", "revealStorage"), 
-        ("Reveal World Cache", "revealCache"), 
+        ("Open Server Storage", "revealStorage"),
+        ("Reveal World Cache", "revealCache"),
         ("Delete World Cache", "clearCache")
         ])
 

@@ -162,7 +162,7 @@ class Modes:
                 worldPoint = [p + o for p, o in zip(point, dirtyBox.origin)]
                 blocks = chunk.Blocks[slices]
                 data = chunk.Data[slices]
-                #box = BoundingBox(worldPoint, 
+                #box = BoundingBox(worldPoint,
                 box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1])) #xzy reorder
 
                 brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
@@ -193,7 +193,7 @@ class Modes:
 
         def createOptions(self, panel, tool):
             col = [
-                panel.modeStyleGrid, 
+                panel.modeStyleGrid,
                 panel.brushSizeRows,
             ]
             col.append(IntInputRow("Strength: ", ref=AttrRef(tool, 'erosionStrength'), min=1, max=20, tooltipText="Number of times to apply erosion. Larger numbers are slower."))
@@ -338,7 +338,7 @@ class Modes:
             tool.centerx = -(tool.level.Width / 2)
             tool.centerz = -(tool.level.Length / 2)
 
-            cx, cy, cz = [IntInputRow(c, ref=AttrRef(tool, "center"+c), max=a, min=-a) 
+            cx, cy, cz = [IntInputRow(c, ref=AttrRef(tool, "center"+c), max=a, min=-a)
                           for a, c in zip(tool.level.size, "xyz")]
             centerRow = Row((cx, cy, cz))
 
@@ -384,11 +384,11 @@ class BrushOperation(Operation):
     brushStyles = ["Round", "Square", "Diamond"]
     #brushModeNames = ["Fill", "Flood Fill", "Replace", "Erode", "Topsoil", "Paste"] #"Smooth", "Flatten", "Raise", "Lower", "Build", "Erode", "Evert"];
     brushModeClasses = [
-        Modes.Fill, 
-        Modes.FloodFill, 
-        Modes.Replace, 
-        Modes.Erode, 
-        Modes.Topsoil, 
+        Modes.Fill,
+        Modes.FloodFill,
+        Modes.Replace,
+        Modes.Erode,
+        Modes.Topsoil,
         Modes.Paste
     ]
     @property
@@ -552,9 +552,9 @@ class BrushPanel(Panel):
         self.brushStyleRow = Row((Label("Brush:"), self.brushStyleButton))
 
         self.modeStyleGrid = Column([
-            self.brushModeRow, 
+            self.brushModeRow,
             self.brushStyleRow,
-        ])  
+        ])
 
         shapeRows = []
 
@@ -579,16 +579,16 @@ class BrushPanel(Panel):
         self.hollowRow = Row((hollowCheckBox, hollowLabel))
 
         self.blockButton = blockButton = BlockButton(
-            tool.editor.level.materials, 
-            ref=AttrRef(tool, 'blockInfo'), 
+            tool.editor.level.materials,
+            ref=AttrRef(tool, 'blockInfo'),
             recentBlocks=tool.recentFillBlocks,
             allowWildcards = (tool.brushMode.name == "Replace"))
 
         #col = [modeStyleGrid, hollowRow, noiseInput, shapeRows, blockButton]
 
         self.replaceBlockButton = replaceBlockButton = BlockButton(
-            tool.editor.level.materials, 
-            ref=AttrRef(tool, 'replaceBlockInfo'), 
+            tool.editor.level.materials,
+            ref=AttrRef(tool, 'replaceBlockInfo'),
             recentBlocks=tool.recentReplaceBlocks)
 
         col = tool.brushMode.createOptions(self, tool)
@@ -659,7 +659,7 @@ class BrushTool(CloneTool):
 
         self.brushModes = [c() for c in BrushOperation.brushModeClasses]
         for m in self.brushModes:
-            self.options.extend(m.options) 
+            self.options.extend(m.options)
 
         self._brushMode = self.brushModes[0]
         BrushSettings.updateBrushOffset.addObserver(self)
@@ -850,7 +850,7 @@ class BrushTool(CloneTool):
 
     def getBrushOptions(self):
         return dict( ((key, getattr(self, key))
-                       for key 
+                       for key
                        in self.options) )
 
     draggedDirection = (0,0,0)
@@ -903,8 +903,8 @@ class BrushTool(CloneTool):
         if self.brushMode.name == "Flood Fill":
             self.draggedPositions = self.draggedPositions[-1:]
 
-        op = BrushOperation(self.editor, 
-            self.draggedPositions, 
+        op = BrushOperation(self.editor,
+            self.draggedPositions,
             self.getBrushOptions())
         self.performWithRetry(op)
 
@@ -1023,8 +1023,8 @@ class BrushTool(CloneTool):
 
         if self.chooseBlockImmediately:
             blockPicker = BlockPicker(
-                self.blockInfo, 
-                self.editor.level.materials, 
+                self.blockInfo,
+                self.editor.level.materials,
                 allowWildcards = self.brushMode.name == "Replace")
 
             if blockPicker.present():
@@ -1087,8 +1087,8 @@ class BrushTool(CloneTool):
 
     def drawToolReticle(self):
         for pos in self.draggedPositions:
-            drawTerrainCuttingWire(BoundingBox(pos, (1,1,1)), 
-                                   (0.75, 0.75, 0.1, 0.4), 
+            drawTerrainCuttingWire(BoundingBox(pos, (1,1,1)),
+                                   (0.75, 0.75, 0.1, 0.4),
                                    (1.0, 1.0, 0.5, 1.0))
 
 
