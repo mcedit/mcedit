@@ -106,7 +106,7 @@ class Operation(object):
         if sch == "Canceled":
             raise Cancel
         if sch is None:
-            sch = MCSchematic( (0, 0, 0) )
+            sch = MCSchematic((0, 0, 0))
 
         sch.compress()
         return sch
