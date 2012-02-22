@@ -80,7 +80,7 @@ class FilterModuleOptions(Widget):
                     rows.append(wrapped_label(optionName, 50))
 
                 else:
-                    raise ValueError( ("Unknown option type", optionType) )
+                    raise ValueError(("Unknown option type", optionType))
 
             height = sum(r.height for r in rows)
 
@@ -272,10 +272,10 @@ class FilterTool(EditorTool):
     def reloadFilters(self):
         filterDir = mcplatform.filtersDir
         filterFiles = os.listdir(filterDir)
-        filterPyfiles = filter(lambda x:x.endswith(".py"), filterFiles)
+        filterPyfiles = filter(lambda x: x.endswith(".py"), filterFiles)
 
         filterModules = (__import__(x[:-3]) for x in filterPyfiles)
-        filterModules = filter(lambda module:hasattr(module, "perform"), filterModules)
+        filterModules = filter(lambda module: hasattr(module, "perform"), filterModules)
 
         self.filterModules = dict((self.moduleDisplayName(x), x) for x in filterModules)
         [reload(m) for m in self.filterModules.itervalues()]

@@ -350,7 +350,7 @@ class BlockButton(ButtonBase, Panel):
             labelText = labelText[:23] + "..."
         return labelText
 
-        # self.blockNameLabel.text = 
+        # self.blockNameLabel.text =
 
     def createRecentBlockView(self):
         def makeBlockView(bi):
@@ -766,7 +766,7 @@ class EditorTool(object):
     #                    glVertex3f(*point)
 
                         if pointInBounds(point, dim1) and pointInBounds(point, dim2):
-                            points[ dim * 2 + side ] = point
+                            points[dim * 2 + side] = point
 
 #        glEnd()
 

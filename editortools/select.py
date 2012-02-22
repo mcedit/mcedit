@@ -26,7 +26,7 @@ ColorSettings.defaultColors = {}
 class ColorSetting(config.Setting):
     def __init__(self, section, name, dtype, default):
         super(ColorSetting, self).__init__(section, name, dtype, default)
-        ColorSettings.defaultColors[name]=self
+        ColorSettings.defaultColors[name] = self
 
     def set(self, val):
         values = str(tuple(val))[1:-1]
@@ -52,19 +52,19 @@ def parseValues(colorValues):
 
 ColorSettings("white", (1.0, 1.0, 1.0))
 
-ColorSettings("blue" ,(0.75, 0.75, 1.0))
-ColorSettings("green" ,(0.75, 1.0, 0.75))
-ColorSettings("red" ,(1.0, 0.75, 0.75))
+ColorSettings("blue", (0.75, 0.75, 1.0))
+ColorSettings("green", (0.75, 1.0, 0.75))
+ColorSettings("red", (1.0, 0.75, 0.75))
 
-ColorSettings("teal" ,(0.75, 1.0, 1.0))
-ColorSettings("pink" ,(1.0, 0.75, 1.0))
-ColorSettings("yellow" ,(1.0, 1.0, 0.75))
+ColorSettings("teal", (0.75, 1.0, 1.0))
+ColorSettings("pink", (1.0, 0.75, 1.0))
+ColorSettings("yellow", (1.0, 1.0, 0.75))
 
 ColorSettings("grey", (0.6, 0.6, 0.6))
 ColorSettings("black", (0.0, 0.0, 0.0))
 
 
-def GetSelectionColor(colorWord = None):
+def GetSelectionColor(colorWord=None):
     if colorWord is None:
         colorWord = SelectSettings.color.get()
 
@@ -98,7 +98,7 @@ class SelectionToolOptions(ToolOptions):
             def _set(val):
                 choice = self.colorPopupButton.selectedChoice
                 values = GetSelectionColor(choice)
-                values = values[:i] + (val / 255.0,) + values[i+1:]
+                values = values[:i] + (val / 255.0,) + values[i + 1:]
                 setting = str(values)[1:-1]
                 config.config.set("Selection Colors", choice, setting)
                 self.colorChanged()
@@ -112,8 +112,8 @@ class SelectionToolOptions(ToolOptions):
                 return int(GetSelectionColor()[i] * 255)
             return _get
 
-        colorValuesInputs = [IntInputRow(ch+":", get_value = get_colorvalue(ch),
-                                              set_value = set_colorvalue(ch),
+        colorValuesInputs = [IntInputRow(ch + ":", get_value=get_colorvalue(ch),
+                                              set_value=set_colorvalue(ch),
                                               min=0, max=255)
                              for ch in "RGB"]
 
@@ -188,7 +188,7 @@ class SelectionToolPanel(Panel):
         self.shrink_wrap()
 
 
-class NudgeBlocksOperation (Operation) :
+class NudgeBlocksOperation (Operation):
     def __init__(self, editor, sourceBox, direction):
         self.editor = editor
         self.sourceBox = sourceBox
@@ -304,17 +304,17 @@ class SelectionTool(EditorTool):
 
     def worldTooltipForBlock(self, pos):
 
-        x,y,z = pos
-        cx,cz = x / 16, z / 16
+        x, y, z = pos
+        cx, cz = x / 16, z / 16
         if isinstance(self.editor.level, MCInfdevOldLevel):
 
             if y == 0:
                 try:
-                    chunk = self.editor.level.getChunk(cx,cz)
+                    chunk = self.editor.level.getChunk(cx, cz)
                 except ChunkNotPresent:
                     return "Chunk not present."
                 if not any(chunk.HeightMap):
-                    if self.editor.level.blockAt(x,y,z):
+                    if self.editor.level.blockAt(x, y, z):
                         return "Chunk HeightMap is incorrect! Please relight this chunk as soon as possible!"
                     else:
                         return "Chunk is present and filled with air."
@@ -378,7 +378,7 @@ class SelectionTool(EditorTool):
 
         self.selectionColor = GetSelectionColor()
         from albow import theme
-        theme.root.sel_color = tuple(int(x*112) for x in self.selectionColor)
+        theme.root.sel_color = tuple(int(x * 112) for x in self.selectionColor)
 
     # --- Nudge functions ---
 
@@ -435,7 +435,7 @@ class SelectionTool(EditorTool):
         if self.nudgePanel is None:
             self.nudgePanel = Panel()
 
-            self.nudgePanel.bg_color = map(lambda x:x * 0.5, self.selectionColor) + [0.5, ]
+            self.nudgePanel.bg_color = map(lambda x: x * 0.5, self.selectionColor) + [0.5, ]
 
             self.bottomLeftNudge = bottomLeftNudge = NudgeButton()
             bottomLeftNudge.nudge = self.nudgeBottomLeft
@@ -660,7 +660,7 @@ class SelectionTool(EditorTool):
 
         mouseVector = self.editor.mainViewport.mouseVector
         scale = distance / (mouseVector[dim] or 0.0001)
-        point = map(lambda a, b:a * scale + b, mouseVector, pos)
+        point = map(lambda a, b: a * scale + b, mouseVector, pos)
         return point
 
     def draggingSelectionBox(self):
@@ -692,7 +692,7 @@ class SelectionTool(EditorTool):
 
         o, m = box.origin, box.maximum
         (m, o)[side][dragdim] = int(floor(point[dragdim] + 0.5))
-        m = map(lambda a:a - 1, m)
+        m = map(lambda a: a - 1, m)
         return o, m
 
     def option1(self):
@@ -815,8 +815,8 @@ class SelectionTool(EditorTool):
 
                             offs = [s * self.edge_factor for s in box.size]
                             offs[face >> 1] = 0
-                            origin = [o+off for o, off in zip(box.origin, offs)]
-                            size =   [s-off*2 for s, off in zip(box.size, offs)]
+                            origin = [o + off for o, off in zip(box.origin, offs)]
+                            size = [s - off * 2 for s, off in zip(box.size, offs)]
 
                             cv = self.editor.mainViewport.cameraVector
                             for i in range(3):
@@ -846,7 +846,7 @@ class SelectionTool(EditorTool):
                     direction = (-1, 1)[side]
                     # print "pos", pos, "otherFace", otherFacePos, "dir", direction
                     # print "m", (pos - otherFacePos) * direction
-                    if (pos - otherFacePos) * direction > 0 :
+                    if (pos - otherFacePos) * direction > 0:
                         face ^= 1
 
                     glColor(0.9, 0.6, 0.2, 0.5)
@@ -860,14 +860,14 @@ class SelectionTool(EditorTool):
 
         pos, direction = self.editor.blockFaceUnderCursor
         x, y, z = pos
-        selectionColor = map(lambda a:a * a * a * a, self.selectionColor)
+        selectionColor = map(lambda a: a * a * a * a, self.selectionColor)
 
         # draw a colored box representing the possible selection
         otherCorner = self.dragStartPoint
         if self.dragResizeFace is not None:
             self.showPanel()  # xxx do this every frame while dragging because our UI kit is bad
 
-        if ((self.selectionInProgress or self.clickSelectionInProgress) and otherCorner != None) :
+        if ((self.selectionInProgress or self.clickSelectionInProgress) and otherCorner != None):
             glPolygonOffset(DepthOffset.PotentialSelection, DepthOffset.PotentialSelection)
 
             box = self.selectionBoxForCorners(otherCorner, pos)
@@ -892,7 +892,7 @@ class SelectionTool(EditorTool):
         pos, direction = self.editor.blockFaceUnderCursor
 
         # draw a selection-colored box for the cursor reticle
-        selectionColor = map(lambda a:a * a * a * a, self.selectionColor)
+        selectionColor = map(lambda a: a * a * a * a, self.selectionColor)
         r, g, b = selectionColor
         alpha = 0.3
 
@@ -925,7 +925,7 @@ class SelectionTool(EditorTool):
             self.setSelectionPoints(self.selectionPointsFromBox(box))
 
     def selectionPointsFromBox(self, box):
-        return (box.origin, map(lambda x:x - 1, box.maximum))
+        return (box.origin, map(lambda x: x - 1, box.maximum))
 
     def selectNone(self):
         self.setSelectionPoints(None)
@@ -982,7 +982,7 @@ class SelectionTool(EditorTool):
         else:
             self._deleteBlocks()
 
-    def _deleteBlocks(self, recordUndo = True):
+    def _deleteBlocks(self, recordUndo=True):
         box = self.selectionBox()
         if None is box:
             return
@@ -1054,7 +1054,7 @@ class SelectionTool(EditorTool):
             fileFormat = "schematic.zip"
 
         if fileFormat == "schematic.zip":
-            missingChunks = filter(lambda x:not self.editor.level.containsChunk(*x), box.chunkPositions)
+            missingChunks = filter(lambda x: not self.editor.level.containsChunk(*x), box.chunkPositions)
             if len(missingChunks):
                 if not ((box.origin[0] & 0xf == 0) and (box.origin[2] & 0xf == 0)):
                     if ask("This is an uneven selection with missing chunks. Expand the selection to chunk edges, or copy air within the missing chunks?", ["Expand Selection", "Copy Air"]) == "Expand Selection":
@@ -1102,7 +1102,7 @@ class SelectionOperation(Operation):
         self.points = points
 
 
-class NudgeSelectionOperation (Operation) :
+class NudgeSelectionOperation (Operation):
     changedLevel = False
 
     def __init__(self, selectionTool, direction):
@@ -1110,7 +1110,7 @@ class NudgeSelectionOperation (Operation) :
         self.direction = direction
         self.oldPoints = selectionTool.getSelectionPoints()
 
-        self.newPoints = map(lambda p:map(operator.add, p, direction), self.oldPoints)
+        self.newPoints = map(lambda p: map(operator.add, p, direction), self.oldPoints)
 
     def perform(self, recordUndo=True):
         self.selectionTool.setSelectionPoints(self.newPoints)

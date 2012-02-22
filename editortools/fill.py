@@ -45,7 +45,7 @@ class BlockFillOperation(Operation):
             self.destLevel.removeEntitiesInBox(self.destBox)
             self.destLevel.removeTileEntitiesInBox(self.destBox)
             with setWindowCaption("Undoing - "):
-                i=self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.destBox.size), self.destBox.origin)
+                i = self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.destBox.size), self.destBox.origin)
                 showProgress("Copying {0:n} blocks...".format(self.destBox.volume), i)
 
     def bufferSize(self):
