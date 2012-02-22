@@ -68,7 +68,7 @@ def okayAt63(level, pos):
 
 def okayAboveSpawn(level, pos):
     """3 blocks above spawn must be open"""
-    return not any( [level.blockAt(pos[0], pos[1]+i, pos[2]) for i in range(1, 4)] )
+    return not any([level.blockAt(pos[0], pos[1]+i, pos[2]) for i in range(1, 4)])
 
 
 def positionValid(level, pos):
