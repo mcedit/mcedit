@@ -25,6 +25,7 @@ BrushSettings.updateBrushOffset = BrushSettings("Update Brush Offset", False)
 BrushSettings.chooseBlockImmediately = BrushSettings("Choose Block Immediately", False)
 BrushSettings.alpha = BrushSettings("Alpha", 0.66)
 
+
 class BrushMode(object):
     options = []
 
@@ -40,6 +41,7 @@ class BrushMode(object):
         pass
     def createOptions(self, panel, tool):
         pass
+
 
 class Modes:
     class Fill(BrushMode):
@@ -344,6 +346,7 @@ class Modes:
 
             return op.level.copyBlocksFromIter(level, level.bounds, point, create=True)
 
+
 class BrushOperation(Operation):
 
     def __init__(self, editor, points, options):
@@ -515,6 +518,7 @@ class BrushOperation(Operation):
         dirtyBox = self.brushMode.dirtyBoxForPointAndOptions(point, self.options)
         return self.brushMode.performAtPoint(self, point, dirtyBox)
 
+
 class BrushPanel(Panel):
 
     def __init__(self, tool):
@@ -607,6 +611,7 @@ class BrushPanel(Panel):
         self.blockButton.blockInfo = self.replaceBlockButton.blockInfo
         self.replaceBlockButton.blockInfo = b
 
+
 class BrushToolOptions(ToolOptions):
     def __init__(self, tool):
         Panel.__init__(self)
@@ -627,6 +632,7 @@ class BrushToolOptions(ToolOptions):
         return
 
 from clone import CloneTool
+
 
 class BrushTool(CloneTool):
     tooltipText = "Brush\nRight-click for options"

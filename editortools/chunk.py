@@ -16,6 +16,7 @@ from toolbasics import *
 from pymclevel.infiniteworld import MCServerChunkGenerator
 from albow.dialogs import Dialog
 
+
 class ChunkToolPanel(Panel):
 
     def __init__(self, tool, *a, **kw):
@@ -319,6 +320,7 @@ class ChunkTool(EditorTool):
         return self.editor.selectionTool.mouseDown(*args)
     def mouseUp(self, evt, *args):
         self.editor.selectionTool.mouseUp(evt, *args)
+
 
 def GeneratorPanel():
     panel = Widget()

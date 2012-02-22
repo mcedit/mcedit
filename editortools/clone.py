@@ -21,6 +21,7 @@ CloneSettings.copyAir = CloneSettings("Copy Air", True)
 CloneSettings.copyWater = CloneSettings("Copy Water", True)
 CloneSettings.placeImmediately = CloneSettings("Place Immediately", True)
 
+
 class CoordsInput(Widget):
     is_gl_container = True
 
@@ -69,6 +70,7 @@ class CoordsInput(Widget):
     def nudge(self, nudge):
         #nudge is a 3-tuple where one of the elements is -1 or 1, and the others are 0.
         pass
+
 
 class BlockCopyOperation(Operation):
     def __init__(self, editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater):
@@ -191,6 +193,7 @@ class CloneOperation (Operation):
     def undo(self):
         [i.undo() for i in self.blockCopyOps]
         [i.undo() for i in self.selectionOps]
+
 
 
 class CloneToolPanel(Panel):

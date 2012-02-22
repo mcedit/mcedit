@@ -21,6 +21,8 @@ SelectSettings.color = SelectSettings("Color", "teal")
 
 ColorSettings = config.Settings("Selection Colors")
 ColorSettings.defaultColors = {}
+
+
 class ColorSetting(config.Setting):
     def __init__(self, section, name, dtype, default):
         super(ColorSetting, self).__init__(section, name, dtype, default)
@@ -34,6 +36,7 @@ class ColorSetting(config.Setting):
         colorValues = super(ColorSetting, self).get()
         return parseValues(colorValues)
 ColorSettings.Setting = ColorSetting
+
 
 def parseValues(colorValues):
     if colorValues is None:
@@ -60,12 +63,14 @@ ColorSettings("yellow" ,(1.0, 1.0, 0.75))
 ColorSettings("grey", (0.6, 0.6, 0.6))
 ColorSettings("black", (0.0, 0.0, 0.0))
 
+
 def GetSelectionColor(colorWord = None):
     if colorWord is None:
         colorWord = SelectSettings.color.get()
 
     colorValues = config.config.get("Selection Colors", colorWord)
     return parseValues(colorValues)
+
 
 class SelectionToolOptions(ToolOptions):
 
@@ -219,6 +224,7 @@ class NudgeBlocksOperation (Operation) :
             self.editor.level.copyBlocksFrom(self.undoSchematic, self.undoSchematic.bounds, self.dirtyBox().origin)
             self.editor.invalidateBox(self.dirtyBox())
             self.nudgeSelection.undo()
+
 
 class SelectionTool(EditorTool):
     #selectionColor = (1.0, .9, .9);
@@ -1056,6 +1062,7 @@ class SelectionTool(EditorTool):
         schematic = self._copySelection()
         if schematic:
             self.editor.exportSchematic(schematic)
+
 
 class SelectionOperation(Operation):
     changedLevel = False

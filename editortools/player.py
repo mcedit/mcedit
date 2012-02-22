@@ -16,6 +16,7 @@ from toolbasics import *
 import urllib
 from pymclevel.box import FloatBox
 
+
 class PlayerMoveOperation(Operation):
     undoPos = None
     def __init__(self, tool, pos, player="Player", yp = (None, None)):
@@ -58,16 +59,20 @@ class PlayerMoveOperation(Operation):
 class SpawnPositionInvalid(Exception):
     pass
 
+
 def okayAt63(level, pos):
     """blocks 63 or 64 must be occupied"""
     return level.blockAt(pos[0], 63, pos[2]) != 0 or level.blockAt(pos[0], 64, pos[2]) != 0
+
 
 def okayAboveSpawn(level, pos):
     """3 blocks above spawn must be open"""
     return not any( [level.blockAt(pos[0], pos[1]+i, pos[2]) for i in range(1, 4)] )
 
+
 def positionValid(level, pos):
     return okayAt63(level, pos) and okayAboveSpawn(level, pos)
+
 
 class PlayerSpawnMoveOperation(PlayerMoveOperation):
     def perform(self, recordUndo=True):
@@ -122,6 +127,7 @@ class PlayerPositionPanel(Panel):
     @property
     def selectedPlayer(self):
         return self.players[self.table.index]
+
 
 class PlayerPositionTool(EditorTool):
     surfaceBuild = True
@@ -372,6 +378,7 @@ class PlayerSpawnPositionOptions(ToolOptions):
 
 SpawnSettings = config.Settings("Spawn")
 SpawnSettings.spawnProtection = SpawnSettings("Spawn Protection", True)
+
 
 class PlayerSpawnPositionTool(PlayerPositionTool):
     surfaceBuild = True

@@ -39,6 +39,7 @@ from albow.dialogs import Dialog
 from pymclevel.mclevelbase import exhaust
 from albow.root import Cancel
 
+
 class NudgeButton(GLBackground):
     """ A button that captures movement keys while pressed and sends them to a listener as nudge events.
     Poorly planned. """
@@ -124,6 +125,7 @@ class Operation(object):
         """
         return None
 
+
 class ToolOptions(Panel):
     @property
     def editor(self):
@@ -194,6 +196,7 @@ class ThumbView(GLPerspective):
             self.renderer.draw()
         GL.glPopAttrib()
 
+
 class BlockThumbView(Widget):
     is_gl_container = True
 
@@ -225,6 +228,7 @@ class BlockThumbView(Widget):
             self.thumb.drawBackground = False
             for i in self.thumb.renderer.chunkWorker:
                 pass
+
 
 class BlockView(GLOrtho):
     def __init__(self, materials, blockInfo=None):
@@ -376,6 +380,7 @@ class BlockButton(ButtonBase, Panel):
         blockPicker = BlockPicker(self.blockInfo, self.materials, allowWildcards = self.allowWildcards)
         if blockPicker.present():
             self.blockInfo = blockPicker.blockInfo
+
 
 def anySubtype(self):
     bl = materials.Block(self.materials, self.ID, self.blockData)

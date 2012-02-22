@@ -14,6 +14,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from toolbasics import *
 from albow.dialogs import wrapped_label
 
+
 def alertFilterException(func):
     def _func(*args, **kw):
         try:
@@ -23,6 +24,7 @@ def alertFilterException(func):
             print traceback.format_exc()
 
     return _func
+
 
 class FilterModuleOptions(Widget):
     is_gl_container = True
@@ -126,6 +128,7 @@ class FilterModuleOptions(Widget):
             if k in self.optionDict:
                 self.optionDict[k].set(val[k])
 
+
 class FilterToolPanel(Panel):
     def __init__(self, tool):
         Panel.__init__(self)
@@ -194,6 +197,7 @@ class FilterToolPanel(Panel):
         if self.filterOptionsPanel:
             self.savedOptions[self.selectedFilterName] = self.filterOptionsPanel.options
 
+
 class FilterOperation(Operation):
     def __init__(self, level, box, filter, options):
         self.box = box
@@ -219,6 +223,7 @@ class FilterOperation(Operation):
             self.level.copyBlocksFrom(self.undoSchematic, BoundingBox((0, 0, 0), self.box.size), self.box.origin)
 
     def dirtyBox(self): return self.box
+
 
 class FilterTool(EditorTool):
     tooltipText = "Filter"
