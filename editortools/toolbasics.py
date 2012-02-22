@@ -509,8 +509,8 @@ class BlockPicker(Dialog):
         self.anchor = "wh"
 
         panel = GLBackground()
-        panel.bg_color = [i/255. for i in self.bg_color]
-        panel.anchor="tlbr"
+        panel.bg_color = [i / 255. for i in self.bg_color]
+        panel.anchor = "tlbr"
         self.add(panel)
 
         self.add(col)
@@ -791,8 +791,8 @@ class EditorTool(object):
         dim = face // 2
         side = face & 1
 
-        dim1, dim2 = dim+1, dim+2
-        dim1, dim2 = dim1%3, dim2%3
+        dim1, dim2 = dim + 1, dim + 2
+        dim1, dim2 = dim1 % 3, dim2 % 3
         cv = self.editor.mainViewport.cameraVector
 
         # determine if a click was within self.edge_factor of the edge of a selection box side. if so, click through
