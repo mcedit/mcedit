@@ -640,7 +640,7 @@ class EditorTool(object):
     def drawTerrainPreview(self, origin):
         if self.previewRenderer is None:
             return
-        self.previewRenderer.origin = map(lambda a, b:a - b, origin, self.level.bounds.origin)
+        self.previewRenderer.origin = map(lambda a, b: a - b, origin, self.level.bounds.origin)
 
         glPolygonOffset(DepthOffset.ClonePreview, DepthOffset.ClonePreview)
         glEnable(GL_POLYGON_OFFSET_FILL)
@@ -762,7 +762,7 @@ class EditorTool(object):
                     if normal[dim]:
                         scale = d / normal[dim]
 
-                        point = map(lambda a, p:(a * scale + p), normal, p0)
+                        point = map(lambda a, p: (a * scale + p), normal, p0)
     #                    glVertex3f(*point)
 
                         if pointInBounds(point, dim1) and pointInBounds(point, dim2):
@@ -843,7 +843,7 @@ class EditorTool(object):
 
             p2[i] += 1
 
-        size = map(lambda a, b:a - b, p2, p1)
+        size = map(lambda a, b: a - b, p2, p1)
 
         box = BoundingBox(p1, size)
 
