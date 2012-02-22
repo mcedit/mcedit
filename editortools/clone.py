@@ -120,7 +120,7 @@ class BlockCopyOperation(Operation):
             self.destLevel.removeTileEntitiesInBox(BoundingBox(self.destPoint, self.sourceBox.size))
 
             with setWindowCaption("Undoing - "):
-                i=self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.sourceBox.size), self.destPoint, create=True)
+                i = self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.sourceBox.size), self.destPoint, create=True)
                 showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
 
     def bufferSize(self):
@@ -1034,8 +1034,8 @@ class ConstructionTool(CloneTool):
         for i, block in enumerate(allBlocks):
             col = (i % blockWidth) * 3 + 1
             row = (i // blockWidth) * 3
-            schematic.Blocks[col:col+2, row:row+2, 2] = block.ID
-            schematic.Data[col:col+2, row:row+2, 2] = block.blockData
+            schematic.Blocks[col:col + 2, row:row + 2, 2] = block.ID
+            schematic.Data[col:col + 2, row:row + 2, 2] = block.blockData
 
         return schematic
 
