@@ -37,7 +37,6 @@ RADIUS = 80
 # "mangrove" makes mangrove trees (see PLANTON below).
 SHAPE = "procedural"
 
-
 # What height should the trees be?
 # Specifies the average height of the tree
 # Examples:
@@ -63,7 +62,6 @@ EDGEHEIGHT = 25
 # value is clipped to a max of HEIGHT
 # for a good rainforest, set this value not more than 1/2 of HEIGHT
 HEIGHTVARIATION = 12
-
 
 # Do you want branches, trunk, and roots?
 # True makes all of that
@@ -155,7 +153,6 @@ FOLIAGE = True
 # 0.3 will make very sparse spotty trees, half as many foliage clusters
 # 2.0 will make dense foliage, better for the "rainforests" SHAPE
 FOLIAGEDENSITY = 1.0
-
 
 # Limit the tree height to the top of the map?
 # True the trees will not grow any higher than the top of the map
@@ -333,6 +330,7 @@ import mcInterface
 
 #some handy functions
 
+
 def dist_to_mat(cord,vec,matidxlist,mcmap,invert = False, limit = False):
     '''travel from cord along vec and return how far it was to a point of matidx
 
@@ -370,6 +368,7 @@ def dist_to_mat(cord,vec,matidxlist,mcmap,invert = False, limit = False):
 
 from random import random, choice, sample
 from math import sqrt, sin, cos, pi
+
 
 def calc_column_lighting(x,z,mclevel):
     '''Recalculate the sky lighting of the column.'''
@@ -420,6 +419,7 @@ def calc_column_lighting(x,z,mclevel):
         y += -1
         if y < 0: break
 
+
 class ReLight(object):
     '''keep track of which squares need to be relit, and then relight them'''
     def add(self,x,z):
@@ -438,6 +438,7 @@ class ReLight(object):
 
 relight_master = ReLight()
 
+
 def assign_value(x,y,z,values,save_file):
     '''Assign an index value to a location in mcmap.
 
@@ -449,6 +450,7 @@ def assign_value(x,y,z,values,save_file):
     if LIGHTINGFIX:
         relight_master.add(x,z)
     return result
+
 
 class Tree(object):
     '''Set up the interface for tree objects.  Designed for subclassing.
@@ -1104,6 +1106,7 @@ class MangroveTree(RoundTree):
         val = val * 1.618
         return val
 
+
 def planttrees(mcmap,treelist):
     '''Take mcmap and add trees to random locations on the surface to treelist.
     '''
@@ -1196,6 +1199,7 @@ def planttrees(mcmap,treelist):
         if VERBOSE: print(x, y, z, height)
         treelist += [newtree]
 
+
 def processtrees(mcmap,treelist):
     '''Initalize all of the trees in treelist.
 
@@ -1272,6 +1276,7 @@ def main(the_map):
             i.maketrunk(the_map)
         if VERBOSE: print(' completed')
     return None
+
 
 def standalone():
     if VERBOSE: print("Importing the map")

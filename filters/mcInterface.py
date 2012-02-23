@@ -1,5 +1,6 @@
 #dummy mcInterface to adapt dudecon's interface to MCEdit's
 
+
 class MCLevelAdapter(object):
     def __init__(self, level, box):
         self.level = level

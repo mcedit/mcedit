@@ -11,6 +11,7 @@ inputs = (
     ("Repeat count", (1, 50)),
 )
 
+
 def perform(level, box, options):
     if box.volume > 16000000:
         raise ValueError("Volume too big for this filter method!")

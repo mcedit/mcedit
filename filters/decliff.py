@@ -43,6 +43,7 @@ inputs = (
     ("Raise/Lower", ("Both", "Lower Only", "Raise Only")),
 )
 
+
 #
 # Calculate the maximum adjustment that can be made from
 # cliff_pos in direction dir (-1/1) keeping terain at most
@@ -67,6 +68,7 @@ def maxadj(heightmap, slice_no, cliff_pos, dir, pushup, maxstep, slice_width):
                dir * heightmap[slice_no, cur_pos + dir]])
 
     return ret
+
 
 #
 # Raise/lower column at cliff face by adj and decrement change as we move away

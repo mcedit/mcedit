@@ -27,6 +27,8 @@ blocks = [
   am.Glowstone
 ]
 blocktypes = [b.ID for b in blocks]
+
+
 def naturalBlockmask():
     blockmask = zeros((256,), dtype='bool')
     blockmask[blocktypes] = True
@@ -36,6 +38,7 @@ inputs = (
   ("Depth", (4, -128, 128)),
   ("Pick a block:", alphaMaterials.Grass),
 )
+
 
 def perform(level, box, options):
     depth = options["Depth"]

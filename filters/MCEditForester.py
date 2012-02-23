@@ -46,6 +46,7 @@ inputs = (
 
 )
 
+
 def perform(level, box, options):
     '''Load the file, create the trees, and save the new file.
     '''
