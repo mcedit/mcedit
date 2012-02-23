@@ -27,25 +27,25 @@ class MCLevelAdapter(object):
         if not self.check_box_3d(x, y, z):
             return None
         d = {}
-        d['B'] = self.level.blockAt(x,y,z)
-        d['D'] = self.level.blockDataAt(x,y,z)
+        d['B'] = self.level.blockAt(x, y, z)
+        d['D'] = self.level.blockDataAt(x, y, z)
         return d
 
     def set_block(self, x, y, z, d):
         if not self.check_box_3d(x, y, z):
             return None
         if 'B' in d:
-            self.level.setBlockAt(x,y,z,d['B'])
+            self.level.setBlockAt(x, y, z, d['B'])
         if 'D' in d:
-            self.level.setBlockDataAt(x,y,z,d['D'])
+            self.level.setBlockDataAt(x, y, z, d['D'])
 
     def surface_block(self, x, z):
         if not self.check_box_2d(x, z):
             return None
-        y = self.level.heightMapAt(x,z)
+        y = self.level.heightMapAt(x, z)
         y = max(0, y-1)
 
-        d = self.block(x,y,z)
+        d = self.block(x, y, z)
         if d:
             d['y'] = y
 
