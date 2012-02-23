@@ -52,7 +52,7 @@ def perform(level, box, options):
     '''
     # set up the non 1 to 1 mappings of options to Forester global names
     optmap = {
-        "Tree Height":"CENTERHEIGHT",
+        "Tree Height": "CENTERHEIGHT",
     }
     # automatically set the options that map 1 to 1 from options to Forester
 
@@ -75,8 +75,8 @@ def perform(level, box, options):
     leaf = options["Leaf Material"]
     grass = options["Plant On"]
 
-    Forester.WOODINFO = {"B":wood.ID, "D":wood.blockData}
-    Forester.LEAFINFO = {"B":leaf.ID, "D":leaf.blockData}
+    Forester.WOODINFO = {"B": wood.ID, "D": wood.blockData}
+    Forester.LEAFINFO = {"B": leaf.ID, "D": leaf.blockData}
     Forester.PLANTON = [grass.ID]
 
     # calculate the plant-on center and radius

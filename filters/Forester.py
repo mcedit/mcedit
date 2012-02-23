@@ -326,10 +326,10 @@ if LIGHTTREE not in [0, 1, 2, 4]:
         print("LIGHTTREE not set correctly, using 0 for no torches")
     LIGHTTREE = 0
 # assemble the material dictionaries
-WOODINFO = {'B':WOODMAT, 'D':WOODDATA}
-LEAFINFO = {'B':LEAFMAT, 'D':LEAFDATA}
-LIGHTINFO = {'B':LIGHTMAT, 'D':LIGHTDATA}
-TRUNKFILLINFO = {'B':TRUNKFILLMAT, 'D':TRUNKFILLDATA}
+WOODINFO = {'B': WOODMAT, 'D': WOODDATA}
+LEAFINFO = {'B': LEAFMAT, 'D': LEAFDATA}
+LIGHTINFO = {'B': LIGHTMAT, 'D': LIGHTDATA}
+TRUNKFILLINFO = {'B': TRUNKFILLMAT, 'D': TRUNKFILLDATA}
 
 # The following is an interface class for .mclevel data for minecraft savefiles.
 # The following also includes a useful coordinate to index convertor and several
@@ -399,7 +399,7 @@ def calc_column_lighting(x, z, mclevel):
     # if this doesn't exist, the block doesn't exist either, abort.
     if cur_height is None:
         return None
-    light_reduction_lookup = {0:0, 20:0, 18:1, 8:2, 79:2}
+    light_reduction_lookup = {0: 0, 20: 0, 18: 1, 8: 2, 79: 2}
     while True:
         #get the block sky light and type
         block_info = get_block(x, y, z, 'BS')
@@ -418,7 +418,7 @@ def calc_column_lighting(x, z, mclevel):
             break
         #set the block light if necessary
         if block_light != cur_light:
-            set_block(x, y, z, {'S':cur_light})
+            set_block(x, y, z, {'S': cur_light})
         #set the new cur_light
         if block_type in light_reduction_lookup:
             # partial light reduction
