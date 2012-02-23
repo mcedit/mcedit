@@ -55,6 +55,7 @@ def perform(level, box, options):
         "Tree Height":"CENTERHEIGHT",
     }
     # automatically set the options that map 1 to 1 from options to Forester
+
     def setOption(opt):
         OPT = optmap.get(opt, opt.replace(" ", "").upper())
         if OPT in dir(Forester):
@@ -63,6 +64,7 @@ def perform(level, box, options):
                 val = val.replace(" ", "").lower()
 
             setattr(Forester, OPT, val)
+
     # set all of the options
     for option in options:
         setOption(option)

@@ -440,6 +440,7 @@ class ReLight(object):
     def add(self,x,z):
         coords = (x,z)
         self.all_columns.add(coords)
+
     def calc_lighting(self):
         mclevel = self.save_file
         for column_coords in self.all_columns:
@@ -447,6 +448,7 @@ class ReLight(object):
             x = column_coords[0]
             z = column_coords[1]
             calc_column_lighting(x,z,mclevel)
+
     def __init__(self):
         self.all_columns = set()
         self.save_file = None
@@ -1071,6 +1073,7 @@ class ConeTree(ProceduralTree):
     '''
     # woodType is the kind of wood the tree has, a data value
     woodType = 1
+
     def prepare(self,mcmap):
         self.branchslope = 0.15
         ProceduralTree.prepare(self,mcmap)
