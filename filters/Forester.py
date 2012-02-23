@@ -978,7 +978,7 @@ class ProceduralTree(Tree):
         if self.trunkradius < 1:
             self.trunkradius = 1
         if BROKENTRUNK:
-            self.trunkheight = self.height * ( .3 + random() * .4 )
+            self.trunkheight = self.height * (.3 + random() * .4)
             yend = int(treeposition[1] + self.trunkheight + .5)
         else:
             self.trunkheight = self.height
@@ -1063,7 +1063,7 @@ class RoundTree(ProceduralTree):
         elif abs(adj) >= radius:
             dist = 0
         else:
-            dist = sqrt( (radius ** 2) - (adj ** 2) )
+            dist = sqrt((radius ** 2) - (adj ** 2))
         dist = dist * .618
         return dist
 
