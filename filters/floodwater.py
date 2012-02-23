@@ -20,7 +20,7 @@ def perform(level, box, options):
         coords = []
         for chunk, slices, point in level.getChunkSlices(box):
             water = waterTable[chunk.Blocks[slices]]
-            chunk.Data[slices][water] = 0 #source block
+            chunk.Data[slices][water] = 0  # source block
 
             x, z, y = water.nonzero()
             x = x + (point[0] + box.minx)

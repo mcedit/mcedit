@@ -43,11 +43,11 @@ def perform(level, box, options):
                 b2 = blocks[z, x, h2]
 
                 if blocks[x, z, h] == 1:
-                    h += 2 # rock surface - top 4 layers become 2 air and 2 rock
+                    h += 2  # rock surface - top 4 layers become 2 air and 2 rock
                 if blocks[z, x, h2] == 1:
-                    h2 += 2 # rock surface - top 4 layers become 2 air and 2 rock
+                    h2 += 2  # rock surface - top 4 layers become 2 air and 2 rock
 
-                #topsoil is 4 layers deep
+                # topsoil is 4 layers deep
                 def swap(s1, s2):
                     a2 = array(s2)
                     s2[:] = s1[:]
@@ -56,5 +56,5 @@ def perform(level, box, options):
                 swap(blocks[x, z, h - 3:h + 1], blocks[z, x, h2 - 3:h2 + 1])
                 swap(data[x, z, h - 3:h + 1], data[z, x, h2 - 3:h2 + 1])
 
-        #remember to do this to make sure the chunk is saved
+        # remember to do this to make sure the chunk is saved
         chunk.chunkChanged()
