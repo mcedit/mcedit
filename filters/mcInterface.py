@@ -43,7 +43,7 @@ class MCLevelAdapter(object):
         if not self.check_box_2d(x, z):
             return None
         y = self.level.heightMapAt(x, z)
-        y = max(0, y-1)
+        y = max(0, y - 1)
 
         d = self.block(x, y, z)
         if d:
