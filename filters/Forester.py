@@ -841,7 +841,7 @@ class ProceduralTree(Tree):
                 # the search found the material.
                 if dist < offlength:
                     # rootmid is the size of the crossection at endcoord.
-                    rootmid +=  (rootstartsize -
+                    rootmid += (rootstartsize -
                                          endsize) * (1 - dist / offlength)
                     # endcoord is the midpoint for hanging roots,
                     # and the endpoint for roots stopped by stone.
