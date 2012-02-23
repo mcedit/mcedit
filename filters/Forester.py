@@ -340,7 +340,7 @@ import mcInterface
 #some handy functions
 
 
-def dist_to_mat(cord, vec, matidxlist, mcmap, invert = False, limit = False):
+def dist_to_mat(cord, vec, matidxlist, mcmap, invert=False, limit=False):
     '''travel from cord along vec and return how far it was to a point of matidx
 
     the distance is returned in number of iterations.  If the edge of the map
@@ -495,7 +495,7 @@ class Tree(object):
         self.pos = other.pos
         self.height = other.height
 
-    def __init__(self, pos = [0, 0, 0], height = 1):
+    def __init__(self, pos=[0, 0, 0], height=1):
         '''Accept values for the position and height of a tree.
 
         Store them in self.
