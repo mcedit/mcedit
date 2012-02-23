@@ -120,7 +120,7 @@ def adjheight(orig, new, slice_no, cliff_pos, dir, adj, can_adj, maxstep, slice_
 
 def perform(level, box, options):
     if box.volume > 16000000:
-        raise ValueError, "Volume too big for this filter method!"
+        raise ValueError("Volume too big for this filter method!")
 
     RLOption = options["Raise/Lower"]
     schema = level.extractSchematic(box)
