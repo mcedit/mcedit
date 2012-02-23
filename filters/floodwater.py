@@ -72,6 +72,3 @@ def perform(level, box, options):
         lavaIDs = [alphaMaterials.LavaActive.ID, alphaMaterials.Lava.ID]
         lavaID = alphaMaterials.Lava.ID
         floodFluid(lavaIDs, lavaID)
-
-
-
