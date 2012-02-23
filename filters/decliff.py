@@ -267,5 +267,4 @@ def perform(level, box, options):
 
         schema.Blocks[x, z] = column
 
-
     level.copyBlocksFrom(schema, schema.bounds, box.origin)

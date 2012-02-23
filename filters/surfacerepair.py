@@ -55,6 +55,5 @@ def perform(level, box, options):
                 swap(blocks[x, z, h - 3:h + 1], blocks[z, x, h2 - 3:h2 + 1])
                 swap(data[x, z, h - 3:h + 1], data[z, x, h2 - 3:h2 + 1])
 
-
         #remember to do this to make sure the chunk is saved
         chunk.chunkChanged()
