@@ -36,11 +36,13 @@ def perform(level, box, options):
 
             for (x, y, z) in coords:
                 for _dir, offsets in faceDirections:
-                    if _dir == FaceYIncreasing: continue
+                    if _dir == FaceYIncreasing:
+                        continue
 
                     dx, dy, dz = offsets
                     p = (x + dx, y + dy, z + dz)
-                    if p not in box: continue
+                    if p not in box:
+                        continue
 
                     nx, ny, nz = p
                     if level.blockAt(nx, ny, nz) == 0:

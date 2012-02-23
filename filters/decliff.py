@@ -51,10 +51,12 @@ inputs = (
 def maxadj(heightmap, slice_no, cliff_pos, dir, pushup, maxstep, slice_width):
     ret = 0
     if dir < 0:
-        if cliff_pos < 2: return 0
+        if cliff_pos < 2:
+            return 0
         end = 0
     else:
-        if cliff_pos > slice_width - 2: return 0
+        if cliff_pos > slice_width - 2:
+            return 0
         end = slice_width - 1
 
     for cur_pos in range(cliff_pos, end, dir):
@@ -177,10 +179,14 @@ def perform(level, box, options):
             can_left = maxadj(heightmap, slice_no, cliff_pos, -1, cliff_height < 0, max_step, slice_width)
             can_right = maxadj(heightmap, slice_no, cliff_pos + 1, 1, cliff_height > 0, max_step, slice_width)
 
-            if can_right < 0 and RLOption == "Raise Only": can_right = 0
-            if can_right > 0 and RLOption == "Lower Only": can_right = 0
-            if can_left < 0 and RLOption == "Raise Only":  can_left = 0
-            if can_left > 0 and RLOption == "Lower Only":  can_left = 0
+            if can_right < 0 and RLOption == "Raise Only":
+                can_right = 0
+            if can_right > 0 and RLOption == "Lower Only":
+                can_right = 0
+            if can_left < 0 and RLOption == "Raise Only":
+                can_left = 0
+            if can_left > 0 and RLOption == "Lower Only":
+                can_left = 0
 
             if cliff_height < 0 and can_right - can_left < cliff_height:
                 if abs(can_left) > abs(can_right):

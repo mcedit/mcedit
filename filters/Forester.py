@@ -274,11 +274,13 @@ VERBOSE = True
 
 # input filtering
 TREECOUNT = int(TREECOUNT)
-if TREECOUNT < 0: TREECOUNT = 0
+if TREECOUNT < 0:
+    TREECOUNT = 0
 if SHAPE not in ["normal","bamboo","palm","stickly",
                  "round","cone","procedural",
                  "rainforest","mangrove"]:
-    if VERBOSE: print("SHAPE not set correctly, using 'procedural'.")
+    if VERBOSE:
+        print("SHAPE not set correctly, using 'procedural'.")
     SHAPE = "procedural"
 if CENTERHEIGHT < 1:
     CENTERHEIGHT = 1
@@ -288,33 +290,40 @@ minheight = min(CENTERHEIGHT, EDGEHEIGHT)
 if HEIGHTVARIATION > minheight:
     HEIGHTVARIATION = minheight
 if INTERPOLATION not in ["linear"]:
-    if VERBOSE: print("INTERPOLATION not set correctly, using 'linear'.")
+    if VERBOSE:
+        print("INTERPOLATION not set correctly, using 'linear'.")
     INTERPOLATION = "linear"
 if WOOD not in [True,False]:
-    if VERBOSE: print("WOOD not set correctly, using True")
+    if VERBOSE:
+        print("WOOD not set correctly, using True")
     WOOD = True
 if TRUNKTHICKNESS < 0.0:
     TRUNKTHICKNESS = 0.0
 if TRUNKHEIGHT < 0.0:
     TRUNKHEIGHT = 0.0
 if ROOTS not in ["yes","tostone","hanging","no"]:
-    if VERBOSE: print("ROOTS not set correctly, using 'no' and creating no roots")
+    if VERBOSE:
+        print("ROOTS not set correctly, using 'no' and creating no roots")
     ROOTS = "no"
 if ROOTBUTTRESSES not in [True,False]:
-    if VERBOSE: print("ROOTBUTTRESSES not set correctly, using False")
+    if VERBOSE:
+        print("ROOTBUTTRESSES not set correctly, using False")
     ROOTBUTTRESSES = False
 if FOLIAGE not in [True,False]:
-    if VERBOSE: print("FOLIAGE not set correctly, using True")
+    if VERBOSE:
+        print("FOLIAGE not set correctly, using True")
     ROOTBUTTRESSES = True
 if FOLIAGEDENSITY < 0.0:
     FOLIAGEDENSITY = 0.0
 if BRANCHDENSITY < 0.0:
     BRANCHDENSITY = 0.0
 if MAPHEIGHTLIMIT not in [True,False]:
-    if VERBOSE: print("MAPHEIGHTLIMIT not set correctly, using False")
+    if VERBOSE:
+        print("MAPHEIGHTLIMIT not set correctly, using False")
     MAPHEIGHTLIMIT = False
 if LIGHTTREE not in [0,1,2,4]:
-    if VERBOSE: print("LIGHTTREE not set correctly, using 0 for no torches")
+    if VERBOSE:
+        print("LIGHTTREE not set correctly, using 0 for no torches")
     LIGHTTREE = 0
 # assemble the material dictionaries
 WOODINFO = {'B':WOODMAT,'D':WOODDATA}
@@ -348,7 +357,8 @@ def dist_to_mat(cord,vec,matidxlist,mcmap,invert = False, limit = False):
         y = int(curcord[1])
         z = int(curcord[2])
         return_dict = block(x, y, z)
-        if return_dict is None: break
+        if return_dict is None:
+            break
         else:
             block_value = return_dict['B']
         if (block_value in matidxlist) and (invert == False):
@@ -387,7 +397,8 @@ def calc_column_lighting(x,z,mclevel):
     # set a flag that the highest point has been updated
     height_updated = False
     # if this doesn't exist, the block doesn't exist either, abort.
-    if cur_height is None: return None
+    if cur_height is None:
+        return None
     light_reduction_lookup = {0:0, 20:0, 18:1, 8:2, 79:2}
     while True:
         #get the block sky light and type
@@ -398,11 +409,13 @@ def calc_column_lighting(x,z,mclevel):
         # and the current block reduces light
         if (not height_updated) and (block_type not in (0,20)):
             new_height = y + 1
-            if new_height == 128: new_height = 127
+            if new_height == 128:
+                new_height = 127
             set_height(x,new_height,z)
             height_updated = True
         #compare block with cur_light, escape if both 0
-        if block_light == 0 and cur_light == 0: break
+        if block_light == 0 and cur_light == 0:
+            break
         #set the block light if necessary
         if block_light != cur_light:
             set_block(x,y,z,{'S':cur_light})
@@ -414,10 +427,12 @@ def calc_column_lighting(x,z,mclevel):
             # full light reduction
             light_reduction = 16
         cur_light += -light_reduction
-        if cur_light < 0: cur_light = 0
+        if cur_light < 0:
+            cur_light = 0
         #increment and check y
         y += -1
-        if y < 0: break
+        if y < 0:
+            break
 
 
 class ReLight(object):
@@ -445,7 +460,8 @@ def assign_value(x,y,z,values,save_file):
     If the index is outside the bounds of the map, return None.  If the
     assignment succeeds, return True.
     '''
-    if y > 127: return None
+    if y > 127:
+        return None
     result = save_file.set_block(x, y, z, values)
     if LIGHTINGFIX:
         relight_master.add(x,z)
@@ -587,7 +603,8 @@ class ProceduralTree(Tree):
         matdata = <int> the integer value to make the block data value.
         '''
         rad = int(radius + .618)
-        if rad <= 0: return None
+        if rad <= 0:
+            return None
         secidx1 = (diraxis - 1)%3
         secidx2 = (1 + diraxis)%3
         coord = [0,0,0]
@@ -926,9 +943,11 @@ class ProceduralTree(Tree):
             # wall thickness is actually the double the wall thickness
             # it is a diameter difference, not a radius difference.
             wall_thickness = (1 + trunkradius * 0.1 * random())
-            if wall_thickness < 1.3: wall_thickness = 1.3
+            if wall_thickness < 1.3:
+                wall_thickness = 1.3
             base_radius = trunkradius - wall_thickness
-            if base_radius < 1: base_radius = 1.0
+            if base_radius < 1:
+                base_radius = 1.0
             mid_radius = midrad - wall_thickness
             top_radius = endrad - wall_thickness
             # the starting x and y can be offset by up to the wall thickness.
@@ -971,8 +990,10 @@ class ProceduralTree(Tree):
         if num_of_clusters_per_y < 1:
             num_of_clusters_per_y = 1
         # make sure we don't spend too much time off the top of the map
-        if yend > 127: yend = 127
-        if ystart > 127: ystart = 127
+        if yend > 127:
+            yend = 127
+        if ystart > 127:
+            ystart = 127
         for y in range(yend,ystart,-1):
             for i in range(num_of_clusters_per_y):
                 shapefac = self.shapefunc(y-ystart)
@@ -1002,7 +1023,8 @@ class ProceduralTree(Tree):
                               z - treeposition[2]]
                     offlength = sqrt(offset[0]**2 + offset[1]**2 + offset[2]**2)
                     # if the branch is as short as... nothing, don't bother.
-                    if offlength < 1: continue
+                    if offlength < 1:
+                        continue
                     # unit vector for the search
                     vec = [offset[i]/offlength for i in range(3)]
                     mat_dist = dist_to_mat(start,vec,STOPSBRANCHES,
@@ -1114,7 +1136,8 @@ def planttrees(mcmap,treelist):
     # keep looping until all the trees are placed
     # calc the radius difference, for interpolation
     in_out_dif = EDGEHEIGHT - CENTERHEIGHT
-    if VERBOSE: print('Tree Locations: x, y, z, tree height')
+    if VERBOSE:
+        print('Tree Locations: x, y, z, tree height')
     tries = 0
     max_tries = MAXTRIES
     while len(treelist) < TREECOUNT:
@@ -1196,7 +1219,8 @@ def planttrees(mcmap,treelist):
 
         # generate the new tree
         newtree = Tree([x,y,z],height)
-        if VERBOSE: print(x, y, z, height)
+        if VERBOSE:
+            print(x, y, z, height)
         treelist += [newtree]
 
 
@@ -1261,38 +1285,49 @@ def main(the_map):
     '''create the trees
     '''
     treelist = []
-    if VERBOSE: print("Planting new trees")
+    if VERBOSE:
+        print("Planting new trees")
     planttrees(the_map,treelist)
-    if VERBOSE: print("Processing tree changes")
+    if VERBOSE:
+        print("Processing tree changes")
     processtrees(the_map,treelist)
     if FOLIAGE:
-        if VERBOSE: print("Generating foliage ")
+        if VERBOSE:
+            print("Generating foliage ")
         for i in treelist:
             i.makefoliage(the_map)
-        if VERBOSE: print(' completed')
+        if VERBOSE:
+            print(' completed')
     if WOOD:
-        if VERBOSE: print("Generating trunks, roots, and branches ")
+        if VERBOSE:
+            print("Generating trunks, roots, and branches ")
         for i in treelist:
             i.maketrunk(the_map)
-        if VERBOSE: print(' completed')
+        if VERBOSE:
+            print(' completed')
     return None
 
 
 def standalone():
-    if VERBOSE: print("Importing the map")
+    if VERBOSE:
+        print("Importing the map")
     try:
         the_map = mcInterface.SaveFile(LOADNAME)
     except IOError:
-        if VERBOSE: print('File name invalid or save file otherwise corrupted. Aborting')
+        if VERBOSE:
+            print('File name invalid or save file otherwise corrupted. Aborting')
         return None
     main(the_map)
     if LIGHTINGFIX:
-        if VERBOSE: print("Rough re-lighting the map")
+        if VERBOSE:
+            print("Rough re-lighting the map")
         relight_master.save_file = the_map
         relight_master.calc_lighting()
-    if VERBOSE: print("Saving the map, this could be a while")
+    if VERBOSE:
+        print("Saving the map, this could be a while")
     the_map.write()
-    if VERBOSE: print("finished")
+    if VERBOSE:
+        print("finished")
 
 if __name__ == '__main__':
     standalone()
