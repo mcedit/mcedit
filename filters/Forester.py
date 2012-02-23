@@ -373,7 +373,7 @@ from math import sqrt, sin, cos, pi
 
 def calc_column_lighting(x,z,mclevel):
     '''Recalculate the sky lighting of the column.'''
-    
+
     # Begin at the top with sky light level 15.
     cur_light = 15
     # traverse the column until cur_light == 0
@@ -435,12 +435,12 @@ class ReLight(object):
     def __init__(self):
         self.all_columns = set()
         self.save_file = None
-    
+
 relight_master = ReLight()
 
 def assign_value(x,y,z,values,save_file):
     '''Assign an index value to a location in mcmap.
-    
+
     If the index is outside the bounds of the map, return None.  If the
     assignment succeeds, return True.
     '''
@@ -457,27 +457,27 @@ class Tree(object):
         '''initialize the internal values for the Tree object.
         '''
         return None
-    
+
     def maketrunk(self,mcmap):
         '''Generate the trunk and enter it in mcmap.
         '''
         return None
-    
+
     def makefoliage(self,mcmap):
         """Generate the foliage and enter it in mcmap.
-        
+
         Note, foliage will disintegrate if there is no log nearby"""
         return None
-    
+
     def copy(self,other):
         '''Copy the essential values of the other tree object into self.
         '''
         self.pos = other.pos
         self.height = other.height
-        
+
     def __init__(self,pos = [0,0,0],height = 1):
         '''Accept values for the position and height of a tree.
-        
+
         Store them in self.
         '''
         self.pos = pos
@@ -486,27 +486,27 @@ class Tree(object):
 
 class StickTree(Tree):
     '''Set up the trunk for trees with a trunk width of 1 and simple geometry.
-    
+
     Designed for sublcassing.  Only makes the trunk.
     '''
     def maketrunk(self,mcmap):
         x = self.pos[0]
         y = self.pos[1]
-        z = self.pos[2]        
+        z = self.pos[2]
         for i in range(self.height):
             assign_value(x, y, z, WOODINFO, mcmap)
             y += 1
-        
+
 
 class NormalTree(StickTree):
     '''Set up the foliage for a 'normal' tree.
-    
+
     This tree will be a single bulb of foliage above a single width trunk.
     This shape is very similar to the default Minecraft tree.
     '''
     def makefoliage(self,mcmap):
         """note, foliage will disintegrate if there is no foliage below, or
-        if there is no "log" block within range 2 (square) at the same level or 
+        if there is no "log" block within range 2 (square) at the same level or
         one level below"""
         topy = self.pos[1] + self.height - 1
         start = topy - 2
@@ -523,16 +523,16 @@ class NormalTree(StickTree):
                         and abs(xoff) == rad
                         ):
                         continue
-                    
+
                     x = self.pos[0] + xoff
                     z = self.pos[2] + zoff
-                    
+
                     assign_value(x,y,z,LEAFINFO,mcmap)
-                    
+
 
 class BambooTree(StickTree):
     '''Set up the foliage for a bamboo tree.
-    
+
     Make foliage sparse and adjacent to the trunk.
     '''
     def makefoliage(self,mcmap):
@@ -549,7 +549,7 @@ class BambooTree(StickTree):
 
 class PalmTree(StickTree):
     '''Set up the foliage for a palm tree.
-    
+
     Make foliage stick out in four directions from the top of the trunk.
     '''
     def makefoliage(self,mcmap):
@@ -564,16 +564,16 @@ class PalmTree(StickTree):
 
 class ProceduralTree(Tree):
     '''Set up the methods for a larger more complicated tree.
-    
-    This tree type has roots, a trunk, and branches all of varying width, 
+
+    This tree type has roots, a trunk, and branches all of varying width,
     and many foliage clusters.
     MUST BE SUBCLASSED.  Specifically, self.foliage_shape must be set.
     Subclass 'prepare' and 'shapefunc' to make different shaped trees.
     '''
-    
+
     def crossection(self,center,radius,diraxis,matidx,mcmap):
         '''Create a round section of type matidx in mcmap.
-        
+
         Passed values:
         center = [x,y,z] for the coordinates of the center block
         radius = <number> as the radius of the section.  May be a float or int.
@@ -601,20 +601,20 @@ class ProceduralTree(Tree):
                 coord[secidx1] = sec1
                 coord[secidx2] = sec2
                 assign_value(coord[0],coord[1],coord[2],matidx,mcmap)
-    
+
     def shapefunc(self,y):
         '''Take y and return a radius for the location of the foliage cluster.
-        
+
         If no foliage cluster is to be created, return None
         Designed for sublcassing.  Only makes clusters close to the trunk.
         '''
         if random() < 100./(self.height **2) and y < self.trunkheight:
             return self.height * .12
         return None
-    
+
     def foliagecluster(self,center,mcmap):
         '''generate a round cluster of foliage at the location center.
-        
+
         The shape of the cluster is defined by the list self.foliage_shape.
         This list must be set in a subclass of ProceduralTree.
         '''
@@ -625,15 +625,15 @@ class ProceduralTree(Tree):
         for i in level_radius:
             self.crossection([x,y,z],i,1,LEAFINFO,mcmap)
             y += 1
-    
+
     def taperedcylinder(self,start,end,startsize,endsize,mcmap,blockdata):
         '''Create a tapered cylinder in mcmap.
-        
+
         start and end are the beginning and ending coordinates of form [x,y,z].
         startsize and endsize are the beginning and ending radius.
         The material of the cylinder is WOODMAT.
         '''
-        
+
         # delta is the coordinate vector for the difference between
         # start and end.
         delta = [int(end[i] - start[i]) for i in range(3)]
@@ -655,7 +655,7 @@ class ProceduralTree(Tree):
         secfac1 = float(secdelta1)/delta[primidx]
         secdelta2 = delta[secidx2]
         secfac2 = float(secdelta2)/delta[primidx]
-        # Initialize coord.  These values could be anything, since 
+        # Initialize coord.  These values could be anything, since
         # they are overwritten.
         coord = [0,0,0]
         # Loop through each crossection along the primary axis,
@@ -672,12 +672,12 @@ class ProceduralTree(Tree):
             radius = endsize + (startsize-endsize) * abs(delta[primidx]
                                 - primoffset) / primdist
             self.crossection(coord,radius,primidx,blockdata,mcmap)
-    
+
     def makefoliage(self,mcmap):
         '''Generate the foliage for the tree in mcmap.
         '''
         """note, foliage will disintegrate if there is no foliage below, or
-        if there is no "log" block within range 2 (square) at the same level or 
+        if there is no "log" block within range 2 (square) at the same level or
         one level below"""
         foliage_coords = self.foliage_cords
         for coord in foliage_coords:
@@ -692,7 +692,7 @@ class ProceduralTree(Tree):
                 if LIGHTTREE == 4:
                     assign_value(cord[0],cord[1],cord[2]+1,LIGHTINFO,mcmap)
                     assign_value(cord[0],cord[1],cord[2]-1,LIGHTINFO,mcmap)
-                    
+
     def makebranches(self,mcmap):
         '''Generate the branches and enter them in mcmap.
         '''
@@ -715,7 +715,7 @@ class ProceduralTree(Tree):
             value = (self.branchdensity * 220 * height)/((ydist + dist) ** 3)
             if value < random():
                 continue
-            
+
             posy = coord[1]
             slope = self.branchslope + (0.5 - random())*.16
             if coord[1] - dist*slope > topy:
@@ -728,9 +728,9 @@ class ProceduralTree(Tree):
                 basesize = endrad
             else:
                 branchy = posy-dist*slope
-                basesize = (endrad + (self.trunkradius-endrad) * 
+                basesize = (endrad + (self.trunkradius-endrad) *
                          (topy - branchy) / self.trunkheight)
-            startsize = (basesize * (1 + random()) * .618 * 
+            startsize = (basesize * (1 + random()) * .618 *
                          (dist/height)**0.618)
             rndr = sqrt(random())*basesize*0.618
             rndang = random()*2*pi
@@ -744,17 +744,17 @@ class ProceduralTree(Tree):
             endsize = 1.0
             self.taperedcylinder(startcoord,coord,startsize,endsize,
                              mcmap,WOODINFO)
-    
+
     def makeroots(self,rootbases,mcmap):
         '''generate the roots and enter them in mcmap.
-        
+
         rootbases = [[x,z,base_radius], ...] and is the list of locations
         the roots can originate from, and the size of that location.
         '''
         treeposition = self.pos
         height = self.height
         for coord in self.foliage_cords:
-            # First, set the threshhold for randomly selecting this 
+            # First, set the threshhold for randomly selecting this
             # coordinate for root creation.
             dist = (sqrt(float(coord[0]-treeposition[0])**2 +
                             float(coord[2]-treeposition[2])**2))
@@ -763,7 +763,7 @@ class ProceduralTree(Tree):
             # Randomly skip roots, based on the above threshold
             if value < random():
                 continue
-            # initialize the internal variables from a selection of 
+            # initialize the internal variables from a selection of
             # starting locations.
             rootbase = choice(rootbases)
             rootx = rootbase[0]
@@ -791,8 +791,8 @@ class ProceduralTree(Tree):
             # If ROOTS is set to "tostone" or "hanging" we need to check
             # along the distance for collision with existing materials.
             if ROOTS in ["tostone","hanging"]:
-                offlength = sqrt(float(offset[0])**2 + 
-                                 float(offset[1])**2 + 
+                offlength = sqrt(float(offset[0])**2 +
+                                 float(offset[1])**2 +
                                  float(offset[2])**2)
                 if offlength < 1:
                     continue
@@ -809,9 +809,9 @@ class ProceduralTree(Tree):
                 # or stopping.
                 startdist = int(random()*6*sqrt(rootstartsize) + 2.8)
                 # searchstart is the coordinate where the search should begin
-                searchstart = [startcoord[i] + startdist*vec[i] 
+                searchstart = [startcoord[i] + startdist*vec[i]
                                for i in range(3)]
-                # dist stores how far the search went (including searchstart) 
+                # dist stores how far the search went (including searchstart)
                 # before encountering the expected marterial.
                 dist = startdist + dist_to_mat(searchstart,vec,
                                         searchindex,mcmap, limit=offlength)
@@ -820,11 +820,11 @@ class ProceduralTree(Tree):
                 # the search found the material.
                 if dist < offlength:
                     # rootmid is the size of the crossection at endcoord.
-                    rootmid +=  (rootstartsize - 
+                    rootmid +=  (rootstartsize -
                                          endsize)*(1-dist/offlength)
-                    # endcoord is the midpoint for hanging roots, 
+                    # endcoord is the midpoint for hanging roots,
                     # and the endpoint for roots stopped by stone.
-                    endcoord = [startcoord[i]+int(vec[i]*dist) 
+                    endcoord = [startcoord[i]+int(vec[i]*dist)
                                 for i in range(3)]
                     if ROOTS == "hanging":
                         # remaining_dist is how far the root had left
@@ -838,16 +838,16 @@ class ProceduralTree(Tree):
                         # Make the hanging part of the hanging root.
                         self.taperedcylinder(endcoord,bottomcord,
                              rootmid,endsize,mcmap,WOODINFO)
-                
+
                 # make the beginning part of hanging or "tostone" roots
                 self.taperedcylinder(startcoord,endcoord,
                      rootstartsize,rootmid,mcmap,WOODINFO)
-        
+
             # If you aren't searching for stone or air, just make the root.
             else:
                 self.taperedcylinder(startcoord,endcoord,
                              rootstartsize,endsize,mcmap,WOODINFO)
-    
+
     def maketrunk(self,mcmap):
         '''Generate the trunk, roots, and branches in mcmap.
         '''
@@ -931,10 +931,10 @@ class ProceduralTree(Tree):
             top_radius = endrad - wall_thickness
             # the starting x and y can be offset by up to the wall thickness.
             base_offset = int(wall_thickness)
-            x_choices = [i for i in range(x-base_offset, 
+            x_choices = [i for i in range(x-base_offset,
                                           x + base_offset+1)]
             start_x = choice(x_choices)
-            z_choices = [i for i in range(z-base_offset, 
+            z_choices = [i for i in range(z-base_offset,
                                           z + base_offset+1)]
             start_z = choice(z_choices)
             self.taperedcylinder([start_x,starty,start_z],[x,midy,z],
@@ -944,10 +944,10 @@ class ProceduralTree(Tree):
             self.taperedcylinder([x,midy,z],[x,hollow_top_y,z],
                                  mid_radius,top_radius,
                                  mcmap,TRUNKFILLINFO)
-        
+
     def prepare(self,mcmap):
         '''Initialize the internal values for the Tree object.
-        
+
         Primarily, sets up the foliage cluster locations.
         '''
         treeposition = self.pos
@@ -964,7 +964,7 @@ class ProceduralTree(Tree):
         topy = treeposition[1]+int(self.trunkheight + 0.5)
         foliage_coords = []
         ystart = treeposition[1]
-        num_of_clusters_per_y = int(1.5 + (FOLIAGEDENSITY * 
+        num_of_clusters_per_y = int(1.5 + (FOLIAGEDENSITY *
                                            self.height / 19.)**2)
         if num_of_clusters_per_y < 1:
             num_of_clusters_per_y = 1
@@ -977,7 +977,7 @@ class ProceduralTree(Tree):
                 if shapefac is None:
                     continue
                 r = (sqrt(random()) + .328)*shapefac
-                
+
                 theta = random()*2*pi
                 x = int(r*sin(theta)) + treeposition[0]
                 z = int(r*cos(theta)) + treeposition[2]
@@ -1023,7 +1023,7 @@ class RoundTree(ProceduralTree):
         self.foliage_shape = [2,3,3,2.5,1.6]
         self.trunkradius = self.trunkradius * 0.8
         self.trunkheight = TRUNKHEIGHT * self.trunkheight
-                    
+
     def shapefunc(self,y):
         twigs = ProceduralTree.shapefunc(self,y)
         if twigs is not None:
@@ -1040,7 +1040,7 @@ class RoundTree(ProceduralTree):
             dist = sqrt( (radius **2) - (adj **2) )
         dist = dist * .618
         return dist
-            
+
 
 class ConeTree(ProceduralTree):
     '''this kind of tree is designed to resemble a conifer tree.
@@ -1052,7 +1052,7 @@ class ConeTree(ProceduralTree):
         ProceduralTree.prepare(self,mcmap)
         self.foliage_shape = [3,2.6,2,1]
         self.trunkradius = self.trunkradius * 0.5
-        
+
     def shapefunc(self,y):
         twigs = ProceduralTree.shapefunc(self,y)
         if twigs is not None:
@@ -1074,7 +1074,7 @@ class RainforestTree(ProceduralTree):
         ProceduralTree.prepare(self,mcmap)
         self.trunkradius = self.trunkradius * 0.382
         self.trunkheight = self.trunkheight * .9
-    
+
     def shapefunc(self,y):
         if y < self.height * 0.8:
             if EDGEHEIGHT < self.height:
@@ -1096,14 +1096,14 @@ class MangroveTree(RoundTree):
         self.branchslope = 1.0
         RoundTree.prepare(self,mcmap)
         self.trunkradius = self.trunkradius * 0.618
-    
+
     def shapefunc(self,y):
         val = RoundTree.shapefunc(self,y)
         if val is None:
             return val
         val = val * 1.618
-        return val                
-                
+        return val
+
 def planttrees(mcmap,treelist):
     '''Take mcmap and add trees to random locations on the surface to treelist.
     '''
@@ -1127,7 +1127,7 @@ def planttrees(mcmap,treelist):
         rad_fraction = 1.0 - rad_fraction
         rad_fraction **= 2
         rad_fraction = 1.0 - rad_fraction
-        
+
         rad = rad_fraction * RADIUS
         ang = random() * pi * 2
         x = X + int(rad * sin(ang) + .5)
@@ -1190,7 +1190,7 @@ def planttrees(mcmap,treelist):
                 # after all that work, there wasn't enough foliage around!
                 # try again!
                 continue
-            
+
         # generate the new tree
         newtree = Tree([x,y,z],height)
         if VERBOSE: print(x, y, z, height)
@@ -1198,7 +1198,7 @@ def planttrees(mcmap,treelist):
 
 def processtrees(mcmap,treelist):
     '''Initalize all of the trees in treelist.
-    
+
     Set all of the trees to the right type, and run prepare.  If indicated
     limit the height of the trees to the top of the map.
     '''
@@ -1209,7 +1209,7 @@ def processtrees(mcmap,treelist):
         shape_choices = ["round","cone"]
     else:
         shape_choices = [SHAPE]
-    
+
     # initialize mapheight, just in case
     mapheight = 127
     for i in range(len(treelist)):
@@ -1228,7 +1228,7 @@ def processtrees(mcmap,treelist):
             newtree = RainforestTree()
         elif newshape == "mangrove":
             newtree = MangroveTree()
-        
+
         # Get the height and position of the existing trees in
         # the list.
         newtree.copy(treelist[i])
@@ -1252,7 +1252,7 @@ def processtrees(mcmap,treelist):
         newtree.prepare(mcmap)
         treelist[i] = newtree
 
-        
+
 def main(the_map):
     '''create the trees
     '''

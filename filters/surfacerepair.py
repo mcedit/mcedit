@@ -8,7 +8,7 @@ from pymclevel.level import extractHeights
 blocktypes = [1, 2, 3, 7, 12, 13, 14, 15, 16, 56, 73, 74, 87, 88, 89]
 blockmask = zeros((256,), dtype='bool')
 
-#compute a truth table that we can index to find out whether a block 
+#compute a truth table that we can index to find out whether a block
 # is naturally occuring and should be considered in a heightmap
 blockmask[blocktypes] = True
 
@@ -27,7 +27,7 @@ def perform(level, box, options):
         blocks = chunk.Blocks
         data = chunk.Data
 
-        # use indexing to look up whether or not each block in blocks is 
+        # use indexing to look up whether or not each block in blocks is
         # naturally-occuring. these blocks will "count" for column height.
         maskedBlocks = blockmask[blocks]
 

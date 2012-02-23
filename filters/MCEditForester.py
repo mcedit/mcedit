@@ -1,4 +1,4 @@
-'''MCEditForester.py 
+'''MCEditForester.py
    Tree-generating script by dudecon
    http://www.minecraftforum.net/viewtopic.php?f=1022&t=219461
 

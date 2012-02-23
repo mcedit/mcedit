@@ -34,7 +34,7 @@ terrainBlocktypes = [b.ID for b in blocks]
 terrainBlockmask = zeros((256,), dtype='bool')
 
 # Truth table used to calculate terrain height
-# trees, leaves, etc. sit on top of terrain 
+# trees, leaves, etc. sit on top of terrain
 terrainBlockmask[terrainBlocktypes] = True
 
 inputs = (
