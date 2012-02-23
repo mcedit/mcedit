@@ -1054,11 +1054,11 @@ class RoundTree(ProceduralTree):
         twigs = ProceduralTree.shapefunc(self, y)
         if twigs is not None:
             return twigs
-        if y < self.height * (.282 + .1 * sqrt(random())) :
+        if y < self.height * (.282 + .1 * sqrt(random())):
             return None
         radius = self.height / 2.
         adj = self.height / 2. - y
-        if adj == 0 :
+        if adj == 0:
             dist = radius
         elif abs(adj) >= radius:
             dist = 0
@@ -1084,9 +1084,9 @@ class ConeTree(ProceduralTree):
         twigs = ProceduralTree.shapefunc(self, y)
         if twigs is not None:
             return twigs
-        if y < self.height * (.25 + .05 * sqrt(random())) :
+        if y < self.height * (.25 + .05 * sqrt(random())):
             return None
-        radius = (self.height - y ) * 0.382
+        radius = (self.height - y) * 0.382
         if radius < 0:
             radius = 0
         return radius
