@@ -20,7 +20,7 @@ def perform(level, box, options):
         coords = []
         for chunk, slices, point in level.getChunkSlices(box):
             water = waterTable[chunk.Blocks[slices]]
-            chunk.Data[slices][water] = 0 #source block
+            chunk.Data[slices][water] = 0  # source block
 
             x, z, y = water.nonzero()
             x = x + (point[0] + box.minx)
@@ -36,11 +36,13 @@ def perform(level, box, options):
 
             for (x, y, z) in coords:
                 for _dir, offsets in faceDirections:
-                    if _dir == FaceYIncreasing: continue
+                    if _dir == FaceYIncreasing:
+                        continue
 
                     dx, dy, dz = offsets
                     p = (x + dx, y + dy, z + dz)
-                    if p not in box: continue
+                    if p not in box:
+                        continue
 
                     nx, ny, nz = p
                     if level.blockAt(nx, ny, nz) == 0:
@@ -70,6 +72,3 @@ def perform(level, box, options):
         lavaIDs = [alphaMaterials.LavaActive.ID, alphaMaterials.Lava.ID]
         lavaID = alphaMaterials.Lava.ID
         floodFluid(lavaIDs, lavaID)
-
-
-

@@ -6,14 +6,15 @@ terrainBlocktypes = [1, 2, 3, 7, 12, 13, 14, 15, 16, 56, 73, 74, 87, 88, 89]
 terrainBlockmask = zeros((256,), dtype='bool')
 terrainBlockmask[terrainBlocktypes] = True
 
-#        
+#
 inputs = (
     ("Repeat count", (1, 50)),
 )
 
+
 def perform(level, box, options):
     if box.volume > 16000000:
-        raise ValueError, "Volume too big for this filter method!"
+        raise ValueError("Volume too big for this filter method!")
 
     repeatCount = options["Repeat count"]
     schema = level.extractSchematic(box)
@@ -62,6 +63,4 @@ def perform(level, box, options):
 
             schema.Blocks[x, z] = column
 
-
     level.copyBlocksFrom(schema, schema.bounds, box.origin)
-

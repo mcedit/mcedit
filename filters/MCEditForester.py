@@ -1,4 +1,4 @@
-'''MCEditForester.py 
+'''MCEditForester.py
    Tree-generating script by dudecon
    http://www.minecraftforum.net/viewtopic.php?f=1022&t=219461
 
@@ -46,14 +46,16 @@ inputs = (
 
 )
 
+
 def perform(level, box, options):
     '''Load the file, create the trees, and save the new file.
     '''
     # set up the non 1 to 1 mappings of options to Forester global names
     optmap = {
-        "Tree Height":"CENTERHEIGHT",
+        "Tree Height": "CENTERHEIGHT",
     }
     # automatically set the options that map 1 to 1 from options to Forester
+
     def setOption(opt):
         OPT = optmap.get(opt, opt.replace(" ", "").upper())
         if OPT in dir(Forester):
@@ -62,6 +64,7 @@ def perform(level, box, options):
                 val = val.replace(" ", "").lower()
 
             setattr(Forester, OPT, val)
+
     # set all of the options
     for option in options:
         setOption(option)
@@ -72,8 +75,8 @@ def perform(level, box, options):
     leaf = options["Leaf Material"]
     grass = options["Plant On"]
 
-    Forester.WOODINFO = {"B":wood.ID, "D":wood.blockData}
-    Forester.LEAFINFO = {"B":leaf.ID, "D":leaf.blockData}
+    Forester.WOODINFO = {"B": wood.ID, "D": wood.blockData}
+    Forester.LEAFINFO = {"B": leaf.ID, "D": leaf.blockData}
     Forester.PLANTON = [grass.ID]
 
     # calculate the plant-on center and radius

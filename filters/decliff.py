@@ -34,7 +34,7 @@ terrainBlocktypes = [b.ID for b in blocks]
 terrainBlockmask = zeros((256,), dtype='bool')
 
 # Truth table used to calculate terrain height
-# trees, leaves, etc. sit on top of terrain 
+# trees, leaves, etc. sit on top of terrain
 terrainBlockmask[terrainBlocktypes] = True
 
 inputs = (
@@ -43,6 +43,7 @@ inputs = (
     ("Raise/Lower", ("Both", "Lower Only", "Raise Only")),
 )
 
+
 #
 # Calculate the maximum adjustment that can be made from
 # cliff_pos in direction dir (-1/1) keeping terain at most
@@ -50,10 +51,12 @@ inputs = (
 def maxadj(heightmap, slice_no, cliff_pos, dir, pushup, maxstep, slice_width):
     ret = 0
     if dir < 0:
-        if cliff_pos < 2: return 0
+        if cliff_pos < 2:
+            return 0
         end = 0
     else:
-        if cliff_pos > slice_width - 2: return 0
+        if cliff_pos > slice_width - 2:
+            return 0
         end = slice_width - 1
 
     for cur_pos in range(cliff_pos, end, dir):
@@ -67,6 +70,7 @@ def maxadj(heightmap, slice_no, cliff_pos, dir, pushup, maxstep, slice_width):
                dir * heightmap[slice_no, cur_pos + dir]])
 
     return ret
+
 
 #
 # Raise/lower column at cliff face by adj and decrement change as we move away
@@ -120,7 +124,7 @@ def adjheight(orig, new, slice_no, cliff_pos, dir, adj, can_adj, maxstep, slice_
 
 def perform(level, box, options):
     if box.volume > 16000000:
-        raise ValueError, "Volume too big for this filter method!"
+        raise ValueError("Volume too big for this filter method!")
 
     RLOption = options["Raise/Lower"]
     schema = level.extractSchematic(box)
@@ -175,10 +179,14 @@ def perform(level, box, options):
             can_left = maxadj(heightmap, slice_no, cliff_pos, -1, cliff_height < 0, max_step, slice_width)
             can_right = maxadj(heightmap, slice_no, cliff_pos + 1, 1, cliff_height > 0, max_step, slice_width)
 
-            if can_right < 0 and RLOption == "Raise Only": can_right = 0
-            if can_right > 0 and RLOption == "Lower Only": can_right = 0
-            if can_left < 0 and RLOption == "Raise Only":  can_left = 0
-            if can_left > 0 and RLOption == "Lower Only":  can_left = 0
+            if can_right < 0 and RLOption == "Raise Only":
+                can_right = 0
+            if can_right > 0 and RLOption == "Lower Only":
+                can_right = 0
+            if can_left < 0 and RLOption == "Raise Only":
+                can_left = 0
+            if can_left > 0 and RLOption == "Lower Only":
+                can_left = 0
 
             if cliff_height < 0 and can_right - can_left < cliff_height:
                 if abs(can_left) > abs(can_right):
@@ -266,6 +274,5 @@ def perform(level, box, options):
                         column[nh + 1:nh + 1 + Waterdepth] = am.Air.ID
 
         schema.Blocks[x, z] = column
-
 
     level.copyBlocksFrom(schema, schema.bounds, box.origin)

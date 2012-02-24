@@ -27,6 +27,8 @@ blocks = [
   am.Glowstone
 ]
 blocktypes = [b.ID for b in blocks]
+
+
 def naturalBlockmask():
     blockmask = zeros((256,), dtype='bool')
     blockmask[blocktypes] = True
@@ -37,11 +39,12 @@ inputs = (
   ("Pick a block:", alphaMaterials.Grass),
 )
 
+
 def perform(level, box, options):
     depth = options["Depth"]
     blocktype = options["Pick a block:"]
 
-    #compute a truth table that we can index to find out whether a block 
+    #compute a truth table that we can index to find out whether a block
     # is naturally occuring and should be considered in a heightmap
     blockmask = naturalBlockmask()
 
@@ -56,7 +59,7 @@ def perform(level, box, options):
         blocks = chunk.Blocks[slices]
         data = chunk.Data[slices]
 
-        # use indexing to look up whether or not each block in blocks is 
+        # use indexing to look up whether or not each block in blocks is
         # naturally-occuring. these blocks will "count" for column height.
         maskedBlocks = blockmask[blocks]
 
