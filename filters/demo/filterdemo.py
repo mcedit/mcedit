@@ -43,7 +43,7 @@ def perform(level, box, options):
     complexity = options["Fractal complexity"]
     if options["Enable thrusters"]:
         # Errors will alert the user and print a traceback to the console.
-        raise NotImplementedError, "Thrusters not attached!"
+        raise NotImplementedError("Thrusters not attached!")
 
     method = options["Access method"]
 
