@@ -54,7 +54,7 @@ def perform(level, box, options):
     if method == "Use blockAt":
         for x in xrange(box.minx, box.maxx):
             for z in xrange(box.minz, box.maxz):
-                for y in xrange(box.miny, box.maxy): #nested loops can be slow
+                for y in xrange(box.miny, box.maxy):  # nested loops can be slow
 
                     # replaces gold with TNT. straightforward.
                     if level.blockAt(x, y, z) == 14:
@@ -113,4 +113,4 @@ def perform(level, box, options):
     pos = level.getPlayerPosition()
     cpos = pos[0] >> 4, pos[2] >> 4
     chunk = level.getChunk(*cpos)
-    chunk.Blocks[::4, ::4, :64] = 46 #replace every 4x4th column of land with TNT
+    chunk.Blocks[::4, ::4, :64] = 46  # replace every 4x4th column of land with TNT
