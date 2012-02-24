@@ -38,6 +38,7 @@ inputs = (
 # you get undo for free: everything within 'box' is copied to a temporary buffer
 # before perform is called, and then copied back when the user asks to undo
 
+
 def perform(level, box, options):
     blockType = options["Pick a block:"].ID
     complexity = options["Fractal complexity"]
