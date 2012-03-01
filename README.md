@@ -4,7 +4,7 @@ MCEdit is an open-source, BSD-licenced world editor for the viral indie hit [Min
 
 ## For Developers
 
-MCEdit is written in Python using a variety of open source modules. When developing it is recommended to use virtualenv to keep dependencies sane and to easy deployment.
+MCEdit is written in Python using a variety of open source modules. When developing it is recommended to use virtualenv to keep dependencies sane and for easy deployment.
 
 ### Development Quick Guide
 
