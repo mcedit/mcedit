@@ -6,163 +6,40 @@ mcedit.py
 Startup, main menu, keyboard configuration, automatic updating.
 """
 import os
+import os.path
 import sys
+import config
+import shutil
+import functools
+import traceback
+import logging
 
+import pygame
+from pygame.constants import *
+from pygame import key, display, rect
 
-class SafeOutputStream(object):
-    def __init__(self, oldStream):
-        self.oldStream = oldStream
+from albow.openglwidgets import GLViewport
+from albow.root import RootWidget
+from albow.dialogs import Dialog
+from albow import *
+from glbackground import Panel
 
-    def write(self, text):
-        try:
-            self.oldStream.write(text.decode("utf8", "replace").encode(self.oldStream.encoding or "utf8", "replace"))
-        except Exception:
-            pass
+from OpenGL import GL
+from numpy import *
 
-    def flush(self):
-        self.oldStream.flush()
+from pymclevel.mclevel import MCInfdevOldLevel, saveFileDir
+from pymclevel.materials import *
+MCInfdevOldLevel.loadedChunkLimit = 0
 
-    def close(self):
-        pass
+from release import release
 
-
-class tee(object):
-    def __init__(self, _fd1, _fd2):
-        self.fd1 = _fd1
-        self.fd2 = _fd2
-
-    def __del__(self):
-        if self.fd1 != sys.stdout and self.fd1 != sys.stderr:
-            self.fd1.close()
-        if self.fd2 != sys.stdout and self.fd2 != sys.stderr:
-            self.fd2.close()
-
-    def write(self, text):
-        self.fd1.write(text)
-        self.fd2.write(text)
-
-    def flush(self):
-        self.fd1.flush()
-        self.fd2.flush()
-
-sys.stdout = SafeOutputStream(sys.stdout)
-sys.stderr = sys.stdout
-
-
-try:
-    from release import release
-    print "Release: ", release
-
-    import locale
-    locale.setlocale(locale.LC_ALL, '')
-    import traceback
-    import logging
-    from os.path import exists, isdir, join
-
-    import functools
-    import shutil
-    import platform
-
-    from errorreporting import reportException
-
-    if "-debug" in sys.argv and platform.architecture()[0] == "32bit":
-        os.environ['PATH'] = "C:\\Program Files (x86)\\GLIntercept_1_0_Beta01" + os.pathsep + os.environ['PATH']
-    try:
-        print "Loading OpenGL..."
-        import OpenGL
-    except ImportError:
-        print "***"
-        print "***   REQUIRED MODULE PyOpenGL not found!"
-        print "***   Please install PyOpenGL from http://pyopengl.sourceforge.net"
-        print "***   Or use the command 'easy_install PyOpenGL'"
-        print "***"
-        raise SystemExit
-
-    loglevel = logging.INFO
-    if "-debug" in sys.argv:
-        loglevel = logging.DEBUG
-    if "-gldebug" in sys.argv:
-        print "GL Debug mode - All errors raise exceptions"
-        OpenGL.ERROR_ON_COPY = True
-        if "-full" in sys.argv:
-            OpenGL.FULL_LOGGING = True
-
-    else:
-        OpenGL.ERROR_CHECKING = False
-    logging.basicConfig(format=u'%(levelname)s:%(message)s')
-    logging.getLogger().level = logging.WARN
-
-    from OpenGL import GL
-    logging.getLogger().level = loglevel
-
-    import pygame
-    import mcplatform
-    try:
-        logfile = file(mcplatform.dataDir + os.path.sep + "mcedit.log", "w")
-
-        logfile = SafeOutputStream(logfile)
-
-        sys.stdout = tee(sys.stdout, logfile)
-        sys.stderr = sys.stdout
-    except Exception as e:
-        print "Error opening logfile", repr(e)
-
-    from albow.openglwidgets import GLViewport
-    from albow.root import RootWidget
-    from albow.dialogs import Dialog
-    from albow import *
-    #from bresenham import bresenham
-    from glbackground import Panel
-
-    from depths import DepthOffset
-    import config
-    from mceutils import *
-    from glutils import gl, Texture
-    #Label = GLLabel
-    import leveleditor
-
-    from pymclevel.mclevel import MCLevel, MCSchematic, MCInfdevOldLevel, saveFileDir
-    from pymclevel.materials import *
-    MCInfdevOldLevel.loadedChunkLimit = 0
-
-    from pygame import key, display, rect
-
-    def initDisplay():
-        try:
-            display.init()
-        except pygame.error:
-            os.environ['SDL_VIDEODRIVER'] = "directx"
-            try:
-                display.init()
-            except pygame.error:
-                os.environ['SDL_VIDEODRIVER'] = "windib"
-                display.init()
-        #print "pygame.init:", pygame.init()
-
-    from pygame.constants import *
-    pygame.font.init()
-
-    from numpy import *
-    #from math import sin, cos, radians
-    #raise ValueError, "OH SHIT"
-except Exception, e:
-
-    traceback.print_exc()
-    print "Startup failed."
-    print "Please send a copy or screenshot of this error to codewarrior0@gmail.com"
-    try:
-        reportException(e)
-    except:
-        pass
-    import sys
-    sys.exit(1)
-
-#from Font import Font
-ESCAPE = '\033'
-
+import leveleditor
+import mcplatform
+from mceutils import *
 from mcplatform import platform_open
-
 from leveleditor import Settings, ControlSettings
+
+ESCAPE = '\033'
 
 
 class FileOpener(Widget):
@@ -1019,7 +896,23 @@ class MCEdit(GLViewport):
                 mcedit.editor.handleMemoryError()
 
 
-def main():
+def main(argv):
+    logging.basicConfig(format=u'%(levelname)s:%(message)s')
+    logging.getLogger().level = logging.INFO
+
+    try:
+        display.init()
+    except pygame.error, e:
+        print(str(e))
+        os.environ['SDL_VIDEODRIVER'] = "directx"
+        try:
+            display.init()
+        except pygame.error:
+            os.environ['SDL_VIDEODRIVER'] = "windib"
+            display.init()
+
+    pygame.font.init()
+
     try:
         if not os.path.exists(mcplatform.schematicsDir):
             shutil.copytree(os.path.join(mcplatform.dataDir, u"stock-schematics"), mcplatform.schematicsDir)
@@ -1031,59 +924,18 @@ def main():
             print "Error creating schematics dir: ", e
 
     try:
-        print "dataDir is ", mcplatform.dataDir
-        print "docsFolder is ", mcplatform.docsFolder
-    except:
-        pass
-
-    MCEdit.profiling = "-profile" in sys.argv
-    if MCEdit.profiling:
-        print "-- Profiling Enabled --"
-        _profilemain()
-    else:
-        _main()
+        MCEdit.main()
+    except SystemExit:
+        return 0
+    except Exception, e:
+        print(str(e))
+        display.quit()
+        return 1
+    return 0
 
 if os.environ.get("MCEDIT_LOWMEMTEST", None):
     hog = zeros((1024 * 1024 * 1024), dtype='uint8')
     pig = zeros((1 * 1024 * 1024), dtype='uint8')
-
-
-def _main():
-    try:
-
-        #global mv
-        #mv = MCEdit()
-        #raise ValueError, "Programmer requested error"
-        MCEdit.main()
-    except SystemExit:
-        raise
-    except Exception, e:
-        print "An error has been found!  Please send the following to codewarrior0@gmail.com."
-
-        reportException(e)
-
-        display.quit()
-
-        if not mcplatform.runningInEditor:
-            raw_input("Press ENTER to dismiss...")
-        sys.exit(1)
-
-
-import cProfile
-
-
-def _profilemain():
-
-    cProfile.run("_main()", mcplatform.dataDir + os.path.sep + "mcedit.profile")
-    # p = Stats("mcedit.profile");
-    # p.sort_stats('cum');
-    # p.print_stats(15);
-    # #system("c:\program files (x86)\graphviz\")
-    if mcplatform.runningInEditor:
-        del os.environ["PYTHONPATH"]
-        os.system("python gprof2dot.py -f pstats mcedit.profile > mcedit.dot ")
-        os.system("dot -Tpng mcedit.dot -o mcedit.png")
-        os.startfile("mcedit.png")
 
 
 class GLDisplayContext(object):
@@ -1091,25 +943,16 @@ class GLDisplayContext(object):
         self.reset()
 
     def getWindowSize(self):
-        w, h = (Settings.windowWidth.get(),
-                Settings.windowHeight.get(),
-                )
-
+        w, h = (Settings.windowWidth.get(), Settings.windowHeight.get())
         return max(20, w), max(20, h)
 
     def displayMode(self):
+        displayMode = OPENGL | RESIZABLE
         if Settings.doubleBuffer.get():
-            print "Double-buffered surface"
-            displayMode = OPENGL | DOUBLEBUF | RESIZABLE
-        else:
-            print "Single-buffered surface"
-            displayMode = OPENGL | RESIZABLE
-
+            displayMode |= DOUBLEBUF
         return displayMode
 
     def reset(self):
-        initDisplay()
-
         pygame.key.set_repeat(500, 100)
 
         try:
@@ -1210,11 +1053,4 @@ def weird_fix():
         pass
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception, e:
-        traceback.print_exc()
-        print("An error occured. Please post the above exception as an issue"
-                "on https://github.com/mcedit/mcedit/issues/new")
-        raw_input("Press ENTER to dismiss...")
-
+    sys.exit(main(sys.argv))
