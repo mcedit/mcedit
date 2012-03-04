@@ -52,7 +52,7 @@ SETUP_COMMON = {
         ]
     },
     'scripts': [
-        'main.py'
+        'mcedit.py'
     ]
 }
 
