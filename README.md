@@ -36,7 +36,7 @@ easy_install pygame
 easy_install pyyaml
 ```
 
-You should now be able to run MCEdit with `python main.py` assuming you've installed all the dependencies correctly.
+You should now be able to run MCEdit with `python mcedit.py` assuming you've installed all the dependencies correctly.
 
 ### Freezing/Packaging
 
