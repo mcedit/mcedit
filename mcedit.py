@@ -53,14 +53,14 @@ class FileOpener(Widget):
 
         helpColumn = []
 
-        label = Label("{0} {1} {2} {3} {4} {5}".format(config.config.get('Keys', 'Forward'),
-                                       config.config.get('Keys', 'Left'),
-                                       config.config.get('Keys', 'Back'),
-                                       config.config.get('Keys', 'Right'),
-                                       config.config.get('Keys', 'Up'),
-                                       config.config.get('Keys', 'Down'),
-                                       ).upper() + " to move")
-        #label.fg_color = (242, 244, 255);
+        label = Label("{0} {1} {2} {3} {4} {5}".format(
+            config.config.get('Keys', 'Forward'),
+            config.config.get('Keys', 'Left'),
+            config.config.get('Keys', 'Back'),
+            config.config.get('Keys', 'Right'),
+            config.config.get('Keys', 'Up'),
+            config.config.get('Keys', 'Down'),
+        ).upper() + " to move")
         label.anchor = 'whrt'
         label.align = 'r'
         helpColumn.append(label)
@@ -96,7 +96,8 @@ class FileOpener(Widget):
                     if lev.LevelName != lev.displayName:
                         shortname = u"{0} ({1})".format(lev.LevelName, lev.displayName)
             except Exception, e:
-                print repr(e)
+                logging.warning(
+                    'Couldn\'t get name from recent world: {0!r}'.format(e))
 
             if shortname == "level.dat":
                 shortname = os.path.basename(os.path.dirname(world))
@@ -150,7 +151,7 @@ class FileOpener(Widget):
             if filename:
                 self.mcedit.loadFile(filename)
         except Exception, e:
-            print "Error during promptOpen: ", e
+            logging.error('Error during proptOpenAndLoad: {0!r}'.format(e))
 
     def createNewWorld(self):
         self.parent.createNewWorld()
@@ -550,7 +551,6 @@ class OptionsPanel(Dialog):
 
         alertText = textChoices[mcplatform.portable]
         if ask(alertText) == "OK":
-            print "Moving files..."
             try:
                 [mcplatform.goPortable, mcplatform.goFixed][mcplatform.portable]()
             except Exception, e:
@@ -685,7 +685,7 @@ class MCEdit(GLViewport):
                     filename = (config.config.get("Recent Worlds", str(i)).decode('utf-8'))
                     worlds.append(self.removeLevelDat(filename))
                 except Exception, e:
-                    print repr(e)
+                    logging.error(repr(e))
 
         return list((f for f in worlds if f and os.path.exists(f)))
 
@@ -749,21 +749,23 @@ class MCEdit(GLViewport):
         return c
 
     def resized(self, dw, dh):
+        """
+        Handle window resizing events.
+        """
         GLViewport.resized(self, dw, dh)
 
         (w, h) = self.size
         if w == 0 and h == 0:
-            print "Minimized!", w, h
+            # The window has been minimized, no need to draw anything.
             self.editor.renderer.render = False
             return
+
         if not self.editor.renderer.render:
-            print "Restored!", w, h
             self.editor.renderer.render = True
 
         surf = pygame.display.get_surface()
         assert isinstance(surf, pygame.Surface)
         dw, dh = surf.get_size()
-        print "Resized!", w, h, "d", dw - w, dh - h
 
         if w > 0 and h > 0:
             Settings.windowWidth.set(w)
@@ -784,21 +786,18 @@ class MCEdit(GLViewport):
     def loadFile(self, filename):
         self.removeGraphicOptions()
         if os.path.exists(filename):
-
             try:
                 self.editor.loadFile(filename)
             except Exception, e:
-                print u"Failed to load file ", filename, e
-                traceback.print_exc()
+                logging.error('Failed to load file {0}: {1!r}'.format(
+                    filename, e))
                 return None
 
             self.remove(self.fileOpener)
             self.fileOpener = None
             if self.editor.level:
                 self.editor.size = self.size
-
                 self.add(self.editor)
-
                 self.focus_switch = self.editor
 
     def createNewWorld(self):
@@ -842,8 +841,6 @@ class MCEdit(GLViewport):
 
     @classmethod
     def main(self):
-        print "MCEdit.main()"
-
         displayContext = GLDisplayContext()
 
         rootwidget = RootWidget(displayContext.display)
@@ -866,7 +863,6 @@ class MCEdit(GLViewport):
                 mcplatform.platform_open("http://getsatisfaction.com/mojang/topics/region_file_cache_interferes_with_map_editors_risking_save_corruption")
             if answer == "Don't remind me again.":
                 mcedit.closeMinecraftWarning = False
-                print "Disabled warning"
 
         config.saveConfig()
 
@@ -897,45 +893,47 @@ class MCEdit(GLViewport):
 
 
 def main(argv):
+    """
+    Setup logging, display, bundled schematics. Handle unclean
+    shutdowns.
+    """
     logging.basicConfig(format=u'%(levelname)s:%(message)s')
     logging.getLogger().level = logging.INFO
 
     try:
         display.init()
     except pygame.error, e:
-        print(str(e))
-        os.environ['SDL_VIDEODRIVER'] = "directx"
+        os.environ['SDL_VIDEODRIVER'] = 'directx'
         try:
             display.init()
         except pygame.error:
-            os.environ['SDL_VIDEODRIVER'] = "windib"
+            os.environ['SDL_VIDEODRIVER'] = 'windib'
             display.init()
 
     pygame.font.init()
 
     try:
         if not os.path.exists(mcplatform.schematicsDir):
-            shutil.copytree(os.path.join(mcplatform.dataDir, u"stock-schematics"), mcplatform.schematicsDir)
+            shutil.copytree(
+                os.path.join(mcplatform.dataDir, u'stock-schematics'),
+                mcplatform.schematicsDir
+            )
     except Exception, e:
-        print "Error copying bundled schematics: ", e
+        logging.warning('Error copying bundled schematics: {0!r}'.format(e))
         try:
             os.mkdir(mcplatform.schematicsDir)
         except Exception, e:
-            print "Error creating schematics dir: ", e
+            logging.warning('Error creating schematics folder: {0!r}'.format(e))
 
     try:
         MCEdit.main()
     except SystemExit:
         return 0
     except Exception, e:
-        print(str(e))
+        logging.error(repr(e))
         display.quit()
         return 1
     return 0
-
-if os.environ.get("MCEDIT_LOWMEMTEST", None):
-    hog = zeros((1024 * 1024 * 1024), dtype='uint8')
-    pig = zeros((1 * 1024 * 1024), dtype='uint8')
 
 
 class GLDisplayContext(object):
@@ -958,17 +956,16 @@ class GLDisplayContext(object):
         try:
             display.gl_set_attribute(GL_SWAP_CONTROL, Settings.vsync.get())
         except Exception, e:
-            print("Failed to set vertical sync: {0!r}".format(e))
+            logging.warning('Unable to set vertical sync: {0!r}'.format(e))
 
         d = display.set_mode(self.getWindowSize(), self.displayMode())
         try:
             pygame.scrap.init()
         except:
-            print "scrap not available"
-        display.set_caption("MCEdit " + release.release)
-        print "Display: ", d
-        if sys.platform == "win32" and Settings.setWindowPlacement.get():
-            print "Attempting SetWindowPlacement..."
+            logging.warning('PyGame clipboard integration disabled.')
+
+        display.set_caption('MCEdit ~ ' + release.release, 'MCEdit')
+        if sys.platform == 'win32' and Settings.setWindowPlacement.get():
             Settings.setWindowPlacement.set(False)
             config.saveConfig()
             X, Y = Settings.windowX.get(), Settings.windowY.get()
@@ -981,7 +978,6 @@ class GLDisplayContext(object):
                 realW = rect[2] - rect[0]
                 realH = rect[3] - rect[1]
 
-                print "GetWindowPlacement", ptMin, ptMax, rect
                 showCmd = Settings.windowShowCmd.get()
                 rect = (X, Y, X + realW, Y + realH)
 
@@ -991,21 +987,20 @@ class GLDisplayContext(object):
             config.saveConfig()
 
         try:
-            iconpath = os.path.join(mcplatform.dataDir, "favicon.png")
-            iconfile = file(iconpath, "rb")
-            icon = image.load(iconfile, "favicon.png")
+            iconpath = os.path.join(mcplatform.dataDir, 'favicon.png')
+            iconfile = file(iconpath, 'rb')
+            icon = image.load(iconfile, 'favicon.png')
             display.set_icon(icon)
         except Exception, e:
-            print "Error setting icon:", repr(e)
+            logging.warning('Unable to set icon: {0!r}'.format(e))
 
         self.display = d
 
-        #glutInit();
         GL.glEnableClientState(GL.GL_VERTEX_ARRAY)
         GL.glAlphaFunc(GL.GL_NOTEQUAL, 0)
         GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
 
-        "textures are 256x256, so with this we can specify pixel coordinates"
+        # textures are 256x256, so with this we can specify pixel coordinates
         GL.glMatrixMode(GL.GL_TEXTURE)
         GL.glScale(1 / 256., 1 / 256., 1 / 256.)
 
@@ -1015,7 +1010,6 @@ class GLDisplayContext(object):
         return self.terrainTextures.get(level.materials.name, self.terrainTextures["Alpha"])
 
     def loadTextures(self):
-        print "Loading terrain textures..."
         self.terrainTextures = {}
 
         def makeTerrainTexture(mats):
@@ -1023,26 +1017,41 @@ class GLDisplayContext(object):
             teximage = zeros((w, h, 4), dtype='uint8')
             teximage[:] = 127, 127, 127, 255
 
-            GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8,
-                     w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, teximage)
+            GL.glTexImage2D(
+                GL.GL_TEXTURE_2D,
+                0,
+                GL.GL_RGBA8,
+                w,
+                h,
+                0,
+                GL.GL_RGBA,
+                GL.GL_UNSIGNED_BYTE,
+                teximage
+            )
 
-        for mats, matFile in ((classicMaterials, "terrain-classic.png"),
-                               (indevMaterials, "terrain-classic.png"),
-                               (alphaMaterials,   "terrain.png"),
-                               (pocketMaterials,  "terrain-pocket.png")):
-            matName = mats.name
+        textures = (
+            (classicMaterials, 'terrain-classic.png'),
+            (indevMaterials, 'terrain-classic.png'),
+            (alphaMaterials, 'terrain.png'),
+            (pocketMaterials, 'terrain-pocket.png')
+        )
+
+        for mats, matFile in textures:
             try:
-                if matName == "Alpha":
+                if mats.name == 'Alpha':
                     tex = loadAlphaTerrainTexture()
                 else:
                     tex = loadPNGTexture(matFile)
-
-                self.terrainTextures[matName] = tex
-
+                self.terrainTextures[mats.name] = tex
             except Exception, e:
-                print repr(e), "while loading Classic terrain texture from {0}. Using flat colors.".format(matFile)
-                self.terrainTextures[matName] = Texture(functools.partial(makeTerrainTexture, mats))
-            mats.terrainTexture = self.terrainTextures[matName]
+                logging.warning(
+                    'Unable to load terrain from {0}, using flat colors.'
+                    'Error was: {1!r}'.format(matFile, e)
+                )
+                self.terrainTextures[mats.name] = Texture(
+                    functools.partial(makeTerrainTexture, mats)
+                )
+            mats.terrainTexture = self.terrainTextures[mats.name]
 
 
 def weird_fix():
