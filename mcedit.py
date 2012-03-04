@@ -5,18 +5,18 @@ mcedit.py
 
 Startup, main menu, keyboard configuration, automatic updating.
 """
-
-print "Loading imports..."
 import os
 import sys
+
 
 class SafeOutputStream(object):
     def __init__(self, oldStream):
         self.oldStream = oldStream
+
     def write(self, text):
         try:
             self.oldStream.write(text.decode("utf8", "replace").encode(self.oldStream.encoding or "utf8", "replace"))
-        except Exception, e:
+        except Exception:
             pass
 
     def flush(self):
@@ -27,26 +27,24 @@ class SafeOutputStream(object):
 
 
 class tee(object):
-    def __init__(self, _fd1, _fd2) :
+    def __init__(self, _fd1, _fd2):
         self.fd1 = _fd1
         self.fd2 = _fd2
 
-    def __del__(self) :
-        if self.fd1 != sys.stdout and self.fd1 != sys.stderr :
+    def __del__(self):
+        if self.fd1 != sys.stdout and self.fd1 != sys.stderr:
             self.fd1.close()
-        if self.fd2 != sys.stdout and self.fd2 != sys.stderr :
+        if self.fd2 != sys.stdout and self.fd2 != sys.stderr:
             self.fd2.close()
 
-
-    def write(self, text) :
+    def write(self, text):
         self.fd1.write(text)
         self.fd2.write(text)
 
-    def flush(self) :
+    def flush(self):
         self.fd1.flush()
         self.fd2.flush()
 
-print "Adding SafeOutputStream..."
 sys.stdout = SafeOutputStream(sys.stdout)
 sys.stderr = sys.stdout
 
@@ -61,17 +59,9 @@ try:
     import logging
     from os.path import exists, isdir, join
 
-    import tempfile
-    import gc
     import functools
-    import urllib
-    import threading
-    import tarfile
-    import zipfile
     import shutil
-    from cStringIO import StringIO
     import platform
-    from datetime import timedelta
 
     from errorreporting import reportException
 
@@ -87,7 +77,6 @@ try:
         print "***   Or use the command 'easy_install PyOpenGL'"
         print "***"
         raise SystemExit
-
 
     loglevel = logging.INFO
     if "-debug" in sys.argv:
@@ -106,27 +95,7 @@ try:
     from OpenGL import GL
     logging.getLogger().level = loglevel
 
-    try:
-        print "Loading numpy..."
-        import numpy
-    except ImportError:
-        print "***"
-        print "***   REQUIRED MODULE numpy not found!"
-        print "***   Please install numpy from http://numpy.scipy.org"
-        print "***   Or use the command 'easy_install numpy'"
-        print "***"
-        raise SystemExit
-    try:
-        print "Loading pygame..."
-        import pygame
-    except ImportError:
-        print "***"
-        print "***   REQUIRED MODULE pygame not found!"
-        print "***   Please install pygame from http://pygame.sourceforge.net"
-        print "***   Or use the command 'easy_install pygame'"
-        print "***"
-        raise SystemExit
-
+    import pygame
     import mcplatform
     try:
         logfile = file(mcplatform.dataDir + os.path.sep + "mcedit.log", "w")
@@ -137,16 +106,6 @@ try:
         sys.stderr = sys.stdout
     except Exception as e:
         print "Error opening logfile", repr(e)
-
-
-
-
-
-
-    #from OpenGL.GLUT import glutBitmapCharacter, glutInit
-
-
-    print "Loading albow..."
 
     from albow.openglwidgets import GLViewport
     from albow.root import RootWidget
@@ -162,16 +121,12 @@ try:
     #Label = GLLabel
     import leveleditor
 
-    print "Loading pymclevel..."
     from pymclevel.mclevel import MCLevel, MCSchematic, MCInfdevOldLevel, saveFileDir
     from pymclevel.materials import *
     MCInfdevOldLevel.loadedChunkLimit = 0
 
-
-
-    print "Initializing pygame..."
-    import pygame
     from pygame import key, display, rect
+
     def initDisplay():
         try:
             display.init()
@@ -184,17 +139,11 @@ try:
                 display.init()
         #print "pygame.init:", pygame.init()
 
-
     from pygame.constants import *
     pygame.font.init()
 
-
-
-
     from numpy import *
     #from math import sin, cos, radians
-
-
     #raise ValueError, "OH SHIT"
 except Exception, e:
 
@@ -216,7 +165,6 @@ from mcplatform import platform_open
 from leveleditor import Settings, ControlSettings
 
 
-
 class FileOpener(Widget):
     is_gl_container = True
 
@@ -226,7 +174,6 @@ class FileOpener(Widget):
         self.anchor = 'tlbr'
         self.mcedit = mcedit
 
-        helpCursor = 100
         helpColumn = []
 
         label = Label("{0} {1} {2} {3} {4} {5}".format(config.config.get('Keys', 'Forward'),
@@ -253,7 +200,7 @@ class FileOpener(Widget):
         addHelp("Hold SHIFT to move along a major axis")
         addHelp("Hold ALT for details")
 
-        helpColumn = Column(helpColumn , align="r")
+        helpColumn = Column(helpColumn, align="r")
         helpColumn.topright = self.topright
         helpColumn.anchor = "whrt"
         #helpColumn.is_gl_container = True
@@ -281,17 +228,13 @@ class FileOpener(Widget):
                 shortname = shortname[:37] + "..."
             shortnames.append(shortname)
 
-
-        hotkeys = ([ ('N', 'Create New World', self.createNewWorld),
+        hotkeys = ([('N', 'Create New World', self.createNewWorld),
             ('L', 'Load World...', self.mcedit.editor.askLoadWorld),
-            ('O', 'Open a level...', self.promptOpenAndLoad)  ] + [
-            ('F{0}'.format(i + 1), shortnames[i] , self.createLoadButtonHandler(world))
-            for i, world in enumerate(self.mcedit.recentWorlds()) ])
+            ('O', 'Open a level...', self.promptOpenAndLoad)] + [
+            ('F{0}'.format(i + 1), shortnames[i], self.createLoadButtonHandler(world))
+            for i, world in enumerate(self.mcedit.recentWorlds())])
 
         commandRow = HotkeyColumn(hotkeys, keysColumn, buttonsColumn)
-
-
-        #buttonEnable(world)
         commandRow.anchor = 'lrh'
 
         sideColumn = mcedit.makeSideColumn()
@@ -302,7 +245,6 @@ class FileOpener(Widget):
         contentRow.anchor = "rh"
         self.add(contentRow)
         self.sideColumn = sideColumn
-
 
     def gl_draw_self(self, root, offset):
         #self.mcedit.editor.mainViewport.setPerspective();
@@ -325,11 +267,11 @@ class FileOpener(Widget):
         if keyname is "l":
             self.mcedit.editor.askLoadWorld()
 
-
     def promptOpenAndLoad(self):
         try:
             filename = mcplatform.askOpenFile()
-            if filename: self.mcedit.loadFile(filename);
+            if filename:
+                self.mcedit.loadFile(filename)
         except Exception, e:
             print "Error during promptOpen: ", e
 
@@ -337,9 +279,8 @@ class FileOpener(Widget):
         self.parent.createNewWorld()
 
     def createLoadButtonHandler(self, filename):
-        return lambda:self.mcedit.loadFile(filename)
+        return lambda: self.mcedit.loadFile(filename)
 
-import pymclevel
 
 class KeyConfigPanel(Dialog):
     keyConfigKeys = [
@@ -367,11 +308,9 @@ class KeyConfigPanel(Dialog):
         "Increase Reach",
         "Decrease Reach",
         "Reset Reach",
-
-
     ]
 
-    presets = { "WASD": [
+    presets = {"WASD": [
         ("Forward", "w"),
         ("Back", "s"),
         ("Left", "a"),
@@ -427,10 +366,11 @@ class KeyConfigPanel(Dialog):
     ]}
 
     selectedKeyIndex = 0
+
     def __init__(self):
         Dialog.__init__(self)
         keyConfigTable = TableView(columns=[TableColumn("Command", 400, "l"), TableColumn("Assigned Key", 150, "r")])
-        keyConfigTable.num_rows = lambda : len(self.keyConfigKeys)
+        keyConfigTable.num_rows = lambda: len(self.keyConfigKeys)
         keyConfigTable.row_data = self.getRowData
         keyConfigTable.row_is_selected = lambda x: x == self.selectedKeyIndex
         keyConfigTable.click_row = self.selectTableRow
@@ -483,8 +423,9 @@ class KeyConfigPanel(Dialog):
     def askAssignSelectedKey(self):
         self.askAssignKey(self.keyConfigKeys[self.selectedKeyIndex])
 
-    def askAssignKey(self, configKey, labelString = None):
-        if not self.isConfigKey(configKey): return
+    def askAssignKey(self, configKey, labelString=None):
+        if not self.isConfigKey(configKey):
+            return
 
         panel = Panel()
         panel.bg_color = (0.5, 0.5, 0.6, 1.0)
@@ -494,9 +435,11 @@ class KeyConfigPanel(Dialog):
         label = Label(labelString)
         panel.add(label)
         panel.shrink_wrap()
+
         def panelKeyDown(evt):
             keyname = key.name(evt.key)
             panel.dismiss(keyname)
+
         def panelMouseDown(evt):
             button = leveleditor.remapMouseButton(evt.button)
             if button > 2:
@@ -506,11 +449,10 @@ class KeyConfigPanel(Dialog):
         panel.key_down = panelKeyDown
         panel.mouse_down = panelMouseDown
 
-
         keyname = panel.present()
         if keyname != "escape":
-            occupiedKeys = [(v,k) for (k,v) in config.config.items("Keys") if v == keyname]
-            oldkey = config.config.get("Keys", configKey)#save key before recursive call
+            occupiedKeys = [(v, k) for (k, v) in config.config.items("Keys") if v == keyname]
+            oldkey = config.config.get("Keys", configKey)
             config.config.set("Keys", configKey, keyname)
             for keyname, setting in occupiedKeys:
                 if self.askAssignKey(setting,
@@ -518,13 +460,11 @@ class KeyConfigPanel(Dialog):
                                      "Press a new key for the action \"{1}\"\n\n"
                                      "Press ESC to cancel."
                                      .format(keyname, setting)):
-                    config.config.set("Keys", configKey, oldkey) #revert
+                    config.config.set("Keys", configKey, oldkey)
                     return True
-
-
-
         else:
             return True
+
 
 class GraphicsPanel(Panel):
     def __init__(self, mcedit):
@@ -534,6 +474,7 @@ class GraphicsPanel(Panel):
 
         def getPacks():
             return ["[Default]", "[Current]"] + mcplatform.getTexturePacks()
+
         def packChanged():
             self.texturePack = self.texturePackChoice.selectedChoice
             packs = getPacks()
@@ -545,7 +486,6 @@ class GraphicsPanel(Panel):
         self.texturePackChoice = texturePackChoice = ChoiceButton(getPacks(), choose=packChanged)
         if self.texturePack in self.texturePackChoice.choices:
             self.texturePackChoice.selectedChoice = self.texturePack
-
 
         texturePackRow = Row((Label("Skin: "), texturePackChoice))
 
@@ -570,7 +510,7 @@ class GraphicsPanel(Panel):
             ref=Settings.enableMouseLag.propertyRef(),
             tooltipText="Enable choppy mouse movement for faster loading.")
 
-        settingsColumn = Column(( fastLeavesRow,
+        settingsColumn = Column((fastLeavesRow,
                                   roughGraphicsRow,
                                   enableMouseLagRow,
                                   texturePackRow,
@@ -595,14 +535,13 @@ class GraphicsPanel(Panel):
     texturePack = Settings.skin.configProperty(_reloadTextures)
 
 
-
 class OptionsPanel(Dialog):
     anchor = 'wh'
+
     def __init__(self, mcedit):
         Dialog.__init__(self)
 
         self.mcedit = mcedit
-
 
         autoBrakeRow = CheckBoxLabel("Autobrake",
             ref=ControlSettings.autobrake.propertyRef(),
@@ -686,7 +625,7 @@ class OptionsPanel(Dialog):
             invertRow,
             visibilityCheckRow,
             ) + (
-            ((sys.platform == "win32" and pygame.version.vernum == (1,9,1)) and (windowSizeRow,) or ())
+            ((sys.platform == "win32" and pygame.version.vernum == (1, 9, 1)) and (windowSizeRow,) or ())
             ) + (
             reportRow,
             ) + (
@@ -698,7 +637,6 @@ class OptionsPanel(Dialog):
         rightcol = Column(options, align='r')
         leftcol = Column(inputs, align='r')
 
-
         optionsColumn = Column((Label("Options"),
                                 Row((leftcol, rightcol), align="t")))
 
@@ -709,7 +647,6 @@ class OptionsPanel(Dialog):
         self.add(optionsColumn)
         self.shrink_wrap()
 
-
     @property
     def blockBuffer(self):
         return Settings.blockBuffer.get() / 1048576
@@ -717,7 +654,6 @@ class OptionsPanel(Dialog):
     @blockBuffer.setter
     def blockBuffer(self, val):
         Settings.blockBuffer.set(int(val * 1048576))
-
 
     def portableButtonTooltip(self):
         return ("Click to make your MCEdit install self-contained by moving the settings and schematics into the program folder",
@@ -747,9 +683,8 @@ class OptionsPanel(Dialog):
         self.goPortableButton.tooltipText = self.portableButtonTooltip()
 
 
-
-
 UPDATES_URL = "http://company.com/mceditupdates/"
+
 
 class MCEdit(GLViewport):
     debug_resize = True
@@ -764,10 +699,7 @@ class MCEdit(GLViewport):
 
         if not config.config.has_section("Recent Worlds"):
             config.config.add_section("Recent Worlds")
-
-            self.setRecentWorlds([""]*5)
-
-
+            self.setRecentWorlds([""] * 5)
 
         self.optionsPanel = OptionsPanel(self)
         self.graphicOptionsPanel = GraphicsPanel(self)
@@ -796,7 +728,6 @@ class MCEdit(GLViewport):
 
         self.fileOpener.focus()
 
-
     editor = None
 
     def reloadEditor(self):
@@ -822,7 +753,6 @@ class MCEdit(GLViewport):
                 c = self.editor.mainViewport
 
                 c.position, c.yaw, c.pitch = pos, yaw, pitch
-
 
     def removeGraphicOptions(self):
         self.removePanel(self.graphicOptionsPanel)
@@ -864,6 +794,7 @@ class MCEdit(GLViewport):
             self.loadFile(worlds[i - 1])
 
     numRecentWorlds = 5
+
     def removeLevelDat(self, filename):
         if filename.endswith("level.dat"):
             filename = os.path.dirname(filename)
@@ -884,18 +815,16 @@ class MCEdit(GLViewport):
     def addRecentWorld(self, filename):
         filename = self.removeLevelDat(filename)
         rw = list(self.recentWorlds())
-        if filename in rw: return
+        if filename in rw:
+            return
         rw = [filename] + rw[:self.numRecentWorlds - 1]
         self.setRecentWorlds(rw)
-
 
     def setRecentWorlds(self, worlds):
         for i, filename in enumerate(worlds):
             config.config.set("Recent Worlds", str(i), filename.encode('utf-8'))
 
-
     def makeSideColumn(self):
-
         def showhistory():
             try:
                 with file(os.path.join(mcplatform.dataDir), 'history.txt') as f:
@@ -942,12 +871,11 @@ class MCEdit(GLViewport):
 
         return c
 
-
     def resized(self, dw, dh):
         GLViewport.resized(self, dw, dh)
 
         (w, h) = self.size
-        if w == 0 and h == 0: # we got minimized?
+        if w == 0 and h == 0:
             print "Minimized!", w, h
             self.editor.renderer.render = False
             return
@@ -955,19 +883,19 @@ class MCEdit(GLViewport):
             print "Restored!", w, h
             self.editor.renderer.render = True
 
-        surf=pygame.display.get_surface()
+        surf = pygame.display.get_surface()
         assert isinstance(surf, pygame.Surface)
         dw, dh = surf.get_size()
-        print "Resized!", w, h, "d", dw-w, dh-h
+        print "Resized!", w, h, "d", dw - w, dh - h
 
         if w > 0 and h > 0:
             Settings.windowWidth.set(w)
             Settings.windowHeight.set(h)
             config.saveConfig()
 
-        if pygame.version.vernum == (1,9,1):
+        if pygame.version.vernum == (1, 9, 1):
             if sys.platform == "win32":
-                if w-dw > 20 or h-dh > 20:
+                if w - dw > 20 or h - dh > 20:
                     if not hasattr(self, 'resizeAlert'):
                         self.resizeAlert = self.shouldResizeAlert
                     if self.resizeAlert:
@@ -975,10 +903,6 @@ class MCEdit(GLViewport):
                         self.resizeAlert = False
 
     shouldResizeAlert = Settings.shouldResizeAlert.configProperty()
-
-
-        #self.size = (w,h)
-
 
     def loadFile(self, filename):
         self.removeGraphicOptions()
@@ -1017,14 +941,16 @@ class MCEdit(GLViewport):
         self.add(self.fileOpener)
         self.focus_switch = self.fileOpener
 
-
     def confirm_quit(self):
         if self.editor.unsavedEdits:
             result = ask("There are {0} unsaved changes.".format(self.editor.unsavedEdits),
-                     responses = ["Save and Quit", "Quit", "Cancel"] )
-            if result == "Save and Quit":self.saveAndQuit()
-            elif result == "Quit":       self.justQuit()
-            elif result == "Cancel": return False;
+                     responses=["Save and Quit", "Quit", "Cancel"])
+            if result == "Save and Quit":
+                self.saveAndQuit()
+            elif result == "Quit":
+                self.justQuit()
+            elif result == "Cancel":
+                return False
         else:
             raise SystemExit
 
@@ -1040,13 +966,9 @@ class MCEdit(GLViewport):
     @classmethod
     def main(self):
         print "MCEdit.main()"
-        #MCEdit.extractReadmes();
-
 
         displayContext = GLDisplayContext()
 
-
-        #mcedit.size = displayContext.getWindowSize()
         rootwidget = RootWidget(displayContext.display)
         mcedit = MCEdit(displayContext)
         rootwidget.displayContext = displayContext
@@ -1069,10 +991,6 @@ class MCEdit(GLViewport):
                 mcedit.closeMinecraftWarning = False
                 print "Disabled warning"
 
-
-
-
-        print "saveConfig()"
         config.saveConfig()
 
         while True:
@@ -1096,14 +1014,12 @@ class MCEdit(GLViewport):
                 mcedit.editor.renderer.discardAllChunks()
                 mcedit.editor.deleteAllCopiedSchematics()
                 raise
-            except MemoryError, e:
+            except MemoryError:
                 traceback.print_exc()
                 mcedit.editor.handleMemoryError()
 
 
 def main():
-
-    #mcplatform.findDirectories();
     try:
         if not os.path.exists(mcplatform.schematicsDir):
             shutil.copytree(os.path.join(mcplatform.dataDir, u"stock-schematics"), mcplatform.schematicsDir)
@@ -1131,6 +1047,7 @@ if os.environ.get("MCEDIT_LOWMEMTEST", None):
     hog = zeros((1024 * 1024 * 1024), dtype='uint8')
     pig = zeros((1 * 1024 * 1024), dtype='uint8')
 
+
 def _main():
     try:
 
@@ -1153,6 +1070,8 @@ def _main():
 
 
 import cProfile
+
+
 def _profilemain():
 
     cProfile.run("_main()", mcplatform.dataDir + os.path.sep + "mcedit.profile")
@@ -1165,6 +1084,7 @@ def _profilemain():
         os.system("python gprof2dot.py -f pstats mcedit.profile > mcedit.dot ")
         os.system("dot -Tpng mcedit.dot -o mcedit.png")
         os.startfile("mcedit.png")
+
 
 class GLDisplayContext(object):
     def __init__(self):
@@ -1220,10 +1140,9 @@ class GLDisplayContext(object):
 
                 print "GetWindowPlacement", ptMin, ptMax, rect
                 showCmd = Settings.windowShowCmd.get()
-                rect = (X, Y, X+realW, Y+realH) #left, top, right, bottom
+                rect = (X, Y, X + realW, Y + realH)
 
-
-                mcplatform.win32gui.SetWindowPlacement(hwndOwner , (0, showCmd, ptMin, ptMax, rect))
+                mcplatform.win32gui.SetWindowPlacement(hwndOwner, (0, showCmd, ptMin, ptMax, rect))
 
             Settings.setWindowPlacement.set(True)
             config.saveConfig()
@@ -1264,13 +1183,13 @@ class GLDisplayContext(object):
             GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8,
                      w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, teximage)
 
-        for mats, matFile in ( (classicMaterials, "terrain-classic.png"),
+        for mats, matFile in ((classicMaterials, "terrain-classic.png"),
                                (indevMaterials, "terrain-classic.png"),
                                (alphaMaterials,   "terrain.png"),
-                               (pocketMaterials,  "terrain-pocket.png") ):
+                               (pocketMaterials,  "terrain-pocket.png")):
             matName = mats.name
             try:
-                if matName=="Alpha":
+                if matName == "Alpha":
                     tex = loadAlphaTerrainTexture()
                 else:
                     tex = loadPNGTexture(matFile)
@@ -1283,20 +1202,11 @@ class GLDisplayContext(object):
             mats.terrainTexture = self.terrainTextures[matName]
 
 
-
-
-
-
-
-import editortools
-
 def weird_fix():
-    #weird fix to make opengl include all files, found online
-    from ctypes import util
     try:
         from OpenGL.platform import win32
         win32
-    except Exception, e:
+    except Exception:
         pass
 
 if __name__ == "__main__":
