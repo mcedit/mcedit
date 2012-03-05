@@ -23,8 +23,11 @@ imported from editortools/
 
 """
 
+from collections import defaultdict
 import gc
 from datetime import datetime, timedelta
+import itertools
+import logging
 from OpenGL.GL import *
 # from OpenGL.GLUT import glutBitmapCharacter, GLUT_BITMAP_HELVETICA_18
 import time
@@ -990,7 +993,7 @@ class CameraViewport(GLViewport):
 
     def mouse_down(self, evt):
         button = remapMouseButton(evt.button)
-        debug("Mouse down %d @ %s", button, evt.pos)
+        logging.debug("Mouse down %d @ %s", button, evt.pos)
 
         if button == 1:
             self.leftClickDown(evt)
@@ -1005,7 +1008,7 @@ class CameraViewport(GLViewport):
 
     def mouse_up(self, evt):
         button = remapMouseButton(evt.button)
-        debug("Mouse up   %d @ %s", button, evt.pos)
+        logging.debug("Mouse up   %d @ %s", button, evt.pos)
         if button == 1:
             self.leftClickUp(evt)
         elif button == 2:
@@ -2183,24 +2186,24 @@ class LevelEditor(GLViewport):
     def activeevent(self, evt):
         if evt.state & 0x4:  # minimized
             if evt.gain == 0:
-                debug("Offscreen")
+                logging.debug("Offscreen")
                 self.onscreen = False
 
                 self.mouseLookOff()
 
             else:
-                debug("Onscreen")
+                logging.debug("Onscreen")
                 self.onscreen = True
                 self.invalidate()
 
         if evt.state & 0x1:  # mouse enter/leave
             if evt.gain == 0:
-                debug("Mouse left")
+                logging.debug("Mouse left")
                 self.mouseEntered = False
                 self.mouseLookOff()
 
             else:
-                debug("Mouse entered")
+                logging.debug("Mouse entered")
                 self.mouseEntered = True
 
     def swapDebugLevels(self):
@@ -2446,7 +2449,7 @@ class LevelEditor(GLViewport):
         if keyname == 'enter':
             keyname = 'return'
 
-        debug("Key down: %s", keyname)
+        logging.debug("Key down: %s", keyname)
         d = self.cameraInputs
         im = [0., 0., 0.]
         mods = evt.dict.get('mod', 0)
