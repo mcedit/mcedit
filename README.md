@@ -45,7 +45,7 @@ You should now be able to run MCEdit with `python mcedit.py` assuming you've ins
 Additional dependencies are required to package MCEdit. Regardless of which platform you're targetting, [esky](http://pypi.python.org/pypi/esky/) will be required.
 
 #### OS X
-*Note:* These instructions have only been testing on OS X Lion.
+*Note:* These instructions have only been tested on OS X Lion.
 
 You will run into errors attempting to use the system Python when packaging anything under OS X. The easiest way to install a new Python is by using [Homebrew](http://mxcl.github.com/homebrew/).
 
