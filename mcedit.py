@@ -897,7 +897,8 @@ def main(argv):
     Setup logging, display, bundled schematics. Handle unclean
     shutdowns.
     """
-    logging.basicConfig(format=u'%(levelname)s:%(message)s')
+    logging.basicConfig(
+        format=u'[%(levelname)s][%(lineno)d][%(module)s]:%(message)s')
     logging.getLogger().level = logging.INFO
 
     try:
@@ -930,7 +931,7 @@ def main(argv):
     except SystemExit:
         return 0
     except Exception, e:
-        logging.error(repr(e))
+        logging.error('An unhandled error occured.', exc_info=True)
         display.quit()
         return 1
     return 0
