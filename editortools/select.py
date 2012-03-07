@@ -12,8 +12,10 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 
-from toolbasics import *
+from collections import defaultdict
 from fill import FillTool, BlockFillOperation
+import tempfile
+from toolbasics import *
 
 SelectSettings = config.Settings("Selection")
 SelectSettings.showPreviousSelection = SelectSettings("Show Previous Selection", True)
