@@ -18,11 +18,10 @@ mcplatform.py
 Platform-specific functions, folder paths, and the whole fixed/portable nonsense.
 """
 
-import sys
+import directories
 import os
-from os.path import join, exists, dirname
-
-from directories import *
+from os.path import dirname, exists, join
+import sys
 
 enc = sys.getfilesystemencoding()
 
@@ -32,9 +31,9 @@ if sys.platform == "win32":
         plat = "win32"
     if platform.architecture()[0] == "64bit":
         plat = "win-amd64"
-    sys.path.append(join(dataDir, "pymclevel", "build", "lib." + plat + "-2.6").encode(enc))
+    sys.path.append(join(directories.dataDir, "pymclevel", "build", "lib." + plat + "-2.6").encode(enc))
 
-os.environ["YAML_ROOT"] = join(dataDir, "pymclevel").encode(enc)
+os.environ["YAML_ROOT"] = join(directories.dataDir, "pymclevel").encode(enc)
 
 from pygame import display
 
@@ -336,7 +335,7 @@ def platform_open(path):
 win32_window_size = True
 
 ini = u"mcedit.ini"
-parentDir = dirname(dataDir)
+parentDir = dirname(directories.dataDir)
 docsFolder = documents_folder()
 portableConfigFilePath = os.path.join(parentDir, ini)
 portableSchematicsDir = os.path.join(parentDir, u"MCEdit-schematics")
@@ -419,7 +418,7 @@ else:
     schematicsDir = fixedSchematicsDir
     portable = False
 
-filtersDir = os.path.join(dataDir, "filters")
+filtersDir = os.path.join(directories.dataDir, "filters")
 if filtersDir not in [s.decode(sys.getfilesystemencoding())
                       if isinstance(s, str)
                       else s
@@ -434,4 +433,4 @@ if portable:
 else:
     jarStorage = ServerJarStorage()
 
-items.items = items.Items(join(dataDir, "pymclevel", "items.txt"))
+items.items = items.Items(join(directories.dataDir, "pymclevel", "items.txt"))
