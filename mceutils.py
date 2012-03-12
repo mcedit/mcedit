@@ -29,7 +29,7 @@ import zipfile
 from cStringIO import StringIO
 from datetime import datetime
 
-from pygame import image, display
+from pygame import image, display, Surface
 import png
 import config
 import release
@@ -382,45 +382,17 @@ def loadAlphaTerrainTexture():
 
 
 def loadPNGData(filename_or_data):
-    # if filename[1:4] != "PNG":
-    if isinstance(filename_or_data, basestring):
-        filename_or_data = os.path.join(mcplatform.dataDir, filename_or_data)
-        filename_or_data = filename_or_data.encode(sys.getfilesystemencoding())
-    else:
-        # path = numpy.fromstring(filename, 'uint8')
-        pass
-    try:
-        img = image.load(filename_or_data)
+    reader = png.Reader(filename_or_data)
+    (w, h, data, metadata) = reader.read_flat()
+    data = numpy.array(data, dtype='uint8')
+    data.shape = (h, w, metadata['planes'])
+    if data.shape[2] == 1:
+        # indexed color. remarkably straightforward.
+        data.shape = data.shape[:2]
+        data = numpy.array(reader.palette(), dtype='uint8')[data]
 
-        img = img.convert_alpha()
-
-        data = numpy.fromstring(img.get_buffer().raw, 'uint8')
-        w, h = img.get_size()
-        data.shape = (h, w, 4)  # xxx 32-bit images
-
-        format = GL.GL_BGRA
-
-    except Exception, e:
-        print repr(e), "while using pygame to load an image"
-
-        reader = png.Reader(filename_or_data)
-        (w, h, data, metadata) = reader.read_flat()
-        data = numpy.array(data, dtype='uint8')
-        data.shape = (h, w, metadata['planes'])
-        if data.shape[2] == 1:
-            # indexed color. remarkably straightforward.
-            data.shape = data.shape[:2]
-            data = numpy.array(reader.palette(), dtype='uint8')[data]
-
-        if data.shape[2] < 4:
-            data = numpy.insert(data, 3, 255, 2)
-
-        format = GL.GL_RGBA
-
-    if format == GL.GL_BGRA:
-        temp = numpy.array(data[:, :, 0])
-        data[:, :, 0] = data[:, :, 2]
-        data[:, :, 2] = temp
+    if data.shape[2] < 4:
+        data = numpy.insert(data, 3, 255, 2)
 
     return w, h, data
 

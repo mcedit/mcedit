@@ -121,7 +121,6 @@ def main():
 
     data_files = get_data_files('fonts', 'toolicons') + [
         ('', [
-            'history.txt',
             'README.html',
             'favicon.png',
             'terrain-classic.png',
