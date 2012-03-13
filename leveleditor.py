@@ -97,7 +97,7 @@ Settings.drawEntities = Settings("draw entities", True)
 Settings.drawMonsters = Settings("draw monsters", True)
 Settings.drawItems = Settings("draw items", True)
 Settings.drawTileEntities = Settings("draw tile entities", True)
-Settings.drawTileTicks = Settings("draw tile ticks", True)
+Settings.drawTileTicks = Settings("draw tile ticks", False)
 Settings.drawUnpopulatedChunks = Settings("draw unpopulated chunks", True)
 Settings.vertexBufferLimit = Settings("vertex buffer limit", 384)
 
