@@ -25,7 +25,7 @@ def get_git_version():
     """
     try:
         p = subprocess.Popen(
-            ['git', 'describe', '--abbrev=4', '--tags', '--match=v*'],
+            ['git', 'describe', '--abbrev=4', '--tags', '--match=*.*.*'],
             stdout=subprocess.PIPE,
             stdin=subprocess.PIPE
         )
