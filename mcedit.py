@@ -592,11 +592,11 @@ class MCEdit(GLViewport):
         if len(sys.argv) > 1:
             for arg in sys.argv[1:]:
                 f = arg.decode(sys.getfilesystemencoding())
-                if isdir(join(saveFileDir, f)):
-                    f = join(saveFileDir, f)
+                if os.path.isdir(os.path.join(saveFileDir, f)):
+                    f = os.path.join(saveFileDir, f)
                     self.droppedLevel = f
                     break
-                if exists(f):
+                if os.path.exists(f):
                     self.droppedLevel = f
                     break
 
