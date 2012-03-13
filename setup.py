@@ -4,6 +4,7 @@ from setuptools import setup
 import os
 import sys
 import glob
+import subprocess
 import platform
 
 LONG_DESC = '''
@@ -17,11 +18,33 @@ Works with saved games from Minecraft Classic, Indev, Infdev, Alpha, Beta,
 Release, and Pocket Edition.
 '''
 
+
+def get_git_version():
+    """
+    Get the version from git.
+    """
+    try:
+        p = subprocess.Popen(
+            ['git', 'describe', '--abbrev=4', '--tags', '--match=v*'],
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE
+        )
+    except:
+        return 'unknown'
+
+    version = p.stdout.readlines()[0].strip()
+    fout = open('RELEASE-VERSION', 'wb')
+    fout.write(version)
+    fout.write('\n')
+    fout.close()
+
+    return version
+
 # setup() options that are common on all platforms.
 SETUP_COMMON = {
     # General fields,
     'name': 'MCEdit',
-    'version': '0.1.1',
+    'version': get_git_version(),
     'description': 'Minecraft World Editor',
     'long_description': LONG_DESC,
 
@@ -29,7 +52,7 @@ SETUP_COMMON = {
     'author_email': 'codewarrior0@gmail.com',
 
     'maintainer': 'MCDevs',
-    'maintainer_email': 'mcdevs@tkte.ch',
+    'maintainer_email': 'tk@tkte.ch',
 
     'url': 'http://www.github.com/mcedit/mcedit',
 
@@ -127,7 +150,8 @@ def main():
             'terrain-pocket.png',
             'char.png',
             'gui.png',
-            'terrain.png'
+            'terrain.png',
+            'RELEASE-VERSION'
         ])
     ]
 
