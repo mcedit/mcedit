@@ -103,6 +103,7 @@ ESKY_OPTIONS = {
                 'mswsock.dll',
                 'powrprof.dll'
             ],
+            'iconfile': 'mcedit.icns'
         }
     }
 }
