@@ -27,7 +27,9 @@ def get_git_version():
         p = subprocess.Popen(
             ['git', 'describe', '--abbrev=4', '--tags', '--match=*.*.*'],
             stdout=subprocess.PIPE,
-            stdin=subprocess.PIPE
+            stdin=subprocess.PIPE,
+            # Shell=True is required due to a Popen Win32 bug.
+            shell=True if platform.system() == 'Windows' else False
         )
     except:
         return 'unknown'
@@ -72,6 +74,12 @@ SETUP_COMMON = {
             '*.yaml',
             '*.txt',
             '_nbt.*'
+        ],
+        'filters': [
+            'filters/**'
+        ],
+        'stock-schematics': [
+            'stock-schematics/**'
         ]
     },
     'scripts': [
@@ -96,6 +104,7 @@ ESKY_OPTIONS = {
             'Cython'
         ],
         'freezer_options': {
+            # py2exe extras
             'optimize': 2,
             'compressed': True,
             'bundle_files': 3,
@@ -103,7 +112,11 @@ ESKY_OPTIONS = {
                 'mswsock.dll',
                 'powrprof.dll'
             ],
-            'iconfile': 'mcedit.icns'
+            # py2app extras
+            'iconfile': 'mcedit.icns',
+            'plist': {
+                'CFBundleIdentifier': 'org.mcedit.mcedit'
+            }
         }
     }
 }
@@ -134,8 +147,16 @@ def setup_win32():
     py2exe.build_exe.isSystemDLL = isSystemDLL
 
 
-def get_data_files(*args):
-    return [(d, glob.glob(d + '/*')) for d in args]
+def get_data_files(dirs):
+    """
+    Recursively include data directories.
+    """
+    results = []
+    for directory in dirs:
+        for root, dirs, files in os.walk(directory):
+            files = [os.path.join(root, file_) for file_ in files]
+            results.append((root, files))
+    return results
 
 
 def main():
@@ -143,7 +164,8 @@ def main():
     if platform.system() == 'Windows':
         setup_win32()
 
-    data_files = get_data_files('fonts', 'toolicons') + [
+    include_dirs = ['fonts', 'toolicons', 'stock-schematics', 'filters']
+    data_files = get_data_files(include_dirs) + [
         ('', [
             'README.html',
             'favicon.png',
