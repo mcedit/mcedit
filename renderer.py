@@ -658,7 +658,7 @@ class ChunkCalculator (object):
         blockData = blockData & 0xf
         blockMaterials = areaBlockMats[1:-1, 1:-1, 1:-1]
         if self.roughGraphics:
-            blockMaterials.numpy.clip(0, 1, blockMaterials)
+            blockMaterials.clip(0, 1, blockMaterials)
 
         sx = sz = slice(0, 16)
         asx = asz = slice(0, 18)
