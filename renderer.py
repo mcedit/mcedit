@@ -44,7 +44,7 @@ from depths import DepthOffset
 from glutils import gl, Texture
 import logging
 import numpy
-import OpenGL
+from OpenGL import GL
 import pymclevel
 import sys
 #import time
@@ -143,7 +143,7 @@ class ChunkRenderer(object):
         showRedraw = self.renderer.showRedraw
 
         if not (showRedraw and self.needsBlockRedraw):
-            OpenGL.GL.glEnableClientState(OpenGL.GL.GL_COLOR_ARRAY)
+            GL.glEnableClientState(GL.GL_COLOR_ARRAY)
 
         renderers = self.blockRenderers
 
@@ -157,7 +157,7 @@ class ChunkRenderer(object):
             lists[blockRenderer.renderstate].append(l)
 
         if not (showRedraw and self.needsBlockRedraw):
-            OpenGL.GL.glDisableClientState(OpenGL.GL.GL_COLOR_ARRAY)
+            GL.glDisableClientState(GL.GL_COLOR_ARRAY)
 
         self.needsRedisplay = False
         self.renderstateLists = lists
@@ -334,31 +334,31 @@ class ChunkCalculator (object):
     class renderstateLowDetail(object):
         @classmethod
         def bind(self):
-            OpenGL.GL.glDisable(OpenGL.GL.GL_CULL_FACE)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_TEXTURE_2D)
+            GL.glDisable(GL.GL_CULL_FACE)
+            GL.glDisable(GL.GL_TEXTURE_2D)
 
         @classmethod
         def release(self):
-            OpenGL.GL.glEnable(OpenGL.GL.GL_CULL_FACE)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_TEXTURE_2D)
+            GL.glEnable(GL.GL_CULL_FACE)
+            GL.glEnable(GL.GL_TEXTURE_2D)
 
     class renderstateAlphaTest(object):
         @classmethod
         def bind(self):
-            OpenGL.GL.glEnable(OpenGL.GL.GL_ALPHA_TEST)
+            GL.glEnable(GL.GL_ALPHA_TEST)
 
         @classmethod
         def release(self):
-            OpenGL.GL.glDisable(OpenGL.GL.GL_ALPHA_TEST)
+            GL.glDisable(GL.GL_ALPHA_TEST)
 
     class _renderstateAlphaBlend(object):
         @classmethod
         def bind(self):
-            OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
+            GL.glEnable(GL.GL_BLEND)
 
         @classmethod
         def release(self):
-            OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
+            GL.glDisable(GL.GL_BLEND)
 
     class renderstateWater(_renderstateAlphaBlend):
         pass
@@ -369,17 +369,17 @@ class ChunkCalculator (object):
     class renderstateEntity(object):
         @classmethod
         def bind(self):
-            OpenGL.GL.glDisable(OpenGL.GL.GL_DEPTH_TEST)
-            # OpenGL.GL.glDisable(OpenGL.GL.GL_CULL_FACE)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_TEXTURE_2D)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
+            GL.glDisable(GL.GL_DEPTH_TEST)
+            # GL.glDisable(GL.GL_CULL_FACE)
+            GL.glDisable(GL.GL_TEXTURE_2D)
+            GL.glEnable(GL.GL_BLEND)
 
         @classmethod
         def release(self):
-            OpenGL.GL.glEnable(OpenGL.GL.GL_DEPTH_TEST)
-            # OpenGL.GL.glEnable(OpenGL.GL.GL_CULL_FACE)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_TEXTURE_2D)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
+            GL.glEnable(GL.GL_DEPTH_TEST)
+            # GL.glEnable(GL.GL_CULL_FACE)
+            GL.glEnable(GL.GL_TEXTURE_2D)
+            GL.glDisable(GL.GL_BLEND)
 
     renderstates = (
         renderstatePlain,
@@ -767,9 +767,9 @@ class BlockRenderer(object):
 
     def makeArrayList(self, chunkPosition, showRedraw):
         l = gl.glGenLists(1)
-        OpenGL.GL.glNewList(l, OpenGL.GL.GL_COMPILE)
+        GL.glNewList(l, GL.GL_COMPILE)
         self.drawArrays(chunkPosition, showRedraw)
-        OpenGL.GL.glEndList()
+        GL.glEndList()
         return l
 
     def drawArrays(self, chunkPosition, showRedraw):
@@ -777,11 +777,11 @@ class BlockRenderer(object):
         y = 0
         if hasattr(self, 'y'):
             y = self.y
-        with gl.glPushMatrix(OpenGL.GL.GL_MODELVIEW):
-            OpenGL.GL.glTranslate(cx << 4, y, cz << 4)
+        with gl.glPushMatrix(GL.GL_MODELVIEW):
+            GL.glTranslate(cx << 4, y, cz << 4)
 
             if showRedraw:
-                OpenGL.GL.glColor(1.0, 0.25, 0.25, 1.0)
+                GL.glColor(1.0, 0.25, 0.25, 1.0)
 
             self.drawVertices()
 
@@ -795,11 +795,11 @@ class BlockRenderer(object):
             return
         stride = elementByteLength
 
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, stride, (buf.ravel()))
-        OpenGL.GL.glTexCoordPointer(2, OpenGL.GL.GL_FLOAT, stride, (buf.ravel()[3:]))
-        OpenGL.GL.glColorPointer(4, OpenGL.GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype=numpy.uint8).ravel()[20:]))
+        GL.glVertexPointer(3, GL.GL_FLOAT, stride, (buf.ravel()))
+        GL.glTexCoordPointer(2, GL.GL_FLOAT, stride, (buf.ravel()[3:]))
+        GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype=numpy.uint8).ravel()[20:]))
 
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
+        GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
 
 
 class EntityRendererGeneric(BlockRenderer):
@@ -811,23 +811,23 @@ class EntityRendererGeneric(BlockRenderer):
             return
         stride = elementByteLength
 
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, stride, (buf.ravel()))
-        OpenGL.GL.glTexCoordPointer(2, OpenGL.GL.GL_FLOAT, stride, (buf.ravel()[3:]))
-        OpenGL.GL.glColorPointer(4, OpenGL.GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype=numpy.uint8).ravel()[20:]))
+        GL.glVertexPointer(3, GL.GL_FLOAT, stride, (buf.ravel()))
+        GL.glTexCoordPointer(2, GL.GL_FLOAT, stride, (buf.ravel()[3:]))
+        GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype=numpy.uint8).ravel()[20:]))
 
-        OpenGL.GL.glDepthMask(False)
+        GL.glDepthMask(False)
 
-        OpenGL.GL.glPolygonMode(OpenGL.GL.GL_FRONT_AND_BACK, OpenGL.GL.GL_LINE)
+        GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE)
 
-        OpenGL.GL.glLineWidth(2.0)
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
+        GL.glLineWidth(2.0)
+        GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
 
-        OpenGL.GL.glPolygonMode(OpenGL.GL.GL_FRONT_AND_BACK, OpenGL.GL.GL_FILL)
+        GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL)
 
-        OpenGL.GL.glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
-        with gl.glEnable(OpenGL.GL.GL_POLYGON_OFFSET_FILL, OpenGL.GL.GL_DEPTH_TEST):
-            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
-        OpenGL.GL.glDepthMask(True)
+        GL.glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
+        with gl.glEnable(GL.GL_POLYGON_OFFSET_FILL, GL.GL_DEPTH_TEST):
+            GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
+        GL.glDepthMask(True)
 
     def _computeVertices(self, positions, colors, offset=False, chunkPosition=(0, 0)):
         cx, cz = chunkPosition
@@ -959,35 +959,35 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
             return
         stride = elementByteLength
 
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, stride, (buf.ravel()))
-        OpenGL.GL.glTexCoordPointer(2, OpenGL.GL.GL_FLOAT, stride, (buf.ravel()[3:]))
-        OpenGL.GL.glColorPointer(4, OpenGL.GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype=numpy.uint8).ravel()[20:]))
+        GL.glVertexPointer(3, GL.GL_FLOAT, stride, (buf.ravel()))
+        GL.glTexCoordPointer(2, GL.GL_FLOAT, stride, (buf.ravel()[3:]))
+        GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype=numpy.uint8).ravel()[20:]))
 
-        OpenGL.GL.glDepthMask(False)
+        GL.glDepthMask(False)
 
-        # OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
-        OpenGL.GL.glDisable(OpenGL.GL.GL_CULL_FACE)
+        # GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
+        GL.glDisable(GL.GL_CULL_FACE)
 
-        with gl.glEnable(OpenGL.GL.GL_DEPTH_TEST):
-            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
+        with gl.glEnable(GL.GL_DEPTH_TEST):
+            GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
 
-        OpenGL.GL.glEnable(OpenGL.GL.GL_CULL_FACE)
+        GL.glEnable(GL.GL_CULL_FACE)
 
-        OpenGL.GL.glPolygonMode(OpenGL.GL.GL_FRONT_AND_BACK, OpenGL.GL.GL_LINE)
+        GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE)
 
-        OpenGL.GL.glLineWidth(1.0)
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
-        OpenGL.GL.glLineWidth(2.0)
-        with gl.glEnable(OpenGL.GL.GL_DEPTH_TEST):
-            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
-        OpenGL.GL.glLineWidth(1.0)
+        GL.glLineWidth(1.0)
+        GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
+        GL.glLineWidth(2.0)
+        with gl.glEnable(GL.GL_DEPTH_TEST):
+            GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
+        GL.glLineWidth(1.0)
 
-        OpenGL.GL.glPolygonMode(OpenGL.GL.GL_FRONT_AND_BACK, OpenGL.GL.GL_FILL)
-        OpenGL.GL.glDepthMask(True)
+        GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL)
+        GL.glDepthMask(True)
 
-#        OpenGL.GL.glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
-#        with gl.glEnable(OpenGL.GL.GL_POLYGON_OFFSET_FILL, OpenGL.GL.GL_DEPTH_TEST):
-#            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
+#        GL.glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
+#        with gl.glEnable(GL.GL_POLYGON_OFFSET_FILL, GL.GL_DEPTH_TEST):
+#            GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
 #
 
     def makeChunkVertices(self, chunk):
@@ -1026,12 +1026,12 @@ class LowDetailBlockRenderer(BlockRenderer):
             return
         stride = 16
 
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, stride, numpy.ravel(buf.ravel()))
-        OpenGL.GL.glColorPointer(4, OpenGL.GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype='uint8').ravel()[12:]))
+        GL.glVertexPointer(3, GL.GL_FLOAT, stride, numpy.ravel(buf.ravel()))
+        GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, stride, (buf.view(dtype='uint8').ravel()[12:]))
 
-        OpenGL.GL.glDisableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(buf) * 4)
-        OpenGL.GL.glEnableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
+        GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
+        GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
+        GL.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
     def makeChunkVertices(self, ch):
         step = 1
@@ -2362,10 +2362,10 @@ class MCRenderer(object):
 
         img = numpy.array([color0, color1, color1, color0], dtype='uint8')
 
-        OpenGL.GL.glTexParameter(OpenGL.GL.GL_TEXTURE_2D, OpenGL.GL.GL_TEXTURE_MIN_FILTER, OpenGL.GL.GL_NEAREST)
-        OpenGL.GL.glTexParameter(OpenGL.GL.GL_TEXTURE_2D, OpenGL.GL.GL_TEXTURE_MAG_FILTER, OpenGL.GL.GL_NEAREST)
+        GL.glTexParameter(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
+        GL.glTexParameter(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
 
-        OpenGL.GL.glTexImage2D(OpenGL.GL.GL_TEXTURE_2D, 0, OpenGL.GL.GL_RGBA, 2, 2, 0, OpenGL.GL.GL_RGBA, OpenGL.GL.GL_UNSIGNED_BYTE, img)
+        GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, 2, 2, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, img)
 
     def invalidateChunkMarkers(self):
         self.loadableChunkMarkers.invalidate()
@@ -2376,17 +2376,17 @@ class MCRenderer(object):
 
             sizedChunks = chunkMarkers(chunkSet)
 
-            OpenGL.GL.glPushAttrib(OpenGL.GL.GL_FOG_BIT)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_FOG)
+            GL.glPushAttrib(GL.GL_FOG_BIT)
+            GL.glDisable(GL.GL_FOG)
 
-            OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
-            OpenGL.GL.glPolygonOffset(DepthOffset.ChunkMarkers, DepthOffset.ChunkMarkers)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_DEPTH_TEST)
+            GL.glEnable(GL.GL_BLEND)
+            GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
+            GL.glPolygonOffset(DepthOffset.ChunkMarkers, DepthOffset.ChunkMarkers)
+            GL.glEnable(GL.GL_DEPTH_TEST)
 
-            OpenGL.GL.glEnableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_TEXTURE_2D)
-            OpenGL.GL.glColor(1.0, 1.0, 1.0, 1.0)
+            GL.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY)
+            GL.glEnable(GL.GL_TEXTURE_2D)
+            GL.glColor(1.0, 1.0, 1.0, 1.0)
 
             self.floorTexture.bind()
             # chunkColor = numpy.zeros(shape=(chunks.shape[0], 4, 4), dtype='float32')
@@ -2399,7 +2399,7 @@ class MCRenderer(object):
 #            chunkColor *= 255
 #            chunkColor = numpy.array(chunkColor, dtype='uint8')
 #
-            # OpenGL.GL.glColorPointer(4, OpenGL.GL.GL_UNSIGNED_BYTE, 0, chunkColor)
+            # GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, chunkColor)
             for size, chunks in sizedChunks.iteritems():
                 if not len(chunks):
                     continue
@@ -2410,17 +2410,17 @@ class MCRenderer(object):
                 chunkPosition[:, :, (0, 2)] *= size
                 chunkPosition[:, :, (0, 2)] += chunks[:, numpy.newaxis, :]
                 chunkPosition *= 16
-                OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, chunkPosition.ravel())
+                GL.glVertexPointer(3, GL.GL_FLOAT, 0, chunkPosition.ravel())
                 # chunkPosition *= 8
-                OpenGL.GL.glTexCoordPointer(2, OpenGL.GL.GL_FLOAT, 0, (chunkPosition[..., (0, 2)] * 8).ravel())
-                OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(chunkPosition) * 4)
+                GL.glTexCoordPointer(2, GL.GL_FLOAT, 0, (chunkPosition[..., (0, 2)] * 8).ravel())
+                GL.glDrawArrays(GL.GL_QUADS, 0, len(chunkPosition) * 4)
 
-            OpenGL.GL.glDisableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_TEXTURE_2D)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_DEPTH_TEST)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
-            OpenGL.GL.glPopAttrib()
+            GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
+            GL.glDisable(GL.GL_TEXTURE_2D)
+            GL.glDisable(GL.GL_BLEND)
+            GL.glDisable(GL.GL_DEPTH_TEST)
+            GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)
+            GL.glPopAttrib()
 
     def drawLoadableChunkMarkers(self):
         if not self.isPreviewer or isinstance(self.level, pymclevel.MCInfdevOldLevel):
@@ -2464,22 +2464,22 @@ class MCRenderer(object):
         coloredChunks = cc > 0
         colorBuffer[coloredChunks] *= 0.75
 
-        OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
-        OpenGL.GL.glEnable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
-        OpenGL.GL.glPolygonOffset(DepthOffset.ChunkMarkers, DepthOffset.ChunkMarkers)
-        OpenGL.GL.glEnable(OpenGL.GL.GL_DEPTH_TEST)
-        OpenGL.GL.glEnableClientState(OpenGL.GL.GL_COLOR_ARRAY)
+        GL.glEnable(GL.GL_BLEND)
+        GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
+        GL.glPolygonOffset(DepthOffset.ChunkMarkers, DepthOffset.ChunkMarkers)
+        GL.glEnable(GL.GL_DEPTH_TEST)
+        GL.glEnableClientState(GL.GL_COLOR_ARRAY)
 
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, vertexBuffer)
-        OpenGL.GL.glColorPointer(4, OpenGL.GL.GL_UNSIGNED_BYTE, 0, colorBuffer)
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(vertexBuffer) * 4)
+        GL.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer)
+        GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, colorBuffer)
+        GL.glDrawArrays(GL.GL_QUADS, 0, len(vertexBuffer) * 4)
 
-        OpenGL.GL.glDisableClientState(OpenGL.GL.GL_COLOR_ARRAY)
+        GL.glDisableClientState(GL.GL_COLOR_ARRAY)
 
-        OpenGL.GL.glDisable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
-        OpenGL.GL.glDisable(OpenGL.GL.GL_DEPTH_TEST)
+        GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
-        OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
+        GL.glDisable(GL.GL_BLEND)
 
     needsImmediateRedraw = False
     viewingFrustum = None
@@ -2525,14 +2525,14 @@ class MCRenderer(object):
                     continue
 
                 if self.alpha != 0xff and renderstate is not ChunkCalculator.renderstateLowDetail:
-                    OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
+                    GL.glEnable(GL.GL_BLEND)
                 renderstate.bind()
 
-                OpenGL.GL.glCallLists(self.masterLists[renderstate])
+                GL.glCallLists(self.masterLists[renderstate])
 
                 renderstate.release()
                 if self.alpha != 0xff and renderstate is not ChunkCalculator.renderstateLowDetail:
-                    OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
+                    GL.glDisable(GL.GL_BLEND)
 
     errorLimit = 10
 
@@ -2547,38 +2547,38 @@ class MCRenderer(object):
 
         chunksDrawn = 0
 
-        with gl.glPushMatrix(OpenGL.GL.GL_MODELVIEW):
+        with gl.glPushMatrix(GL.GL_MODELVIEW):
             dx, dy, dz = self.origin
-            OpenGL.GL.glTranslate(dx, dy, dz)
+            GL.glTranslate(dx, dy, dz)
 
-            OpenGL.GL.glEnable(OpenGL.GL.GL_CULL_FACE)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_DEPTH_TEST)
+            GL.glEnable(GL.GL_CULL_FACE)
+            GL.glEnable(GL.GL_DEPTH_TEST)
 
             self.level.materials.terrainTexture.bind()
-            OpenGL.GL.glEnable(OpenGL.GL.GL_TEXTURE_2D)
-            OpenGL.GL.glEnableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
+            GL.glEnable(GL.GL_TEXTURE_2D)
+            GL.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
             offset = DepthOffset.PreviewRenderer if self.isPreviewer else DepthOffset.Renderer
-            OpenGL.GL.glPolygonOffset(offset, offset)
-            OpenGL.GL.glEnable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
+            GL.glPolygonOffset(offset, offset)
+            GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
 
             self.createMasterLists()
             try:
                 self.callMasterLists()
 
-            except OpenGL.GL.GLError, e:
+            except GL.GLError, e:
                 if self.errorLimit:
                     self.errorLimit -= 1
                     traceback.print_exc()
                     print e
 
-            OpenGL.GL.glDisable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
+            GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)
 
-            OpenGL.GL.glDisable(OpenGL.GL.GL_CULL_FACE)
-            OpenGL.GL.glDisable(OpenGL.GL.GL_DEPTH_TEST)
+            GL.glDisable(GL.GL_CULL_FACE)
+            GL.glDisable(GL.GL_DEPTH_TEST)
 
-            OpenGL.GL.glDisable(OpenGL.GL.GL_TEXTURE_2D)
-            OpenGL.GL.glDisableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
+            GL.glDisable(GL.GL_TEXTURE_2D)
+            GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
                 # if self.drawLighting:
             self.drawLoadableChunkMarkers()
 
@@ -2767,33 +2767,33 @@ def rendermain():
 
     # display.init( (640, 480), OPENGL | DOUBLEBUF )
     from mcedit import GLDisplayContext
-    #from OpenGL import GLU
+    from OpenGL import GLU
     cxt = GLDisplayContext()
     import pygame
 
     # distance = 4000
-    OpenGL.GL.glMatrixMode(OpenGL.GL.GL_PROJECTION)
-    OpenGL.GL.glLoadIdentity()
-    OpenGL.GLU.gluPerspective(35, 640.0 / 480.0, 0.5, 4000.0)
+    GL.glMatrixMode(GL.GL_PROJECTION)
+    GL.glLoadIdentity()
+    GLU.gluPerspective(35, 640.0 / 480.0, 0.5, 4000.0)
     h = 366
 
     pos = (0, h, 0)
 
     look = (0.0001, h - 1, 0.0001)
     up = (0, 1, 0)
-    OpenGL.GL.glMatrixMode(OpenGL.GL.GL_MODELVIEW)
-    OpenGL.GL.glLoadIdentity()
+    GL.glMatrixMode(GL.GL_MODELVIEW)
+    GL.glLoadIdentity()
 
-    OpenGL.GLU.gluLookAt(pos[0], pos[1], pos[2],
+    GLU.gluLookAt(pos[0], pos[1], pos[2],
                    look[0], look[1], look[2],
                    up[0], up[1], up[2])
 
-    OpenGL.GL.glClearColor(0.0, 0.0, 0.0, 1.0)
+    GL.glClearColor(0.0, 0.0, 0.0, 1.0)
 
     framestart = datetime.now()
     frames = 200
     for i in range(frames):
-        OpenGL.GL.glClear(OpenGL.GL.GL_COLOR_BUFFER_BIT | OpenGL.GL.GL_DEPTH_BUFFER_BIT)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
         renderer.draw()
         pygame.display.flip()
 

@@ -49,7 +49,8 @@ import mceutils
 import mcplatform
 from mcplatform import askSaveFile
 import numpy
-import OpenGL
+from OpenGL import GL
+from OpenGL import GLU
 # from OpenGL.GLUT import glutBitmapCharacter, GLUT_BITMAP_HELVETICA_18
 import os
 from os.path import dirname, isdir
@@ -198,7 +199,7 @@ class ControlPanel(Panel):
 
 def unproject(x, y, z):
     try:
-        return OpenGL.GLU.gluUnProject(x, y, z)
+        return GLU.gluUnProject(x, y, z)
     except ValueError:  # projection failed
         return 0, 0, 0
 
@@ -404,7 +405,7 @@ class CameraViewport(GLViewport):
         look = numpy.array(self.cameraPosition)
         look += self.cameraVector
         up = (0, 1, 0)
-        OpenGL.GLU.gluLookAt(pos[0], pos[1], pos[2],
+        GLU.gluLookAt(pos[0], pos[1], pos[2],
                   look[0], look[1], look[2],
                   up[0], up[1], up[2])
 
@@ -449,10 +450,10 @@ class CameraViewport(GLViewport):
         """
         try:
             if Settings.doubleBuffer.get():
-                OpenGL.GL.glReadBuffer(OpenGL.GL.GL_BACK)
+                GL.glReadBuffer(GL.GL_BACK)
             else:
-                OpenGL.GL.glReadBuffer(OpenGL.GL.GL_FRONT)
-        except Exception:
+                GL.glReadBuffer(GL.GL_FRONT)
+        except Exception, e:
             logging.exception('Exception during glReadBuffer')
         ws = self.get_root().size
         if center:
@@ -468,7 +469,7 @@ class CameraViewport(GLViewport):
         y = ws[1] - y
 
         try:
-            pixel = OpenGL.GL.glReadPixels(x, y, 1, 1, OpenGL.GL.GL_DEPTH_COMPONENT, OpenGL.GL.GL_FLOAT)
+            pixel = GL.glReadPixels(x, y, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT)
             newpoint = unproject(x, y, pixel[0])
         except Exception:
             return 0, 0, 0
@@ -1084,25 +1085,25 @@ class CameraViewport(GLViewport):
             lines.append((minx, 0, z))
             lines.append((maxx, 0, z))
 
-        OpenGL.GL.glColor(0.3, 0.7, 0.9)
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, numpy.array(lines, dtype='float32'))
+        GL.glColor(0.3, 0.7, 0.9)
+        GL.glVertexPointer(3, GL.GL_FLOAT, 0, numpy.array(lines, dtype='float32'))
 
-        OpenGL.GL.glEnable(OpenGL.GL.GL_DEPTH_TEST)
-        OpenGL.GL.glDepthMask(False)
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_LINES, 0, len(lines))
-        OpenGL.GL.glDisable(OpenGL.GL.GL_DEPTH_TEST)
-        OpenGL.GL.glDepthMask(True)
+        GL.glEnable(GL.GL_DEPTH_TEST)
+        GL.glDepthMask(False)
+        GL.glDrawArrays(GL.GL_LINES, 0, len(lines))
+        GL.glDisable(GL.GL_DEPTH_TEST)
+        GL.glDepthMask(True)
 
     def drawCeiling(self):
-        OpenGL.GL.glMatrixMode(OpenGL.GL.GL_MODELVIEW)
-        # OpenGL.GL.glPushMatrix()
+        GL.glMatrixMode(GL.GL_MODELVIEW)
+        # GL.glPushMatrix()
         x, y, z = self.cameraPosition
         x -= x % 16
         z -= z % 16
         y = self.editor.level.Height
-        OpenGL.GL.glTranslate(x, y, z)
+        GL.glTranslate(x, y, z)
         self.ceilingList.call(self._drawCeiling)
-        OpenGL.GL.glTranslate(-x, -y, -z)
+        GL.glTranslate(-x, -y, -z)
 
     _floorQuadList = None
 
@@ -1130,12 +1131,12 @@ class CameraViewport(GLViewport):
 #    floorColor = (0.0, 0.0, 1.0, 0.1)
 
     def _drawFloorQuad(self):
-        OpenGL.GL.glDepthMask(True)
-        OpenGL.GL.glPolygonOffset(DepthOffset.ChunkMarkers + 2, DepthOffset.ChunkMarkers + 2)
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, self.floorQuad)
-        OpenGL.GL.glColor(*self.floorColor)
-        with gl.glEnable(OpenGL.GL.GL_BLEND, OpenGL.GL.GL_DEPTH_TEST, OpenGL.GL.GL_POLYGON_OFFSET_FILL):
-            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, 4)
+        GL.glDepthMask(True)
+        GL.glPolygonOffset(DepthOffset.ChunkMarkers + 2, DepthOffset.ChunkMarkers + 2)
+        GL.glVertexPointer(3, GL.GL_FLOAT, 0, self.floorQuad)
+        GL.glColor(*self.floorColor)
+        with gl.glEnable(GL.GL_BLEND, GL.GL_DEPTH_TEST, GL.GL_POLYGON_OFFSET_FILL):
+            GL.glDrawArrays(GL.GL_QUADS, 0, 4)
 
     @property
     def drawSky(self):
@@ -1157,13 +1158,13 @@ class CameraViewport(GLViewport):
         self.skyList.call(self._drawSkyBackground)
 
     def _drawSkyBackground(self):
-        OpenGL.GL.glMatrixMode(OpenGL.GL.GL_MODELVIEW)
-        OpenGL.GL.glPushMatrix()
-        OpenGL.GL.glLoadIdentity()
-        OpenGL.GL.glMatrixMode(OpenGL.GL.GL_PROJECTION)
-        OpenGL.GL.glPushMatrix()
-        OpenGL.GL.glLoadIdentity()
-        OpenGL.GL.glEnableClientState(OpenGL.GL.GL_COLOR_ARRAY)
+        GL.glMatrixMode(GL.GL_MODELVIEW)
+        GL.glPushMatrix()
+        GL.glLoadIdentity()
+        GL.glMatrixMode(GL.GL_PROJECTION)
+        GL.glPushMatrix()
+        GL.glLoadIdentity()
+        GL.glEnableClientState(GL.GL_COLOR_ARRAY)
 
         quad = numpy.array([-1, -1, -1, 1, 1, 1, 1, -1], dtype='float32')
         colors = numpy.array([0x48, 0x49, 0xBA, 0xff,
@@ -1175,20 +1176,20 @@ class CameraViewport(GLViewport):
 
         if alpha > 0.0:
             if alpha < 1.0:
-                OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
+                GL.glEnable(GL.GL_BLEND)
 
-            OpenGL.GL.glVertexPointer(2, OpenGL.GL.GL_FLOAT, 0, quad)
-            OpenGL.GL.glColorPointer(4, OpenGL.GL.GL_UNSIGNED_BYTE, 0, colors)
-            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, 4)
+            GL.glVertexPointer(2, GL.GL_FLOAT, 0, quad)
+            GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, colors)
+            GL.glDrawArrays(GL.GL_QUADS, 0, 4)
 
             if alpha < 1.0:
-                OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
+                GL.glDisable(GL.GL_BLEND)
 
-        OpenGL.GL.glDisableClientState(OpenGL.GL.GL_COLOR_ARRAY)
-        OpenGL.GL.glMatrixMode(OpenGL.GL.GL_PROJECTION)
-        OpenGL.GL.glPopMatrix()
-        OpenGL.GL.glMatrixMode(OpenGL.GL.GL_MODELVIEW)
-        OpenGL.GL.glPopMatrix()
+        GL.glDisableClientState(GL.GL_COLOR_ARRAY)
+        GL.glMatrixMode(GL.GL_PROJECTION)
+        GL.glPopMatrix()
+        GL.glMatrixMode(GL.GL_MODELVIEW)
+        GL.glPopMatrix()
 
     enableMouseLag = Settings.enableMouseLag.configProperty()
 
@@ -1204,16 +1205,16 @@ class CameraViewport(GLViewport):
     fogColorBlack = numpy.array([0.0, 0.0, 0.0, 1.0], dtype='float32')
 
     def enableFog(self):
-        OpenGL.GL.glEnable(OpenGL.GL.GL_FOG)
+        GL.glEnable(GL.GL_FOG)
         if self.drawSky:
-            OpenGL.GL.glFogfv(OpenGL.GL.GL_FOG_COLOR, self.fogColor)
+            GL.glFogfv(GL.GL_FOG_COLOR, self.fogColor)
         else:
-            OpenGL.GL.glFogfv(OpenGL.GL.GL_FOG_COLOR, self.fogColorBlack)
+            GL.glFogfv(GL.GL_FOG_COLOR, self.fogColorBlack)
 
-        OpenGL.GL.glFogf(OpenGL.GL.GL_FOG_DENSITY, 0.002)
+        GL.glFogf(GL.GL_FOG_DENSITY, 0.002)
 
     def disableFog(self):
-        OpenGL.GL.glDisable(OpenGL.GL.GL_FOG)
+        GL.glDisable(GL.GL_FOG)
 
     def getCameraPoint(self):
         distance = self.editor.currentTool.cameraDistance
@@ -1229,7 +1230,7 @@ class CameraViewport(GLViewport):
         distance = 1.0
         if self.editor.renderer.inSpace():
             distance = 8.0
-        OpenGL.GLU.gluPerspective(max(self.fov, 25.0), self.ratio, self.near * distance, self.far * distance)
+        GLU.gluPerspective(max(self.fov, 25.0), self.ratio, self.near * distance, self.far * distance)
 
     def setup_modelview(self):
         self.setModelview()
@@ -1304,13 +1305,13 @@ class ChunkViewport(CameraViewport):
         minx, maxx = - w,  w
         miny, maxy = - h,  h
         minz, maxz = -4000, 4000
-        OpenGL.GL.glOrtho(minx, maxx, miny, maxy, minz, maxz)
+        GL.glOrtho(minx, maxx, miny, maxy, minz, maxz)
 
     def setup_modelview(self):
         x, y, z = self.cameraPosition
 
-        OpenGL.GL.glRotate(90.0, 1.0, 0.0, 0.0)
-        OpenGL.GL.glTranslate(-x, 0, -z)
+        GL.glRotate(90.0, 1.0, 0.0, 0.0)
+        GL.glTranslate(-x, 0, -z)
 
     def zoom(self, f):
         x, y, z = self.cameraPosition
@@ -1826,13 +1827,13 @@ class LevelEditor(GLViewport):
     longDistanceMode = Settings.longDistanceMode.configProperty()
 
     def genSixteenBlockTexture(self):
-        has12 = OpenGL.GL.glGetString(OpenGL.GL.GL_VERSION) >= "1.2"
+        has12 = GL.glGetString(GL.GL_VERSION) >= "1.2"
         if has12:
             maxLevel = 2
-            mode = OpenGL.GL.GL_LINEAR_MIPMAP_NEAREST
+            mode = GL.GL_LINEAR_MIPMAP_NEAREST
         else:
             maxLevel = 1
-            mode = OpenGL.GL.GL_LINEAR
+            mode = GL.GL_LINEAR
 
         def makeSixteenBlockTex():
             darkColor = (0x30, 0x30, 0x30, 0xff)
@@ -1847,11 +1848,11 @@ class LevelEditor(GLViewport):
             teximage[-1:] = darkColor
             teximage[:, -1:] = darkColor
             teximage[:, :2] = darkColor
-            # OpenGL.GL.glTexParameter(OpenGL.GL.GL_TEXTURE_2D,
-            #                  OpenGL.GL.GL_TEXTURE_MIN_FILTER,
-            #                  OpenGL.GL.GL_NEAREST_MIPMAP_NEAREST),
-            OpenGL.GL.glTexParameter(OpenGL.GL.GL_TEXTURE_2D,
-                              OpenGL.GL.GL_TEXTURE_MAX_LEVEL,
+            # GL.glTexParameter(GL.GL_TEXTURE_2D,
+            #                  GL.GL_TEXTURE_MIN_FILTER,
+            #                  GL.GL_NEAREST_MIPMAP_NEAREST),
+            GL.glTexParameter(GL.GL_TEXTURE_2D,
+                              GL.GL_TEXTURE_MAX_LEVEL,
                               maxLevel - 1)
 
             for lev in range(maxLevel):
@@ -1864,9 +1865,9 @@ class LevelEditor(GLViewport):
                     teximage[:, -1:] = darkColor
                     teximage[:, :2] = darkColor
 
-                OpenGL.GL.glTexImage2D(OpenGL.GL.GL_TEXTURE_2D, lev, OpenGL.GL.GL_RGBA8,
+                GL.glTexImage2D(GL.GL_TEXTURE_2D, lev, GL.GL_RGBA8,
                          w / step, h / step, 0,
-                         OpenGL.GL.GL_RGBA, OpenGL.GL.GL_UNSIGNED_BYTE,
+                         GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
                          teximage[::step, ::step].ravel())
 
         return Texture(makeSixteenBlockTex, mode)
@@ -1879,33 +1880,33 @@ class LevelEditor(GLViewport):
             texture = self.sixteenBlockTex
         # textured cube faces
 
-        OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
-        OpenGL.GL.glEnable(OpenGL.GL.GL_DEPTH_TEST)
-        OpenGL.GL.glDepthMask(False)
+        GL.glEnable(GL.GL_BLEND)
+        GL.glEnable(GL.GL_DEPTH_TEST)
+        GL.glDepthMask(False)
 
         # edges within terrain
-        OpenGL.GL.glDepthFunc(OpenGL.GL.GL_GREATER)
+        GL.glDepthFunc(GL.GL_GREATER)
         try:
-            OpenGL.GL.glColor(color[0], color[1], color[2], max(color[3], 0.35))
+            GL.glColor(color[0], color[1], color[2], max(color[3], 0.35))
         except IndexError:
             raise
-        OpenGL.GL.glLineWidth(1.0)
-        mceutils.drawCube(box, cubeType=OpenGL.GL.GL_LINE_STRIP)
+        GL.glLineWidth(1.0)
+        mceutils.drawCube(box, cubeType=GL.GL_LINE_STRIP)
 
         # edges on or outside terrain
-        OpenGL.GL.glDepthFunc(OpenGL.GL.GL_LEQUAL)
-        OpenGL.GL.glColor(color[0], color[1], color[2], max(color[3] * 2, 0.75))
-        OpenGL.GL.glLineWidth(2.0)
-        mceutils.drawCube(box, cubeType=OpenGL.GL.GL_LINE_STRIP)
+        GL.glDepthFunc(GL.GL_LEQUAL)
+        GL.glColor(color[0], color[1], color[2], max(color[3] * 2, 0.75))
+        GL.glLineWidth(2.0)
+        mceutils.drawCube(box, cubeType=GL.GL_LINE_STRIP)
 
-        OpenGL.GL.glDepthFunc(OpenGL.GL.GL_LESS)
-        OpenGL.GL.glColor(color[0], color[1], color[2], color[3])
-        OpenGL.GL.glDepthFunc(OpenGL.GL.GL_LEQUAL)
+        GL.glDepthFunc(GL.GL_LESS)
+        GL.glColor(color[0], color[1], color[2], color[3])
+        GL.glDepthFunc(GL.GL_LEQUAL)
         mceutils.drawCube(box, texture=texture, selectionBox=True)
-        OpenGL.GL.glDepthMask(True)
+        GL.glDepthMask(True)
 
-        OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
-        OpenGL.GL.glDisable(OpenGL.GL.GL_DEPTH_TEST)
+        GL.glDisable(GL.GL_BLEND)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
     def loadFile(self, filename):
         if self.level and self.unsavedEdits > 0:
@@ -2359,10 +2360,10 @@ class LevelEditor(GLViewport):
         self.mainViewport.cameraPosition = map(lambda x: x / 128.0, pos)
         self.mainViewport.setModelview()
 
-        OpenGL.GL.glColor(.5, .5, .5, 1.)
+        GL.glColor(.5, .5, .5, 1.)
 
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, self.starVertices)
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, len(self.starVertices) / 3)
+        GL.glVertexPointer(3, GL.GL_FLOAT, 0, self.starVertices)
+        GL.glDrawArrays(GL.GL_QUADS, 0, len(self.starVertices) / 3)
 
         self.mainViewport.cameraPosition = pos
         self.mainViewport.setModelview()
@@ -2513,7 +2514,7 @@ class LevelEditor(GLViewport):
                     # ===========================================================
 
                 elif mods & KMOD_SHIFT:
-                    raise OpenGL.GL.GLError(err=1285, description="User pressed CONTROL-SHIFT-F9, requesting a GL Memory Error")
+                    raise GL.GLError(err=1285, description="User pressed CONTROL-SHIFT-F9, requesting a GL Memory Error")
                 else:
                     try:
                         expr = input_text(">>> ", 600)
@@ -3299,15 +3300,15 @@ class LevelEditor(GLViewport):
             pass
 
     def drawWireCubeReticle(self, color=(1.0, 1.0, 1.0, 1.0), position=None):
-        OpenGL.GL.glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
-        OpenGL.GL.glEnable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
+        GL.glPolygonOffset(DepthOffset.TerrainWire, DepthOffset.TerrainWire)
+        GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
 
         blockPosition, faceDirection = self.blockFaceUnderCursor
         blockPosition = position or blockPosition
 
         mceutils.drawTerrainCuttingWire(pymclevel.BoundingBox(blockPosition, (1, 1, 1)), c1=color)
 
-        OpenGL.GL.glDisable(OpenGL.GL.GL_POLYGON_OFFSET_FILL)
+        GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)
 
     def drawString(self, x, y, color, string):
         return
@@ -3315,18 +3316,18 @@ class LevelEditor(GLViewport):
     def freezeStatus(self, string):
         return
 
-#        OpenGL.GL.glColor(1.0, 0., 0., 1.0)
+#        GL.glColor(1.0, 0., 0., 1.0)
 #
-#        # glDrawBuffer(OpenGL.GL.GL_FRONT)
-#        OpenGL.GL.glMatrixMode(OpenGL.GL.GL_PROJECTION)
-#        OpenGL.GL.glPushMatrix()
+#        # glDrawBuffer(GL.GL_FRONT)
+#        GL.glMatrixMode(GL.GL_PROJECTION)
+#        GL.glPushMatrix()
 #        glRasterPos(50, 100)
 #        for i in string:
 #            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(i))
 #
-#        # glDrawBuffer(OpenGL.GL.GL_BACK)
-#        OpenGL.GL.glMatrixMode(OpenGL.GL.GL_PROJECTION)
-#        OpenGL.GL.glPopMatrix()
+#        # glDrawBuffer(GL.GL_BACK)
+#        GL.glMatrixMode(GL.GL_PROJECTION)
+#        GL.glPopMatrix()
 #        glFlush()
 #        display.flip()
 #        # while(True): pass
@@ -3422,17 +3423,17 @@ class LevelEditor(GLViewport):
 ##        glBindTexture(GL_TEXTURE_3D, sourceTex)
 ##        glTexImage3D(GL_TEXTURE_3D, 0, 1,
 ##                     level.Width, level.Length, level.Height,
-##                     0, GL_RED, OpenGL.GL.GL_UNSIGNED_BYTE,
+##                     0, GL_RED, GL.GL_UNSIGNED_BYTE,
 ##                     blocks)
 ##
 ##        # return
 ##
-##        glBindTexture(OpenGL.GL.GL_TEXTURE_2D, destTex)
-##        glTexImage2D(OpenGL.GL.GL_TEXTURE_2D, 0, 1,
+##        glBindTexture(GL.GL_TEXTURE_2D, destTex)
+##        glTexImage2D(GL.GL_TEXTURE_2D, 0, 1,
 ##                     level.Width, level.Length,
-##                     0, GL_RED, OpenGL.GL.GL_UNSIGNED_BYTE, destBlocks)
-##        glTexParameter(OpenGL.GL.GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-##        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, OpenGL.GL.GL_TEXTURE_2D, destTex, 0)
+##                     0, GL_RED, GL.GL_UNSIGNED_BYTE, destBlocks)
+##        glTexParameter(GL.GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+##        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D, destTex, 0)
 ##
 ##        vertShader = glCreateShader(GL_VERTEX_SHADER)
 ##
@@ -3468,13 +3469,13 @@ class LevelEditor(GLViewport):
 ##
 ##        glUseProgram(prog);
 ##        # return
-##        OpenGL.GL.glDisable(OpenGL.GL.GL_DEPTH_TEST);
-##        OpenGL.GL.glVertexPointer(2, OpenGL.GL.GL_FLOAT, 0, [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]);
-##        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, 4);
-##        OpenGL.GL.glEnable(OpenGL.GL.GL_DEPTH_TEST);
+##        GL.glDisable(GL.GL_DEPTH_TEST);
+##        GL.glVertexPointer(2, GL.GL_FLOAT, 0, [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]);
+##        GL.glDrawArrays(GL.GL_QUADS, 0, 4);
+##        GL.glEnable(GL.GL_DEPTH_TEST);
 ##
 ##        glFlush();
-##        destBlocks = glGetTexImage(OpenGL.GL.GL_TEXTURE_2D, 0, GL_RED, OpenGL.GL.GL_UNSIGNED_BYTE);
+##        destBlocks = glGetTexImage(GL.GL_TEXTURE_2D, 0, GL_RED, GL.GL_UNSIGNED_BYTE);
 ##        print destBlocks, destBlocks[0:8];
 ##        raise SystemExit;
 
@@ -3624,27 +3625,27 @@ class EditorToolbar(GLOrtho):
                 tool.markerList.invalidate()
 
     def drawToolbar(self):
-        OpenGL.GL.glEnableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
+        GL.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
-        OpenGL.GL.glColor(1., 1., 1., 1.)
+        GL.glColor(1., 1., 1., 1.)
         w, h = self.toolbarTextureSize
 
         self.guiTexture.bind()
 
-        OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, numpy.array((
+        GL.glVertexPointer(3, GL.GL_FLOAT, 0, numpy.array((
                                1, h + 1, 0.5,
                                w + 1, h + 1, 0.5,
                                w + 1, 1, 0.5,
                                1, 1, 0.5,
                             ), dtype="f4"))
-        OpenGL.GL.glTexCoordPointer(2, OpenGL.GL.GL_FLOAT, 0, numpy.array((
+        GL.glTexCoordPointer(2, GL.GL_FLOAT, 0, numpy.array((
                              0, 0,
                              w, 0,
                              w, h,
                              0, h,
                              ), dtype="f4"))
 
-        OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, 4)
+        GL.glDrawArrays(GL.GL_QUADS, 0, 4)
 
         for i in range(len(self.tools)):
             tool = self.tools[i]
@@ -3660,37 +3661,37 @@ class EditorToolbar(GLOrtho):
                 h = 16
 
                 self.toolTextures[tool.toolIconName].bind()
-                OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, numpy.array((
+                GL.glVertexPointer(3, GL.GL_FLOAT, 0, numpy.array((
                                    x, y + h, 1,
                                    x + w, y + h, 1,
                                    x + w, y, 1,
                                    x, y, 1,
                                 ), dtype="f4"))
-                OpenGL.GL.glTexCoordPointer(2, OpenGL.GL.GL_FLOAT, 0, numpy.array((
+                GL.glTexCoordPointer(2, GL.GL_FLOAT, 0, numpy.array((
                                  0, 0,
                                  w * 16, 0,
                                  w * 16, h * 16,
                                  0, h * 16,
                                  ), dtype="f4"))
 
-                OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, 4)
-            except Exception:
+                GL.glDrawArrays(GL.GL_QUADS, 0, 4)
+            except Exception, e:
                 logging.exception('Error while drawing toolbar.')
-        OpenGL.GL.glDisableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
+        GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
     gfont = None
 
     def gl_draw(self):
 
-        OpenGL.GL.glEnable(OpenGL.GL.GL_TEXTURE_2D)
-        OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
+        GL.glEnable(GL.GL_TEXTURE_2D)
+        GL.glEnable(GL.GL_BLEND)
         self.toolbarDisplayList.call(self.drawToolbar)
-        OpenGL.GL.glColor(1.0, 1.0, 0.0)
+        GL.glColor(1.0, 1.0, 0.0)
 
-        # OpenGL.GL.glEnable(OpenGL.GL.GL_BLEND)
+        # GL.glEnable(GL.GL_BLEND)
 
         # with gl.glPushMatrix(GL_TEXTURE):
-        #    OpenGL.GL.glLoadIdentity()
+        #    GL.glLoadIdentity()
         #    self.gfont.flatPrint("ADLADLADLADLADL")
 
         try:
@@ -3713,27 +3714,27 @@ class EditorToolbar(GLOrtho):
             ty = 0.
             tw = 24.
             th = 24.
-            OpenGL.GL.glEnableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
+            GL.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
             self.guiTexture.bind()
-            OpenGL.GL.glVertexPointer(3, OpenGL.GL.GL_FLOAT, 0, numpy.array((
+            GL.glVertexPointer(3, GL.GL_FLOAT, 0, numpy.array((
                             tx, ty, 2,
                             tx + tw, ty, 2,
                             tx + tw, ty + th, 2,
                             tx, ty + th, 2,
                             ), dtype="f4"))
 
-            OpenGL.GL.glTexCoordPointer(2, OpenGL.GL.GL_FLOAT, 0, numpy.array((
+            GL.glTexCoordPointer(2, GL.GL_FLOAT, 0, numpy.array((
                               texx, texy + texh,
                               texx + texw, texy + texh,
                               texx + texw, texy,
                               texx, texy,
                                ), dtype="f4"))
 
-            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, 4)
+            GL.glDrawArrays(GL.GL_QUADS, 0, 4)
 
-        OpenGL.GL.glDisableClientState(OpenGL.GL.GL_TEXTURE_COORD_ARRAY)
-        OpenGL.GL.glDisable(OpenGL.GL.GL_TEXTURE_2D)
+        GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
+        GL.glDisable(GL.GL_TEXTURE_2D)
 
         redOutBoxes = numpy.zeros(9 * 4 * 2, dtype='float32')
         cursor = 0
@@ -3750,8 +3751,8 @@ class EditorToolbar(GLOrtho):
             cursor += 8
 
         if cursor:
-            OpenGL.GL.glColor(1.0, 0.0, 0.0, 0.3)
-            OpenGL.GL.glVertexPointer(2, OpenGL.GL.GL_FLOAT, 0, redOutBoxes)
-            OpenGL.GL.glDrawArrays(OpenGL.GL.GL_QUADS, 0, cursor / 2)
+            GL.glColor(1.0, 0.0, 0.0, 0.3)
+            GL.glVertexPointer(2, GL.GL_FLOAT, 0, redOutBoxes)
+            GL.glDrawArrays(GL.GL_QUADS, 0, cursor / 2)
 
-        OpenGL.GL.glDisable(OpenGL.GL.GL_BLEND)
+        GL.glDisable(GL.GL_BLEND)
