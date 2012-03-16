@@ -12,7 +12,7 @@ Based on code from:
 
 import logging
 import numpy
-import OpenGL.GL
+from OpenGL import GL
 context_log = logging.getLogger()
 
 
@@ -31,9 +31,9 @@ def viewingMatrix(projection=None, model=None):
         matrix, the function will raise a RuntimeError
     """
     if projection is None:
-        projection = OpenGL.GL.glGetDoublev(OpenGL.GL.GL_PROJECTION_MATRIX)
+        projection = GL.glGetDoublev(GL.GL_PROJECTION_MATRIX)
     if model is None:
-        model = OpenGL.GL.glGetDoublev(OpenGL.GL.GL_MODELVIEW_MATRIX)
+        model = GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)
     # hmm, this will likely fail on 64-bit platforms :(
     if projection is None or model is None:
         context_log.warn(
@@ -85,15 +85,15 @@ class Frustum (object):
         frustcullaccel C extension module)
         """
 
-        distances = sum(self.planes[OpenGL.GL.newaxis, :, :] * points[:, OpenGL.GL.newaxis, :], -1)
+        distances = sum(self.planes[GL.newaxis, :, :] * points[:, GL.newaxis, :], -1)
         return ~any(distances < -radius, -1)
 
     def visible1(self, point, radius):
-        #return self.visible(array(point[OpenGL.GL.newaxis, :]), radius)
+        #return self.visible(array(point[GL.newaxis, :]), radius)
 
         distance = sum(self.planes * point, -1)
         vis = ~any(distance < -radius)
-        #assert vis == self.visible(array(point)[OpenGL.GL.newaxis, :], radius)
+        #assert vis == self.visible(array(point)[GL.newaxis, :], radius)
 
         return vis
 
