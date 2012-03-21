@@ -85,15 +85,15 @@ class Frustum (object):
         frustcullaccel C extension module)
         """
 
-        distances = sum(self.planes[GL.newaxis, :, :] * points[:, GL.newaxis, :], -1)
+        distances = sum(self.planes[numpy.newaxis, :, :] * points[:, numpy.newaxis, :], -1)
         return ~any(distances < -radius, -1)
 
     def visible1(self, point, radius):
-        #return self.visible(array(point[GL.newaxis, :]), radius)
+        #return self.visible(array(point[numpy.newaxis, :]), radius)
 
         distance = sum(self.planes * point, -1)
         vis = ~any(distance < -radius)
-        #assert vis == self.visible(array(point)[GL.newaxis, :], radius)
+        #assert vis == self.visible(array(point)[numpy.newaxis, :], radius)
 
         return vis
 
