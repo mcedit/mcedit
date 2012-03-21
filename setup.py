@@ -4,6 +4,7 @@ from setuptools import setup
 import os
 import sys
 import glob
+import subprocess
 import platform
 
 LONG_DESC = '''
@@ -17,11 +18,35 @@ Works with saved games from Minecraft Classic, Indev, Infdev, Alpha, Beta,
 Release, and Pocket Edition.
 '''
 
+
+def get_git_version():
+    """
+    Get the version from git.
+    """
+    try:
+        p = subprocess.Popen(
+            ['git', 'describe', '--abbrev=4', '--tags', '--match=*.*.*'],
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            # Shell=True is required due to a Popen Win32 bug.
+            shell=True if platform.system() == 'Windows' else False
+        )
+    except:
+        return 'unknown'
+
+    version = p.stdout.readlines()[0].strip()
+    fout = open('RELEASE-VERSION', 'wb')
+    fout.write(version)
+    fout.write('\n')
+    fout.close()
+
+    return version
+
 # setup() options that are common on all platforms.
 SETUP_COMMON = {
     # General fields,
     'name': 'MCEdit',
-    'version': '0.1.1',
+    'version': get_git_version(),
     'description': 'Minecraft World Editor',
     'long_description': LONG_DESC,
 
@@ -29,7 +54,7 @@ SETUP_COMMON = {
     'author_email': 'codewarrior0@gmail.com',
 
     'maintainer': 'MCDevs',
-    'maintainer_email': 'mcdevs@tkte.ch',
+    'maintainer_email': 'tk@tkte.ch',
 
     'url': 'http://www.github.com/mcedit/mcedit',
 
@@ -49,6 +74,12 @@ SETUP_COMMON = {
             '*.yaml',
             '*.txt',
             '_nbt.*'
+        ],
+        'filters': [
+            'filters/**'
+        ],
+        'stock-schematics': [
+            'stock-schematics/**'
         ]
     },
     'scripts': [
@@ -73,6 +104,7 @@ ESKY_OPTIONS = {
             'Cython'
         ],
         'freezer_options': {
+            # py2exe extras
             'optimize': 2,
             'compressed': True,
             'bundle_files': 3,
@@ -80,6 +112,11 @@ ESKY_OPTIONS = {
                 'mswsock.dll',
                 'powrprof.dll'
             ],
+            # py2app extras
+            'iconfile': 'mcedit.icns',
+            'plist': {
+                'CFBundleIdentifier': 'org.mcedit.mcedit'
+            }
         }
     }
 }
@@ -110,8 +147,16 @@ def setup_win32():
     py2exe.build_exe.isSystemDLL = isSystemDLL
 
 
-def get_data_files(*args):
-    return [(d, glob.glob(d + '/*')) for d in args]
+def get_data_files(dirs):
+    """
+    Recursively include data directories.
+    """
+    results = []
+    for directory in dirs:
+        for root, dirs, files in os.walk(directory):
+            files = [os.path.join(root, file_) for file_ in files]
+            results.append((root, files))
+    return results
 
 
 def main():
@@ -119,16 +164,17 @@ def main():
     if platform.system() == 'Windows':
         setup_win32()
 
-    data_files = get_data_files('fonts', 'toolicons') + [
+    include_dirs = ['fonts', 'toolicons', 'stock-schematics', 'filters']
+    data_files = get_data_files(include_dirs) + [
         ('', [
-            'history.txt',
             'README.html',
             'favicon.png',
             'terrain-classic.png',
             'terrain-pocket.png',
             'char.png',
             'gui.png',
-            'terrain.png'
+            'terrain.png',
+            'RELEASE-VERSION'
         ])
     ]
 

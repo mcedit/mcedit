@@ -101,7 +101,7 @@ Settings.drawEntities = Settings("draw entities", True)
 Settings.drawMonsters = Settings("draw monsters", True)
 Settings.drawItems = Settings("draw items", True)
 Settings.drawTileEntities = Settings("draw tile entities", True)
-Settings.drawTileTicks = Settings("draw tile ticks", True)
+Settings.drawTileTicks = Settings("draw tile ticks", False)
 Settings.drawUnpopulatedChunks = Settings("draw unpopulated chunks", True)
 Settings.vertexBufferLimit = Settings("vertex buffer limit", 384)
 
@@ -453,8 +453,8 @@ class CameraViewport(GLViewport):
                 GL.glReadBuffer(GL.GL_BACK)
             else:
                 GL.glReadBuffer(GL.GL_FRONT)
-        except Exception, e:
-            print "Exception during glReadBuffer: {0!r}".format(e)
+        except Exception:
+            logging.exception('Exception during glReadBuffer')
         ws = self.get_root().size
         if center:
             x, y = ws
@@ -471,9 +471,7 @@ class CameraViewport(GLViewport):
         try:
             pixel = GL.glReadPixels(x, y, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT)
             newpoint = unproject(x, y, pixel[0])
-        except Exception, e:
-            # print e
-            # traceback.print_exc()
+        except Exception:
             return 0, 0, 0
 
         return newpoint
@@ -736,7 +734,6 @@ class CameraViewport(GLViewport):
             self.editor.level.addTileEntity(tileEntityTag)
 
         if tileEntityTag["id"].value != containerID:
-            print "Not a {0}! \n".format(containerID), tileEntityTag
             return
 
         backupEntityTag = copy.deepcopy(tileEntityTag)
@@ -1415,16 +1412,12 @@ class LevelEditor(GLViewport):
         self.cameraPanKeys = [0., 0.]
         self.cameraToolDistance = self.defaultCameraToolDistance
 
-        print "MCRenderer()"
         self.createRenderers()
 
-        print "Generating selection grid texture..."
         self.sixteenBlockTex = self.genSixteenBlockTexture()
 
-        # print "FontRenderer()"
         # self.Font = Font("Verdana, Arial", 18)
 
-        print "generateStars()"
         self.generateStars()
 
         self.optionsBar = Widget()
@@ -1528,7 +1521,6 @@ class LevelEditor(GLViewport):
         self.add(self.viewportContainer)
         Settings.viewMode.addObserver(self)
 
-        print "EditorToolbar()"
         self.reloadToolbar()
 
         self.currentTool = None
@@ -1897,7 +1889,6 @@ class LevelEditor(GLViewport):
         try:
             GL.glColor(color[0], color[1], color[2], max(color[3], 0.35))
         except IndexError:
-            print color
             raise
         GL.glLineWidth(1.0)
         mceutils.drawCube(box, cubeType=GL.GL_LINE_STRIP)
@@ -1929,7 +1920,9 @@ class LevelEditor(GLViewport):
         try:
             level = pymclevel.fromFile(filename)
         except Exception, e:
-            traceback.print_exc()
+            logging.exception(
+                'Wasn\'t able to open a file {file => %s}' % filename
+            )
             alert(u"I don't know how to open {0}:\n\n{1!r}".format(filename, e))
             return
 
@@ -2872,8 +2865,7 @@ class LevelEditor(GLViewport):
         for f in worldFiles:
             try:
                 lev = pymclevel.MCInfdevOldLevel(f)
-            except Exception, e:
-                print f, ": ", repr(e)
+            except Exception:
                 continue
             else:
                 worlds.append(lev)
@@ -2938,8 +2930,8 @@ class LevelEditor(GLViewport):
             filename = mcplatform.askOpenFile()
             if filename:
                 self.parent.loadFile(filename)
-        except Exception, e:
-            print "Exception while getting filename", e
+        except Exception:
+            logging.exception('Error while asking user for filename')
             return
 
     def createNewLevel(self):
@@ -2991,7 +2983,6 @@ class LevelEditor(GLViewport):
             return
         filename = mcplatform.askCreateWorld(pymclevel.saveFileDir)
 
-        print filename
         if not filename:
             return
 
@@ -3027,9 +3018,10 @@ class LevelEditor(GLViewport):
                 newlevel.setBlockAt(x, y, z, pymclevel.alphaMaterials.Sponge.ID)
 
             self.loadFile(filename)
-        except Exception, e:
-            traceback.print_exc()
-            alert(u"Error while creating world {0}: {1}".format(os.path.basename(filename), e))
+        except Exception:
+            logging.exception(
+                'Error while creating world. {world => %s}' % filename
+            )
             return
 
         return newlevel
@@ -3106,7 +3098,6 @@ class LevelEditor(GLViewport):
                 self.addUnsavedEdit()
 
     def invalidateBox(self, box):
-        print "Invalidating box", box, ", Chunk range ", box.mincx, box.mincz, box.maxcx, box.maxcz
         self.renderer.invalidateChunksInBox(box)
 
     def invalidateChunks(self, c):
@@ -3498,8 +3489,11 @@ class LevelEditor(GLViewport):
         self.renderer.viewDistance = self.renderer.viewDistance - 4
         self.renderer.discardAllChunks()
 
-        print "Out of memory! Decreasing view distance to {0}".format(self.renderer.viewDistance)
-        print "Freed {0} objects".format(gc.collect())
+        logging.warning(
+            'Out of memory, decreasing view distance. {view => %s}' % (
+                self.renderer.viewDistance
+            )
+        )
 
         Settings.viewDistance.set(self.renderer.viewDistance)
         config.saveConfig()
@@ -3681,8 +3675,8 @@ class EditorToolbar(GLOrtho):
                                  ), dtype="f4"))
 
                 GL.glDrawArrays(GL.GL_QUADS, 0, 4)
-            except Exception, e:
-                print "Exception: {0!r}".format(e)
+            except Exception:
+                logging.exception('Error while drawing toolbar.')
         GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
     gfont = None

@@ -295,5 +295,5 @@ class Settings(object):
                 log.warn("Setting attr %s via __setattr__ instead of set()!", attr)
                 return old.set(val)
 
-        print "Setting", attr, val
+        log.debug("Setting {%s => %s}" % (attr, val))
         return object.__setattr__(self, attr, val)
