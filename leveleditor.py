@@ -453,7 +453,7 @@ class CameraViewport(GLViewport):
                 GL.glReadBuffer(GL.GL_BACK)
             else:
                 GL.glReadBuffer(GL.GL_FRONT)
-        except Exception, e:
+        except Exception:
             logging.exception('Exception during glReadBuffer')
         ws = self.get_root().size
         if center:
@@ -3675,7 +3675,7 @@ class EditorToolbar(GLOrtho):
                                  ), dtype="f4"))
 
                 GL.glDrawArrays(GL.GL_QUADS, 0, 4)
-            except Exception, e:
+            except Exception:
                 logging.exception('Error while drawing toolbar.')
         GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
