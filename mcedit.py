@@ -865,7 +865,14 @@ class MCEdit(GLViewport):
                 sys.executable,
                 'https://github.com/mcedit/mcedit/downloads'
             )
-            update_version = app.find_update()
+
+            try:
+                update_version = app.find_update()
+            except:
+                # FIXME: Horrible, hacky kludge.
+                update_version = None
+                logging.exception('Error while checking for updates')
+
             if update_version:
                 answer = ask(
                     'An updated version is available, would you like to '
