@@ -23,6 +23,7 @@ imported from editortools/
 
 """
 
+from deepcopy import deepcopy
 from collections import defaultdict
 import gc
 from datetime import datetime, timedelta
