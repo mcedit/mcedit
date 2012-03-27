@@ -921,10 +921,24 @@ def main(argv):
     Setup logging, display, bundled schematics. Handle unclean
     shutdowns.
     """
-    logging.basicConfig(
-        format=u'[%(levelname)s][%(lineno)d][%(module)s]:%(message)s',
-        level=logging.INFO
+    # Setup file and stderr logging.
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    fh = logging.FileHandler('mcedit.log')
+    fh.setLevel(logging.ERROR)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+
+    fmt = logging.Formatter(
+        '[%(levelname)s][%(lineno)d][%(module)s]:%(message)s'
     )
+    fh.setFormatter(fmt)
+    ch.setFormatter(fmt)
+
+    logger.addHandler(fh)
+    logger.addHandler(ch)
 
     try:
         display.init()
