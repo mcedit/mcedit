@@ -701,7 +701,7 @@ class MCEdit(GLViewport):
     def makeSideColumn(self):
         def showhistory():
             try:
-                with file(os.path.join(mcplatform.dataDir), 'history.txt') as f:
+                with file(os.path.join(mcplatform.dataDir, 'history.txt')) as f:
                     history = f.read()
 
                 history = "\n".join(history.split("\n")[:16])
@@ -711,7 +711,7 @@ class MCEdit(GLViewport):
                 history = "Exception while reading history.txt: {0}".format(e)
 
             if ask(history, ["Show history.txt", "OK"]) == "Show history.txt":
-                platform_open(os.path.join(mcplatform.dataDir), "history.txt")
+                platform_open(os.path.join(mcplatform.dataDir, "history.txt"))
 
         def showLicense():
             platform_open(os.path.join(mcplatform.dataDir, "LICENSE.txt"))
