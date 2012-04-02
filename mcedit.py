@@ -699,20 +699,6 @@ class MCEdit(GLViewport):
             config.config.set("Recent Worlds", str(i), filename.encode('utf-8'))
 
     def makeSideColumn(self):
-        def showhistory():
-            try:
-                with file(os.path.join(mcplatform.dataDir), 'history.txt') as f:
-                    history = f.read()
-
-                history = "\n".join(history.split("\n")[:16])
-
-                history += "\n ... see history.txt for more ... "
-            except Exception, e:
-                history = "Exception while reading history.txt: {0}".format(e)
-
-            if ask(history, ["Show history.txt", "OK"]) == "Show history.txt":
-                platform_open(os.path.join(mcplatform.dataDir), "history.txt")
-
         def showLicense():
             platform_open(os.path.join(mcplatform.dataDir, "LICENSE.txt"))
 
@@ -735,7 +721,7 @@ class MCEdit(GLViewport):
                   lambda: platform_open(readmePath)),
                   ("",
                   "Recent Changes",
-                  showhistory),
+                  lambda: platform_open("https://github.com/mcedit/mcedit/wiki/Version-History")),
                   ("",
                   "License",
                   showLicense),
