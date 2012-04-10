@@ -2273,7 +2273,7 @@ class LevelEditor(GLViewport):
             self.dragInProgress = True
             self.dragStartPoint = (x,y)
             self.currentOperation.dragStart(x,y)
-      '
+      
     def mouseDragOff(self):
         if self.dragInProgress:
             self.dragInProgress = False
