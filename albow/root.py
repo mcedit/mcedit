@@ -98,7 +98,6 @@ class RootWidget(Widget):
         widget.root_widget = self
         self.is_gl = surface.get_flags() & OPENGL != 0
         self.idle_handlers = []
-        self.avoid_mouse_jump_bug = 0
 
     def set_timer(self, ms):
         pygame.time.set_timer(USEREVENT, ms)
@@ -115,9 +114,6 @@ class RootWidget(Widget):
             pygame.mouse.set_visible(False)
             pygame.event.set_grab(True)
             get_root().captured_widget = widget
-
-            if self.avoid_mouse_jump_bug == 1:
-                self.avoid_mouse_jump_bug = 2
         else:
             pygame.mouse.set_visible(True)
             pygame.event.set_grab(False)
@@ -201,25 +197,21 @@ class RootWidget(Widget):
                             mouse_widget.notify_attention_loss()
                             mouse_widget.handle_mouse('mouse_down', event)
                         elif type == MOUSEMOTION:
-                            if self.avoid_mouse_jump_bug == 2:
-                                self.avoid_mouse_jump_bug = 0
-                                log.debug("Discarding mouse move event due to a pygame bug")
+                            self.do_draw = True
+                            add_modifiers(event)
+                            modal_widget.dispatch_key('mouse_delta', event)
+                            last_mouse_event = event
+
+                            mouse_widget = self.update_tooltip(event.pos)
+
+                            if clicked_widget:
+                                last_mouse_event_handler = clicked_widget
+                                clicked_widget.handle_mouse('mouse_drag', event)
                             else:
-                                self.do_draw = True
-                                add_modifiers(event)
-                                modal_widget.dispatch_key('mouse_delta', event)
-                                last_mouse_event = event
-
-                                mouse_widget = self.update_tooltip(event.pos)
-
-                                if clicked_widget:
-                                    last_mouse_event_handler = clicked_widget
-                                    clicked_widget.handle_mouse('mouse_drag', event)
-                                else:
-                                    if not mouse_widget.is_inside(modal_widget):
-                                        mouse_widget = modal_widget
-                                    last_mouse_event_handler = mouse_widget
-                                    mouse_widget.handle_mouse('mouse_move', event)
+                                if not mouse_widget.is_inside(modal_widget):
+                                    mouse_widget = modal_widget
+                                last_mouse_event_handler = mouse_widget
+                                mouse_widget.handle_mouse('mouse_move', event)
                         elif type == MOUSEBUTTONUP:
                             add_modifiers(event)
                             self.do_draw = True
@@ -274,9 +266,6 @@ class RootWidget(Widget):
                         elif type == ACTIVEEVENT:
                             add_modifiers(event)
                             self.dispatch_key('activeevent', event)
-
-                            if self.avoid_mouse_jump_bug == 0:
-                                self.avoid_mouse_jump_bug = 1
                         elif type == NOEVENT:
                             add_modifiers(event)
                             self.call_idle_handlers(event)
