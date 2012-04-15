@@ -244,6 +244,12 @@ class CameraViewport(GLViewport):
 
         self.cameraVector = self._cameraVector()
 
+        # A state machine to dodge an apparent bug in pygame that generates erroneous mouse move events
+        #   0 = bad event already happened
+        #   1 = app just started or regained focus since last bad event
+        #   2 = mouse cursor was hidden after state 1, next event will be bad
+        self.avoidMouseJumpBug = 1
+
         Settings.drawSky.addObserver(self)
         Settings.drawFog.addObserver(self)
         Settings.showCeiling.addObserver(self)
@@ -578,6 +584,9 @@ class CameraViewport(GLViewport):
         root.get_root().capture_mouse(self)
         self.focus_switch = None
         self.startingMousePosition = mouse.get_pos()
+
+        if self.avoidMouseJumpBug == 1:
+            self.avoidMouseJumpBug = 2
 
     def mouseLookOff(self):
         root.get_root().capture_mouse(None)
@@ -1022,6 +1031,10 @@ class CameraViewport(GLViewport):
     lastRendererUpdate = datetime.now()
 
     def mouse_move(self, evt):
+        if self.avoidMouseJumpBug == 2:
+            self.avoidMouseJumpBug = 0
+            return
+        
         def sensitivityAdjust(d):
             return d * ControlSettings.mouseSpeed.get() / 10.0
 
@@ -1045,6 +1058,10 @@ class CameraViewport(GLViewport):
             #    mouse.set_pos(*self.startingMousePosition)
             #    event.get(MOUSEMOTION)
             #    self.oldMousePosition = (self.startingMousePosition)
+
+    def activeevent(self, evt):
+        if evt.state & 0x2 and evt.gain != 0:
+            self.avoidMouseJumpBug = 1
 
     @property
     def tooltipText(self):
@@ -2178,6 +2195,8 @@ class LevelEditor(GLViewport):
         self.doWorkUnit()
 
     def activeevent(self, evt):
+        self.mainViewport.activeevent(evt)
+        
         if evt.state & 0x4:  # minimized
             if evt.gain == 0:
                 logging.debug("Offscreen")
@@ -2273,7 +2292,7 @@ class LevelEditor(GLViewport):
             self.dragInProgress = True
             self.dragStartPoint = (x,y)
             self.currentOperation.dragStart(x,y)
-      '
+      
     def mouseDragOff(self):
         if self.dragInProgress:
             self.dragInProgress = False
