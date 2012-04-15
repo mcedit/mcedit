@@ -9,9 +9,10 @@ OpenGLContext.scenegraph.boundingvolume module.
 Based on code from:
     http://www.markmorley.com/opengl/frustumculling.html
 """
-from OpenGL.GL import *
-from numpy import *
+
 import logging
+import numpy
+from OpenGL import GL
 context_log = logging.getLogger()
 
 
@@ -30,9 +31,9 @@ def viewingMatrix(projection=None, model=None):
         matrix, the function will raise a RuntimeError
     """
     if projection is None:
-        projection = glGetDoublev(GL_PROJECTION_MATRIX)
+        projection = GL.glGetDoublev(GL.GL_PROJECTION_MATRIX)
     if model is None:
-        model = glGetDoublev(GL_MODELVIEW_MATRIX)
+        model = GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)
     # hmm, this will likely fail on 64-bit platforms :(
     if projection is None or model is None:
         context_log.warn(
@@ -44,20 +45,20 @@ def viewingMatrix(projection=None, model=None):
         if model:
             return model
         else:
-            return identity(4, 'd')
-    if allclose(projection, -1.79769313e+308):
+            return numpy.identity(4, 'd')
+    if numpy.allclose(projection, -1.79769313e+308):
         context_log.warn(
             """Attempt to retrieve projection matrix when uninitialised %s, model=%s""",
             projection, model,
         )
         return model
-    if allclose(model, -1.79769313e+308):
+    if numpy.allclose(model, -1.79769313e+308):
         context_log.warn(
             """Attempt to retrieve model-view matrix when uninitialised %s, projection=%s""",
             model, projection,
         )
         return projection
-    return dot(model, projection)
+    return numpy.dot(model, projection)
 
 
 class Frustum (object):
@@ -84,15 +85,15 @@ class Frustum (object):
         frustcullaccel C extension module)
         """
 
-        distances = sum(self.planes[newaxis, :, :] * points[:, newaxis, :], -1)
+        distances = sum(self.planes[numpy.newaxis, :, :] * points[:, numpy.newaxis, :], -1)
         return ~any(distances < -radius, -1)
 
     def visible1(self, point, radius):
-        #return self.visible(array(point[newaxis, :]), radius)
+        #return self.visible(array(point[numpy.newaxis, :]), radius)
 
         distance = sum(self.planes * point, -1)
         vis = ~any(distance < -radius)
-        #assert vis == self.visible(array(point)[newaxis, :], radius)
+        #assert vis == self.visible(array(point)[numpy.newaxis, :], radius)
 
         return vis
 
@@ -113,8 +114,8 @@ class Frustum (object):
         """
         if matrix is None:
             matrix = viewingMatrix()
-        clip = ravel(matrix)
-        frustum = zeros((6, 4), 'd')
+        clip = numpy.ravel(matrix)
+        frustum = numpy.zeros((6, 4), 'd')
         # right
         frustum[0][0] = clip[3] - clip[0]
         frustum[0][1] = clip[7] - clip[4]
@@ -155,10 +156,10 @@ class Frustum (object):
     @classmethod
     def normalize(cls, frustum):
         """Normalize clipping plane equations"""
-        magnitude = sqrt(frustum[:, 0] * frustum[:, 0] + frustum[:, 1] * frustum[:, 1] + frustum[:, 2] * frustum[:, 2])
+        magnitude = numpy.sqrt(frustum[:, 0] * frustum[:, 0] + frustum[:, 1] * frustum[:, 1] + frustum[:, 2] * frustum[:, 2])
         # eliminate any planes which have 0-length vectors,
         # those planes can't be used for excluding anything anyway...
-        frustum = compress(magnitude, frustum, 0)
-        magnitude = compress(magnitude, magnitude, 0)
-        magnitude = reshape(magnitude.astype('d'), (len(frustum), 1))
+        frustum = numpy.compress(magnitude, frustum, 0)
+        magnitude = numpy.compress(magnitude, magnitude, 0)
+        magnitude = numpy.reshape(magnitude.astype('d'), (len(frustum), 1))
         return frustum / magnitude

@@ -18,29 +18,26 @@ mceutils.py
 Exception catching, some basic box drawing, texture pack loading, oddball UI elements
 """
 
-from OpenGL import GL, GLU
-import numpy
-import httplib
-import sys
-import os
-import platform
-import traceback
-import zipfile
+from albow.controls import ValueDisplay
+from albow import alert, ask, Button, Column, Label, root, Row, ValueButton, Widget
+import config
 from cStringIO import StringIO
 from datetime import datetime
-
-from pygame import image, display, Surface
-import png
-import config
-import release
+import directories
+from errorreporting import reportCrash, reportException
+import httplib
 import mcplatform
-from albow import ask, alert, Widget, Button, ValueButton, Column, Row, Label, root
+import numpy
+from OpenGL import GL, GLU
+import os
+import platform
+import png
+from pygame import display, image, Surface
 import pymclevel
-from albow.controls import ValueDisplay
-from pymclevel import materials
-
-
-from errorreporting import reportException, reportCrash
+import release
+import sys
+import traceback
+import zipfile
 
 
 def alertException(func):
@@ -55,14 +52,12 @@ def alertException(func):
 
     return _alertException
 
-from pymclevel.faces import *
-
 
 def drawFace(box, face, type=GL.GL_QUADS):
     x, y, z, = box.origin
     x2, y2, z2 = box.maximum
 
-    if face == FaceXDecreasing:
+    if face == pymclevel.faces.FaceXDecreasing:
 
         faceVertices = numpy.array(
             (x, y2, z2,
@@ -71,7 +66,7 @@ def drawFace(box, face, type=GL.GL_QUADS):
             x, y, z2,
             ), dtype='f4')
 
-    elif face == FaceXIncreasing:
+    elif face == pymclevel.faces.FaceXIncreasing:
 
         faceVertices = numpy.array(
             (x2, y, z2,
@@ -80,7 +75,7 @@ def drawFace(box, face, type=GL.GL_QUADS):
             x2, y2, z2,
             ), dtype='f4')
 
-    elif face == FaceYDecreasing:
+    elif face == pymclevel.faces.FaceYDecreasing:
         faceVertices = numpy.array(
             (x2, y, z2,
             x, y, z2,
@@ -88,7 +83,7 @@ def drawFace(box, face, type=GL.GL_QUADS):
             x2, y, z,
             ), dtype='f4')
 
-    elif face == FaceYIncreasing:
+    elif face == pymclevel.faces.FaceYIncreasing:
         faceVertices = numpy.array(
             (x2, y2, z,
             x, y2, z,
@@ -96,7 +91,7 @@ def drawFace(box, face, type=GL.GL_QUADS):
             x2, y2, z2,
             ), dtype='f4')
 
-    elif face == FaceZDecreasing:
+    elif face == pymclevel.faces.FaceZDecreasing:
         faceVertices = numpy.array(
             (x, y, z,
             x, y2, z,
@@ -104,7 +99,7 @@ def drawFace(box, face, type=GL.GL_QUADS):
             x2, y, z,
             ), dtype='f4')
 
-    elif face == FaceZIncreasing:
+    elif face == pymclevel.faces.FaceZIncreasing:
         faceVertices = numpy.array(
             (x2, y, z2,
             x2, y2, z2,
@@ -356,7 +351,7 @@ def loadAlphaTerrainTexture():
     if foliageColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(foliageColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[17, 0, :3] = color  # xxxxxxx
+        pymclevel.materials.alphaMaterials.flatColors[17, 0, :3] = color  # xxxxxxx
 
         color = [c / 255.0 for c in color]
         LeafBlockRenderer.leafColor = color
@@ -366,7 +361,7 @@ def loadAlphaTerrainTexture():
     if grassColorFile is not None:
         w, h, data = loadPNGData(slurpZipExt(grassColorFile))
         color = data[77, 55, :3]
-        materials.alphaMaterials.flatColors[2, 0, :3] = color  # xxxxxxx
+        pymclevel.materials.alphaMaterials.flatColors[2, 0, :3] = color  # xxxxxxx
         color = [c / 255.0 for c in color]
 
         GenericBlockRenderer.grassColor = color
