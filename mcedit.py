@@ -915,7 +915,7 @@ def main(argv):
     logger.setLevel(logging.DEBUG)
 
     fh = logging.FileHandler('mcedit.log')
-    fh.setLevel(logging.ERROR)
+    fh.setLevel(logging.DEBUG)
 
     ch = logging.StreamHandler()
     ch.setLevel(logging.ERROR)
