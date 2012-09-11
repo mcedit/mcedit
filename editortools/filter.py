@@ -79,6 +79,13 @@ class FilterModuleOptions(Widget):
                 elif optionType == "label":
                     rows.append(wrapped_label(optionName, 50))
 
+                elif optionType == "string":
+                    field = TextField(value="string")
+                    self.optionDict[optionName] = AttrRef(field, 'value')
+                    
+                    row = Row((Label(optionName), field))
+                    rows.append(row)
+
                 else:
                     raise ValueError(("Unknown option type", optionType))
 
