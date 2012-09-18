@@ -13,6 +13,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from toolbasics import *
 from albow.dialogs import wrapped_label
+from albow import *
 
 
 def alertFilterException(func):
@@ -25,93 +26,7 @@ def alertFilterException(func):
 
     return _func
 
-
-class FilterModuleOptions(Widget):
-    is_gl_container = True
-
-    def __init__(self, tool, module, *args, **kw):
-        Widget.__init__(self, *args, **kw)
-        rows = []
-        self.optionDict = {}
-        self.tool = tool
-        cols = []
-        height = 0
-        max_height = 550
-
-        print "Creating options for ", module
-        if hasattr(module, "inputs"):
-
-            for optionName, optionType in module.inputs:
-                if isinstance(optionType, tuple):
-                    if isinstance(optionType[0], (int, long, float)):
-                        if len(optionType) > 2:
-                            val, min, max = optionType
-                        elif len(optionType) == 2:
-                            min, max = optionType
-                            val = min
-
-                        rows.append(self.addNumberField(optionName, val, min, max))
-                    if isinstance(optionType[0], (str, unicode)):
-                        choiceButton = ChoiceButton(map(str, optionType))
-                        self.optionDict[optionName] = AttrRef(choiceButton, 'selectedChoice')
-
-                        rows.append(Row((Label(optionName), choiceButton)))
-
-                elif isinstance(optionType, bool):
-                    cbox = CheckBox(value=optionType)
-                    self.optionDict[optionName] = AttrRef(cbox, 'value')
-
-                    row = Row((Label(optionName), cbox))
-                    rows.append(row)
-
-                elif isinstance(optionType, (int, float)):
-                    rows.append(self.addNumberField(optionName, optionType))
-
-                elif optionType == "blocktype" or isinstance(optionType, materials.Block):
-                    blockButton = BlockButton(self.tool.editor.level.materials)
-                    if isinstance(optionType, materials.Block):
-                        blockButton.blockInfo = optionType
-
-                    row = Column((Label(optionName), blockButton))
-                    self.optionDict[optionName] = AttrRef(blockButton, 'blockInfo')
-
-                    rows.append(row)
-                elif optionType == "label":
-                    rows.append(wrapped_label(optionName, 50))
-
-                elif optionType == "string":
-                    field = TextField(value="string")
-                    self.optionDict[optionName] = AttrRef(field, 'value')
-                    
-                    row = Row((Label(optionName), field))
-                    rows.append(row)
-
-                else:
-                    raise ValueError(("Unknown option type", optionType))
-
-            height = sum(r.height for r in rows)
-
-            if height > max_height:
-                h = 0
-                for i, r in enumerate(rows):
-                    h += r.height
-                    if h > height / 2:
-                        break
-
-                cols.append(Column(rows[:i]))
-                rows = rows[i:]
-            #cols.append(Column(rows))
-
-            if len(rows):
-                cols.append(Column(rows))
-
-            if len(cols):
-                self.add(Row(cols))
-            self.shrink_wrap()
-        else:
-            self.size = (0, 0)
-
-    def addNumberField(self, optionName, val, min=None, max=None):
+def addNumField(page, optionName, val, min=None, max=None):
         if isinstance(val, float):
             ftype = FloatField
         else:
@@ -122,10 +37,158 @@ class FilterModuleOptions(Widget):
             max = None
 
         field = ftype(value=val, width=100, min=min, max=max)
-        self.optionDict[optionName] = AttrRef(field, 'value')
+        page.optionDict[optionName] = AttrRef(field, 'value')
 
         row = Row([Label(optionName), field])
         return row
+
+class FilterModuleOptions(Widget):
+    is_gl_container = True
+
+    def __init__(self, tool, module, *args, **kw):
+        Widget.__init__(self, *args, **kw)
+        self.tool = tool
+        pages = TabPanel()
+        pages.is_gl_container = True
+        self.pages = pages
+        self.optionDict = {}
+        pageTabContents = []
+        
+        print "Creating options for ", module
+        if hasattr(module, "inputs"):
+            if isinstance(module.inputs, list):
+                for tabData in module.inputs:
+                    title, page, pageRect = self.makeTabPage(self.tool, tabData)
+                    pages.add_page(title, page)
+                    pages.set_rect(pageRect.union(pages._rect))           
+            elif isinstance(module.inputs, tuple):
+                title, page, pageRect = self.makeTabPage(self.tool, module.inputs)
+                pages.add_page(title, page)
+                pages.set_rect(pageRect)
+        else:
+            self.size = (0, 0)
+
+        pages.shrink_wrap()
+        self.add(pages)
+        self.shrink_wrap()
+        if len(pages.pages):
+            if(pages.current_page != None):
+                pages.show_page(pages.current_page)
+            else:
+                pages.show_page(pages.pages[0])                
+
+        for eachPage in pages.pages:
+            self.optionDict = dict(self.optionDict.items() + eachPage.optionDict.items())
+
+    def makeTabPage(self, tool, inputs):
+        page = Widget()
+        page.is_gl_container = True
+        rows = []
+        cols = []
+        height = 0
+        max_height = 550
+        page.optionDict = {}
+        page.tool = tool
+        title = "Tab"
+
+        for optionName, optionType in inputs:
+            if isinstance(optionType, tuple):
+                if isinstance(optionType[0], (int, long, float)):
+                    if len(optionType) > 2:
+                        val, min, max = optionType
+                    elif len(optionType) == 2:
+                        min, max = optionType
+                        val = min
+
+                    rows.append(addNumField(page, optionName, val, min, max))
+
+                if isinstance(optionType[0], (str)):
+                    if len(optionType) == 3:
+                        a,b,c = optionType
+                        if a == "strValSize":
+                            field = TextField(value=b, width=c)
+                            page.optionDict[optionName] = AttrRef(field, 'value')
+                            
+                            row = Row((Label(optionName), field))
+                            rows.append(row)                           
+                    elif len(optionType) == 2:
+                        a,b = optionType
+                        if a == "strVal":
+                            field = TextField(value=b, width=200)
+                            page.optionDict[optionName] = AttrRef(field, 'value')
+
+                            row = Row((Label(optionName), field))
+                            rows.append(row)
+                        elif a == "strSize":
+                            field = TextField(value="Input String Here", width=b)
+                            page.optionDict[optionName] = AttrRef(field, 'value')
+
+                            row = Row((Label(optionName), field))
+                            rows.append(row)
+
+                            
+                if isinstance(optionType[0], (str, unicode)):
+                    choiceButton = ChoiceButton(map(str, optionType))
+                    page.optionDict[optionName] = AttrRef(choiceButton, 'selectedChoice')
+
+                    rows.append(Row((Label(optionName), choiceButton)))
+
+            elif isinstance(optionType, bool):
+                cbox = CheckBox(value=optionType)
+                page.optionDict[optionName] = AttrRef(cbox, 'value')
+
+                row = Row((Label(optionName), cbox))
+                rows.append(row)
+          
+            elif isinstance(optionType, (int, float)):
+                rows.append(addNumField(self, optionName, optionType))
+
+            elif optionType == "blocktype" or isinstance(optionType, materials.Block):
+                blockButton = BlockButton(tool.editor.level.materials)
+                if isinstance(optionType, materials.Block):
+                    blockButton.blockInfo = optionType
+
+                row = Column((Label(optionName), blockButton))
+                page.optionDict[optionName] = AttrRef(blockButton, 'blockInfo')
+
+                rows.append(row)
+            elif optionType == "label":
+                rows.append(wrapped_label(optionName, 50))
+
+            elif optionType == "string":
+                field = TextField(value="Input String Here", width=200)
+                page.optionDict[optionName] = AttrRef(field, 'value')
+                
+                row = Row((Label(optionName), field))
+                rows.append(row)
+
+            elif optionType == "title":
+                title = optionName
+
+            else:
+                raise ValueError(("Unknown option type", optionType))
+
+        height = sum(r.height for r in rows)
+
+        if height > max_height:
+            h = 0
+            for i, r in enumerate(rows):
+                h += r.height
+                if h > height / 2:
+                    break
+
+            cols.append(Column(rows[:i]))
+            rows = rows[i:]
+        #cols.append(Column(rows))
+
+        if len(rows):
+            cols.append(Column(rows))
+
+        if len(cols):
+            page.add(Row(cols))
+        page.shrink_wrap()
+
+        return (title, page, page._rect)
 
     @property
     def options(self):

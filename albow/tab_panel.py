@@ -4,10 +4,16 @@
 #
 ################################################################
 
-from pygame import Rect
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+from albow import *
+from pygame import Rect, Surface, draw, image
+from pygame.locals import SRCALPHA
 from widget import Widget
 from theme import ThemeProperty, FontProperty
 from utils import brighten
+from numpy import fromstring
 
 
 class TabPanel(Widget):
@@ -23,6 +29,7 @@ class TabPanel(Widget):
     default_tab_bg_color = ThemeProperty('default_tab_bg_color')
     tab_area_bg_color = ThemeProperty('tab_area_bg_color')
     tab_dimming = ThemeProperty('tab_dimming')
+    tab_titles = None
     #use_page_bg_color_for_tabs = ThemeProperty('use_page_bg_color_for_tabs')
 
     def __init__(self, pages=None, **kwds):
@@ -150,3 +157,63 @@ class TabPanel(Widget):
         i = (x - m) * n // width
         if 0 <= i < n:
             return i
+        
+    def gl_draw_self(self, root, offset):
+        self.gl_draw(root, offset)
+
+    def gl_draw(self, root, offset):
+        pages = self.pages
+
+        if len(pages) > 1:
+            tlcorner = (offset[0] + self.bottomleft[0], offset[1] + self.bottomleft[1])
+            pageTabContents = []        
+            current_page = self.current_page
+            n = len(pages)
+            b = self.tab_border_width
+            s = self.tab_spacing
+            h = self.tab_height
+            m = self.tab_margin
+            tabWidth = (self.size[0]-(s*n)-(2*m))/n
+            width = self.width - 2 * m + s - b
+            x0 = m + tlcorner[0]
+
+            font = self.tab_font
+            fg = self.tab_fg_color
+            surface = Surface(self.size, SRCALPHA)
+
+            glEnable(GL_BLEND)
+            
+            for i, page in enumerate(pages):
+                x1 = x0+tabWidth
+                selected = page is current_page
+                if selected:
+                    glColor(1.0, 1.0, 1.0, 0.5)
+                else:
+                    glColor(0.5, 0.5, 0.5, 0.5)
+                glRectf(x0, tlcorner[1]-(m+b), x1, tlcorner[1]-(h))
+                buf = font.render(self.pages[i].tab_title, True, self.fg_color or fg)
+                r = buf.get_rect()
+
+                offs = ((tabWidth - r.size[0])/2) + m +((s+tabWidth)*i)
+
+                surface.blit(buf, (offs, m))
+                x0 = x1 + s    
+            
+            data = image.tostring(surface, 'RGBA', 1)
+            rect = self.rect.move(offset)
+            w, h = root.size
+            glViewport(0, 0, w, h)
+            glMatrixMode(GL_PROJECTION)
+            glLoadIdentity()
+            gluOrtho2D(0, w, 0, h)
+            glMatrixMode(GL_MODELVIEW)
+            glLoadIdentity()
+            glRasterPos2i(rect.left, h - rect.bottom)
+            glPushAttrib(GL_COLOR_BUFFER_BIT)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            glDrawPixels(self.width, self.height,
+                GL_RGBA, GL_UNSIGNED_BYTE, fromstring(data, dtype='uint8'))
+            glPopAttrib()
+            glFlush()
+
+            glDisable(GL_BLEND)
