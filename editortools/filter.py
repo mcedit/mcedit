@@ -102,7 +102,8 @@ class FilterModuleOptions(Widget):
 
                     rows.append(addNumField(page, optionName, val, min, max))
 
-                if isinstance(optionType[0], (str)):
+                if isinstance(optionType[0], (str, unicode)):
+                    isChoiceButton = False
                     if len(optionType) == 3:
                         a,b,c = optionType
                         if a == "strValSize":
@@ -110,7 +111,9 @@ class FilterModuleOptions(Widget):
                             page.optionDict[optionName] = AttrRef(field, 'value')
                             
                             row = Row((Label(optionName), field))
-                            rows.append(row)                           
+                            rows.append(row)
+                        else:
+                            isChoiceButton = True
                     elif len(optionType) == 2:
                         a,b = optionType
                         if a == "strVal":
@@ -125,13 +128,16 @@ class FilterModuleOptions(Widget):
 
                             row = Row((Label(optionName), field))
                             rows.append(row)
+                        else:
+                            isChoiceButton = True
+                    else:
+                        isChoiceButton = True
 
-                            
-                if isinstance(optionType[0], (str, unicode)):
-                    choiceButton = ChoiceButton(map(str, optionType))
-                    page.optionDict[optionName] = AttrRef(choiceButton, 'selectedChoice')
+                    if isChoiceButton:
+                        choiceButton = ChoiceButton(map(str, optionType))
+                        page.optionDict[optionName] = AttrRef(choiceButton, 'selectedChoice')
 
-                    rows.append(Row((Label(optionName), choiceButton)))
+                        rows.append(Row((Label(optionName), choiceButton)))
 
             elif isinstance(optionType, bool):
                 cbox = CheckBox(value=optionType)
