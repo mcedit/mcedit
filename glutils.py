@@ -19,6 +19,7 @@ Pythonesque wrappers around certain OpenGL functions.
 """
 
 from OpenGL import GL
+from OpenGL.GL.ARB import window_pos
 import numpy
 import functools
 from contextlib import contextmanager
@@ -47,6 +48,15 @@ class gl(object):
         finally:
             GL.glMatrixMode(matrixmode)
             GL.glPopMatrix()
+
+    @classmethod
+    @contextmanager
+    def glPushAttrib(cls, attribs):
+        try:
+            GL.glPushAttrib(attribs)
+            yield
+        finally:
+            GL.glPopAttrib()
 
     @classmethod
     @contextmanager
@@ -133,8 +143,8 @@ class DisplayList(object):
 
     def getList(self, drawFunc=None):
         self.makeList(drawFunc)
-
         return self._list
+
     if "-debuglists" in sys.argv:
         def call(self, drawFunc=None):
             drawFunc = (drawFunc or self.drawFunc)
@@ -192,14 +202,18 @@ class FramebufferTexture(Texture):
         GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, None)
         self.enabled = False
         self._texID = tex
-        if FBO.glGenFramebuffersEXT:
+        if bool(FBO.glGenFramebuffersEXT):
             buf = FBO.glGenFramebuffersEXT(1)
-            FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, buf)
             depthbuffer = FBO.glGenRenderbuffersEXT(1)
+
+            FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, buf)
+
             FBO.glBindRenderbufferEXT(FBO.GL_RENDERBUFFER_EXT, depthbuffer)
             FBO.glRenderbufferStorageEXT(FBO.GL_RENDERBUFFER_EXT, GL.GL_DEPTH_COMPONENT, width, height)
+
             FBO.glFramebufferRenderbufferEXT(FBO.GL_FRAMEBUFFER_EXT, FBO.GL_DEPTH_ATTACHMENT_EXT, FBO.GL_RENDERBUFFER_EXT, depthbuffer)
             FBO.glFramebufferTexture2DEXT(FBO.GL_FRAMEBUFFER_EXT, FBO.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D, tex, 0)
+
             status = FBO.glCheckFramebufferStatusEXT(FBO.GL_FRAMEBUFFER_EXT)
             if status != FBO.GL_FRAMEBUFFER_COMPLETE_EXT:
                 print "glCheckFramebufferStatusEXT", status
@@ -207,15 +221,38 @@ class FramebufferTexture(Texture):
                 return
 
             FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, buf)
-            GL.glPushAttrib(GL.GL_VIEWPORT_BIT)
-            GL.glViewport(0, 0, width, height)
 
-            drawFunc()
-            GL.glPopAttrib()
+            GL.glViewport(0, 0, width, height)
+            with gl.glPushAttrib(GL.GL_VIEWPORT_BIT):
+                drawFunc()
+
             FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, 0)
             FBO.glDeleteFramebuffersEXT(1, [buf])
             FBO.glDeleteRenderbuffersEXT(1, [depthbuffer])
             self.enabled = True
+        else:
+            GL.glReadBuffer(GL.GL_BACK)
+            if bool(window_pos.glWindowPos2dARB):
+                pixels = GL.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE)
+
+            GL.glPushAttrib(GL.GL_VIEWPORT_BIT | GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_TEST | GL.GL_STENCIL_BUFFER_BIT)
+            GL.glDisable(GL.GL_STENCIL_TEST)
+
+            GL.glViewport(0, 0, width, height)
+            GL.glScissor(0, 0, width, height)
+            with gl.glEnable(GL.GL_SCISSOR_TEST):
+                drawFunc()
+
+            GL.glBindTexture(GL.GL_TEXTURE_2D, tex)
+            GL.glReadBuffer(GL.GL_BACK)
+            GL.glCopyTexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height)
+
+            if bool(window_pos.glWindowPos2dARB):
+                window_pos.glWindowPos2dARB(0,0)
+                GL.glDrawPixels(width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels)
+
+            GL.glPopAttrib()
+
 
 
 def debugDrawPoint(point):

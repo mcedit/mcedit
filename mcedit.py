@@ -987,6 +987,8 @@ class GLDisplayContext(object):
         except Exception, e:
             logging.warning('Unable to set vertical sync: {0!r}'.format(e))
 
+        display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+
         d = display.set_mode(self.getWindowSize(), self.displayMode())
         try:
             pygame.scrap.init()
