@@ -53,9 +53,6 @@ SETUP_COMMON = {
     'author': 'David Vierra',
     'author_email': 'codewarrior0@gmail.com',
 
-    'maintainer': 'MCDevs',
-    'maintainer_email': 'tk@tkte.ch',
-
     'url': 'http://www.github.com/mcedit/mcedit',
 
     # PyPi,
@@ -115,7 +112,7 @@ ESKY_OPTIONS = {
             # py2app extras
             'iconfile': 'mcedit.icns',
             'plist': {
-                'CFBundleIdentifier': 'org.mcedit.mcedit'
+                'CFBundleIdentifier': 'net.mcedit.mcedit'
             }
         }
     }
@@ -127,7 +124,7 @@ def build_nbt():
     Builds _nbt.py.
     """
     os.chdir('pymclevel')
-    os.system(sys.executable + ' setup.py build_ext --inplace --force')
+    os.system(sys.executable + ' setup_nbt.py build_ext --inplace --force')
     os.chdir('..')
 
 
