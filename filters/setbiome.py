@@ -77,7 +77,7 @@ def perform(level, box, options):
             chunk = level.getChunk(x / 16, z / 16)
             chunk.decompress()
             chunk.dirty = True
-            array = chunk.root_tag["Level"]["Biomes"].getValue()
+            array = chunk.root_tag["Level"]["Biomes"].value
 
             chunkx = int(x/16)*16
             chunkz = int(z/16)*16
@@ -87,4 +87,4 @@ def perform(level, box, options):
                     idx = 16*(bz-chunkz)+(bx-chunkx)
                     array[idx] = biome
 
-            chunk.root_tag["Level"]["Biomes"].setValue(array)
+            chunk.root_tag["Level"]["Biomes"].value = array
