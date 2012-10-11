@@ -39,7 +39,7 @@ def perform(level, box, options):
 				spawner["Delay"] = TAG_Short(120)
 				spawner["SpawnData"] = entity
 				if not includePos:
-					spawner["SpawnData"].value.remove(entity["Pos"])
+					del spawner["SpawnData"]["Pos"]
 				spawner["EntityId"] = entity["id"]
 				
 				chunk.TileEntities.append(spawner)
