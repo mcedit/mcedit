@@ -5,6 +5,10 @@ mcedit.py
 
 Startup, main menu, keyboard configuration, automatic updating.
 """
+import OpenGL
+import sys
+if "-debug" not in sys.argv:
+    OpenGL.ERROR_CHECKING = False
 
 import albow
 from albow.dialogs import Dialog
@@ -22,11 +26,7 @@ import mceutils
 import mcplatform
 from mcplatform import platform_open
 import numpy
-import OpenGL
-import sys
 
-if "-debug" not in sys.argv:
-    OpenGL.ERROR_CHECKING = False
 
 from OpenGL import GL
 import os
