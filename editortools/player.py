@@ -75,7 +75,12 @@ def positionValid(level, pos):
     return okayAt63(level, pos) and okayAboveSpawn(level, pos)
 
 
-class PlayerSpawnMoveOperation(PlayerMoveOperation):
+class PlayerSpawnMoveOperation(Operation):
+    undoPos = None
+
+    def __init__(self, tool, pos):
+        self.tool, self.pos = tool, pos
+
     def perform(self, recordUndo=True):
         level = self.tool.editor.level
         if isinstance(level, MCInfdevOldLevel):
@@ -85,8 +90,13 @@ class PlayerSpawnMoveOperation(PlayerMoveOperation):
 
         self.undoPos = level.playerSpawnPosition()
         level.setPlayerSpawnPosition(self.pos)
-
         self.tool.markerList.invalidate()
+
+    def undo(self):
+        if self.undoPos is not None:
+            level = self.tool.editor.level
+            level.setPlayerSpawnPosition(self.undoPos)
+            self.tool.markerList.invalidate()
 
 
 class PlayerPositionPanel(Panel):
