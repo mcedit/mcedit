@@ -18,14 +18,23 @@ Works with saved games from Minecraft Classic, Indev, Infdev, Alpha, Beta,
 Release, and Pocket Edition.
 '''
 
+if "--stable" in sys.argv:
+    DEVELOP = False
+    sys.argv.remove('--stable')
+else:
+    DEVELOP = True
 
 def get_git_version():
     """
     Get the version from git.
     """
+    if DEVELOP:
+        match = '--match=*.*.*build*'
+    else:
+        match = '--match=*.*.*'
     try:
         p = subprocess.Popen(
-            ['git', 'describe', '--abbrev=4', '--tags', '--match=*.*.*'],
+            ['git', 'describe', '--abbrev=4', '--tags', match],
             stdout=subprocess.PIPE,
             stdin=subprocess.PIPE,
             # Shell=True is required due to a Popen Win32 bug.
@@ -42,10 +51,11 @@ def get_git_version():
 
     return version
 
+
 # setup() options that are common on all platforms.
 SETUP_COMMON = {
     # General fields,
-    'name': 'MCEdit',
+    'name': 'MCEdit_dev' if DEVELOP else 'MCEdit',
     'version': get_git_version(),
     'description': 'Minecraft World Editor',
     'long_description': LONG_DESC,
