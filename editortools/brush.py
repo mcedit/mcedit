@@ -13,9 +13,11 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 
 from editortools.clone import BlockCopyOperation
+from pymclevel.level import extractHeights
 from mceutils import ChoiceButton
 from os.path import basename
 import tempfile
+import itertools
 from toolbasics import *
 
 BrushSettings = config.Settings("Brush")
