@@ -992,8 +992,6 @@ class BrushTool(CloneTool):
                     return self.chunkCache[cx, cz]
 
                 class FakeBrushChunk(pymclevel.level.FakeChunk):
-                    def compress(self):
-                        del self.world.chunkCache[self.chunkPosition]
                     Entities = []
                     TileEntities = []
 

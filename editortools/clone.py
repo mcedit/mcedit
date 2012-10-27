@@ -124,7 +124,7 @@ class BlockCopyOperation(Operation):
                 showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
 
     def bufferSize(self):
-        return self.undoSchematic.compressedSize()
+        return 123456
 
 
 class CloneOperation (Operation):

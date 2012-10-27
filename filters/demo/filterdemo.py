@@ -88,7 +88,7 @@ def perform(level, box, options):
 
     if method == "Use chunk slices":
         for (chunk, slices, point) in level.getChunkSlices(box):
-            # chunk is an InfdevChunk object with attributes:
+            # chunk is an AnvilChunk object with attributes:
             # Blocks, Data, Entities, and TileEntities
             # Blocks and Data can be indexed using slices:
             blocks = chunk.Blocks[slices]

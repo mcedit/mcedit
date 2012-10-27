@@ -11,9 +11,9 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+from minecraft_server import MCServerChunkGenerator
 
 from toolbasics import *
-from pymclevel.infiniteworld import MCServerChunkGenerator
 from albow.dialogs import Dialog
 
 
@@ -501,7 +501,6 @@ def GeneratorPanel():
                         ch.needsLighting = False
                         ch.dirty = True
                         ch.save()
-                        ch.unload()
 
         return _createChunks()
 

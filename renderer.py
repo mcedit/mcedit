@@ -935,8 +935,7 @@ class TileTicksRenderer(EntityRendererGeneric):
     layer = Layer.TileTicks
 
     def makeChunkVertices(self, chunk):
-        chunk.decompress()
-        if chunk.root_tag and "Level" in chunk.root_tag and "TileTicks" in chunk.root_tag["Level"]:
+        if "Level" in chunk.root_tag and "TileTicks" in chunk.root_tag["Level"]:
             ticks = chunk.root_tag["Level"]["TileTicks"]
             if len(ticks):
                 self.vertexArrays.append(self._computeVertices([[t[i].value for i in "xyz"] for t in ticks],
@@ -991,7 +990,6 @@ class TerrainPopulatedRenderer(EntityRendererGeneric):
 #
 
     def makeChunkVertices(self, chunk):
-        chunk.decompress()
         neighbors = self.chunkCalculator.getNeighboringChunks(chunk)
 
         def getpop(ch):
@@ -2200,8 +2198,6 @@ class MCRenderer(object):
             self.chunkRenderers[cx, cz].forgetDisplayLists()
             del self.chunkRenderers[cx, cz]
 
-        self.level.compressChunk(cx, cz)
-
     _fastLeaves = False
 
     @property
@@ -2427,59 +2423,6 @@ class MCRenderer(object):
             self.loadableChunkMarkers.call(self._drawLoadableChunkMarkers)
 
         # self.drawCompressedChunkMarkers()
-
-    def drawCompressedChunkMarkers(self):
-        chunkPositions = self.chunkRenderers.keys()
-        if 0 == len(chunkPositions):
-            return
-
-        chunkPositions = numpy.array(chunkPositions)
-
-        chunkLoaded = [self.level.chunkIsLoaded(*c) for c in chunkPositions]
-        chunkLoaded = numpy.array(chunkLoaded, dtype='bool')
-
-        chunkCompressed = [self.level.chunkIsCompressed(*c) for c in chunkPositions]
-        chunkCompressed = numpy.array(chunkCompressed, dtype='bool')
-
-        chunkDirty = [self.level.chunkIsDirty(*c) for c in chunkPositions]
-        chunkDirty = numpy.array(chunkDirty, dtype='bool')
-
-        vertexBuffer = numpy.zeros((len(chunkPositions), 4, 3), dtype='float32')
-
-        vertexBuffer[..., (0, 2)] = numpy.array(((0, 0), (0, 1), (1, 1), (1, 0)), dtype='float32')
-
-        vertexBuffer[..., (0, 2)] += chunkPositions[:, numpy.newaxis]
-        vertexBuffer[..., (0, 2)] *= 16
-
-        vertexBuffer[..., 1] = 128
-
-        colorBuffer = numpy.zeros((len(chunkCompressed), 4, 4), dtype='uint8')
-        colorBuffer[:] = (0x00, 0x00, 0x00, 0x33)
-        colorBuffer[chunkLoaded] = (0xff, 0xff, 0xff, 0x66)
-        colorBuffer[chunkCompressed] = (0xff, 0xFF, 0x00, 0x66)
-        colorBuffer[chunkDirty] = (0xff, 0x00, 0x00, 0x66)
-
-        cc = numpy.array(chunkPositions[:, 0] + chunkPositions[:, 1], dtype='int32')
-        cc &= 1
-        coloredChunks = cc > 0
-        colorBuffer[coloredChunks] *= 0.75
-
-        GL.glEnable(GL.GL_BLEND)
-        GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
-        GL.glPolygonOffset(DepthOffset.ChunkMarkers, DepthOffset.ChunkMarkers)
-        GL.glEnable(GL.GL_DEPTH_TEST)
-        GL.glEnableClientState(GL.GL_COLOR_ARRAY)
-
-        GL.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer)
-        GL.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, colorBuffer)
-        GL.glDrawArrays(GL.GL_QUADS, 0, len(vertexBuffer) * 4)
-
-        GL.glDisableClientState(GL.GL_COLOR_ARRAY)
-
-        GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)
-        GL.glDisable(GL.GL_DEPTH_TEST)
-
-        GL.glDisable(GL.GL_BLEND)
 
     needsImmediateRedraw = False
     viewingFrustum = None
@@ -2725,16 +2668,6 @@ class MCRenderer(object):
 
             cx, cz = chunkRenderer.chunkPosition
 
-            for dx, dz in ((1, 0), (0, 1), (-1, 0), (0, -1), (0, 0)):
-                self.tryCompressChunk(cx + dx, cz + dz, (cx, cz))
-
-    def tryCompressChunk(self, cx, cz, donePos):
-        neighborChunkPos = [(cx + dx, cz + dz) for dx, dz in ((1, 0), (0, 1), (-1, 0), (0, -1))]
-        neighborChunks = [self.chunkRenderers.get(c) for c in neighborChunkPos]
-        doneChunks = [cr and cr.done or not self.level.containsChunk(*cPos) or cPos == donePos for cPos, cr in zip(neighborChunkPos, neighborChunks)]
-
-        if all(doneChunks):
-            self.level.compressChunk(cx, cz)
 
 
 class PreviewRenderer(MCRenderer):

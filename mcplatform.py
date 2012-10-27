@@ -11,6 +11,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+from minecraft_server import ServerJarStorage, MCServerChunkGenerator
 
 """
 mcplatform.py
@@ -39,7 +40,6 @@ from pygame import display
 
 from albow import request_new_filename, request_old_filename
 from pymclevel import saveFileDir, minecraftDir
-from pymclevel.infiniteworld import MCServerChunkGenerator, ServerJarStorage
 from pymclevel import items
 
 import shutil

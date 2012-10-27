@@ -108,7 +108,6 @@ class Operation(object):
         if sch is None:
             sch = MCSchematic((0, 0, 0))
 
-        sch.compress()
         return sch
 
     # represents a single undoable operation

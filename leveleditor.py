@@ -63,7 +63,7 @@ from editortools.toolbasics import Operation
 from glbackground import GLBackground, Panel
 from glutils import gl, Texture
 from mcplatform import askSaveFile
-from pymclevel.infiniteworld import alphanum_key
+from pymclevel.minecraft_server import alphanum_key #?????
 from renderer import MCRenderer
 
 # Label = GLLabel
@@ -752,15 +752,15 @@ class CameraViewport(GLViewport):
         def itemProp(key):
             # xxx do validation here
             def getter(self):
-                if 0 == len(tileEntityTag['Items']):
+                if 0 == len(tileEntityTag["Items"]):
                     return "N/A"
-                return tileEntityTag['Items'][self.selectedItemIndex][key].value
+                return tileEntityTag["Items"][self.selectedItemIndex][key].value
 
             def setter(self, val):
-                if 0 == len(tileEntityTag['Items']):
+                if 0 == len(tileEntityTag["Items"]):
                     return
                 self.dirty = True
-                tileEntityTag['Items'][self.selectedItemIndex][key].value = val
+                tileEntityTag["Items"][self.selectedItemIndex][key].value = val
             return property(getter, setter)
 
         class ChestWidget(Widget):
@@ -794,7 +794,7 @@ class CameraViewport(GLViewport):
                 return "Unknown Item"
 
         def getRowData(i):
-            item = tileEntityTag['Items'][i]
+            item = tileEntityTag["Items"][i]
             slot, id, damage, count = item["Slot"].value, item["id"].value, item["Damage"].value, item["Count"].value
             return slot, id, damage, count, itemName(id, damage)
 
@@ -803,7 +803,7 @@ class CameraViewport(GLViewport):
         def selectTableRow(i, evt):
             chestWidget.selectedItemIndex = i
 
-        chestItemTable.num_rows = lambda: len(tileEntityTag['Items'])
+        chestItemTable.num_rows = lambda: len(tileEntityTag["Items"])
         chestItemTable.row_data = getRowData
         chestItemTable.row_is_selected = lambda x: x == chestWidget.selectedItemIndex
         chestItemTable.click_row = selectTableRow
@@ -817,7 +817,7 @@ class CameraViewport(GLViewport):
 
         def deleteFromWorld():
             i = chestWidget.selectedItemIndex
-            item = tileEntityTag['Items'][i]
+            item = tileEntityTag["Items"][i]
             id = item["id"].value
             Damage = item["Damage"].value
 
@@ -852,8 +852,8 @@ class CameraViewport(GLViewport):
                         return matches(t)
                     for player in self.editor.level.players:
                         tag = self.editor.level.getPlayerTag(player)
-                        l = len(tag['Inventory'])
-                        tag['Inventory'].value = [t for t in tag['Inventory'].value if not matches(t)]
+                        l = len(tag["Inventory"])
+                        tag["Inventory"].value = [t for t in tag["Inventory"].value if not matches(t)]
 
                     for chunk in self.editor.level.getChunks():
                         if id < 256 and deleteBlocksToo.value:
@@ -868,10 +868,10 @@ class CameraViewport(GLViewport):
 
                         for te in chunk.TileEntities:
                             if "Items" in te:
-                                l = len(te['Items'])
+                                l = len(te["Items"])
 
-                                te['Items'].value = [t for t in te['Items'].value if not matches(t)]
-                                if l != len(te['Items']):
+                                te["Items"].value = [t for t in te["Items"].value if not matches(t)]
+                                if l != len(te["Items"]):
                                     chunk.dirty = True
                         entities = [e for e in chunk.Entities if matches_itementity(e)]
                         if len(entities) != len(chunk.Entities):
@@ -888,23 +888,23 @@ class CameraViewport(GLViewport):
                 mceutils.showProgress(progressInfo, deleteItemsIter(), cancel=True)
 
                 self.editor.addUnsavedEdit()
-                chestWidget.selectedItemIndex = min(chestWidget.selectedItemIndex, len(tileEntityTag['Items']) - 1)
+                chestWidget.selectedItemIndex = min(chestWidget.selectedItemIndex, len(tileEntityTag["Items"]) - 1)
 
         def deleteItem():
             i = chestWidget.selectedItemIndex
-            item = tileEntityTag['Items'][i]
-            tileEntityTag['Items'].value = [t for t in tileEntityTag['Items'].value if t is not item]
-            chestWidget.selectedItemIndex = min(chestWidget.selectedItemIndex, len(tileEntityTag['Items']) - 1)
+            item = tileEntityTag["Items"][i]
+            tileEntityTag["Items"].value = [t for t in tileEntityTag["Items"].value if t is not item]
+            chestWidget.selectedItemIndex = min(chestWidget.selectedItemIndex, len(tileEntityTag["Items"]) - 1)
 
         def deleteEnable():
-            return len(tileEntityTag['Items']) and chestWidget.selectedItemIndex != -1
+            return len(tileEntityTag["Items"]) and chestWidget.selectedItemIndex != -1
 
         def addEnable():
-            return len(tileEntityTag['Items']) < chestWidget.itemLimit
+            return len(tileEntityTag["Items"]) < chestWidget.itemLimit
 
         def addItem():
             slot = 0
-            for item in tileEntityTag['Items']:
+            for item in tileEntityTag["Items"]:
                 if slot == item["Slot"].value:
                     slot += 1
             if slot >= chestWidget.itemLimit:
@@ -914,7 +914,7 @@ class CameraViewport(GLViewport):
             item["Damage"] = pymclevel.TAG_Short(0)
             item["Slot"] = pymclevel.TAG_Byte(slot)
             item["Count"] = pymclevel.TAG_Byte(0)
-            tileEntityTag['Items'].append(item)
+            tileEntityTag["Items"].append(item)
 
         addItemButton = Button("Add Item", action=addItem, enable=addEnable)
         deleteItemButton = Button("Delete This Item", action=deleteItem, enable=deleteEnable)
@@ -1456,27 +1456,6 @@ class LevelEditor(GLViewport):
             get_value=lambda: "MBv: %0.1f" % (self.renderer.bufferUsage / 1000000.),
             tooltipText="Memory used for vertexes")
 
-        def dataSize():
-            if not isinstance(self.level, pymclevel.MCInfdevOldLevel):
-                try:
-                    return len(self.level.root_tag)
-                except:
-                    return 0
-
-            chunks = self.level._loadedChunks
-
-            def size(c):
-                if c.compressedTag:
-                    if c.root_tag:
-                        return len(c.root_tag)
-                    return len(c.compressedTag)
-                return 0
-
-            return numpy.sum(size(c) for c in chunks.itervalues())
-
-        mbldReadout = SmallValueDisplay(width=60,
-            get_value=lambda: "MBd: %0.1f" % (dataSize() / 1000000.),
-            tooltipText="Memory used for saved game data.")
 
         def showViewOptions():
             col = []
@@ -1508,7 +1487,7 @@ class LevelEditor(GLViewport):
 
         viewButton = Button("Show...", action=showViewOptions)
 
-        mbReadoutRow = Row((mbReadout, mbldReadout))
+        mbReadoutRow = Row((mbReadout, Label("")))
         readoutGrid = Grid(((chunksReadout, fpsReadout), (mbReadoutRow, cpsReadout), ), 0, 0)
 
         self.viewportButton = Button("Camera View", action=self.swapViewports,
@@ -1659,18 +1638,8 @@ class LevelEditor(GLViewport):
             deleteButton = Button("Delete", action=lambda: (self.deleteCopiedSchematic(sch)))
             saveButton = Button("Save", action=lambda: (self.exportSchematic(sch)))
             sizeLabel = Label("{0} x {1} x {2}".format(sch.Length, sch.Width, sch.Height))
-            if isinstance(sch, pymclevel.MCSchematic):
-                sch.compress()
-                length = len(sch.compressedTag)
-            else:
-                if sch.SizeOnDisk == 0:
-                    for ch in sch.getChunks():
-                        sch.SizeOnDisk += ch.compressedSize()
 
-                length = sch.SizeOnDisk
-            mbLabel = Label("{0:.3f} MB".format(length / 1000000.0))
-
-            p.add(Row((thumb, Column((sizeLabel, mbLabel, Row((deleteButton, saveButton))), spacing=5))))
+            p.add(Row((thumb, Column((sizeLabel, Row((deleteButton, saveButton))), spacing=5))))
             p.shrink_wrap()
             return p
 
@@ -2108,6 +2077,7 @@ class LevelEditor(GLViewport):
 
                     if self.level == level:
                         needsRefresh = [c.chunkPosition for c in level._loadedChunks.itervalues() if c.dirty]
+                        #xxx change MCInfdevOldLevel to monitor changes since last call
                         self.invalidateChunks(needsRefresh)
 
             self.freezeStatus("Saving...")
@@ -3203,9 +3173,6 @@ class LevelEditor(GLViewport):
                 self.debugString += "DL: {dl} ({dlcount}), Tx: {t}, gc: {g}, ".format(
                     dl=len(glutils.DisplayList.allLists), dlcount=glutils.gl.listCount,
                     t=len(glutils.Texture.allTextures), g=len(gc.garbage))
-
-            if isinstance(self.level, pymclevel.MCInfdevOldLevel):
-                self.debugString += "Loa: {0}, Dec: {1}, ".format(len(self.level.loadedChunkQueue), len(self.level.decompressedChunkQueue))
 
             if self.renderer:
                 self.renderer.addDebugInfo(self.addDebugString)
