@@ -68,7 +68,7 @@ class Modes:
 
                 box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1]))  # xzy reorder
 
-                brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
+                brushMask = createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
                 blocks[brushMask] = op.blockInfo.ID
 
                 chunk.Data[slices][brushMask] = op.blockInfo.blockData
@@ -174,7 +174,7 @@ class Modes:
                 # box = BoundingBox(worldPoint,
                 box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1]))  # xzy reorder
 
-                brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
+                brushMask = createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
 
                 replaceWith = op.options['replaceBlockInfo']
                 # xxx pasted from fill.py
@@ -238,7 +238,7 @@ class Modes:
                 solidBlocks = blocks != 0
                 neighbors = getNeighbors(solidBlocks)
 
-                brushMask = op.createBrushMask(op.brushSize, op.brushStyle)
+                brushMask = createBrushMask(op.brushSize, op.brushStyle)
                 erodeBlocks = neighbors < 5
                 erodeBlocks &= (random.random(erodeBlocks.shape) > 0.3)
                 erodeBlocks[1:-1, 1:-1, 1:-1] &= brushMask
@@ -276,7 +276,7 @@ class Modes:
 
                 box = BoundingBox(worldPoint, (blocks.shape[0], blocks.shape[2], blocks.shape[1]))  # xzy reorder
 
-                brushMask = op.createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
+                brushMask = createBrushMask(op.brushSize, op.brushStyle, dirtyBox.origin, box, op.noise, op.hollow)
 
                 blocktype = op.blockInfo
 
@@ -407,89 +407,7 @@ class BrushOperation(Operation):
     def hollow(self):
         return self.options.get('brushHollow', False)
 
-    @classmethod
-    def createBrushMask(cls, shape, style="Round", offset=(0, 0, 0), box=None, chance=100, hollow=False):
-        """
-        Return a boolean array for a brush with the given shape and style.
-        If 'offset' and 'box' are given, then the brush is offset into the world
-        and only the part of the world contained in box is returned as an array
-        """
 
-        # we are returning indices for a Blocks array, so swap axes
-        if box is None:
-            box = BoundingBox(offset, shape)
-        if chance < 100 or hollow:
-            box = box.expand(1)
-
-        outputShape = box.size
-        outputShape = (outputShape[0], outputShape[2], outputShape[1])
-
-        shape = shape[0], shape[2], shape[1]
-        offset = array(offset) - array(box.origin)
-        offset = offset[[0, 2, 1]]
-
-        inds = indices(outputShape, dtype=float)
-        halfshape = array([(i >> 1) - ((i & 1 == 0) and 0.5 or 0) for i in shape])
-
-        blockCenters = inds - halfshape[:, newaxis, newaxis, newaxis]
-        blockCenters -= offset[:, newaxis, newaxis, newaxis]
-
-        # odd diameter means measure from the center of the block at 0,0,0 to each block center
-        # even diameter means measure from the 0,0,0 grid point to each block center
-
-        # if diameter & 1 == 0: blockCenters += 0.5
-        shape = array(shape, dtype='float32')
-
-        # if not isSphere(shape):
-        if style == "Round":
-            blockCenters *= blockCenters
-            shape /= 2
-            shape *= shape
-
-            blockCenters /= shape[:, newaxis, newaxis, newaxis]
-            distances = sum(blockCenters, 0)
-            mask = distances < 1
-        elif style == "Square":
-            # mask = ones(outputShape, dtype=bool)
-            # mask = blockCenters[:, newaxis, newaxis, newaxis] < shape
-            blockCenters /= shape[:, newaxis, newaxis, newaxis]
-
-            distances = absolute(blockCenters).max(0)
-            mask = distances < .5
-
-        elif style == "Diamond":
-            blockCenters = numpy.abs(blockCenters)
-            shape /= 2
-            blockCenters /= shape[:, newaxis, newaxis, newaxis]
-            distances = sum(blockCenters, 0)
-            mask = distances < 1
-
-        if (chance < 100 or hollow) and max(shape) > 1:
-            threshold = chance / 100.0
-            exposedBlockMask = ones(shape=outputShape, dtype='bool')
-            exposedBlockMask[:] = mask
-            submask = mask[1:-1, 1:-1, 1:-1]
-            exposedBlockSubMask = exposedBlockMask[1:-1, 1:-1, 1:-1]
-            exposedBlockSubMask[:] = False
-
-            for dim in (0, 1, 2):
-                slices = [slice(1, -1), slice(1, -1), slice(1, -1)]
-                slices[dim] = slice(None, -2)
-                exposedBlockSubMask |= (submask & (mask[slices] != submask))
-                slices[dim] = slice(2, None)
-                exposedBlockSubMask |= (submask & (mask[slices] != submask))
-
-            if hollow:
-                mask[~exposedBlockMask] = False
-            if chance < 100:
-                rmask = random.random(mask.shape) < threshold
-
-                mask[exposedBlockMask] = rmask[exposedBlockMask]
-
-        if chance < 100 or hollow:
-            return mask[1:-1, 1:-1, 1:-1]
-        else:
-            return mask
 
     def dirtyBox(self):
         return self._dirtyBox
@@ -999,7 +917,7 @@ class BrushTool(CloneTool):
                 f.world = self
                 f.chunkPosition = (cx, cz)
 
-                mask = BrushOperation.createBrushMask(brushSize, brushStyle, (0, 0, 0), BoundingBox((cx << 4, 0, cz << 4), (16, self.Height, 16)))
+                mask = createBrushMask(brushSize, brushStyle, (0, 0, 0), BoundingBox((cx << 4, 0, cz << 4), (16, self.Height, 16)))
                 f.Blocks = zeros(mask.shape, dtype='uint8')
                 f.Data = zeros(mask.shape, dtype='uint8')
                 f.BlockLight = self.zerolight
@@ -1137,3 +1055,86 @@ class BrushTool(CloneTool):
 
     def option3(self):
         self.brushHollow = not self.brushHollow
+
+def createBrushMask(shape, style="Round", offset=(0, 0, 0), box=None, chance=100, hollow=False):
+    """
+    Return a boolean array for a brush with the given shape and style.
+    If 'offset' and 'box' are given, then the brush is offset into the world
+    and only the part of the world contained in box is returned as an array
+    """
+
+    # we are returning indices for a Blocks array, so swap axes
+    if box is None:
+        box = BoundingBox(offset, shape)
+    if chance < 100 or hollow:
+        box = box.expand(1)
+
+    outputShape = box.size
+    outputShape = (outputShape[0], outputShape[2], outputShape[1])
+
+    shape = shape[0], shape[2], shape[1]
+    offset = array(offset) - array(box.origin)
+    offset = offset[[0, 2, 1]]
+
+    inds = indices(outputShape, dtype=float)
+    halfshape = array([(i >> 1) - ((i & 1 == 0) and 0.5 or 0) for i in shape])
+
+    blockCenters = inds - halfshape[:, newaxis, newaxis, newaxis]
+    blockCenters -= offset[:, newaxis, newaxis, newaxis]
+
+    # odd diameter means measure from the center of the block at 0,0,0 to each block center
+    # even diameter means measure from the 0,0,0 grid point to each block center
+
+    # if diameter & 1 == 0: blockCenters += 0.5
+    shape = array(shape, dtype='float32')
+
+    # if not isSphere(shape):
+    if style == "Round":
+        blockCenters *= blockCenters
+        shape /= 2
+        shape *= shape
+
+        blockCenters /= shape[:, newaxis, newaxis, newaxis]
+        distances = sum(blockCenters, 0)
+        mask = distances < 1
+    elif style == "Square":
+        # mask = ones(outputShape, dtype=bool)
+        # mask = blockCenters[:, newaxis, newaxis, newaxis] < shape
+        blockCenters /= shape[:, newaxis, newaxis, newaxis]
+
+        distances = absolute(blockCenters).max(0)
+        mask = distances < .5
+
+    elif style == "Diamond":
+        blockCenters = numpy.abs(blockCenters)
+        shape /= 2
+        blockCenters /= shape[:, newaxis, newaxis, newaxis]
+        distances = sum(blockCenters, 0)
+        mask = distances < 1
+
+    if (chance < 100 or hollow) and max(shape) > 1:
+        threshold = chance / 100.0
+        exposedBlockMask = ones(shape=outputShape, dtype='bool')
+        exposedBlockMask[:] = mask
+        submask = mask[1:-1, 1:-1, 1:-1]
+        exposedBlockSubMask = exposedBlockMask[1:-1, 1:-1, 1:-1]
+        exposedBlockSubMask[:] = False
+
+        for dim in (0, 1, 2):
+            slices = [slice(1, -1), slice(1, -1), slice(1, -1)]
+            slices[dim] = slice(None, -2)
+            exposedBlockSubMask |= (submask & (mask[slices] != submask))
+            slices[dim] = slice(2, None)
+            exposedBlockSubMask |= (submask & (mask[slices] != submask))
+
+        if hollow:
+            mask[~exposedBlockMask] = False
+        if chance < 100:
+            rmask = random.random(mask.shape) < threshold
+
+            mask[exposedBlockMask] = rmask[exposedBlockMask]
+
+    if chance < 100 or hollow:
+        return mask[1:-1, 1:-1, 1:-1]
+    else:
+        return mask
