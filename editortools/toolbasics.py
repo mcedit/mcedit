@@ -378,7 +378,7 @@ class BlockButton(ButtonBase, Panel):
 
         self.recentBlockView.right = self.width
         self.add(self.recentBlockView)
-        print self.rect, self.recentBlockView.rect
+        #print self.rect, self.recentBlockView.rect
 
     recentBlockView = None
 

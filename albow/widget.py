@@ -273,12 +273,12 @@ class Widget(object):
     def _add(self, widget):
         self.subwidgets.append(widget)
         if hasattr(widget, "idleevent"):
-            print "Adding idle handler for ", widget
+            #print "Adding idle handler for ", widget
             self.get_root().add_idle_handler(widget)
 
     def _remove(self, widget):
         if hasattr(widget, "idleevent"):
-            print "Removing idle handler for ", widget
+            #print "Removing idle handler for ", widget
             self.get_root().remove_idle_handler(widget)
         self.subwidgets.remove(widget)
 

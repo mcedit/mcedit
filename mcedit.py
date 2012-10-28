@@ -563,7 +563,7 @@ class OptionsPanel(Dialog):
 
 
 class MCEdit(GLViewport):
-    debug_resize = True
+    #debug_resize = True
 
     def __init__(self, displayContext, *args):
         ws = displayContext.getWindowSize()
