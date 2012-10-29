@@ -39,10 +39,7 @@ import shutil
 import sys
 import traceback
 
-pymclevel.MCInfdevOldLevel.loadedChunkLimit = 0
-
 ESCAPE = '\033'
-
 
 class FileOpener(albow.Widget):
     is_gl_container = True
