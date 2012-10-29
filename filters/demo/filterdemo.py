@@ -60,9 +60,6 @@ def perform(level, box, options):
                     if level.blockAt(x, y, z) == 14:
                         level.setBlockAt(x, y, z, 46)
 
-        #block by block access does not mark the chunks for lighting
-        #to do this, call level.markDirtyBox
-        level.markDirtyBox(box)
 
     # The second is to extract the segment of interest into a contiguous array
     # using level.extractSchematic. this simplifies using numpy but at the cost
