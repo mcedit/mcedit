@@ -459,6 +459,8 @@ class BrushOperation(Operation):
             else:
 
                 for j, cPos in enumerate(self._dirtyBox.chunkPositions):
+                    if not self.level.containsChunk(*cPos):
+                        continue
                     chunk = self.level.getChunk(*cPos)
                     for i, point in enumerate(self.points):
 
