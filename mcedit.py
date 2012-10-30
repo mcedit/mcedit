@@ -10,6 +10,27 @@ import sys
 if "-debug" not in sys.argv:
     OpenGL.ERROR_CHECKING = False
 
+import logging
+
+# Setup file and stderr logging.
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+fh = logging.FileHandler('mcedit.log')
+fh.setLevel(logging.DEBUG)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+fmt = logging.Formatter(
+    '[%(levelname)s][%(module)s.py:%(lineno)d]:%(message)s'
+)
+fh.setFormatter(fmt)
+ch.setFormatter(fmt)
+
+logger.addHandler(fh)
+logger.addHandler(ch)
+
 import albow
 from albow.dialogs import Dialog
 from albow.openglwidgets import GLViewport
@@ -21,7 +42,6 @@ from glbackground import Panel
 import glutils
 import leveleditor
 from leveleditor import ControlSettings, Settings
-import logging
 import mceutils
 import mcplatform
 from mcplatform import platform_open
@@ -910,27 +930,9 @@ class MCEdit(GLViewport):
 
 def main(argv):
     """
-    Setup logging, display, bundled schematics. Handle unclean
+    Setup display, bundled schematics. Handle unclean
     shutdowns.
     """
-    # Setup file and stderr logging.
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-
-    fh = logging.FileHandler('mcedit.log')
-    fh.setLevel(logging.DEBUG)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
-
-    fmt = logging.Formatter(
-        '[%(levelname)s][%(lineno)d][%(module)s]:%(message)s'
-    )
-    fh.setFormatter(fmt)
-    ch.setFormatter(fmt)
-
-    logger.addHandler(fh)
-    logger.addHandler(ch)
 
     try:
         display.init()
