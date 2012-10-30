@@ -3225,6 +3225,7 @@ class LevelEditor(GLViewport):
     def updateInspectionString(self, blockPosition):
         self.inspectionString += str(blockPosition) + ": "
         x, y, z = blockPosition
+        cx, cz = x // 16, z // 16
 
         try:
             if self.debug:
@@ -3246,22 +3247,13 @@ class LevelEditor(GLViewport):
                         blockID, bdata, self.level.materials.names[blockID][bdata])
 
                     try:
-                        path = self.level.chunkFilenameAt(*blockPosition)
+                        path = self.level.getChunk(cx, cz).filename
                     except:
                         path = "chunks.dat"
-                    if path:
-                        (path, fn) = os.path.split(path)
-                        (path, d2) = os.path.split(path)
-                        (path, d1) = os.path.split(path)
-                        (path, w) = os.path.split(path)
-                        path = os.path.join(w, d1, d2, fn)
-                    else:
-                        path = "Empty space"
 
                     self.inspectionString += "Data: %d, L: %d, SL: %d" % (
                         bdata, bl, sl)
 
-                    cx, cz = blockPosition[0] // 16, blockPosition[2] // 16
                     try:
                         hm = self.level.heightMapAt(x, z)
                         self.inspectionString += ", H: %d" % hm
