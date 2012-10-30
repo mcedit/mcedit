@@ -2638,10 +2638,7 @@ class MCRenderer(object):
 
             except Exception, e:
                 traceback.print_exc()
-                try:
-                    fn = self.level.chunkFilename(*c)
-                except Exception:
-                    fn = c
+                fn = c
 
                 logging.info(u"Skipped chunk {f}: {e}".format(e=e, f=fn))
 
