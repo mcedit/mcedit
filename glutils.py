@@ -222,8 +222,8 @@ class FramebufferTexture(Texture):
 
             FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, buf)
 
-            GL.glViewport(0, 0, width, height)
             with gl.glPushAttrib(GL.GL_VIEWPORT_BIT):
+                GL.glViewport(0, 0, width, height)
                 drawFunc()
 
             FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, 0)
