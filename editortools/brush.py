@@ -13,12 +13,16 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 
 from editortools.clone import BlockCopyOperation
+from pymclevel import block_fill
 from pymclevel.level import extractHeights
 from mceutils import ChoiceButton
 from os.path import basename
 import tempfile
 import itertools
 from toolbasics import *
+import logging
+log = logging.getLogger(__name__)
+
 
 BrushSettings = config.Settings("Brush")
 BrushSettings.brushSizeL = BrushSettings("Brush Shape L", 3)
@@ -27,7 +31,6 @@ BrushSettings.brushSizeW = BrushSettings("Brush Shape W", 3)
 BrushSettings.updateBrushOffset = BrushSettings("Update Brush Offset", False)
 BrushSettings.chooseBlockImmediately = BrushSettings("Choose Block Immediately", False)
 BrushSettings.alpha = BrushSettings("Alpha", 0.66)
-
 
 class BrushMode(object):
     options = []
@@ -57,16 +60,11 @@ class BrushMode(object):
         These three parameters are passed to applyToChunkSlices along with the chunk and the brush operation.
         Brush modes must implement either applyToChunk or applyToChunkSlices
         """
-        bounds = chunk.bounds
         brushBox = self.brushBoxForPointAndOptions(point, op.options)
-        brushBoxThisChunk = brushBox.intersect(bounds)
+
+        brushBoxThisChunk, slices = chunk.getChunkSlicesForBox(brushBox)
         if brushBoxThisChunk.volume == 0: return
 
-        slices = (
-            slice(brushBoxThisChunk.minx - bounds.minx, brushBoxThisChunk.maxx - bounds.minx),
-            slice(brushBoxThisChunk.minz - bounds.minz, brushBoxThisChunk.maxz - bounds.minz),
-            slice(brushBoxThisChunk.miny - bounds.miny, brushBoxThisChunk.maxy - bounds.miny),
-        )
         return self.applyToChunkSlices(op, chunk, slices, brushBox, brushBoxThisChunk)
 
     def applyToChunkSlices(self, op, chunk, slices, brushBox, brushBoxThisChunk):
@@ -173,7 +171,7 @@ class Modes:
                     coords = processCoords(coords)
                     d = datetime.now() - start
                     progress = "Did {0} coords in {1}".format(num, d)
-                    info(progress)
+                    log.info(progress)
                     yield progress
 
             showProgress("Flood fill...", spread([point]), cancel=True)
@@ -203,7 +201,7 @@ class Modes:
             else:
                 blocksToReplace = [op.blockInfo]
 
-            replaceTable = op.level.blockReplaceTable(blocksToReplace)
+            replaceTable = block_fill.blockReplaceTable(blocksToReplace)
             replaceMask = replaceTable[blocks, data]
             brushMask &= replaceMask
 

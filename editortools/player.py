@@ -15,6 +15,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from toolbasics import *
 import urllib
 from pymclevel.box import FloatBox
+import logging
+log = logging.getLogger(__name__)
+
 
 
 class PlayerMoveOperation(Operation):
@@ -33,7 +36,7 @@ class PlayerMoveOperation(Operation):
                 self.undoDim = level.getPlayerDimension(self.player)
                 self.undoYP = level.getPlayerOrientation(self.player)
             except Exception, e:
-                info("Couldn't get player position! ({0!r})".format(e))
+                log.info("Couldn't get player position! ({0!r})".format(e))
 
             yaw, pitch = self.yp
             if yaw is not None and pitch is not None:

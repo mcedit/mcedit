@@ -15,6 +15,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from toolbasics import *
 from select import SelectionOperation
 from pymclevel.pocket import PocketWorld
+from pymclevel import block_copy
+import logging
+log = logging.getLogger(__name__)
+
 
 CloneSettings = config.Settings("Clone")
 CloneSettings.copyAir = CloneSettings("Copy Air", True)
@@ -81,7 +85,7 @@ class BlockCopyOperation(Operation):
         self.destPoint = destPoint
         self.copyAir = copyAir
         self.copyWater = copyWater
-        self.sourceBox, self.destPoint = self.destLevel.adjustCopyParameters(self.sourceLevel, self.sourceBox, self.destPoint)
+        self.sourceBox, self.destPoint = block_copy.adjustCopyParameters(self.destLevel, self.sourceLevel, self.sourceBox, self.destPoint)
 
     def dirtyBox(self):
         return BoundingBox(self.destPoint, self.sourceBox.size)
