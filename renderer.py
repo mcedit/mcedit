@@ -2249,20 +2249,8 @@ class MCRenderer(object):
             self.invalidChunkQueue.append((cx, cz))  # xxx encapsulate
 
     def invalidateChunksInBox(self, box, layers=None):
-        box = pymclevel.BoundingBox(box)
-        if box.minx & 0xf == 0:
-            box.minx -= 1
-        if box.miny & 0xf == 0:
-            box.miny -= 1
-        if box.minz & 0xf == 0:
-            box.minz -= 1
-
-        if box.maxx & 0xf == 0:
-            box.maxx += 1
-        if box.maxy & 0xf == 0:
-            box.maxy += 1
-        if box.maxz & 0xf == 0:
-            box.maxz += 1
+        # If the box is at the edge of any chunks, expanding by 1 makes sure the neighboring chunk gets redrawn.
+        box = box.expand(1)
 
         self.invalidateChunks(box.chunkPositions, layers)
 

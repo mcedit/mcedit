@@ -13,6 +13,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 
 from collections import defaultdict
+from box import Vector
 from fill import FillTool, BlockFillOperation
 import tempfile
 from toolbasics import *
@@ -194,8 +195,7 @@ class NudgeBlocksOperation (Operation):
     def __init__(self, editor, sourceBox, direction):
         self.editor = editor
         self.sourceBox = sourceBox
-        self.destBox = BoundingBox(sourceBox.origin, sourceBox.size)
-        self.destBox.origin = map(operator.add, self.destBox.origin, direction)
+        self.destBox = BoundingBox(sourceBox.origin + direction, sourceBox.size)
         self.nudgeSelection = NudgeSelectionOperation(editor.selectionTool, direction)
 
     def dirtyBox(self):
@@ -387,7 +387,7 @@ class SelectionTool(EditorTool):
     @alertException
     def nudgeBlocks(self, dir):
         if key.get_mods() & KMOD_SHIFT:
-            dir = map(operator.mul, dir, (16, 16, 16))
+            dir = dir * (16, 16, 16)
         op = NudgeBlocksOperation(self.editor, self.selectionBox(), dir)
 
         self.performWithRetry(op)
@@ -396,13 +396,12 @@ class SelectionTool(EditorTool):
 
     def nudgeSelection(self, dir):
         if key.get_mods() & KMOD_SHIFT:
-            dir = map(operator.mul, dir, (16, 16, 16))
+            dir = dir * (16, 16, 16)
 
         points = self.getSelectionPoints()
         bounds = self.editor.level.bounds
 
-        inbounds = [map(operator.add, dir, p) in bounds for p in points]
-        if not all(inbounds):
+        if not all((p + dir) in bounds for p in points):
             return
 
         op = NudgeSelectionOperation(self, dir)
@@ -413,8 +412,8 @@ class SelectionTool(EditorTool):
         if self.selectionBox() is None:
             return
         if key.get_mods() & KMOD_SHIFT:
-            n = map(operator.mul, n, (16, 16, 16))
-        self.setSelectionPoint(p, map(operator.add, self.getSelectionPoint(p), n))
+            n = n * (16, 16, 16)
+        self.setSelectionPoint(p, self.getSelectionPoint(p) + n)
 
     def nudgeBottomLeft(self, n):
         return self.nudgePoint(0, n)
@@ -692,7 +691,7 @@ class SelectionTool(EditorTool):
         dragdim = self.dragResizeFace >> 1
         box = self.selectionBox()
 
-        o, m = box.origin, box.maximum
+        o, m = list(box.origin), list(box.maximum)
         (m, o)[side][dragdim] = int(floor(point[dragdim] + 0.5))
         m = map(lambda a: a - 1, m)
         return o, m
@@ -950,7 +949,7 @@ class SelectionTool(EditorTool):
 
     def setSelectionPoints(self, points):
         if points:
-            self.bottomLeftPoint, self.topRightPoint = points
+            self.bottomLeftPoint, self.topRightPoint = [Vector(*p) for p in points]
         else:
             self.bottomLeftPoint = self.topRightPoint = None
 
@@ -1112,7 +1111,7 @@ class NudgeSelectionOperation (Operation):
         self.direction = direction
         self.oldPoints = selectionTool.getSelectionPoints()
 
-        self.newPoints = map(lambda p: map(operator.add, p, direction), self.oldPoints)
+        self.newPoints = [p + direction for p in self.oldPoints]
 
     def perform(self, recordUndo=True):
         self.selectionTool.setSelectionPoints(self.newPoints)

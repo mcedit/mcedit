@@ -324,9 +324,9 @@ class PlayerPositionTool(EditorTool):
 
     def drawCharacterHead(self, x, y, z):
         glEnable(GL_CULL_FACE)
-        box = FloatBox()
-        box.origin = (x - 0.25, y - 0.25, z - 0.25)
-        box.size = (0.5, 0.5, 0.5)
+        origin = (x - 0.25, y - 0.25, z - 0.25)
+        size = (0.5, 0.5, 0.5)
+        box = FloatBox(origin, size)
 
         drawCube(box,
                  texture=self.charTex, textureVertices=self.texVerts)

@@ -11,6 +11,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+from box import Vector
 
 from toolbasics import *
 from select import SelectionOperation
@@ -82,7 +83,7 @@ class BlockCopyOperation(Operation):
         self.sourceLevel = sourceLevel
         self.sourceBox = sourceBox
         self.destLevel = destLevel
-        self.destPoint = destPoint
+        self.destPoint = Vector(*destPoint)
         self.copyAir = copyAir
         self.copyWater = copyWater
         self.sourceBox, self.destPoint = block_copy.adjustCopyParameters(self.destLevel, self.sourceLevel, self.sourceBox, self.destPoint)
@@ -136,7 +137,7 @@ class CloneOperation (Operation):
         self.blockCopyOps = []
         dirtyBoxes = []
         if repeatCount > 1:  # clone tool only
-            delta = map(operator.sub, destPoint, editor.toolbar.tools[0].selectionBox().origin)
+            delta = destPoint - editor.toolbar.tools[0].selectionBox().origin
         else:
             delta = (0, 0, 0)
 
@@ -156,22 +157,11 @@ class CloneOperation (Operation):
             dirtyBoxes.append(dirty)
             self.blockCopyOps.append(op)
 
-            destPoint = map(operator.add, delta, destPoint)
+            destPoint += delta
 
         if len(dirtyBoxes):
             def enclosingBox(dirtyBoxes):
-                minx = min(map(lambda x: x.minx, dirtyBoxes))
-                miny = min(map(lambda x: x.miny, dirtyBoxes))
-                minz = min(map(lambda x: x.minz, dirtyBoxes))
-
-                maxx = max(map(lambda x: x.maxx, dirtyBoxes))
-                maxy = max(map(lambda x: x.maxy, dirtyBoxes))
-                maxz = max(map(lambda x: x.maxz, dirtyBoxes))
-
-                origin = (minx, miny, minz)
-                maximum = (maxx, maxy, maxz)
-
-                return BoundingBox(origin, map(operator.sub, maximum, origin))
+                return reduce(lambda a, b: a.union(b), dirtyBoxes)
 
             self._dirtyBox = enclosingBox(dirtyBoxes)
 
@@ -179,7 +169,7 @@ class CloneOperation (Operation):
                 dirtyBoxes.append(originSourceBox)
 
             dirty = enclosingBox(dirtyBoxes)
-            points = (dirty.origin, map(lambda x: x - 1, dirty.maximum))
+            points = (dirty.origin, dirty.maximum - (1, 1, 1))
 
             self.selectionOps = [SelectionOperation(editor.selectionTool, points)]
 
@@ -359,7 +349,7 @@ class CloneTool(EditorTool):
     def alignDestPoint(self):
         if self.destPoint is not None:
             x, y, z = self.destPoint
-            self.destPoint = (x >> 4) << 4, y, (z >> 4) << 4
+            self.destPoint = Vector((x >> 4) << 4, y, (z >> 4) << 4)
 
     placeImmediately = CloneSettings.placeImmediately.configProperty()
 
@@ -407,7 +397,7 @@ class CloneTool(EditorTool):
             nudge = self.quickNudge(nudge)
 
         # self.panel.performButton.enabled = True
-        self.destPoint = map(lambda a, b: a + b, self.destPoint, nudge)
+        self.destPoint = self.destPoint + nudge
         self.updateOffsets()
 
     def selectionChanged(self):
@@ -417,7 +407,7 @@ class CloneTool(EditorTool):
 
     def updateOffsets(self):
         if self.panel and self.panel.useOffsetInput and self.destPoint is not None:
-            self.panel.offsetInput.setCoords(map(operator.sub, self.destPoint, self.selectionBox().origin))
+            self.panel.offsetInput.setCoords(self.destPoint - self.selectionBox().origin)
 
     def offsetChanged(self):
 
@@ -429,7 +419,7 @@ class CloneTool(EditorTool):
                 return
 
             delta = self.panel.offsetInput.coords
-            self.destPoint = map(operator.add, box.origin, delta)
+            self.destPoint = box.origin + delta
 
     def toolEnabled(self):
         return not (self.selectionBox() is None)
@@ -468,7 +458,7 @@ class CloneTool(EditorTool):
         self._scaleFactor = 1.0
 
         if self.placeImmediately:
-            self.destPoint = list(box.origin)
+            self.destPoint = box.origin
         else:
             self.destPoint = None
 
@@ -653,7 +643,7 @@ class CloneTool(EditorTool):
             if z < 0:
                 z = 0
 
-        return x, y, z
+        return Vector(x, y, z)
 
     def getReticleBox(self):
 
@@ -698,13 +688,14 @@ class CloneTool(EditorTool):
             color = (self.color[0], self.color[1], self.color[2], 0.06)
             box = self.getDestBox()
             if self.draggingFace is not None:
-                box.origin = self.draggingOrigin()
-                guideBox = BoundingBox(box)
+                o = list(self.draggingOrigin())
+                s = list(box.size)
                 for i in range(3):
                     if i == self.draggingFace >> 1:
                         continue
-                    guideBox._origin[i] -= 1000
-                    guideBox._size[i] += 2000
+                    o[i] -= 1000
+                    s[i] += 2000
+                guideBox = BoundingBox(o, s)
 
                 color = self.draggingColor
                 glColor(1.0, 1.0, 1.0, 0.33)
@@ -722,7 +713,7 @@ class CloneTool(EditorTool):
             box = self.getDestBox()
             if self.draggingFace is not None:
                 face = self.draggingFace
-                box.origin = self.draggingOrigin()
+                box = BoundingBox(self.draggingOrigin(), box.size)
             face, point = self.boxFaceUnderCursor(box)
             if face is not None:
                 glEnable(GL_BLEND)
@@ -736,11 +727,11 @@ class CloneTool(EditorTool):
     def drawRepeatedCube(self, box, color):
         # draw several cubes according to the repeat count
         # it's not really sensible to repeat a crane because the origin point is literally out of this world.
-        delta = map(operator.sub, box.origin, self.selectionBox().origin)
+        delta = box.origin - self.selectionBox().origin
 
         for i in range(self.repeatCount):
             self.editor.drawConstructionCube(box, color)
-            box.origin = map(operator.add, box.origin, delta)
+            box.origin += delta
 
     def sourceLevel(self):
         return self.level
@@ -808,10 +799,10 @@ class CloneTool(EditorTool):
             d[dragY] = delta[dragY]
             delta = d
 
-        p = map(lambda a, b: a + b, delta, self.destPoint)
+        p = self.destPoint + delta
         if self.chunkAlign:
             p = [i // 16 * 16 for i in p]
-        return p
+        return Vector(*p)
 
     def positionOnDraggingPlane(self):
         pos = self.editor.mainViewport.cameraPosition
@@ -850,7 +841,7 @@ class CloneTool(EditorTool):
             self.destPoint = self.getReticleOrigin()
 
             if self.panel and self.panel.useOffsetInput:
-                self.panel.offsetInput.setCoords(map(operator.sub, self.destPoint, box.origin))
+                self.panel.offsetInput.setCoords(self.destPoint - box.origin)
             print "Destination: ", self.destPoint
 
     @alertException

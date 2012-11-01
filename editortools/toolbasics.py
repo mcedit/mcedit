@@ -820,8 +820,8 @@ class EditorTool(object):
         if(None != self.editor.selectionTool.bottomLeftPoint and
            None != self.editor.selectionTool.topRightPoint):
 
-            return (list(self.editor.selectionTool.bottomLeftPoint),
-                    list(self.editor.selectionTool.topRightPoint))
+            return (self.editor.selectionTool.bottomLeftPoint,
+                    self.editor.selectionTool.topRightPoint)
 
         return None
 
@@ -844,21 +844,19 @@ class EditorTool(object):
 
         size = map(lambda a, b: a - b, p2, p1)
 
-        box = BoundingBox(p1, size)
-
-        if box.origin[1] < 0:
-            box.size[1] += box.origin[1]
-            box.origin[1] = 0
+        if p1[1] < 0:
+            size[1] += p1[1]
+            p1[1] = 0
 
         h = self.editor.level.Height
-        if box.origin[1] >= h:
-            box.origin[1] = h - 1
-            box.size[1] = 1
+        if p1[1] >= h:
+            p1[1] = h - 1
+            size[1] = 1
 
-        if box.maximum[1] >= h:
-            box.size[1] -= (box.maximum[1] - h)
+        if p1[1] + size[1] >= h:
+            size[1] = h - p1[1]
 
-        return box
+        return BoundingBox(p1, size)
 
     def selectionBox(self):
         ''' selection corners, ordered, with the greater point moved up one block for use as the ending value of an array slice '''
