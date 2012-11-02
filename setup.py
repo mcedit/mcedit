@@ -134,7 +134,7 @@ def build_nbt():
     Builds _nbt.py.
     """
     os.chdir('pymclevel')
-    os.system(sys.executable + ' setup_nbt.py build_ext --inplace --force')
+    os.system(sys.executable + ' setup.py build_ext --inplace --force')
     os.chdir('..')
 
 
