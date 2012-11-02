@@ -15,15 +15,15 @@ def perform(level, box, options):
             x = e["Pos"][0].value
             y = e["Pos"][1].value
             z = e["Pos"][2].value
-            
+
             if x >= box.minx and x < box.maxx and y >= box.miny and y < box.maxy and z >= box.minz and z < box.maxz:
                 if "Health" in e:
-					if "ActiveEffects" not in e:
-						e["ActiveEffects"] = TAG_List()
+                    if "ActiveEffects" not in e:
+                        e["ActiveEffects"] = TAG_List()
 
-					resist = TAG_Compound()
-					resist["Amplifier"] = TAG_Byte(4)
-					resist["Id"] = TAG_Byte(11)
-					resist["Duration"] = TAG_Int(2000000000)
-					e["ActiveEffects"].append(resist)
-					chunk.dirty = True
+                    resist = TAG_Compound()
+                    resist["Amplifier"] = TAG_Byte(4)
+                    resist["Id"] = TAG_Byte(11)
+                    resist["Duration"] = TAG_Int(2000000000)
+                    e["ActiveEffects"].append(resist)
+                    chunk.dirty = True
