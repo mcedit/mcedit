@@ -264,7 +264,7 @@ class Modes:
                 fillBlocks[1:-1, 1:-1, 1:-1] &= brushMask
                 blocks[fillBlocks] = fillBlockID
 
-            op.level.copyBlocksFrom(erosionArea, erosionArea.bounds.expand(-1), brushBox.origin)
+            op.level.copyBlocksFrom(erosionArea, erosionArea.bounds.expand(-1), brushBox.origin + (1, 1, 1))
 
     class Topsoil(BrushMode):
         name = "Topsoil"
