@@ -433,4 +433,3 @@ if portable:
 else:
     jarStorage = ServerJarStorage()
 
-items.items = items.Items(join(directories.dataDir, "pymclevel", "items.txt"))
