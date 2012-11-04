@@ -78,7 +78,7 @@ Settings.skin = Settings("MCEdit Skin", "[Current]")
 Settings.fov = Settings("Field of View", 70.0)
 Settings.spaceHeight = Settings("Space Height", 64)
 Settings.blockBuffer = Settings("Block Buffer", 256 * 1048576)
-Settings.reportCrashes = Settings("report crashes", 1)
+Settings.reportCrashes = Settings("report crashes new", "ask")
 
 Settings.doubleBuffer = Settings("Double Buffer", True)
 

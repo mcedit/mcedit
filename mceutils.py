@@ -24,7 +24,7 @@ import config
 from cStringIO import StringIO
 from datetime import datetime
 import directories
-from errorreporting import reportCrash, reportException
+from errorreporting import reportException
 import httplib
 import mcplatform
 import numpy
@@ -48,7 +48,7 @@ def alertException(func):
             alert("Canceled.")
         except Exception, e:
             if ask("Error during {0}: {1!r}".format(func, e)[:1000], ["Report Error", "Okay"], default=1, cancel=0) == "Report Error":
-                reportException(e)
+                reportException()
 
     return _alertException
 

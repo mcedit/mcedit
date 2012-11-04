@@ -10,9 +10,8 @@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""
 errorreporting.py
 
 Patch the `traceback' module to print "self" with each stack frame.
@@ -22,8 +21,12 @@ import traceback
 import platform
 from datetime import datetime
 import os
+import json
 import httplib
-
+import zlib
+import release
+import logging
+log = logging.getLogger(__name__)
 
 def extract_tb(tb, limit=None):
     """Return list of up to limit pre-processed entries from traceback.
@@ -75,7 +78,7 @@ def format_list(extracted_list):
     whose source text line is not None.
     """
     list = []
-    for filename, lineno, name, line, selfstr in extracted_list:
+    for filename, lineno, name, line, selfstr in reversed(extracted_list):
         item = '  File "%s", line %d, in %s %s\n' % (filename, lineno, name, selfstr[:60])
         if line:
             item = item + '    %s\n' % line.strip()
@@ -85,82 +88,107 @@ def format_list(extracted_list):
 traceback.extract_tb = extract_tb
 traceback.format_list = format_list
 
+EXCEPTIONAL_API_KEY = "37eaf2a19432e268829ef4fa35921ad399bbda80"
 
-def clamp(num, low, high):
-    return min(high, max(low, num))
-
-
-def releaseInfo():
-    import release
-
-    uname = platform.uname()
-    uname = list(uname)
-    uname[1] = hex(hash(uname[1]))
-
-    info = """Release: MCEdit-{0}\n{1}
-Platform: {2}, Name: {3}, Version{4}, Arch: {5}
-Platform:{6}, Processor: {7},
-uname: {8}
-""".format(release.release, datetime.now(), sys.platform, os.name, platform.version(), platform.architecture(), platform.platform(), platform.processor(), uname)
-    try:
-        from OpenGL import GL
-        info += "Version: {0}\n".format(GL.glGetString(GL.GL_VERSION))
-        info += "Vendor: {0}\nRenderer: {1}\n".format(GL.glGetString(GL.GL_VENDOR), GL.glGetString(GL.GL_RENDERER))
-        from albow import root
-        info += "Frames: {0}\n".format(root.get_root().frames)
-
-    finally:
-        return info
-
-
-def reportCrash(crashlog):
+def get_backtrace():
+    backtrace = traceback.format_exc()
     try:
         import mcplatform
         parentDir = mcplatform.parentDir
         minecraftDir = mcplatform.minecraftDir
 
-        if hasattr(sys, 'frozen') or sys.platform != "win32":
-            crashlog = crashlog.replace(parentDir, "[MCEdit folder]")
-            crashlog = crashlog.replace(minecraftDir, "[Minecraft folder]")
+        backtrace = backtrace.replace(parentDir, "[MCEdit folder]")
+        backtrace = backtrace.replace(minecraftDir, "[Minecraft folder]")
     except Exception, e:
-        print repr(e), "while scrubbing user directories from crash log!"
+        print repr(e), "while scrubbing user directories from crash log! Error not reported."
+        raise
 
-    releaseString = releaseInfo()
-    crashlog = releaseString + crashlog
-    print crashlog
-#    logfilename = "mcedit-{0}-crash.log".format(os.getpid())
-#    if not os.path.exists("logs"):
-#        try:
-#            os.mkdir("logs")
-#            logfilename = os.path.join("logs", logfilename)
-#        except Exception, e:
-#            print "Couldn't make logs dir!", repr(e)
+    return backtrace.split('\n')
 
+def json_crash_report():
+    exc_class, exc_value, exc_tb = sys.exc_info()
 
-    #with open(logfilename, "w") as f:
-    #    f.write(crashlog)
-    #print "This info has also been logged to " + logfilename
-#    try:
-#        import config
-#        if not config.config.getboolean('Settings', 'Report Crashes'): return;
-#    except Exception, e:
-#        print repr(e), "while retrieving Report Crashes setting. Reporting anyway."
-#
-#    print "Crash log length: ", len(crashlog)
-#    conn = httplib.HTTPConnection("company.com")
-#    conn.request("POST", "/bugs.php", crashlog)
-#    resp = conn.getresponse().read()
-#    conn.close()
-#    print "Response length: ", len(resp)
-#    #print resp
-#    print ""
-#    print "The above traceback was automatically reported to the author."
-#    print "To disable crash reporting, "
-#    print "Open MCEdit.ini and set Report Crashes to 0."
+    report = {}
+    # We don't handle requests, so repurpose the request fields for release info.
+    request = report['request'] = {}
+    request['controller'] = release.release
 
-def reportException(exc):
-    tb = traceback.format_exc()
+    exception = report['exception'] = {}
+    exception['backtrace'] = get_backtrace()
+    exception['exception_class'] = exc_class.__name__
+    exception['message'] = str(exc_value)
+    exception['occurred_at'] = datetime.now().isoformat()
+
     try:
-        reportCrash(tb)
+        os.getcwdu().encode('ascii')
+        ascii_cwd = True
+    except UnicodeEncodeError:
+        ascii_cwd = False
+
+    app_env = report['application_environment'] = {}
+    app_env['application_root_directory'] = "ASCII" if ascii_cwd else "Unicode"
+    app_env['framework'] = 'mcedit'
+    app_env['language'] = 'python'
+    app_env['language_version'] = sys.version
+
+    env = app_env['env'] = {}
+
+    env['OS_NAME'] = os.name,
+    env['OS_VERSION'] = platform.version()
+    env['OS_ARCH'] = platform.architecture()
+    env['OS_PLATFORM'] = platform.platform()
+    env['OS_CPU'] = platform.processor()
+
+
+    try:
+        from albow import root
+        env['FRAMES'] = str(root.get_root().frames)
+    except:
+        log.info("Can't get frame count")
+
+    try:
+        from OpenGL import GL
+        env['GL_VERSION'] = GL.glGetString(GL.GL_VERSION)
+    except:
+        log.info("Can't get GL_VERSION")
+
+    try:
+        from OpenGL import GL
+        env['GL_VENDOR'] = GL.glGetString(GL.GL_VENDOR)
+    except:
+        log.info("Can't get GL_VENDOR")
+
+
+    try:
+        from OpenGL import GL
+        env['GL_RENDERER'] = GL.glGetString(GL.GL_RENDERER)
+    except:
+        log.info("Can't get GL_RENDERER")
+
+    return json.dumps(report)
+
+def post_crash_report():
+    """
+    POST http://api.exceptional.io/api/errors?api_key=YOUR_API_KEY&protocol_version=5
+
+    Note: protocol_version 5 means use zlib compression.
+    """
+
+    report = json_crash_report()
+
+    body = zlib.compress(report)
+    conn = httplib.HTTPConnection("api.exceptional.io")
+    conn.request("POST", "http://api.exceptional.io/api/errors?api_key=%s&protocol_version=5" % EXCEPTIONAL_API_KEY, body)
+
+    resp = conn.getresponse()
+    print "Response status: %s\n Response data: %s\n" % (resp.status, resp.read())
+    conn.close()
+
+
+def reportException():
+    try:
+        import config
+        if config.config.get("Settings", "report crashes new") == "yes":
+            post_crash_report()
     except Exception, e:
         print "Error while reporting crash: ", repr(e)

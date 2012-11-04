@@ -7,6 +7,8 @@ Startup, main menu, keyboard configuration, automatic updating.
 """
 import OpenGL
 import sys
+import errorreporting
+
 if "-debug" not in sys.argv:
     OpenGL.ERROR_CHECKING = False
 
@@ -500,9 +502,9 @@ class OptionsPanel(Dialog):
         goPortableButton.tooltipText = self.portableButtonTooltip()
         goPortableRow = albow.Row((albow.ValueDisplay(ref=albow.AttrRef(self, 'portableLabelText'), width=250, align='r'), goPortableButton))
 
-        reportRow = mceutils.CheckBoxLabel("Report Crashes",
+        reportRow = mceutils.CheckBoxLabel("Report Errors",
             ref=Settings.reportCrashes.propertyRef(),
-            tooltipText="Automatically report fatal errors to the author.")
+            tooltipText="Automatically report errors to the developer.")
 
         inputs = (
             spaceHeightRow,
@@ -900,6 +902,18 @@ class MCEdit(GLViewport):
             if answer == "Don't remind me again.":
                 mcedit.closeMinecraftWarning = False
 
+        if Settings.reportCrashes.get() == "ask":
+            answer = albow.ask(
+                "When an error occurs, MCEdit can report the details of the error to its developers. "
+                "The error report will include your operating system version, MCEdit version, "
+                "OpenGL version, plus the make and model of your CPU and graphics processor. No personal "
+                "information will be collected.\n\n"
+                "Error reporting can be enabled or disabled in the Options dialog.\n\n"
+                "Enable error reporting?",
+                ["Yes", "No"],
+                default=0)
+            Settings.reportCrashes.set(answer.lower())
+
         config.saveConfig()
 
         while True:
@@ -965,6 +979,7 @@ def main(argv):
         return 0
     except Exception, e:
         logging.error('An unhandled error occured.', exc_info=True)
+        errorreporting.reportException()
         display.quit()
         return 1
     return 0
