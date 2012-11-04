@@ -406,7 +406,7 @@ def portableConfigExists():
     return (os.path.exists(portableConfigFilePath)  # mcedit.ini in MCEdit folder
         or (sys.platform != 'darwin' and not os.path.exists(fixedConfigFilePath)))  # no mcedit.ini in Documents folder (except on OS X when we always want it in Library/Preferences
 
-if "-fixed" not in sys.argv and ("-portable" in sys.argv or portableConfigExists()):
+if portableConfigExists():
     print "Running in portable mode. MCEdit-schematics and mcedit.ini are stored alongside " + (sys.platform == "darwin" and "the MCEdit app bundle" or "MCEditData")
     portable = True
     schematicsDir = portableSchematicsDir

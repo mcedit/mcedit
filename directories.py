@@ -62,52 +62,23 @@ def win32_utf8_argv():
         pass
 
 
-def findDirectories():
-    #print 'CWD:', os.getcwdu()
-
+def findDataDir():
     def fsdecode(x):
         return x.decode(sys.getfilesystemencoding())
 
     argzero = fsdecode(sys.argv[0])
-    #print "EXE", fsdecode(sys.executable)
-    #print "ARGV", map(fsdecode, sys.argv)
 
     if sys.platform == "win32":
-        if sys.executable.endswith("python.exe") or sys.executable.endswith("pythonw.exe"):
-            dataDir = os.path.split(argzero)[0]
-            runningInEditor = True
+        if hasattr(sys, 'frozen'):
+            dataDir = os.path.dirname(fsdecode(sys.executable))
         else:
-            dataDir = os.path.split(sys.executable.decode(sys.getfilesystemencoding()))[0]
-            runningInEditor = False
+            dataDir = os.path.dirname(argzero)
+
     elif sys.platform == "darwin":
         dataDir = os.getcwdu()
-        runningInEditor = False
     else:
-        if argzero.endswith("mcedit.pyo"):
-            dataDir = os.path.split(argzero)[0]
-            runningInEditor = False
-        else:
-            dataDir = os.getcwdu()
-            runningInEditor = True
-
-    #print "Parent Dir: ", dataDir
-
-    if not runningInEditor:
-        if u'MCEditData' in os.listdir(os.getcwdu()):
-            dataDir = os.path.join(os.getcwdu(), u'MCEditData')
-        #else:
-        #    raise RuntimeError, "Cannot find MCEditData! (did you start from the right directory?)"
-
-    if not len(dataDir):
-        print "DataDir was empty, using cwd."
         dataDir = os.getcwdu()
 
-    #docsFolder = mcplatform.documents_folder()
+    return dataDir
 
-    if runningInEditor:
-        print "Running in development mode!"
-
-    os.chdir(os.path.abspath(dataDir))
-    return dataDir, runningInEditor
-
-dataDir, runningInEditor = findDirectories()
+dataDir = findDataDir()
