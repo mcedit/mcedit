@@ -731,7 +731,7 @@ class CloneTool(EditorTool):
 
         for i in range(self.repeatCount):
             self.editor.drawConstructionCube(box, color)
-            box.origin += delta
+            box = BoundingBox(box.origin + delta, box.size)
 
     def sourceLevel(self):
         return self.level
