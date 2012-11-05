@@ -3265,6 +3265,9 @@ class LevelEditor(GLViewport):
                     except:
                         pass
 
+                    self.inspectionString += ", D: %d" % self.level.getChunk(cx, cz).dirty
+                    self.inspectionString += ", NL: %d" % self.level.getChunk(cx, cz).needsLighting
+
                     if isinstance(self.level, pymclevel.pocket.PocketWorld):
                         ch = self.level.getChunk(cx, cz)
                         self.inspectionString += ", DC: %s" % ch.DirtyColumns[z & 15, x & 15]
