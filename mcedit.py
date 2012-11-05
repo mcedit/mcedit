@@ -22,7 +22,10 @@ fh = logging.FileHandler('mcedit.log')
 fh.setLevel(logging.DEBUG)
 
 ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+if "-debug" in sys.argv:
+    ch.setLevel(logging.INFO)
+else:
+    ch.setLevel(logging.WARN)
 
 fmt = logging.Formatter(
     '[%(levelname)s][%(module)s.py:%(lineno)d]:%(message)s'
