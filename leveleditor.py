@@ -2076,7 +2076,8 @@ class LevelEditor(GLViewport):
                         return
 
                     if self.level == level:
-                        needsRefresh = [c.chunkPosition for c in level._loadedChunks.itervalues() if c.dirty]
+                        needsRefresh = [c.chunkPosition for c in level._loadedChunkData.itervalues() if c.dirty]
+                        needsRefresh.extend(level.unsavedWorkFolder.listChunks())
                         #xxx change MCInfdevOldLevel to monitor changes since last call
                         self.invalidateChunks(needsRefresh)
 
