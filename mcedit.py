@@ -744,6 +744,9 @@ class MCEdit(GLViewport):
                   "About MCEdit",
                   lambda: platform_open("http://www.mcedit.net/about.html")),
                   ("",
+                  "Recent Changes",
+                  lambda: platform_open("http://www.mcedit.net/changes/%s.html" % release.release)),
+                  ("",
                   "License",
                   showLicense),
                   ])
