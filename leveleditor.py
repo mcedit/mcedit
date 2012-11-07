@@ -3268,6 +3268,13 @@ class LevelEditor(GLViewport):
 
                     self.inspectionString += ", D: %d" % self.level.getChunk(cx, cz).dirty
                     self.inspectionString += ", NL: %d" % self.level.getChunk(cx, cz).needsLighting
+                    try:
+                        biome = self.level.getChunk(cx, cz).Biomes[x & 15, z & 15]
+                        from pymclevel import biome_types
+
+                        self.inspectionString += ", Bio: %s" % biome_types.biome_types[biome]
+                    except AttributeError:
+                        pass
 
                     if isinstance(self.level, pymclevel.pocket.PocketWorld):
                         ch = self.level.getChunk(cx, cz)
