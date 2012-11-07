@@ -191,7 +191,7 @@ def post_crash_report():
 def reportException():
     try:
         import config
-        if config.config.get("Settings", "report crashes new") == "yes":
+        if config.config.get("Settings", "report crashes new"):
             post_crash_report()
     except Exception, e:
         print "Error while reporting crash: ", repr(e)

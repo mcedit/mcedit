@@ -905,7 +905,7 @@ class MCEdit(GLViewport):
             if answer == "Don't remind me again.":
                 mcedit.closeMinecraftWarning = False
 
-        if Settings.reportCrashes.get() == "ask":
+        if not Settings.reportCrashesAsked.get():
             answer = albow.ask(
                 "When an error occurs, MCEdit can report the details of the error to its developers. "
                 "The error report will include your operating system version, MCEdit version, "
@@ -915,7 +915,8 @@ class MCEdit(GLViewport):
                 "Enable error reporting?",
                 ["Yes", "No"],
                 default=0)
-            Settings.reportCrashes.set(answer.lower())
+            Settings.reportCrashes.set(answer == "Yes")
+            Settings.reportCrashesAsked.set(True)
 
         config.saveConfig()
 
