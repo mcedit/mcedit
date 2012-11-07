@@ -96,9 +96,12 @@ def get_backtrace():
         import mcplatform
         parentDir = mcplatform.parentDir
         minecraftDir = mcplatform.minecraftDir
+        home = os.path.expanduser("~")
 
+        backtrace = backtrace.replace(home, "[User home folder]")
         backtrace = backtrace.replace(parentDir, "[MCEdit folder]")
         backtrace = backtrace.replace(minecraftDir, "[Minecraft folder]")
+
     except Exception, e:
         print repr(e), "while scrubbing user directories from crash log! Error not reported."
         raise
