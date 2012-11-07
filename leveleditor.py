@@ -1902,6 +1902,7 @@ class LevelEditor(GLViewport):
             if resp == "Save":
                 self.saveFile()
 
+
         self.freezeStatus("Loading " + filename)
         try:
             level = pymclevel.fromFile(filename)
@@ -1946,6 +1947,9 @@ class LevelEditor(GLViewport):
         self.renderer.loadNearbyChunks()
 
     def loadLevel(self, level):
+        if self.level and hasattr(self.level, 'close'):
+            self.level.close()
+
         self.level = level
 
         self.toolbar.selectTool(-1)
@@ -2058,8 +2062,6 @@ class LevelEditor(GLViewport):
     def reload(self):
         filename = self.level.filename
         # self.discardAllChunks()
-        self.level.close()
-
         self.loadFile(filename)
 
     @mceutils.alertException
