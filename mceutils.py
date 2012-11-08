@@ -39,6 +39,7 @@ import sys
 import traceback
 import zipfile
 
+import logging
 
 def alertException(func):
     def _alertException(*args, **kw):
@@ -47,6 +48,7 @@ def alertException(func):
         except root.Cancel:
             alert("Canceled.")
         except Exception, e:
+            logging.exception("Exception:")
             if ask("Error during {0}: {1!r}".format(func, e)[:1000], ["Report Error", "Okay"], default=1, cancel=0) == "Report Error":
                 reportException()
 
