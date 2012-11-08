@@ -1983,7 +1983,7 @@ class LevelEditor(GLViewport):
                 dimensions = self.level.dimensions
 
             dimensionsMenu = [("Earth", "0")]
-            dimensionsMenu += [((dim.displayName,str(dim.dimNo)+"/"+dim.dirname)) for dim in dimensions.values()]
+            dimensionsMenu += [(pymclevel.MCAlphaDimension.dimensionNames.get(dimNo, "Dimension {0}".format(dimNo)), str(dimNo)) for dimNo in dimensions]
             for dim, name in pymclevel.MCAlphaDimension.dimensionNames.iteritems():
                 if dim not in dimensions:
                     dimensionsMenu.append((name, str(dim)))
@@ -1995,12 +1995,8 @@ class LevelEditor(GLViewport):
                 dimIdx = menu.present(self, (x, y - menu.height))
                 if dimIdx == -1:
                     return
-                dimTokens = dimensionsMenu[dimIdx][1].partition('/')
-                dimNo = int(dimTokens[0])
-                dirname = None
-                if len(dimTokens)>1:
-                    dirname = dimTokens[2]
-                self.gotoDimension(dimNo, dirname)
+                dimNo = int(dimensionsMenu[dimIdx][1])
+                self.gotoDimension(dimNo)
 
             self.netherPanel = Panel()
             self.netherButton = Button("Goto Dimension", action=presentMenu)
@@ -2041,7 +2037,7 @@ class LevelEditor(GLViewport):
         self.mainViewport.cameraPosition = [x / 8, y, z / 8]
         self.loadLevel(self.level.getDimension(-1))
 
-    def gotoDimension(self, dimNo, dirname=None):
+    def gotoDimension(self, dimNo):
         if dimNo == self.level.dimNo:
             return
         elif dimNo == -1 and self.level.dimNo == 0:
@@ -2053,7 +2049,7 @@ class LevelEditor(GLViewport):
             if dimNo:
                 if dimNo == 1:
                     self.mainViewport.cameraPosition = (0, 96, 0)
-                self.loadLevel(self.level.getDimension(dimNo, dirname))
+                self.loadLevel(self.level.getDimension(dimNo))
 
             else:
                 self.loadLevel(self.level.parentWorld)
