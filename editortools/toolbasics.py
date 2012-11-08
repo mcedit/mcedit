@@ -38,7 +38,7 @@ from glbackground import *
 from albow.dialogs import Dialog
 from pymclevel.mclevelbase import exhaust
 from albow.root import Cancel
-
+from pymclevel.box import Vector
 
 class NudgeButton(GLBackground):
     """ A button that captures movement keys while pressed and sends them to a listener as nudge events.
@@ -69,9 +69,9 @@ class NudgeButton(GLBackground):
     def key_down(self, evt):
         keyname = key.name(evt.key)
         if keyname == config.config.get("Keys", "Up"):
-            self.nudge((0, 1, 0))
+            self.nudge(Vector(0, 1, 0))
         if keyname == config.config.get("Keys", "Down"):
-            self.nudge((0, -1, 0))
+            self.nudge(Vector(0, -1, 0))
 
         Z = self.get_root().mcedit.editor.mainViewport.cameraVector  # xxx mouthful
         absZ = map(abs, Z)
@@ -85,13 +85,13 @@ class NudgeButton(GLBackground):
         right = map(int.__neg__, left)
 
         if keyname == config.config.get("Keys", "Forward"):
-            self.nudge(forward)
+            self.nudge(Vector(*forward))
         if keyname == config.config.get("Keys", "Back"):
-            self.nudge(back)
+            self.nudge(Vector(*back))
         if keyname == config.config.get("Keys", "Left"):
-            self.nudge(left)
+            self.nudge(Vector(*left))
         if keyname == config.config.get("Keys", "Right"):
-            self.nudge(right)
+            self.nudge(Vector(*right))
 
 
 class Operation(object):
