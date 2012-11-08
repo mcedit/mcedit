@@ -1,6 +1,6 @@
 # MCEdit
 
-MCEdit is an open-source, BSD-licenced world editor for the viral indie hit [Minecraft](http://www.minecraft.net/).
+MCEdit is an open-source, BSD-licenced world editor for the viral indie hit [Minecraft](http://www.minecraft.net/). For downloads and update info, visit the official website at [www.mcedit.net](http://www.mcedit.net/). The rest of this file is intended for computer programmers and Linux users.
 
 ## Running from source
 
