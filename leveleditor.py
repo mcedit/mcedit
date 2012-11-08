@@ -1896,6 +1896,9 @@ class LevelEditor(GLViewport):
         GL.glDisable(GL.GL_DEPTH_TEST)
 
     def loadFile(self, filename):
+        """
+        Called when the user picks a level using Load World or Open File.
+        """
         if self.level and self.unsavedEdits > 0:
             resp = ask("Save unsaved edits before loading?", ["Cancel", "Don't Save", "Save"], default=2, cancel=0)
             if resp == "Cancel":
@@ -1905,6 +1908,9 @@ class LevelEditor(GLViewport):
 
 
         self.freezeStatus("Loading " + filename)
+        if self.level:
+            self.level.close()
+
         try:
             level = pymclevel.fromFile(filename)
         except Exception, e:
@@ -1915,6 +1921,7 @@ class LevelEditor(GLViewport):
             return
 
         assert level
+
         self.mcedit.addRecentWorld(filename)
 
         try:
@@ -1944,13 +1951,15 @@ class LevelEditor(GLViewport):
 
         self.undoStack = []
         self.loadLevel(level)
+        self.clearUnsavedEdits()
+
         self.renderer.position = self.currentViewport.cameraPosition
         self.renderer.loadNearbyChunks()
 
     def loadLevel(self, level):
-        if self.level and hasattr(self.level, 'close'):
-            self.level.close()
-
+        """
+        Called to load a level, world, or dimension into the editor and display it in the viewport.
+        """
         self.level = level
 
         self.toolbar.selectTool(-1)
@@ -1965,7 +1974,6 @@ class LevelEditor(GLViewport):
         self.initWindowCaption()
         self.selectionTool.selectNone()
 
-        self.clearUnsavedEdits()
         [t.levelChanged() for t in self.toolbar.tools]
 
         if isinstance(self.level, pymclevel.MCInfdevOldLevel):
