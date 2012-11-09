@@ -909,8 +909,10 @@ class SelectionTool(EditorTool):
         glColor(r, g, b, alpha)
         glDepthMask(False)
         glEnable(GL_BLEND)
+        glEnable(GL_DEPTH_TEST)
         drawCube(BoundingBox(pos, (1, 1, 1)))
         glDepthMask(True)
+        glDisable(GL_DEPTH_TEST)
 
         drawTerrainCuttingWire(BoundingBox(pos, (1, 1, 1)),
                                (r, g, b, 0.4),
