@@ -90,17 +90,21 @@ traceback.format_list = format_list
 
 EXCEPTIONAL_API_KEY = "37eaf2a19432e268829ef4fa35921ad399bbda80"
 
+def sanitize(s):
+    import mcplatform
+    parentDir = mcplatform.parentDir
+    minecraftDir = mcplatform.minecraftDir
+    home = os.path.expanduser("~")
+
+    s = s.replace(parentDir, "[MCEdit folder]")
+    s = s.replace(minecraftDir, "[Minecraft folder]")
+    s = s.replace(home, "[User home folder]")
+    return s
+
 def get_backtrace():
     backtrace = traceback.format_exc()
     try:
-        import mcplatform
-        parentDir = mcplatform.parentDir
-        minecraftDir = mcplatform.minecraftDir
-        home = os.path.expanduser("~")
-
-        backtrace = backtrace.replace(home, "[User home folder]")
-        backtrace = backtrace.replace(parentDir, "[MCEdit folder]")
-        backtrace = backtrace.replace(minecraftDir, "[Minecraft folder]")
+        backtrace = sanitize(backtrace)
 
     except Exception, e:
         print repr(e), "while scrubbing user directories from crash log! Error not reported."
@@ -119,7 +123,11 @@ def json_crash_report():
     exception = report['exception'] = {}
     exception['backtrace'] = get_backtrace()
     exception['exception_class'] = exc_class.__name__
-    exception['message'] = str(exc_value)
+    try:
+        exception['message'] = sanitize(str(exc_value))
+    except:
+        exception['message'] = ""
+        
     exception['occurred_at'] = datetime.now().isoformat()
 
     try:
