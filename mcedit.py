@@ -476,8 +476,8 @@ class OptionsPanel(Dialog):
             ref=Settings.spaceHeight.propertyRef(),
             tooltipText="When you are this far above the top of the world, move fast and use low-detail mode.")
 
-        blockBufferRow = mceutils.IntInputRow("Block Buffer",
-            ref=Settings.blockBuffer.propertyRef(), min=1,
+        blockBufferRow = mceutils.IntInputRow("Block Buffer (MB):",
+            ref=albow.AttrRef(self, 'blockBuffer'), min=1,
             tooltipText="Amount of memory used for temporary storage.  When more than this is needed, the disk is used instead.")
 
         setWindowPlacementRow = mceutils.CheckBoxLabel("Set Window Placement",
@@ -873,7 +873,6 @@ class MCEdit(GLViewport):
                 sys.executable,
                 'https://github.com/mcedit/mcedit/downloads'
             )
-
             try:
                 update_version = app.find_update()
             except:
