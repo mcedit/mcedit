@@ -7,6 +7,7 @@ Startup, main menu, keyboard configuration, automatic updating.
 """
 import OpenGL
 import sys
+import os
 import errorreporting
 
 if "-debug" not in sys.argv:
@@ -18,7 +19,14 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-fh = logging.FileHandler('mcedit.log')
+logfile = 'mcedit.log'
+if hasattr(sys, 'frozen'):
+    import esky
+    app = esky.Esky(sys.executable)
+
+    logfile = os.path.join(app.appdir, logfile)
+
+fh = logging.FileHandler(logfile, mode="w")
 fh.setLevel(logging.DEBUG)
 
 ch = logging.StreamHandler()
