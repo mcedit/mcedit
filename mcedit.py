@@ -864,8 +864,6 @@ class MCEdit(GLViewport):
         if mcedit.droppedLevel:
             mcedit.loadFile(mcedit.droppedLevel)
 
-        # Attempt to auto-update. This entire thing will be redone
-        # with the UI update so that it doesn't block and reports progress.
         if hasattr(sys, 'frozen'):
             # We're being run from a bundle, check for updates.
             import esky
@@ -885,8 +883,8 @@ class MCEdit(GLViewport):
 
             if update_version:
                 answer = albow.ask(
-                    'An updated version is available, would you like to '
-                    'download it?',
+                    'Version "%s" is available, would you like to '
+                    'download it?' % update_version,
                     [
                         'Yes',
                         'No',
@@ -895,8 +893,35 @@ class MCEdit(GLViewport):
                     cancel=1
                 )
                 if answer == 'Yes':
-                    app.auto_update()
-                    raise SystemExit()
+                    def callback(args):
+                        status = args['status']
+                        status_texts = {
+                            'searching': "Finding updates...",
+                            'found':  "Found version {new_version}",
+                            'downloading': "Downloading: {received} / {size}",
+                            'ready': "Downloaded {path}",
+                            'installing': "Installing {new_version}",
+                            'cleaning up': "Cleaning up...",
+                            'done': "Done."
+                        }
+                        text = status_texts.get(status, 'Unknown').format(**args)
+                        if status != 'downloding':
+                            print args
+
+                        panel = Dialog()
+                        panel.idleevent = lambda event: panel.dismiss()
+                        label = albow.Label(text, width=600)
+                        panel.add(label)
+                        panel.size = (500, 250)
+                        panel.present()
+
+                    try:
+                        app.auto_update(callback)
+                    except esky.EskyVersionError:
+                        albow.alert("Failed to install update %s" % update_version)
+                    else:
+                        albow.alert("Version %s installed. Restart MCEdit to begin using it." % update_version)
+                        raise SystemExit()
 
         if mcedit.closeMinecraftWarning:
             answer = albow.ask("Warning: You must close Minecraft completely before editing. Save corruption may result. Get Satisfaction to learn more.", ["Get Satisfaction", "Don't remind me again.", "OK"], default=1, cancel=1)
