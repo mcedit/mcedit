@@ -48,11 +48,6 @@ from pymclevel.box import Vector
 
 
 
-class ToolOptions(Panel):
-    @property
-    def editor(self):
-        return self.tool.editor
-
 
 class EditorTool(object):
     surfaceBuild = False

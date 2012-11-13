@@ -14,6 +14,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from editortools.blockpicker import BlockPicker
 from editortools.blockview import BlockButton
 
+from editortools.tooloptions import ToolOptions
 from editortools.clone import BlockCopyOperation
 from pymclevel import block_fill
 from pymclevel.level import extractHeights

@@ -14,6 +14,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 
 from collections import defaultdict
 from editortools.nudgebutton import NudgeButton
+from editortools.tooloptions import ToolOptions
 from operation import Operation
 from pymclevel.box import Vector
 from fill import FillTool, BlockFillOperation
