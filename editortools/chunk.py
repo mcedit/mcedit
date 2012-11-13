@@ -304,6 +304,9 @@ class ChunkTool(EditorTool):
         try:
             with setWindowCaption("CREATING - "):
                 showProgress("Creating {0} chunks...".format(len(chunks)), createChunks, cancel=True)
+        except Exception, e:
+            traceback.print_exc()
+            alert("Failed to start the chunk generator. {0!r}".format(e))
         finally:
             self.editor.renderer.invalidateChunkMarkers()
             self.editor.renderer.loadNearbyChunks()
@@ -436,17 +439,12 @@ def GeneratorPanel():
 
         if useServer:
             def _createChunks():
-                try:
-                    if versionChoice:
-                        version = versionChoice.selectedChoice
-                    else:
-                        version = None
-                    gen = MCServerChunkGenerator(version=version)
-                except Exception, e:
-                    traceback.print_exc()
-                    alert("Failed to start the chunk generator. {0!r}".format(e))
-                    yield "Failed"
-                    return
+                if versionChoice:
+                    version = versionChoice.selectedChoice
+                else:
+                    version = None
+                gen = MCServerChunkGenerator(version=version)
+
 
                 if isinstance(arg, BoundingBox):
                     for i in gen.createLevelIter(level, arg, simulate=panel.simulate):
