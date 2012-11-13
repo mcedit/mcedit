@@ -498,7 +498,6 @@ def GeneratorPanel():
 
                         ch.needsLighting = False
                         ch.dirty = True
-                        ch.save()
 
         return _createChunks()
 
