@@ -11,6 +11,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+from editortools.thumbview import ThumbView
 
 """
 leveleditor.py
@@ -1626,7 +1627,6 @@ class LevelEditor(GLViewport):
                 del self.thumbCache[k]
 
         def createOneCopyPanel(sch):
-            from editortools.toolbasics import ThumbView
             p = GLBackground()
             p.bg_color = (0.0, 0.0, 0.0, 0.4)
             thumb = thumbCache.get(sch)
