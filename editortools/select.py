@@ -948,7 +948,7 @@ class SelectionTool(EditorTool):
 
     def setSelectionPoints(self, points):
         if points:
-            self.bottomLeftPoint, self.topRightPoint = [Vector(*p) for p in points]
+            self.bottomLeftPoint, self.topRightPoint = [Vector(*p) if p else None for p in points]
         else:
             self.bottomLeftPoint = self.topRightPoint = None
 
