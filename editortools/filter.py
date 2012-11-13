@@ -53,14 +53,14 @@ class FilterModuleOptions(Widget):
         self.pages = pages
         self.optionDict = {}
         pageTabContents = []
-        
+
         print "Creating options for ", module
         if hasattr(module, "inputs"):
             if isinstance(module.inputs, list):
                 for tabData in module.inputs:
                     title, page, pageRect = self.makeTabPage(self.tool, tabData)
                     pages.add_page(title, page)
-                    pages.set_rect(pageRect.union(pages._rect))           
+                    pages.set_rect(pageRect.union(pages._rect))
             elif isinstance(module.inputs, tuple):
                 title, page, pageRect = self.makeTabPage(self.tool, module.inputs)
                 pages.add_page(title, page)
@@ -75,7 +75,7 @@ class FilterModuleOptions(Widget):
             if(pages.current_page != None):
                 pages.show_page(pages.current_page)
             else:
-                pages.show_page(pages.pages[0])                
+                pages.show_page(pages.pages[0])
 
         for eachPage in pages.pages:
             self.optionDict = dict(self.optionDict.items() + eachPage.optionDict.items())
@@ -109,7 +109,7 @@ class FilterModuleOptions(Widget):
                         if a == "strValSize":
                             field = TextField(value=b, width=c)
                             page.optionDict[optionName] = AttrRef(field, 'value')
-                            
+
                             row = Row((Label(optionName), field))
                             rows.append(row)
                         else:
@@ -145,7 +145,7 @@ class FilterModuleOptions(Widget):
 
                 row = Row((Label(optionName), cbox))
                 rows.append(row)
-          
+
             elif isinstance(optionType, (int, float)):
                 rows.append(addNumField(self, optionName, optionType))
 
@@ -164,7 +164,7 @@ class FilterModuleOptions(Widget):
             elif optionType == "string":
                 field = TextField(value="Input String Here", width=200)
                 page.optionDict[optionName] = AttrRef(field, 'value')
-                
+
                 row = Row((Label(optionName), field))
                 rows.append(row)
 
@@ -278,28 +278,19 @@ class FilterToolPanel(Panel):
 
 
 class FilterOperation(Operation):
-    def __init__(self, level, box, filter, options):
+    def __init__(self, editor, level, box, filter, options):
+        super(FilterOperation, self).__init__(editor, level)
         self.box = box
-        self.level = level
         self.filter = filter
         self.options = options
 
     def perform(self, recordUndo=True):
         if recordUndo:
-            self.recordUndo()
+            self.undoLevel = self.extractUndo(self.level, self.box)
 
         self.filter.perform(self.level, BoundingBox(self.box), self.options)
 
         pass
-
-    def recordUndo(self):
-        self.undoSchematic = self.extractUndoSchematicFrom(self.level, self.box)
-
-    def undo(self):
-        if self.undoSchematic:
-            self.level.removeEntitiesInBox(self.box)
-            self.level.removeTileEntitiesInBox(self.box)
-            self.level.copyBlocksFrom(self.undoSchematic, BoundingBox((0, 0, 0), self.box.size), self.box.origin)
 
     def dirtyBox(self):
         return self.box
@@ -370,7 +361,7 @@ class FilterTool(EditorTool):
         with setWindowCaption("APPLYING FILTER - "):
             filterModule = self.filterModules[self.panel.filterSelect.selectedChoice]
 
-            op = FilterOperation(self.editor.level, self.selectionBox(), filterModule, self.panel.filterOptionsPanel.options)
+            op = FilterOperation(self.editor, self.editor.level, self.selectionBox(), filterModule, self.panel.filterOptionsPanel.options)
 
             self.editor.level.showProgress = showProgress
             self.performWithRetry(op)

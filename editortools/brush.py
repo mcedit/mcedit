@@ -118,8 +118,7 @@ class Modes:
                 if (cx, cz) in dirtyChunks:
                     return
                 dirtyChunks.add((cx, cz))
-                b = BoundingBox((cx * 16, 0, cz * 16), (16, 128, 16))
-                undoLevel.copyBlocksFrom(op.level, b, b.origin, create=True)
+                undoLevel.copyChunkFrom(op.level, cx, cz)
 
             doomedBlock = op.level.blockAt(*point)
             doomedBlockData = op.level.blockDataAt(*point)
@@ -176,7 +175,7 @@ class Modes:
 
             showProgress("Flood fill...", spread([point]), cancel=True)
             op.editor.invalidateChunks(dirtyChunks)
-            op.undoSchematic = undoLevel
+            op.undoLevel = undoLevel
 
     class Replace(Fill):
         name = "Replace"
@@ -371,12 +370,13 @@ class Modes:
 
 class BrushOperation(Operation):
 
-    def __init__(self, editor, points, options):
+    def __init__(self, editor, level, points, options):
+        super(BrushOperation, self).__init__(editor, level)
+
         # if options is None: options = {}
 
         self.options = options
         self.editor = editor
-        self.level = editor.level
         if isinstance(points[0], (int, float)):
             points = [points]
 
@@ -395,7 +395,6 @@ class BrushOperation(Operation):
         boxes = [self.brushMode.brushBoxForPointAndOptions(p, options) for p in points]
         self._dirtyBox = reduce(lambda a, b: a.union(b), boxes)
 
-    undoSchematic = None
     brushStyles = ["Round", "Square", "Diamond"]
     # brushModeNames = ["Fill", "Flood Fill", "Replace", "Erode", "Topsoil", "Paste"]  # "Smooth", "Flatten", "Raise", "Lower", "Build", "Erode", "Evert"]
     brushModeClasses = [
@@ -420,29 +419,9 @@ class BrushOperation(Operation):
     def dirtyBox(self):
         return self._dirtyBox
 
-    def undo(self):
-        if self.undoSchematic:
-            self.level.removeEntitiesInBox(self._dirtyBox)
-            self.level.removeTileEntitiesInBox(self._dirtyBox)
-
-            if self.brushMode.name == "Flood Fill":
-                i = self.level.copyBlocksFromIter(self.undoSchematic,
-                                          self.undoSchematic.bounds,
-                                          self.undoSchematic.bounds.origin
-                                          )
-
-            else:
-                i = self.level.copyBlocksFromIter(self.undoSchematic,
-                                          BoundingBox((0, 0, 0), self._dirtyBox.size),
-                                          self._dirtyBox.origin
-                                          )
-
-            showProgress("Undoing brush...", i)
-            self.editor.invalidateChunks(self.undoSchematic.allChunks)
-
     def perform(self, recordUndo=True):
         if recordUndo:
-            self.undoSchematic = self.extractUndoSchematicFrom(self.level, self._dirtyBox)
+            self.undoLevel = self.extractUndo(self.level, self._dirtyBox)
 
         def _perform():
             yield 0, len(self.points), "Applying {0} brush...".format(self.brushMode.name)
@@ -849,8 +828,9 @@ class BrushTool(CloneTool):
             self.draggedPositions = self.draggedPositions[-1:]
 
         op = BrushOperation(self.editor,
-            self.draggedPositions,
-            self.getBrushOptions())
+                            self.editor.level,
+                            self.draggedPositions,
+                            self.getBrushOptions())
         self.performWithRetry(op)
 
         box = op.dirtyBox()

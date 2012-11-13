@@ -191,9 +191,10 @@ class SelectionToolPanel(Panel):
         self.shrink_wrap()
 
 
-class NudgeBlocksOperation (Operation):
-    def __init__(self, editor, sourceBox, direction):
-        self.editor = editor
+class NudgeBlocksOperation(Operation):
+    def __init__(self, editor, level, sourceBox, direction):
+        super(NudgeBlocksOperation, self).__init__(editor, level)
+
         self.sourceBox = sourceBox
         self.destBox = BoundingBox(sourceBox.origin + direction, sourceBox.size)
         self.nudgeSelection = NudgeSelectionOperation(editor.selectionTool, direction)
@@ -207,7 +208,7 @@ class NudgeBlocksOperation (Operation):
         if tempSchematic:
             dirtyBox = self.dirtyBox()
             if recordUndo:
-                self.undoSchematic = self.extractUndoSchematicFrom(level, dirtyBox)
+                self.undoLevel = self.extractUndo(level, dirtyBox)
 
             level.fillBlocks(self.sourceBox, level.materials.Air)
             level.removeTileEntitiesInBox(self.sourceBox)
@@ -221,12 +222,8 @@ class NudgeBlocksOperation (Operation):
             self.nudgeSelection.perform(recordUndo)
 
     def undo(self):
-        if self.undoSchematic:
-            self.editor.level.removeTileEntitiesInBox(self.destBox)
-            self.editor.level.removeEntitiesInBox(self.destBox)
-            self.editor.level.copyBlocksFrom(self.undoSchematic, self.undoSchematic.bounds, self.dirtyBox().origin)
-            self.editor.invalidateBox(self.dirtyBox())
-            self.nudgeSelection.undo()
+        super(NudgeBlocksOperation, self).undo()
+        self.nudgeSelection.undo()
 
 
 class SelectionTool(EditorTool):
@@ -388,7 +385,7 @@ class SelectionTool(EditorTool):
     def nudgeBlocks(self, dir):
         if key.get_mods() & KMOD_SHIFT:
             dir = dir * (16, 16, 16)
-        op = NudgeBlocksOperation(self.editor, self.selectionBox(), dir)
+        op = NudgeBlocksOperation(self.editor, self.editor.level, self.selectionBox(), dir)
 
         self.performWithRetry(op)
         self.editor.addOperation(op)
@@ -1018,7 +1015,7 @@ class SelectionTool(EditorTool):
                     level.addEntities(self.undoEntities)
                     editor.renderer.invalidateEntitiesInBox(box)
 
-            op = DeleteEntitiesOperation()
+            op = DeleteEntitiesOperation(self.editor, self.editor.level)
             self.performWithRetry(op, recordUndo)
             if recordUndo:
                 self.editor.addOperation(op)
@@ -1091,6 +1088,7 @@ class SelectionOperation(Operation):
     changedLevel = False
 
     def __init__(self, selectionTool, points):
+        super(SelectionOperation, self).__init__(selectionTool.editor, selectionTool.editor.level)
         self.selectionTool = selectionTool
         self.points = points
 
@@ -1105,14 +1103,14 @@ class SelectionOperation(Operation):
         self.points = points
 
 
-class NudgeSelectionOperation (Operation):
+class NudgeSelectionOperation(Operation):
     changedLevel = False
 
     def __init__(self, selectionTool, direction):
+        super(NudgeSelectionOperation, self).__init__(selectionTool.editor, selectionTool.editor.level)
         self.selectionTool = selectionTool
         self.direction = direction
         self.oldPoints = selectionTool.getSelectionPoints()
-
         self.newPoints = [p + direction for p in self.oldPoints]
 
     def perform(self, recordUndo=True):

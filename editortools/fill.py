@@ -20,8 +20,7 @@ FillSettings.chooseBlockImmediately = FillSettings("Choose Block Immediately", T
 
 class BlockFillOperation(Operation):
     def __init__(self, editor, destLevel, destBox, blockInfo, blocksToReplace):
-        self.editor = editor
-        self.destLevel = destLevel
+        super(BlockFillOperation, self).__init__(editor, destLevel)
         self.destBox = destBox
         self.blockInfo = blockInfo
         self.blocksToReplace = blocksToReplace
@@ -31,22 +30,14 @@ class BlockFillOperation(Operation):
 
     def perform(self, recordUndo=True):
         if recordUndo:
-            self.undoSchematic = self.extractUndoSchematicFrom(self.destLevel, self.destBox)
+            self.undoLevel = self.extractUndo(self.level, self.destBox)
 
         destBox = self.destBox
-        if self.destLevel.bounds == self.destBox:
+        if self.level.bounds == self.destBox:
             destBox = None
 
-        fill = self.destLevel.fillBlocksIter(destBox, self.blockInfo, blocksToReplace=self.blocksToReplace)
+        fill = self.level.fillBlocksIter(destBox, self.blockInfo, blocksToReplace=self.blocksToReplace)
         showProgress("Replacing blocks...", fill, cancel=True)
-
-    def undo(self):
-        if self.undoSchematic:
-            self.destLevel.removeEntitiesInBox(self.destBox)
-            self.destLevel.removeTileEntitiesInBox(self.destBox)
-            with setWindowCaption("Undoing - "):
-                i = self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.destBox.size), self.destBox.origin)
-                showProgress("Copying {0:n} blocks...".format(self.destBox.volume), i)
 
     def bufferSize(self):
         return self.destBox.volume * 2

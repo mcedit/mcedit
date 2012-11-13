@@ -11,6 +11,9 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import atexit
+import shutil
+import tempfile
 
 from OpenGL.GL import *
 from pymclevel import *
@@ -96,19 +99,27 @@ class NudgeButton(GLBackground):
 
 class Operation(object):
     changedLevel = True
+    undoLevel = None
 
-    def extractUndoSchematicFrom(self, level, box):
-        if box.volume > 131072:
-            sch = showProgress("Recording undo...", level.extractAnySchematicIter(box), cancel=True)
-        else:
-            sch = level.extractAnySchematic(box)
+    def __init__(self, editor, level):
+        self.editor = editor
+        self.level = level
 
-        if sch == "Canceled":
-            raise Cancel
-        if sch is None:
-            sch = MCSchematic((0, 0, 0))
+    def extractUndo(self, level, box):
+        undoPath = tempfile.mkdtemp("mceditundo")
+        undoLevel = MCInfdevOldLevel(undoPath, create=True)
+        atexit.register(shutil.rmtree, undoPath, True)
 
-        return sch
+        def _extractUndo():
+            yield 0, 0, "Recording undo..."
+            for i, (cx, cz) in enumerate(box.chunkPositions):
+                undoLevel.copyChunkFrom(level, cx, cz)
+                yield i, box.chunkCount, "Copying chunk %s..." % ((cx, cz),)
+            undoLevel.saveInPlace()
+
+        showProgress("Recording undo...", _extractUndo())
+
+        return undoLevel
 
     # represents a single undoable operation
     def perform(self, recordUndo=True):
@@ -116,9 +127,21 @@ class Operation(object):
 
     def undo(self):
         """ Undo the operation. Ought to leave the Operation in a state where it can be performed again.
-            Returns a BoundingBox containing all of the modified areas of the level. """
-        pass
-    undoSchematic = None
+            Default implementation copies all chunks in undoLevel back into level. Non-chunk-based operations
+            should override this."""
+
+        if self.undoLevel:
+
+            def _undo():
+                yield 0, 0, "Undoing..."
+                for i, (cx, cz) in enumerate(self.undoLevel.allChunks):
+                    self.level.copyChunkFrom(self.undoLevel, cx, cz)
+                    yield i, self.undoLevel.chunkCount, "Copying chunk %s..." % ((cx, cz),)
+
+
+            showProgress("Undoing...", _undo())
+            self.editor.invalidateChunks(self.undoLevel.allChunks)
+
 
     def dirtyBox(self):
         """ The region modified by the operation.

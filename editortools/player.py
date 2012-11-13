@@ -24,9 +24,11 @@ class PlayerMoveOperation(Operation):
     undoPos = None
 
     def __init__(self, tool, pos, player="Player", yp=(None, None)):
-        self.tool, self.pos = tool, pos
-        self.yp = yp
+        super(PlayerMoveOperation, self).__init__(tool.editor, tool.editor.level)
+        self.tool = tool
+        self.pos = pos
         self.player = player
+        self.yp = yp
 
     def perform(self, recordUndo=True):
         try:

@@ -79,14 +79,14 @@ class CoordsInput(Widget):
 
 class BlockCopyOperation(Operation):
     def __init__(self, editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater):
-        self.editor = editor
+        super(BlockCopyOperation, self).__init__(editor, destLevel)
         self.sourceLevel = sourceLevel
         self.sourceBox = sourceBox
-        self.destLevel = destLevel
         self.destPoint = Vector(*destPoint)
         self.copyAir = copyAir
         self.copyWater = copyWater
-        self.sourceBox, self.destPoint = block_copy.adjustCopyParameters(self.destLevel, self.sourceLevel, self.sourceBox, self.destPoint)
+        self.sourceBox, self.destPoint = block_copy.adjustCopyParameters(self.level, self.sourceLevel, self.sourceBox,
+                                                                         self.destPoint)
 
     def dirtyBox(self):
         return BoundingBox(self.destPoint, self.sourceBox.size)
@@ -94,16 +94,12 @@ class BlockCopyOperation(Operation):
     def name(self):
         return "Copy {0} blocks".format(self.sourceBox.volume)
 
-    def recordUndo(self):
-        self.undoSchematic = self.extractUndoSchematicFrom(self.destLevel, BoundingBox(self.destPoint, self.sourceBox.size))
-
     def perform(self, recordUndo=True):
-        dirtyBox = self.dirtyBox()
         sourceBox = self.sourceBox
-        destBox = BoundingBox(self.destPoint, sourceBox.size)
 
         if recordUndo:
-            self.recordUndo()
+            self.undoLevel = self.extractUndo(self.level, BoundingBox(self.destPoint, self.sourceBox.size))
+
 
         blocksToCopy = None
         if not (self.copyAir and self.copyWater):
@@ -116,24 +112,17 @@ class BlockCopyOperation(Operation):
                 blocksToCopy.remove(9)
 
         with setWindowCaption("Copying - "):
-            i = self.destLevel.copyBlocksFromIter(self.sourceLevel, self.sourceBox, self.destPoint, blocksToCopy, create=True)
+            i = self.level.copyBlocksFromIter(self.sourceLevel, self.sourceBox, self.destPoint, blocksToCopy, create=True)
             showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
-
-    def undo(self):
-        if self.undoSchematic:
-            self.destLevel.removeEntitiesInBox(BoundingBox(self.destPoint, self.sourceBox.size))
-            self.destLevel.removeTileEntitiesInBox(BoundingBox(self.destPoint, self.sourceBox.size))
-
-            with setWindowCaption("Undoing - "):
-                i = self.destLevel.copyBlocksFromIter(self.undoSchematic, BoundingBox((0, 0, 0), self.sourceBox.size), self.destPoint, create=True)
-                showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
 
     def bufferSize(self):
         return 123456
 
 
-class CloneOperation (Operation):
+class CloneOperation(Operation):
     def __init__(self, editor, sourceLevel, sourceBox, originSourceBox, destLevel, destPoint, copyAir, copyWater, repeatCount):
+        super(CloneOperation, self).__init__(editor, destLevel)
+
         self.blockCopyOps = []
         dirtyBoxes = []
         if repeatCount > 1:  # clone tool only
