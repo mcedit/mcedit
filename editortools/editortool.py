@@ -1,54 +1,7 @@
-"""Copyright (c) 2010-2012 David Rio Vierra
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
-import atexit
-import shutil
-import tempfile
-
-from editortools.editortool import EditorTool
-from OpenGL.GL import *
-from editortools.blockpicker import BlockPicker
-from editortools.thumbview import ThumbView, BlockThumbView
-from operation import Operation
-from pymclevel import *
-import pymclevel
-
-from albow import *
-from albow.openglwidgets import GLPerspective
+from OpenGL import GL
 import numpy
-from numpy import *
-
-from pygame import key
-from pygame.locals import *
-
-from mceutils import *
-import mcplatform
 from depths import DepthOffset
-from renderer import *
-import bresenham
-import config
-import operator
-import pymclevel
-from glutils import *
-from OpenGL.GL.images import glTexImage2D
-from glbackground import *
-from albow.dialogs import Dialog
-from pymclevel.mclevelbase import exhaust
-from albow.root import Cancel
-from pymclevel.box import Vector
-
-
-
+from pymclevel import BoundingBox
 
 class EditorTool(object):
     surfaceBuild = False
@@ -95,10 +48,10 @@ class EditorTool(object):
             return
         self.previewRenderer.origin = map(lambda a, b: a - b, origin, self.level.bounds.origin)
 
-        glPolygonOffset(DepthOffset.ClonePreview, DepthOffset.ClonePreview)
-        glEnable(GL_POLYGON_OFFSET_FILL)
+        GL.glPolygonOffset(DepthOffset.ClonePreview, DepthOffset.ClonePreview)
+        GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
         self.previewRenderer.draw()
-        glDisable(GL_POLYGON_OFFSET_FILL)
+        GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)
 
     def rotate(self, amount=1):
         pass
@@ -227,7 +180,7 @@ class EditorTool(object):
             return None, None
 
         cp = self.editor.mainViewport.cameraPosition
-        distances = dict((sum(map(lambda a, b: (b - a) ** 2, cp, point)), (face, point)) for face, point in points.iteritems())
+        distances = dict((numpy.sum(map(lambda a, b: (b - a) ** 2, cp, point)), (face, point)) for face, point in points.iteritems())
         if not len(distances):
             return None, None
 
@@ -262,7 +215,7 @@ class EditorTool(object):
                 facenormal[d] = 1
                 cameraBehind = cp[d] - box.maximum[d] < 0
 
-            if dot(facenormal, cv) > 0 or cameraBehind:
+            if numpy.dot(facenormal, cv) > 0 or cameraBehind:
                 # the face adjacent to the clicked edge faces away from the cam
                 return distances[max(distances.iterkeys())]
 
@@ -346,6 +299,3 @@ class EditorTool(object):
         except MemoryError:
             self.editor.invalidateAllChunks()
             op.perform(recordUndo)
-
-
-Operation.maxBlocks = EditorTool.maxBlocks

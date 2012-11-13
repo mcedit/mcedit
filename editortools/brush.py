@@ -13,6 +13,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from editortools.blockpicker import BlockPicker
 from editortools.blockview import BlockButton
+from editortools.editortool import EditorTool
 
 from editortools.tooloptions import ToolOptions
 from editortools.clone import BlockCopyOperation
