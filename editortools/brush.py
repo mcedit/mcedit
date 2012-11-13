@@ -21,6 +21,8 @@ import tempfile
 import itertools
 from toolbasics import *
 import logging
+from operation import Operation
+
 log = logging.getLogger(__name__)
 
 

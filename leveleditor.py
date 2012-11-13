@@ -58,8 +58,8 @@ from albow.openglwidgets import GLOrtho, GLViewport
 from pygame import display, event, key, KMOD_ALT, KMOD_CTRL, KMOD_LALT, KMOD_META, KMOD_RALT, KMOD_SHIFT, mouse, MOUSEMOTION
 
 from depths import DepthOffset
+from editortools.operation import Operation
 from editortools.chunk import GeneratorPanel
-from editortools.toolbasics import Operation
 from glbackground import GLBackground, Panel
 from glutils import gl, Texture
 from mcplatform import askSaveFile
