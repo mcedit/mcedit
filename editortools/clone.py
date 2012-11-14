@@ -192,12 +192,15 @@ class CloneOperation(Operation):
 
     def perform(self, recordUndo=True):
         if recordUndo:
-            [i.recordUndo() for i in self.blockCopyOps]
+            chunks = set()
+            for op in self.blockCopyOps:
+                chunks.update(op.dirtyBox().chunkPositions)
+            self.undoLevel = self.extractUndoChunks(self.level, chunks)
         [i.perform(False) for i in self.blockCopyOps]
         [i.perform(recordUndo) for i in self.selectionOps]
 
     def undo(self):
-        [i.undo() for i in self.blockCopyOps]
+        super(CloneOperation, self).undo()
         [i.undo() for i in self.selectionOps]
 
 

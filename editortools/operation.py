@@ -13,15 +13,23 @@ class Operation(object):
         self.level = level
 
     def extractUndo(self, level, box):
+        return self.extractUndoChunks(level, box.chunkPositions, box.chunkCount)
+
+    def extractUndoChunks(self, level, chunks, chunkCount = None):
         undoPath = tempfile.mkdtemp("mceditundo")
         undoLevel = pymclevel.MCInfdevOldLevel(undoPath, create=True)
         atexit.register(shutil.rmtree, undoPath, True)
+        if not chunkCount:
+            try:
+                chunkCount = len(chunks)
+            except TypeError:
+                chunkCount = -1
 
         def _extractUndo():
             yield 0, 0, "Recording undo..."
-            for i, (cx, cz) in enumerate(box.chunkPositions):
+            for i, (cx, cz) in enumerate(chunks):
                 undoLevel.copyChunkFrom(level, cx, cz)
-                yield i, box.chunkCount, "Copying chunk %s..." % ((cx, cz),)
+                yield i, chunkCount, "Copying chunk %s..." % ((cx, cz),)
             undoLevel.saveInPlace()
 
         showProgress("Recording undo...", _extractUndo())
