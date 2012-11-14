@@ -11,10 +11,20 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import traceback
+from OpenGL import GL
+import numpy
+from numpy import newaxis
+
+from albow import Label, ValueDisplay, AttrRef, Button, Column, ask, Row, alert, Widget, Menu
 from editortools.editortool import EditorTool
+from glbackground import Panel
+from glutils import DisplayList, gl
+from mceutils import alertException, setWindowCaption, showProgress, ChoiceButton, IntInputRow, CheckBoxLabel
+import mcplatform
+import pymclevel
 from pymclevel.minecraft_server import MCServerChunkGenerator
 
-from toolbasics import *
 from albow.dialogs import Dialog
 
 
@@ -96,7 +106,7 @@ class ChunkTool(EditorTool):
         return "Click and drag to select chunks. Hold ALT to deselect chunks. Hold SHIFT to select chunks."
 
     def toolEnabled(self):
-        return isinstance(self.editor.level, ChunkedLevelMixin)
+        return isinstance(self.editor.level, pymclevel.ChunkedLevelMixin)
 
     _selectedChunks = None
     _displayList = None
@@ -129,30 +139,30 @@ class ChunkTool(EditorTool):
                     positions.append([ch])
 
         color = self.editor.selectionTool.selectionColor + (0.3, )
-        glColor(*color)
-        with gl.glEnable(GL_BLEND):
+        GL.glColor(*color)
+        with gl.glEnable(GL.GL_BLEND):
 
             import renderer
             sizedChunks = renderer.chunkMarkers(self._selectedChunks)
             for size, chunks in sizedChunks.iteritems():
                 if not len(chunks):
                     continue
-                chunks = array(chunks, dtype='float32')
+                chunks = numpy.array(chunks, dtype='float32')
 
-                chunkPosition = zeros(shape=(chunks.shape[0], 4, 3), dtype='float32')
-                chunkPosition[..., (0, 2)] = array(((0, 0), (0, 1), (1, 1), (1, 0)), dtype='float32')
+                chunkPosition = numpy.zeros(shape=(chunks.shape[0], 4, 3), dtype='float32')
+                chunkPosition[..., (0, 2)] = numpy.array(((0, 0), (0, 1), (1, 1), (1, 0)), dtype='float32')
                 chunkPosition[..., (0, 2)] *= size
                 chunkPosition[..., (0, 2)] += chunks[:, newaxis, :]
                 chunkPosition *= 16
                 chunkPosition[..., 1] = self.editor.level.Height
-                glVertexPointer(3, GL_FLOAT, 0, chunkPosition.ravel())
+                GL.glVertexPointer(3, GL.GL_FLOAT, 0, chunkPosition.ravel())
                 #chunkPosition *= 8
-                glDrawArrays(GL_QUADS, 0, len(chunkPosition) * 4)
+                GL.glDrawArrays(GL.GL_QUADS, 0, len(chunkPosition) * 4)
 
         for d, points, positions in lines:
             if 0 == len(positions):
                 continue
-            vertexArray = zeros((len(positions), 4, 3), dtype='float32')
+            vertexArray = numpy.zeros((len(positions), 4, 3), dtype='float32')
             vertexArray[..., [0, 2]] = positions
             vertexArray.shape = len(positions), 2, 2, 3
 
@@ -169,14 +179,14 @@ class ChunkTool(EditorTool):
 
             vertexArray[..., 1, :, 1] = self.editor.level.Height
 
-            glVertexPointer(3, GL_FLOAT, 0, vertexArray)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-            glDrawArrays(GL_QUADS, 0, len(positions) * 4)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-            with gl.glEnable(GL_BLEND, GL_DEPTH_TEST):
-                glDepthMask(False)
-                glDrawArrays(GL_QUADS, 0, len(positions) * 4)
-                glDepthMask(True)
+            GL.glVertexPointer(3, GL.GL_FLOAT, 0, vertexArray)
+            GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE)
+            GL.glDrawArrays(GL.GL_QUADS, 0, len(positions) * 4)
+            GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL)
+            with gl.glEnable(GL.GL_BLEND, GL.GL_DEPTH_TEST):
+                GL.glDepthMask(False)
+                GL.glDrawArrays(GL.GL_QUADS, 0, len(positions) * 4)
+                GL.glDepthMask(True)
 
     @property
     def worldTooltipText(self):
@@ -318,7 +328,7 @@ class ChunkTool(EditorTool):
             try:
                 chunk = self.editor.level.getChunk(*cpos)
                 chunk.TerrainPopulated = False
-            except ChunkNotPresent:
+            except pymclevel.ChunkNotPresent:
                 continue
         self.editor.renderer.invalidateChunks(self.selectedChunks(), layers=["TerrainPopulated"])
 
@@ -328,7 +338,7 @@ class ChunkTool(EditorTool):
             try:
                 chunk = self.editor.level.getChunk(*cpos)
                 chunk.TerrainPopulated = True
-            except ChunkNotPresent:
+            except pymclevel.ChunkNotPresent:
                 continue
         self.editor.renderer.invalidateChunks(self.selectedChunks(), layers=["TerrainPopulated"])
 
@@ -447,7 +457,7 @@ def GeneratorPanel():
                 gen = MCServerChunkGenerator(version=version)
 
 
-                if isinstance(arg, BoundingBox):
+                if isinstance(arg, pymclevel.BoundingBox):
                     for i in gen.createLevelIter(level, arg, simulate=panel.simulate):
                         yield i
                 else:
@@ -457,8 +467,8 @@ def GeneratorPanel():
         else:
             def _createChunks():
                 height = panel.chunkHeight
-                grass = panel.grass and alphaMaterials.Grass.ID or alphaMaterials.Dirt.ID
-                if isinstance(arg, BoundingBox):
+                grass = panel.grass and pymclevel.alphaMaterials.Grass.ID or pymclevel.alphaMaterials.Dirt.ID
+                if isinstance(arg, pymclevel.BoundingBox):
                     chunks = list(arg.chunkPositions)
                 else:
                     chunks = arg
@@ -486,10 +496,10 @@ def GeneratorPanel():
                             grassHeight = max(0, height - 1)
 
                             ch.Blocks[:, :, grassHeight] = grass
-                            ch.Blocks[:, :, stoneHeight:grassHeight] = alphaMaterials.Dirt.ID
-                            ch.Blocks[:, :, :stoneHeight] = alphaMaterials.Stone.ID
+                            ch.Blocks[:, :, stoneHeight:grassHeight] = pymclevel.alphaMaterials.Dirt.ID
+                            ch.Blocks[:, :, :stoneHeight] = pymclevel.alphaMaterials.Stone.ID
 
-                            ch.Blocks[:, :, 0] = alphaMaterials.Bedrock.ID
+                            ch.Blocks[:, :, 0] = pymclevel.alphaMaterials.Bedrock.ID
                             ch.SkyLight[:, :, height:] = maxskylight
                             if maxskylight:
                                 ch.HeightMap[:] = height

@@ -11,13 +11,22 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+from OpenGL import GL
+import numpy
+import pygame
+from albow import Label, Button, Column
+from depths import DepthOffset
 from editortools.blockpicker import BlockPicker
 from editortools.blockview import BlockButton
 from editortools.editortool import EditorTool
 from editortools.tooloptions import ToolOptions
+from glbackground import Panel
+from glutils import Texture
+from mceutils import showProgress, CheckBoxLabel, alertException, setWindowCaption
 from operation import Operation
 
-from toolbasics import *
+import config
+import pymclevel
 
 FillSettings = config.Settings("Fill")
 FillSettings.chooseBlockImmediately = FillSettings("Choose Block Immediately", True)
@@ -147,8 +156,8 @@ class FillToolOptions(ToolOptions):
 
 class FillTool(EditorTool):
     toolIconName = "fill"
-    _blockInfo = alphaMaterials.Stone
-    replaceBlockInfo = alphaMaterials.Air
+    _blockInfo = pymclevel.alphaMaterials.Stone
+    replaceBlockInfo = pymclevel.alphaMaterials.Air
     tooltipText = "Fill and Replace\nRight-click for options"
     replacing = False
 
@@ -279,15 +288,15 @@ class FillTool(EditorTool):
                 w, h = terrainTexture.data.shape[:2]
                 s = s * w / 256
                 t = t * h / 256
-                texData = array(terrainTexture.data[t:t + h / 16, s:s + w / 16])
-                glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, w / 16, h / 16, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texData)
+                texData = numpy.array(terrainTexture.data[t:t + h / 16, s:s + w / 16])
+                GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, w / 16, h / 16, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texData)
             return _func
 
         for type in range(256):
             self.blockTextures[type] = Texture(blockTexFunc(type))
 
     def drawToolReticle(self):
-        if key.get_mods() & KMOD_ALT:
+        if pygame.key.get_mods() & pygame.KMOD_ALT:
             # eyedropper mode
             self.editor.drawWireCubeReticle(color=(0.2, 0.6, 0.9, 1.0))
 
@@ -304,22 +313,22 @@ class FillTool(EditorTool):
         if blockInfo:
             tex = self.blockTextures[blockInfo.ID]
             # color = (1.5 - alpha, 1.0, 1.5 - alpha, alpha - 0.35)
-            glMatrixMode(GL_TEXTURE)
-            glPushMatrix()
-            glScale(16., 16., 16.)
+            GL.glMatrixMode(GL.GL_TEXTURE)
+            GL.glPushMatrix()
+            GL.glScale(16., 16., 16.)
 
         else:
             tex = None
             # color = (1.0, 0.3, 0.3, alpha - 0.35)
 
-        glPolygonOffset(DepthOffset.FillMarkers, DepthOffset.FillMarkers)
+        GL.glPolygonOffset(DepthOffset.FillMarkers, DepthOffset.FillMarkers)
         self.editor.drawConstructionCube(self.selectionBox(),
                                          color,
                                          texture=tex)
 
         if blockInfo:
-            glMatrixMode(GL_TEXTURE)
-            glPopMatrix()
+            GL.glMatrixMode(GL.GL_TEXTURE)
+            GL.glPopMatrix()
 
     @property
     def statusText(self):
@@ -327,7 +336,7 @@ class FillTool(EditorTool):
 
     @property
     def worldTooltipText(self):
-        if key.get_mods() & KMOD_ALT:
+        if pygame.key.get_mods() & pygame.KMOD_ALT:
             try:
                 if self.editor.blockFaceUnderCursor is None:
                     return
@@ -344,7 +353,7 @@ class FillTool(EditorTool):
 
     @alertException
     def mouseDown(self, evt, pos, dir):
-        if key.get_mods() & KMOD_ALT:
+        if pygame.key.get_mods() & pygame.KMOD_ALT:
             id = self.editor.level.blockAt(*pos)
             data = self.editor.level.blockDataAt(*pos)
 

@@ -11,12 +11,18 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import os
+import traceback
+from albow import FloatField, IntField, AttrRef, Row, Label, Widget, TabPanel, TextField, CheckBox, Column, Button
 from editortools.blockview import BlockButton
 from editortools.editortool import EditorTool
+from glbackground import Panel
+from mceutils import ChoiceButton, alertException, setWindowCaption, showProgress
+import mcplatform
 from operation import Operation
-from toolbasics import *
-from albow.dialogs import wrapped_label
-from albow import *
+from albow.dialogs import wrapped_label, alert
+import pymclevel
+from pymclevel import BoundingBox
 
 
 def alertFilterException(func):
@@ -152,9 +158,9 @@ class FilterModuleOptions(Widget):
             elif isinstance(optionType, (int, float)):
                 rows.append(addNumField(self, optionName, optionType))
 
-            elif optionType == "blocktype" or isinstance(optionType, materials.Block):
+            elif optionType == "blocktype" or isinstance(optionType, pymclevel.materials.Block):
                 blockButton = BlockButton(tool.editor.level.materials)
-                if isinstance(optionType, materials.Block):
+                if isinstance(optionType, pymclevel.materials.Block):
                     blockButton.blockInfo = optionType
 
                 row = Column((Label(optionName), blockButton))

@@ -11,13 +11,18 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+from OpenGL import GL
+import numpy
+from albow import TableView, TableColumn, Label, Button, Column, CheckBox, AttrRef, Row, ask, alert
+import config
 from editortools.editortool import EditorTool
 from editortools.tooloptions import ToolOptions
+from glbackground import Panel
+from glutils import DisplayList
+from mceutils import loadPNGTexture, alertException, drawTerrainCuttingWire, drawCube
 from operation import Operation
-
-from toolbasics import *
-import urllib
-from pymclevel.box import FloatBox
+import pymclevel
+from pymclevel.box import BoundingBox, FloatBox
 import logging
 log = logging.getLogger(__name__)
 
@@ -50,7 +55,7 @@ class PlayerMoveOperation(Operation):
             level.setPlayerDimension(level.dimNo, self.player)
             self.tool.markerList.invalidate()
 
-        except PlayerNotFound, e:
+        except pymclevel.PlayerNotFound, e:
             print "Player move failed: ", e
 
     def undo(self):
@@ -86,7 +91,7 @@ def positionValid(level, pos):
 class PlayerSpawnMoveOperation(PlayerMoveOperation):
     def perform(self, recordUndo=True):
         level = self.tool.editor.level
-        if isinstance(level, MCInfdevOldLevel):
+        if isinstance(level, pymclevel.MCInfdevOldLevel):
             if not positionValid(level, self.pos):
                 if SpawnSettings.spawnProtection.get():
                     raise SpawnPositionInvalid("You cannot have two air blocks at Y=63 and Y=64 in your spawn point's column. Additionally, you cannot have a solid block in the three blocks above your spawn point. It's weird, I know.")
@@ -178,7 +183,7 @@ class PlayerPositionTool(EditorTool):
             self.editor.mainViewport.pitch = p
             self.editor.mainViewport.stopMoving()
             self.editor.mainViewport.invalidate()
-        except PlayerNotFound:
+        except pymclevel.PlayerNotFound:
             pass
 
     def gotoPlayer(self):
@@ -196,7 +201,7 @@ class PlayerPositionTool(EditorTool):
 
             self.editor.mainViewport.cameraPosition = pos
             self.editor.mainViewport.stopMoving()
-        except PlayerNotFound:
+        except pymclevel.PlayerNotFound:
             pass
 
     def __init__(self, *args):
@@ -272,17 +277,17 @@ class PlayerPositionTool(EditorTool):
         x, y, z = pos
 
         #x,y,z=map(lambda p,d: p+d, pos, direction)
-        glEnable(GL_BLEND)
-        glColor(1.0, 1.0, 1.0, 0.5)
+        GL.glEnable(GL.GL_BLEND)
+        GL.glColor(1.0, 1.0, 1.0, 0.5)
         self.drawCharacterHead(x + 0.5, y + 0.75, z + 0.5)
-        glDisable(GL_BLEND)
+        GL.glDisable(GL.GL_BLEND)
 
-        glEnable(GL_DEPTH_TEST)
+        GL.glEnable(GL.GL_DEPTH_TEST)
         self.drawCharacterHead(x + 0.5, y + 0.75, z + 0.5)
         drawTerrainCuttingWire(BoundingBox((x, y, z), (1, 1, 1)))
         drawTerrainCuttingWire(BoundingBox((x, y - 1, z), (1, 1, 1)))
         #drawTerrainCuttingWire( BoundingBox((x,y-2,z), (1,1,1)) )
-        glDisable(GL_DEPTH_TEST)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
     markerLevel = None
 
@@ -293,10 +298,10 @@ class PlayerPositionTool(EditorTool):
         self.markerList.call(self._drawToolMarkers)
 
     def _drawToolMarkers(self):
-        glColor(1.0, 1.0, 1.0, 0.5)
+        GL.glColor(1.0, 1.0, 1.0, 0.5)
 
-        glEnable(GL_DEPTH_TEST)
-        glMatrixMode(GL_MODELVIEW)
+        GL.glEnable(GL.GL_DEPTH_TEST)
+        GL.glMatrixMode(GL.GL_MODELVIEW)
 
         for player in self.editor.level.players:
             try:
@@ -306,36 +311,36 @@ class PlayerPositionTool(EditorTool):
                 if dim != self.editor.level.dimNo:
                     continue
                 x, y, z = pos
-                glPushMatrix()
-                glTranslate(x, y, z)
-                glRotate(-yaw, 0, 1, 0)
-                glRotate(pitch, 1, 0, 0)
-                glColor(1, 1, 1, 1)
+                GL.glPushMatrix()
+                GL.glTranslate(x, y, z)
+                GL.glRotate(-yaw, 0, 1, 0)
+                GL.glRotate(pitch, 1, 0, 0)
+                GL.glColor(1, 1, 1, 1)
                 self.drawCharacterHead(0, 0, 0)
-                glPopMatrix()
-                #glEnable(GL_BLEND)
+                GL.glPopMatrix()
+                #GL.glEnable(GL.GL_BLEND)
                 drawTerrainCuttingWire(FloatBox((x - .5, y - .5, z - .5), (1, 1, 1)),
                                        c0=(0.3, 0.9, 0.7, 1.0),
                                        c1=(0, 0, 0, 0),
                                        )
 
-                #glDisable(GL_BLEND)
+                #GL.glDisable(GL.GL_BLEND)
 
             except Exception, e:
                 print repr(e)
                 continue
 
-        glDisable(GL_DEPTH_TEST)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
     def drawCharacterHead(self, x, y, z):
-        glEnable(GL_CULL_FACE)
+        GL.glEnable(GL.GL_CULL_FACE)
         origin = (x - 0.25, y - 0.25, z - 0.25)
         size = (0.5, 0.5, 0.5)
         box = FloatBox(origin, size)
 
         drawCube(box,
                  texture=self.charTex, textureVertices=self.texVerts)
-        glDisable(GL_CULL_FACE)
+        GL.glDisable(GL.GL_CULL_FACE)
 
     @property
     def statusText(self):
@@ -437,38 +442,38 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
         x, y, z = map(lambda p, d: p + d, pos, direction)
 
         color = (1.0, 1.0, 1.0, 0.5)
-        if isinstance(self.editor.level, MCInfdevOldLevel) and self.spawnProtection:
+        if isinstance(self.editor.level, pymclevel.MCInfdevOldLevel) and self.spawnProtection:
             if not positionValid(self.editor.level, (x, y, z)):
                 color = (1.0, 0.0, 0.0, 0.5)
 
-        glColor(*color)
-        glEnable(GL_BLEND)
+        GL.glColor(*color)
+        GL.glEnable(GL.GL_BLEND)
         self.drawCage(x, y, z)
         self.drawCharacterHead(x + 0.5, y + 0.5, z + 0.5)
-        glDisable(GL_BLEND)
+        GL.glDisable(GL.GL_BLEND)
 
-        glEnable(GL_DEPTH_TEST)
+        GL.glEnable(GL.GL_DEPTH_TEST)
         self.drawCage(x, y, z)
         self.drawCharacterHead(x + 0.5, y + 0.5, z + 0.5)
         color2 = map(lambda a: a * 0.4, color)
         drawTerrainCuttingWire(BoundingBox((x, y, z), (1, 1, 1)), color2, color)
-        glDisable(GL_DEPTH_TEST)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
     def _drawToolMarkers(self):
         x, y, z = self.editor.level.playerSpawnPosition()
-        glColor(1.0, 1.0, 1.0, 1.0)
-        glEnable(GL_DEPTH_TEST)
+        GL.glColor(1.0, 1.0, 1.0, 1.0)
+        GL.glEnable(GL.GL_DEPTH_TEST)
         self.drawCage(x, y, z)
-        self.drawCharacterHead(x + 0.5, y + 0.5 + 0.125 * sin(self.editor.frames * 0.05), z + 0.5)
-        glDisable(GL_DEPTH_TEST)
+        self.drawCharacterHead(x + 0.5, y + 0.5 + 0.125 * numpy.sin(self.editor.frames * 0.05), z + 0.5)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
     def drawCage(self, x, y, z):
-        cageTexVerts = MCInfdevOldLevel.materials.blockTextures[52, 0]
-        cageTexVerts = array([((tx, ty), (tx + 16, ty), (tx + 16, ty + 16), (tx, ty + 16)) for (tx, ty) in cageTexVerts], dtype='float32')
-        glEnable(GL_ALPHA_TEST)
+        cageTexVerts = pymclevel.MCInfdevOldLevel.materials.blockTextures[52, 0]
+        cageTexVerts = numpy.array([((tx, ty), (tx + 16, ty), (tx + 16, ty + 16), (tx, ty + 16)) for (tx, ty) in cageTexVerts], dtype='float32')
+        GL.glEnable(GL.GL_ALPHA_TEST)
 
-        drawCube(BoundingBox((x, y, z), (1, 1, 1)), texture=alphaMaterials.terrainTexture, textureVertices=cageTexVerts)
-        glDisable(GL_ALPHA_TEST)
+        drawCube(BoundingBox((x, y, z), (1, 1, 1)), texture=pymclevel.alphaMaterials.terrainTexture, textureVertices=cageTexVerts)
+        GL.glDisable(GL.GL_ALPHA_TEST)
 
     @alertException
     def mouseDown(self, evt, pos, direction):

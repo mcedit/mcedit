@@ -11,16 +11,26 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import os
+from OpenGL import GL
 
 from collections import defaultdict
+import numpy
+import pygame
+from albow import Row, Label, Button, AttrRef, Column, ask
+import config
+from depths import DepthOffset
 from editortools.editortool import EditorTool
 from editortools.nudgebutton import NudgeButton
 from editortools.tooloptions import ToolOptions
+from glbackground import Panel
+from mceutils import ChoiceButton, CheckBoxLabel, IntInputRow, alertException, drawCube, drawFace, drawTerrainCuttingWire, setWindowCaption, showProgress
+import mcplatform
 from operation import Operation
-from pymclevel.box import Vector
-from fill import FillTool, BlockFillOperation
+import pymclevel
+from pymclevel.box import Vector, BoundingBox, FloatBox
+from fill import  BlockFillOperation
 import tempfile
-from toolbasics import *
 
 SelectSettings = config.Settings("Selection")
 SelectSettings.showPreviousSelection = SelectSettings("Show Previous Selection", True)
@@ -287,7 +297,7 @@ class SelectionTool(EditorTool):
             if box:
                 size = "{s[0]} W x {s[2]} L x {s[1]} H".format(s=box.size)
                 text = size
-            if key.get_mods() & KMOD_ALT:
+            if pygame.key.get_mods() & pygame.KMOD_ALT:
                 if size:
                     return size
                 elif self.dragResizeFace is not None:
@@ -309,24 +319,24 @@ class SelectionTool(EditorTool):
 
         x, y, z = pos
         cx, cz = x / 16, z / 16
-        if isinstance(self.editor.level, MCInfdevOldLevel):
+        if isinstance(self.editor.level, pymclevel.MCInfdevOldLevel):
 
             if y == 0:
                 try:
                     chunk = self.editor.level.getChunk(cx, cz)
-                except ChunkNotPresent:
+                except pymclevel.ChunkNotPresent:
                     return "Chunk not present."
-                if not any(chunk.HeightMap):
+                if not chunk.HeightMap.any():
                     if self.editor.level.blockAt(x, y, z):
                         return "Chunk HeightMap is incorrect! Please relight this chunk as soon as possible!"
                     else:
                         return "Chunk is present and filled with air."
 
         block = self.editor.level.blockAt(*pos)
-        if block in (alphaMaterials.Chest.ID,
-                     alphaMaterials.Furnace.ID,
-                     alphaMaterials.LitFurnace.ID,
-                     alphaMaterials.Dispenser.ID):
+        if block in (pymclevel.alphaMaterials.Chest.ID,
+                     pymclevel.alphaMaterials.Furnace.ID,
+                     pymclevel.alphaMaterials.LitFurnace.ID,
+                     pymclevel.alphaMaterials.Dispenser.ID):
             t = self.editor.level.tileEntityAt(*pos)
             if t:
                 containerID = t["id"].value
@@ -347,8 +357,8 @@ class SelectionTool(EditorTool):
                     else:
                         return "Empty {0}. \n\nDouble-click to edit {0}.".format(containerID)
             else:
-                return "Double-click to initialize the {0}.".format(alphaMaterials.names[block][0])
-        if block == alphaMaterials.MonsterSpawner.ID:
+                return "Double-click to initialize the {0}.".format(pymclevel.alphaMaterials.names[block][0])
+        if block == pymclevel.alphaMaterials.MonsterSpawner.ID:
 
             t = self.editor.level.tileEntityAt(*pos)
             if t:
@@ -358,8 +368,8 @@ class SelectionTool(EditorTool):
 
             return "{id} spawner. \n\nDouble-click to edit spawner.".format(id=id)
 
-        if block in (alphaMaterials.Sign.ID,
-                     alphaMaterials.WallSign.ID):
+        if block in (pymclevel.alphaMaterials.Sign.ID,
+                     pymclevel.alphaMaterials.WallSign.ID):
             t = self.editor.level.tileEntityAt(*pos)
             if t:
                 signtext = u"\n".join(t["Text" + str(x)].value for x in range(1, 5))
@@ -367,7 +377,7 @@ class SelectionTool(EditorTool):
                 signtext = "Undefined"
             return "Sign text: \n" + signtext + "\n\n" + "Double-click to edit sign."
 
-        absentTexture = (self.editor.level.materials.blockTextures[block, 0, 0] == materials.NOTEX).all()
+        absentTexture = (self.editor.level.materials.blockTextures[block, 0, 0] == pymclevel.materials.NOTEX).all()
         if absentTexture:
             return self.describeBlockAt(pos)
 
@@ -387,7 +397,7 @@ class SelectionTool(EditorTool):
 
     @alertException
     def nudgeBlocks(self, dir):
-        if key.get_mods() & KMOD_SHIFT:
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT:
             dir = dir * (16, 16, 16)
         op = NudgeBlocksOperation(self.editor, self.editor.level, self.selectionBox(), dir)
 
@@ -396,7 +406,7 @@ class SelectionTool(EditorTool):
         self.editor.addUnsavedEdit()
 
     def nudgeSelection(self, dir):
-        if key.get_mods() & KMOD_SHIFT:
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT:
             dir = dir * (16, 16, 16)
 
         points = self.getSelectionPoints()
@@ -412,7 +422,7 @@ class SelectionTool(EditorTool):
     def nudgePoint(self, p, n):
         if self.selectionBox() is None:
             return
-        if key.get_mods() & KMOD_SHIFT:
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT:
             n = n * (16, 16, 16)
         self.setSelectionPoint(p, self.getSelectionPoint(p) + n)
 
@@ -693,7 +703,7 @@ class SelectionTool(EditorTool):
         box = self.selectionBox()
 
         o, m = list(box.origin), list(box.maximum)
-        (m, o)[side][dragdim] = int(floor(point[dragdim] + 0.5))
+        (m, o)[side][dragdim] = int(numpy.floor(point[dragdim] + 0.5))
         m = map(lambda a: a - 1, m)
         return o, m
 
@@ -722,10 +732,10 @@ class SelectionTool(EditorTool):
 
         selectionBox = self.selectionBox()
         if(selectionBox):
-            widg = self.editor.find_widget(mouse.get_pos())
+            widg = self.editor.find_widget(pygame.mouse.get_pos())
 
             # these corners stay even while using the chunk tool.
-            glPolygonOffset(DepthOffset.SelectionCorners, DepthOffset.SelectionCorners)
+            GL.glPolygonOffset(DepthOffset.SelectionCorners, DepthOffset.SelectionCorners)
             lineWidth = 3
             for t, c, n in ((self.bottomLeftPoint, self.bottomLeftColor, self.bottomLeftNudge), (self.topRightPoint, self.topRightColor, self.topRightNudge)):
                 if t != None:
@@ -746,17 +756,17 @@ class SelectionTool(EditorTool):
                         bt = self.editor.level.blockAt(sx, sy, sz)
                         if(bt):
                             alpha = 0.2
-                    except ChunkNotPresent:
+                    except pymclevel.ChunkNotPresent:
                         pass
 
-                    glLineWidth(lineWidth)
+                    GL.glLineWidth(lineWidth)
                     lineWidth += 1
 
                     # draw highlighted block faces when nudging
                     if (widg.parent == n or widg == n):
-                        glEnable(GL_BLEND)
+                        GL.glEnable(GL.GL_BLEND)
                         # drawCube(BoundingBox((sx, sy, sz), (1,1,1)))
-                        nudgefaces = array([
+                        nudgefaces = numpy.array([
                                selectionBox.minx, selectionBox.miny, selectionBox.minz,
                                selectionBox.minx, selectionBox.maxy, selectionBox.minz,
                                selectionBox.minx, selectionBox.maxy, selectionBox.maxz,
@@ -769,7 +779,7 @@ class SelectionTool(EditorTool):
                                selectionBox.minx, selectionBox.maxy, selectionBox.minz,
                                selectionBox.maxx, selectionBox.maxy, selectionBox.minz,
                                selectionBox.maxx, selectionBox.miny, selectionBox.minz,
-                               ], dtype=float32)
+                               ], dtype='float32')
 
                         if sx != selectionBox.minx:
                             nudgefaces[0:12:3] = selectionBox.maxx
@@ -778,20 +788,20 @@ class SelectionTool(EditorTool):
                         if sz != selectionBox.minz:
                             nudgefaces[26:36:3] = selectionBox.maxz
 
-                        glColor(r, g, b, 0.3)
-                        glVertexPointer(3, GL_FLOAT, 0, nudgefaces)
-                        glEnable(GL_DEPTH_TEST)
-                        glDrawArrays(GL_QUADS, 0, 12)
-                        glDisable(GL_DEPTH_TEST)
+                        GL.glColor(r, g, b, 0.3)
+                        GL.glVertexPointer(3, GL.GL_FLOAT, 0, nudgefaces)
+                        GL.glEnable(GL.GL_DEPTH_TEST)
+                        GL.glDrawArrays(GL.GL_QUADS, 0, 12)
+                        GL.glDisable(GL.GL_DEPTH_TEST)
 
-                        glDisable(GL_BLEND)
+                        GL.glDisable(GL.GL_BLEND)
 
-                    glColor(r, g, b, alpha)
-                    drawCube(BoundingBox((sx, sy, sz), (1, 1, 1)), GL_LINE_STRIP)
+                    GL.glColor(r, g, b, alpha)
+                    drawCube(BoundingBox((sx, sy, sz), (1, 1, 1)), GL.GL_LINE_STRIP)
 
             if not (not self.showPreviousSelection and self.selectionInProgress):
                 # draw the current selection as a white box.  hangs around when you use other tools.
-                glPolygonOffset(DepthOffset.Selection, DepthOffset.Selection)
+                GL.glPolygonOffset(DepthOffset.Selection, DepthOffset.Selection)
                 color = self.selectionColor + (self.alpha,)
                 if self.dragResizeFace is not None:
                     box = self.draggingSelectionBox()
@@ -810,8 +820,8 @@ class SelectionTool(EditorTool):
                         face, point = self.boxFaceUnderCursor(box)
 
                         if face is not None:
-                            glEnable(GL_BLEND)
-                            glColor(*color)
+                            GL.glEnable(GL.GL_BLEND)
+                            GL.glColor(*color)
 
                             # Shrink the highlighted face to show the click-through edges
 
@@ -832,10 +842,10 @@ class SelectionTool(EditorTool):
 
                             drawFace(smallbox, face)
 
-                            glColor(0.9, 0.6, 0.2, 0.8)
-                            glLineWidth(2.0)
+                            GL.glColor(0.9, 0.6, 0.2, 0.8)
+                            GL.glLineWidth(2.0)
                             drawFace(box, face, type=GL.GL_LINE_STRIP)
-                            glDisable(GL_BLEND)
+                            GL.glDisable(GL.GL_BLEND)
                 else:
                     face = self.dragResizeFace
                     point = self.dragResizePoint()
@@ -851,14 +861,14 @@ class SelectionTool(EditorTool):
                     if (pos - otherFacePos) * direction > 0:
                         face ^= 1
 
-                    glColor(0.9, 0.6, 0.2, 0.5)
-                    drawFace(box, face, type=GL_LINE_STRIP)
-                    glEnable(GL_BLEND)
-                    glEnable(GL_DEPTH_TEST)
+                    GL.glColor(0.9, 0.6, 0.2, 0.5)
+                    drawFace(box, face, type=GL.GL_LINE_STRIP)
+                    GL.glEnable(GL.GL_BLEND)
+                    GL.glEnable(GL.GL_DEPTH_TEST)
 
                     drawFace(box, face)
-                    glDisable(GL_BLEND)
-                    glDisable(GL_DEPTH_TEST)
+                    GL.glDisable(GL.GL_BLEND)
+                    GL.glDisable(GL.GL_DEPTH_TEST)
 
         pos, direction = self.editor.blockFaceUnderCursor
         x, y, z = pos
@@ -870,12 +880,12 @@ class SelectionTool(EditorTool):
             self.showPanel()  # xxx do this every frame while dragging because our UI kit is bad
 
         if ((self.selectionInProgress or self.clickSelectionInProgress) and otherCorner != None):
-            glPolygonOffset(DepthOffset.PotentialSelection, DepthOffset.PotentialSelection)
+            GL.glPolygonOffset(DepthOffset.PotentialSelection, DepthOffset.PotentialSelection)
 
             box = self.selectionBoxForCorners(otherCorner, pos)
             if self.chunkMode:
                 box = box.chunkBox(self.editor.level)
-                if key.get_mods() & KMOD_ALT:
+                if pygame.key.get_mods() & pygame.KMOD_ALT:
                     selectionColor = [1., 0., 0.]
             self.editor.drawConstructionCube(box, selectionColor + [self.alpha, ])
         else:
@@ -890,7 +900,7 @@ class SelectionTool(EditorTool):
                 return
 
     def drawToolReticle(self):
-        glPolygonOffset(DepthOffset.SelectionReticle, DepthOffset.SelectionReticle)
+        GL.glPolygonOffset(DepthOffset.SelectionReticle, DepthOffset.SelectionReticle)
         pos, direction = self.editor.blockFaceUnderCursor
 
         # draw a selection-colored box for the cursor reticle
@@ -903,24 +913,24 @@ class SelectionTool(EditorTool):
             if(bt):
 ##                textureCoords = materials[bt][0]
                 alpha = 0.12
-        except ChunkNotPresent:
+        except pymclevel.ChunkNotPresent:
             pass
 
         # cube sides
-        glColor(r, g, b, alpha)
-        glDepthMask(False)
-        glEnable(GL_BLEND)
-        glEnable(GL_DEPTH_TEST)
+        GL.glColor(r, g, b, alpha)
+        GL.glDepthMask(False)
+        GL.glEnable(GL.GL_BLEND)
+        GL.glEnable(GL.GL_DEPTH_TEST)
         drawCube(BoundingBox(pos, (1, 1, 1)))
-        glDepthMask(True)
-        glDisable(GL_DEPTH_TEST)
+        GL.glDepthMask(True)
+        GL.glDisable(GL.GL_DEPTH_TEST)
 
         drawTerrainCuttingWire(BoundingBox(pos, (1, 1, 1)),
                                (r, g, b, 0.4),
                                (1., 1., 1., 1.0)
                                )
 
-        glDisable(GL_BLEND)
+        GL.glDisable(GL.GL_BLEND)
 
     def setSelection(self, box):
         if box is None:

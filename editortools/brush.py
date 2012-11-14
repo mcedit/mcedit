@@ -11,24 +11,36 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import collections
+from datetime import datetime
+import numpy
+from numpy import newaxis
+import pygame
+from albow import AttrRef, Button, ValueDisplay, Row, Label, ValueButton, Column, IntField, CheckBox, FloatField, alert
+import bresenham
 from editortools.blockpicker import BlockPicker
 from editortools.blockview import BlockButton
 from editortools.editortool import EditorTool
-
 from editortools.tooloptions import ToolOptions
-from editortools.clone import BlockCopyOperation
-from pymclevel import block_fill
+from glbackground import Panel
+from glutils import gl
+import mcplatform
+from pymclevel import block_fill, BoundingBox
+import pymclevel
 from pymclevel.level import extractHeights
-from mceutils import ChoiceButton
+from mceutils import ChoiceButton, CheckBoxLabel, showProgress, IntInputRow, alertException, drawTerrainCuttingWire
 from os.path import basename
 import tempfile
 import itertools
-from toolbasics import *
 import logging
 from operation import Operation
+from pymclevel.mclevelbase import exhaust
+
+from OpenGL import GL
 
 log = logging.getLogger(__name__)
 
+import config
 
 BrushSettings = config.Settings("Brush")
 BrushSettings.brushSizeL = BrushSettings("Brush Shape L", 3)
@@ -117,7 +129,7 @@ class Modes:
         def apply(self, op, point):
 
             tmpfile = tempfile.mkdtemp("FloodFillUndo")
-            undoLevel = MCInfdevOldLevel(tmpfile, create=True)
+            undoLevel = pymclevel.MCInfdevOldLevel(tmpfile, create=True)
             dirtyChunks = set()
 
             def saveUndoChunk(cx, cz):
@@ -144,10 +156,10 @@ class Modes:
             op.level.setBlockDataAt(x, y, z, op.blockInfo.blockData)
 
             def processCoords(coords):
-                newcoords = deque()
+                newcoords = collections.deque()
 
                 for (x, y, z) in coords:
-                    for _dir, offsets in faceDirections:
+                    for _dir, offsets in pymclevel.faceDirections:
                         dx, dy, dz = offsets
                         p = (x + dx, y + dy, z + dz)
 
@@ -238,11 +250,11 @@ class Modes:
                 return
 
             blocks = erosionArea.Blocks
-            bins = bincount(blocks.ravel())
+            bins = numpy.bincount(blocks.ravel())
             fillBlockID = bins.argmax()
 
             def getNeighbors(solidBlocks):
-                neighbors = zeros(solidBlocks.shape, dtype='uint8')
+                neighbors = numpy.zeros(solidBlocks.shape, dtype='uint8')
                 neighbors[1:-1, 1:-1, 1:-1] += solidBlocks[:-2, 1:-1, 1:-1]
                 neighbors[1:-1, 1:-1, 1:-1] += solidBlocks[2:, 1:-1, 1:-1]
                 neighbors[1:-1, 1:-1, 1:-1] += solidBlocks[1:-1, :-2, 1:-1]
@@ -257,7 +269,7 @@ class Modes:
 
                 brushMask = createBrushMask(op.brushSize, op.brushStyle)
                 erodeBlocks = neighbors < 5
-                erodeBlocks &= (random.random(erodeBlocks.shape) > 0.3)
+                erodeBlocks &= (numpy.random.random(erodeBlocks.shape) > 0.3)
                 erodeBlocks[1:-1, 1:-1, 1:-1] &= brushMask
                 blocks[erodeBlocks] = 0
 
@@ -609,6 +621,7 @@ class BrushTool(CloneTool):
         self.previewDirty = True
 
     previewDirty = False
+    updateBrushOffset = True
 
     _reticleOffset = 1
     naturalEarth = True
@@ -666,7 +679,7 @@ class BrushTool(CloneTool):
 
     chooseBlockImmediately = BrushSettings.chooseBlockImmediately.configProperty()
 
-    _blockInfo = alphaMaterials.Stone
+    _blockInfo = pymclevel.alphaMaterials.Stone
 
     @property
     def blockInfo(self):
@@ -677,7 +690,7 @@ class BrushTool(CloneTool):
         self._blockInfo = bi
         self.setupPreview()
 
-    _replaceBlockInfo = alphaMaterials.Stone
+    _replaceBlockInfo = pymclevel.alphaMaterials.Stone
 
     @property
     def replaceBlockInfo(self):
@@ -703,7 +716,7 @@ class BrushTool(CloneTool):
         # xxx mouthful
         if clipFilename:
             try:
-                self.loadLevel(fromFile(clipFilename))
+                self.loadLevel(pymclevel.fromFile(clipFilename))
             except Exception, e:
                 alert("Failed to load file %s" % clipFilename)
                 self.brushMode = "Fill"
@@ -732,7 +745,7 @@ class BrushTool(CloneTool):
 
     @property
     def worldTooltipText(self):
-        if key.get_mods() & KMOD_ALT:
+        if pygame.key.get_mods() & pygame.KMOD_ALT:
             try:
                 if self.editor.blockFaceUnderCursor is None:
                     return
@@ -787,7 +800,7 @@ class BrushTool(CloneTool):
 
     @alertException
     def mouseDown(self, evt, pos, direction):
-        if key.get_mods() & KMOD_ALT:
+        if pygame.key.get_mods() & pygame.KMOD_ALT:
             id = self.editor.level.blockAt(*pos)
             data = self.editor.level.blockDataAt(*pos)
             if self.brushMode.name == "Replace":
@@ -817,7 +830,7 @@ class BrushTool(CloneTool):
             self.draggedPositions = [point]
             return
 
-        if key.get_mods() & KMOD_SHIFT and len(self.draggedPositions):
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT and len(self.draggedPositions):
             points = bresenham.bresenham(self.draggedPositions[-1], point)
             self.draggedPositions.extend(points[1:])
         else:
@@ -899,7 +912,7 @@ class BrushTool(CloneTool):
         else:
             blockInfo = self.blockInfo
 
-        class FakeLevel(MCLevel):
+        class FakeLevel(pymclevel.MCLevel):
             filename = "Fake Level"
             materials = self.editor.level.materials
 
@@ -908,7 +921,7 @@ class BrushTool(CloneTool):
 
             Width, Height, Length = brushSize
 
-            zerolight = zeros((16, 16, Height), dtype='uint8')
+            zerolight = numpy.zeros((16, 16, Height), dtype='uint8')
             zerolight[:] = 15
 
             def getChunk(self, cx, cz):
@@ -924,8 +937,8 @@ class BrushTool(CloneTool):
                 f.chunkPosition = (cx, cz)
 
                 mask = createBrushMask(brushSize, brushStyle, (0, 0, 0), BoundingBox((cx << 4, 0, cz << 4), (16, self.Height, 16)))
-                f.Blocks = zeros(mask.shape, dtype='uint8')
-                f.Data = zeros(mask.shape, dtype='uint8')
+                f.Blocks = numpy.zeros(mask.shape, dtype='uint8')
+                f.Data = numpy.zeros(mask.shape, dtype='uint8')
                 f.BlockLight = self.zerolight
                 f.SkyLight = self.zerolight
 
@@ -1022,7 +1035,7 @@ class BrushTool(CloneTool):
     lastPosition = None
 
     def drawTerrainReticle(self):
-        if key.get_mods() & KMOD_ALT:
+        if pygame.key.get_mods() & pygame.KMOD_ALT:
             # eyedropper mode
             self.editor.drawWireCubeReticle(color=(0.2, 0.6, 0.9, 1.0))
         else:
@@ -1031,21 +1044,21 @@ class BrushTool(CloneTool):
 
             self.editor.drawWireCubeReticle(position=reticlePoint)
             if reticlePoint != pos:
-                glColor4f(1.0, 1.0, 0.0, 0.7)
-                with gl.glBegin(GL_LINES):
-                    glVertex3f(*map(lambda a: a + 0.5, reticlePoint))  # center of reticle block
-                    glVertex3f(*map(lambda a, b: a + 0.5 + b * 0.5, pos, direction))  # top side of surface block
+                GL.glColor4f(1.0, 1.0, 0.0, 0.7)
+                with gl.glBegin(GL.GL_LINES):
+                    GL.glVertex3f(*map(lambda a: a + 0.5, reticlePoint))  # center of reticle block
+                    GL.glVertex3f(*map(lambda a, b: a + 0.5 + b * 0.5, pos, direction))  # top side of surface block
 
             if self.previewDirty:
                 self.setupPreview()
 
             dirtyBox = self.brushMode.brushBoxForPointAndOptions(reticlePoint, self.getBrushOptions())
             self.drawTerrainPreview(dirtyBox.origin)
-            if key.get_mods() & KMOD_SHIFT and self.lastPosition and self.brushMode.name != "Flood Fill":
-                glColor4f(1.0, 1.0, 1.0, 0.7)
-                with gl.glBegin(GL_LINES):
-                    glVertex3f(*map(lambda a: a + 0.5, self.lastPosition))
-                    glVertex3f(*map(lambda a: a + 0.5, reticlePoint))
+            if pygame.key.get_mods() & pygame.KMOD_SHIFT and self.lastPosition and self.brushMode.name != "Flood Fill":
+                GL.glColor4f(1.0, 1.0, 1.0, 0.7)
+                with gl.glBegin(GL.GL_LINES):
+                    GL.glVertex3f(*map(lambda a: a + 0.5, self.lastPosition))
+                    GL.glVertex3f(*map(lambda a: a + 0.5, reticlePoint))
 
     def updateOffsets(self):
         pass
@@ -1079,11 +1092,11 @@ def createBrushMask(shape, style="Round", offset=(0, 0, 0), box=None, chance=100
     outputShape = (outputShape[0], outputShape[2], outputShape[1])
 
     shape = shape[0], shape[2], shape[1]
-    offset = array(offset) - array(box.origin)
+    offset = numpy.array(offset) - numpy.array(box.origin)
     offset = offset[[0, 2, 1]]
 
-    inds = indices(outputShape, dtype=float)
-    halfshape = array([(i >> 1) - ((i & 1 == 0) and 0.5 or 0) for i in shape])
+    inds = numpy.indices(outputShape, dtype=float)
+    halfshape = numpy.array([(i >> 1) - ((i & 1 == 0) and 0.5 or 0) for i in shape])
 
     blockCenters = inds - halfshape[:, newaxis, newaxis, newaxis]
     blockCenters -= offset[:, newaxis, newaxis, newaxis]
@@ -1092,7 +1105,7 @@ def createBrushMask(shape, style="Round", offset=(0, 0, 0), box=None, chance=100
     # even diameter means measure from the 0,0,0 grid point to each block center
 
     # if diameter & 1 == 0: blockCenters += 0.5
-    shape = array(shape, dtype='float32')
+    shape = numpy.array(shape, dtype='float32')
 
     # if not isSphere(shape):
     if style == "Round":
@@ -1108,7 +1121,7 @@ def createBrushMask(shape, style="Round", offset=(0, 0, 0), box=None, chance=100
         # mask = blockCenters[:, newaxis, newaxis, newaxis] < shape
         blockCenters /= shape[:, newaxis, newaxis, newaxis]
 
-        distances = absolute(blockCenters).max(0)
+        distances = numpy.absolute(blockCenters).max(0)
         mask = distances < .5
 
     elif style == "Diamond":
@@ -1117,10 +1130,12 @@ def createBrushMask(shape, style="Round", offset=(0, 0, 0), box=None, chance=100
         blockCenters /= shape[:, newaxis, newaxis, newaxis]
         distances = sum(blockCenters, 0)
         mask = distances < 1
+    else:
+        raise ValueError, "Unknown style: " + style
 
     if (chance < 100 or hollow) and max(shape) > 1:
         threshold = chance / 100.0
-        exposedBlockMask = ones(shape=outputShape, dtype='bool')
+        exposedBlockMask = numpy.ones(shape=outputShape, dtype='bool')
         exposedBlockMask[:] = mask
         submask = mask[1:-1, 1:-1, 1:-1]
         exposedBlockSubMask = exposedBlockMask[1:-1, 1:-1, 1:-1]
@@ -1136,7 +1151,7 @@ def createBrushMask(shape, style="Round", offset=(0, 0, 0), box=None, chance=100
         if hollow:
             mask[~exposedBlockMask] = False
         if chance < 100:
-            rmask = random.random(mask.shape) < threshold
+            rmask = numpy.random.random(mask.shape) < threshold
 
             mask[exposedBlockMask] = rmask[exposedBlockMask]
 

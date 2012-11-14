@@ -11,18 +11,33 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import os
+import traceback
+from OpenGL import GL
+import numpy
+import pygame
+from albow import Widget, IntField, Column, Row, Label, Button, CheckBox, AttrRef, FloatField, alert
+from depths import DepthOffset
 from editortools.editortool import EditorTool
 from editortools.nudgebutton import NudgeButton
 from editortools.tooloptions import ToolOptions
+from glbackground import Panel
+from glutils import gl
+from mceutils import setWindowCaption, showProgress, alertException, drawFace
+import mcplatform
 from operation import Operation
+import pymclevel
 from pymclevel.box import Vector
+from renderer import PreviewRenderer
 
-from toolbasics import *
 from select import SelectionOperation
 from pymclevel.pocket import PocketWorld
-from pymclevel import block_copy
+from pymclevel import block_copy, BoundingBox
+
 import logging
 log = logging.getLogger(__name__)
+
+import config
 
 
 CloneSettings = config.Settings("Clone")
@@ -190,7 +205,7 @@ class CloneToolPanel(Panel):
     useOffsetInput = True
 
     def transformEnable(self):
-        return not isinstance(self.tool.level, MCInfdevOldLevel)
+        return not isinstance(self.tool.level, pymclevel.MCInfdevOldLevel)
 
     def __init__(self, tool):
         Panel.__init__(self)
@@ -386,7 +401,7 @@ class CloneTool(EditorTool):
             x, y, z = nudge
             nudge = x << 4, y, z << 4
 
-        if key.get_mods() & KMOD_SHIFT:
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT:
             nudge = self.quickNudge(nudge)
 
         # self.panel.performButton.enabled = True
@@ -432,7 +447,7 @@ class CloneTool(EditorTool):
         self.pickUp()
 
     def safeToolDistance(self):
-        return sqrt(sum([self.level.Width ** 2, self.level.Height ** 2, self.level.Length ** 2]))
+        return numpy.sqrt(sum([self.level.Width ** 2, self.level.Height ** 2, self.level.Length ** 2]))
 
     def toolSelected(self):
         box = self.selectionBox()
@@ -490,10 +505,10 @@ class CloneTool(EditorTool):
 
         newshape = map(lambda x: int(x * factor), oldshape)
         xyzshape = newshape[0], newshape[2], newshape[1]
-        newlevel = MCSchematic(xyzshape, mats=self.editor.level.materials)
+        newlevel = pymclevel.MCSchematic(xyzshape, mats=self.editor.level.materials)
 
-        srcgrid = mgrid[0:roundedShape[0]:1.0 / factor, 0:roundedShape[1]:1.0 / factor, 0:roundedShape[2]:1.0 / factor].astype('uint')
-        dstgrid = mgrid[0:newshape[0], 0:newshape[1], 0:newshape[2]].astype('uint')
+        srcgrid = numpy.mgrid[0:roundedShape[0]:1.0 / factor, 0:roundedShape[1]:1.0 / factor, 0:roundedShape[2]:1.0 / factor].astype('uint')
+        dstgrid = numpy.mgrid[0:newshape[0], 0:newshape[1], 0:newshape[2]].astype('uint')
         srcgrid = srcgrid[map(slice, dstgrid.shape)]
         dstgrid = dstgrid[map(slice, srcgrid.shape)]
 
@@ -576,7 +591,7 @@ class CloneTool(EditorTool):
 
     @property
     def canRotateLevel(self):
-        return not isinstance(self.level, (MCInfdevOldLevel, PocketWorld))
+        return not isinstance(self.level, (pymclevel.MCInfdevOldLevel, PocketWorld))
 
     def rotatedSelectionSize(self):
         if self.canRotateLevel:
@@ -623,7 +638,7 @@ class CloneTool(EditorTool):
         if y < 0:
             y = 0
 
-        if not isinstance(lev, MCInfdevOldLevel):
+        if not isinstance(lev, pymclevel.MCInfdevOldLevel):
             sx = size[0]
             if x + sx > lev.Width:
                 x = lev.Width - sx
@@ -673,11 +688,10 @@ class CloneTool(EditorTool):
         if self.level is None:
             return
 
-        glPolygonOffset(DepthOffset.CloneMarkers, DepthOffset.CloneMarkers)
+        GL.glPolygonOffset(DepthOffset.CloneMarkers, DepthOffset.CloneMarkers)
 
         color = self.color
         if self.destPoint is not None:
-            alpha = sin((self.editor.frameStartTime.second + self.editor.frameStartTime.microsecond / 1000000) * 3.14) * 0.124 + 0.25
             color = (self.color[0], self.color[1], self.color[2], 0.06)
             box = self.getDestBox()
             if self.draggingFace is not None:
@@ -691,8 +705,8 @@ class CloneTool(EditorTool):
                 guideBox = BoundingBox(o, s)
 
                 color = self.draggingColor
-                glColor(1.0, 1.0, 1.0, 0.33)
-                with gl.glEnable(GL_BLEND, GL_TEXTURE_2D, GL_DEPTH_TEST):
+                GL.glColor(1.0, 1.0, 1.0, 0.33)
+                with gl.glEnable(GL.GL_BLEND, GL.GL_TEXTURE_2D, GL.GL_DEPTH_TEST):
                     self.editor.sixteenBlockTex.bind()
                     drawFace(guideBox, self.draggingFace ^ 1)
         else:
@@ -701,7 +715,7 @@ class CloneTool(EditorTool):
                 return
         self.drawRepeatedCube(box, color)
 
-        glPolygonOffset(DepthOffset.CloneReticle, DepthOffset.CloneReticle)
+        GL.glPolygonOffset(DepthOffset.CloneReticle, DepthOffset.CloneReticle)
         if self.destPoint:
             box = self.getDestBox()
             if self.draggingFace is not None:
@@ -709,13 +723,13 @@ class CloneTool(EditorTool):
                 box = BoundingBox(self.draggingOrigin(), box.size)
             face, point = self.boxFaceUnderCursor(box)
             if face is not None:
-                glEnable(GL_BLEND)
-                glDisable(GL_DEPTH_TEST)
+                GL.glEnable(GL.GL_BLEND)
+                GL.glDisable(GL.GL_DEPTH_TEST)
 
-                glColor(*self.color)
+                GL.glColor(*self.color)
                 drawFace(box, face)
-                glDisable(GL_BLEND)
-                glEnable(GL_DEPTH_TEST)
+                GL.glDisable(GL.GL_BLEND)
+                GL.glEnable(GL.GL_DEPTH_TEST)
 
     def drawRepeatedCube(self, box, color):
         # draw several cubes according to the repeat count
@@ -780,10 +794,10 @@ class CloneTool(EditorTool):
         return p
 
     def _draggingOrigin(self):
-        dragPos = map(int, map(floor, self.positionOnDraggingPlane()))
-        delta = map(lambda s, e: e - int(floor(s)), self.draggingStartPoint, dragPos)
+        dragPos = map(int, map(numpy.floor, self.positionOnDraggingPlane()))
+        delta = map(lambda s, e: e - int(numpy.floor(s)), self.draggingStartPoint, dragPos)
 
-        if key.get_mods() & KMOD_SHIFT:
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT:
             ad = map(abs, delta)
             midx = ad.index(max(ad))
             d = [0, 0, 0]
@@ -897,7 +911,7 @@ class CloneTool(EditorTool):
 
         # pick up the object. reset the tool distance to the object's distance from the camera
         d = map(lambda a, b, c: abs(a - b - c / 2), self.editor.mainViewport.cameraPosition, self.destPoint, box.size)
-        self.cloneCameraDistance = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2])
+        self.cloneCameraDistance = numpy.sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2])
         self.destPoint = None
         # self.panel.performButton.enabled = False
         print "Picked up"
@@ -1015,7 +1029,7 @@ class ConstructionTool(CloneTool):
         length = rows * 3 + 1
         height = 3
 
-        schematic = MCSchematic((width, height, length), mats=self.editor.level.materials)
+        schematic = pymclevel.MCSchematic((width, height, length), mats=self.editor.level.materials)
         schematic.Blocks[:, :, 0] = 1
 
         for i, block in enumerate(allBlocks):
@@ -1029,8 +1043,8 @@ class ConstructionTool(CloneTool):
     def toolSelected(self):
         self.editor.mouseLookOff()
 
-        mods = key.get_mods()
-        if mods & KMOD_ALT and mods & KMOD_SHIFT:
+        mods = pygame.key.get_mods()
+        if mods & pygame.KMOD_ALT and mods & pygame.KMOD_SHIFT:
             self.loadLevel(self.createTestBoard())
             return
 
@@ -1055,7 +1069,7 @@ class ConstructionTool(CloneTool):
     def loadSchematic(self, filename):
         """ actually loads a schematic or a level """
         try:
-            level = fromFile(filename)
+            level = pymclevel.fromFile(filename)
             self.loadLevel(level)
         except Exception, e:
             print u"Unable to import file {0} : {1}".format(filename, e)
@@ -1078,7 +1092,7 @@ class ConstructionTool(CloneTool):
 
             self.cloneCameraDistance = self.safeToolDistance()
 
-            self.chunkAlign = isinstance(self.level, MCInfdevOldLevel) and all(b % 16 == 0 for b in self.level.bounds.size)
+            self.chunkAlign = isinstance(self.level, pymclevel.MCInfdevOldLevel) and all(b % 16 == 0 for b in self.level.bounds.size)
 
             self.setupPreview()
             self.originalLevelSize = (self.level.Width, self.level.Height, self.level.Length)

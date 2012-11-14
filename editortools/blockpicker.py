@@ -1,8 +1,7 @@
-from sets import Set
 from albow import Label, TextField, Row, TableView, TableColumn, Column, Widget, Button, AttrRef
 from albow.dialogs import Dialog
-from editortools.blockview import BlockView
-import toolbasics
+from editortools import thumbview
+from editortools import blockview
 from glbackground import GLBackground
 from mceutils import CheckBoxLabel
 
@@ -64,7 +63,7 @@ class BlockPicker(Dialog):
             return r
 
         tableview = TableView(columns=[TableColumn(" ", 24, "l", lambda x: ""), TableColumn("(ID) Name [Aliases]", 276, "l", formatBlockName)])
-        tableicons = [BlockView(materials) for i in range(tableview.rows.num_rows())]
+        tableicons = [blockview.BlockView(materials) for i in range(tableview.rows.num_rows())]
         for t in tableicons:
             t.size = (16, 16)
             t.margin = 0
@@ -98,7 +97,7 @@ class BlockPicker(Dialog):
                 t.blockInfo = materials.Air
 
         tableWidget.draw = wdraw
-        self.blockButton = blockView = toolbasics.BlockThumbView(materials, self.blockInfo)
+        self.blockButton = blockView = thumbview.BlockThumbView(materials, self.blockInfo)
 
         blockView.centerx = self.centerx
         blockView.top = tableview.bottom
