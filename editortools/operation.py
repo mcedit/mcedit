@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import pymclevel
 from mceutils import showProgress
+from pymclevel.mclevelbase import exhaust
 
 class Operation(object):
     changedLevel = True
@@ -32,7 +33,10 @@ class Operation(object):
                 yield i, chunkCount, "Copying chunk %s..." % ((cx, cz),)
             undoLevel.saveInPlace()
 
-        showProgress("Recording undo...", _extractUndo())
+        if chunkCount > 25 or chunkCount < 1:
+            showProgress("Recording undo...", _extractUndo())
+        else:
+            exhaust(_extractUndo())
 
         return undoLevel
 
@@ -53,8 +57,11 @@ class Operation(object):
                     self.level.copyChunkFrom(self.undoLevel, cx, cz)
                     yield i, self.undoLevel.chunkCount, "Copying chunk %s..." % ((cx, cz),)
 
+            if self.undoLevel.chunkCount > 25:
+                showProgress("Undoing...", _undo())
+            else:
+                exhaust(_undo())
 
-            showProgress("Undoing...", _undo())
             self.editor.invalidateChunks(self.undoLevel.allChunks)
 
 
