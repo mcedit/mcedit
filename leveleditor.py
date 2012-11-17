@@ -941,7 +941,7 @@ class CameraViewport(GLViewport):
                 return pymclevel.BoundingBox(pymclevel.TileEntity.pos(tileEntityTag), (1, 1, 1))
 
         if chestWidget.dirty:
-            op = ChestEditOperation()
+            op = ChestEditOperation(self.editor, self.editor.level)
             op.perform()
             self.editor.addOperation(op)
             self.editor.addUnsavedEdit()
