@@ -3017,6 +3017,8 @@ class LevelEditor(GLViewport):
                 y = 64
                 newlevel.setBlockAt(x, y, z, pymclevel.alphaMaterials.Sponge.ID)
 
+            newlevel.saveInPlace()
+
             self.loadFile(filename)
         except Exception:
             logging.exception(
