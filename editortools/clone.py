@@ -634,7 +634,7 @@ class CloneTool(EditorTool):
 
         sy = size[1]
         if sy > lev.Height:  # don't snap really tall stuff to the height
-            return x, y, z
+            return Vector(x, y, z)
 
         if y + sy > lev.Height:
             y = lev.Height - sy
