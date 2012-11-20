@@ -1,0 +1,4 @@
+pyopengl>=3.0.2
+pygame
+numpy
+pyyaml

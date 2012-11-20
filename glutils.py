@@ -29,7 +29,7 @@ from albow.openglwidgets import GLOrtho
 import config
 
 import weakref
-from OpenGL.GL.EXT import framebuffer_object as FBO
+from OpenGL.GL import framebufferobjects as FBO
 import sys
 
 
@@ -202,33 +202,33 @@ class FramebufferTexture(Texture):
         GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, None)
         self.enabled = False
         self._texID = tex
-        if bool(FBO.glGenFramebuffersEXT):
-            buf = FBO.glGenFramebuffersEXT(1)
-            depthbuffer = FBO.glGenRenderbuffersEXT(1)
+        if bool(FBO.glGenFramebuffers):
+            buf = FBO.glGenFramebuffers(1)
+            depthbuffer = FBO.glGenRenderbuffers(1)
 
-            FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, buf)
+            FBO.glBindFramebuffer(FBO.GL_FRAMEBUFFER, buf)
 
-            FBO.glBindRenderbufferEXT(FBO.GL_RENDERBUFFER_EXT, depthbuffer)
-            FBO.glRenderbufferStorageEXT(FBO.GL_RENDERBUFFER_EXT, GL.GL_DEPTH_COMPONENT, width, height)
+            FBO.glBindRenderbuffer(FBO.GL_RENDERBUFFER, depthbuffer)
+            FBO.glRenderbufferStorage(FBO.GL_RENDERBUFFER, GL.GL_DEPTH_COMPONENT, width, height)
 
-            FBO.glFramebufferRenderbufferEXT(FBO.GL_FRAMEBUFFER_EXT, FBO.GL_DEPTH_ATTACHMENT_EXT, FBO.GL_RENDERBUFFER_EXT, depthbuffer)
-            FBO.glFramebufferTexture2DEXT(FBO.GL_FRAMEBUFFER_EXT, FBO.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D, tex, 0)
+            FBO.glFramebufferRenderbuffer(FBO.GL_FRAMEBUFFER, FBO.GL_DEPTH_ATTACHMENT, FBO.GL_RENDERBUFFER, depthbuffer)
+            FBO.glFramebufferTexture2D(FBO.GL_FRAMEBUFFER, FBO.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, tex, 0)
 
-            status = FBO.glCheckFramebufferStatusEXT(FBO.GL_FRAMEBUFFER_EXT)
-            if status != FBO.GL_FRAMEBUFFER_COMPLETE_EXT:
-                print "glCheckFramebufferStatusEXT", status
+            status = FBO.glCheckFramebufferStatus(FBO.GL_FRAMEBUFFER)
+            if status != FBO.GL_FRAMEBUFFER_COMPLETE:
+                print "glCheckFramebufferStatus", status
                 self.enabled = False
                 return
 
-            FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, buf)
+            FBO.glBindFramebuffer(FBO.GL_FRAMEBUFFER, buf)
 
             with gl.glPushAttrib(GL.GL_VIEWPORT_BIT):
                 GL.glViewport(0, 0, width, height)
                 drawFunc()
 
-            FBO.glBindFramebufferEXT(FBO.GL_FRAMEBUFFER_EXT, 0)
-            FBO.glDeleteFramebuffersEXT(1, [buf])
-            FBO.glDeleteRenderbuffersEXT(1, [depthbuffer])
+            FBO.glBindFramebuffer(FBO.GL_FRAMEBUFFER, 0)
+            FBO.glDeleteFramebuffers(1, [buf])
+            FBO.glDeleteRenderbuffers(1, [depthbuffer])
             self.enabled = True
         else:
             GL.glReadBuffer(GL.GL_BACK)
