@@ -750,7 +750,6 @@ class Widget(object):
             GL.glDrawPixels(self.width, self.height,
                 GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, fromstring(data, dtype='uint8'))
             GL.glPopAttrib()
-            GL.glFlush()
 
     def gl_draw_self(self, root, offset):
         pass
