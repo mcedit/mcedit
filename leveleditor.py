@@ -82,8 +82,6 @@ Settings.blockBuffer = Settings("Block Buffer", 256 * 1048576)
 Settings.reportCrashes = Settings("report crashes new", False)
 Settings.reportCrashesAsked = Settings("report crashes asked", False)
 
-Settings.doubleBuffer = Settings("Double Buffer", True)
-
 Settings.viewDistance = Settings("View Distance", 8)
 Settings.targetFPS = Settings("Target FPS", 30)
 
@@ -459,10 +457,7 @@ class CameraViewport(GLViewport):
          reading the depth buffer value
         """
         try:
-            if Settings.doubleBuffer.get():
-                GL.glReadBuffer(GL.GL_BACK)
-            else:
-                GL.glReadBuffer(GL.GL_FRONT)
+            GL.glReadBuffer(GL.GL_BACK)
         except Exception:
             logging.exception('Exception during glReadBuffer')
         ws = self.get_root().size

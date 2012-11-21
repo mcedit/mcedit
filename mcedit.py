@@ -1030,10 +1030,7 @@ class GLDisplayContext(object):
         return max(20, w), max(20, h)
 
     def displayMode(self):
-        displayMode = pygame.OPENGL | pygame.RESIZABLE
-        if Settings.doubleBuffer.get():
-            displayMode |= pygame.DOUBLEBUF
-        return displayMode
+        return pygame.OPENGL | pygame.RESIZABLE | pygame.DOUBLEBUF
 
     def reset(self):
         pygame.key.set_repeat(500, 100)
