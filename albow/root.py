@@ -167,8 +167,8 @@ class RootWidget(Widget):
                     events = [pygame.event.poll()]
                     events.extend(pygame.event.get())
                     for event in events:
-                        if event.type:
-                            log.debug("%s", event)
+                        #if event.type:
+                            #log.debug("%s", event)
 
                         type = event.type
                         if type == QUIT:
