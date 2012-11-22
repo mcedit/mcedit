@@ -33,7 +33,7 @@ from os.path import basename
 import tempfile
 import itertools
 import logging
-from operation import Operation
+from operation import Operation, mkundotemp
 from pymclevel.mclevelbase import exhaust
 
 from OpenGL import GL
@@ -128,8 +128,7 @@ class Modes:
 
         def apply(self, op, point):
 
-            tmpfile = tempfile.mkdtemp("FloodFillUndo")
-            undoLevel = pymclevel.MCInfdevOldLevel(tmpfile, create=True)
+            undoLevel = pymclevel.MCInfdevOldLevel(mkundotemp(), create=True)
             dirtyChunks = set()
 
             def saveUndoChunk(cx, cz):

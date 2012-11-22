@@ -1,9 +1,19 @@
 import atexit
+import os
 import shutil
 import tempfile
 import pymclevel
 from mceutils import showProgress
 from pymclevel.mclevelbase import exhaust
+
+undo_folder = os.path.join(tempfile.gettempdir(), "mcedit_undo")
+if not os.path.exists(undo_folder):
+    os.mkdir(undo_folder)
+
+def mkundotemp():
+    return tempfile.mkdtemp("mceditundo", dir=undo_folder)
+
+atexit.register(shutil.rmtree, undo_folder, True)
 
 class Operation(object):
     changedLevel = True
@@ -17,9 +27,7 @@ class Operation(object):
         return self.extractUndoChunks(level, box.chunkPositions, box.chunkCount)
 
     def extractUndoChunks(self, level, chunks, chunkCount = None):
-        undoPath = tempfile.mkdtemp("mceditundo")
-        undoLevel = pymclevel.MCInfdevOldLevel(undoPath, create=True)
-        atexit.register(shutil.rmtree, undoPath, True)
+        undoLevel = pymclevel.MCInfdevOldLevel(mkundotemp(), create=True)
         if not chunkCount:
             try:
                 chunkCount = len(chunks)
