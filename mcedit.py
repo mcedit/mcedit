@@ -21,11 +21,14 @@ logger.setLevel(logging.DEBUG)
 
 logfile = 'mcedit.log'
 if hasattr(sys, 'frozen'):
-    import esky
-    app = esky.Esky(sys.executable)
+    if sys.platform == "win32":
+        import esky
+        app = esky.Esky(sys.executable)
 
-    logfile = os.path.join(app.appdir, logfile)
-
+        logfile = os.path.join(app.appdir, logfile)
+    elif sys.platform == "darwin":
+        logfile = os.path.expanduser("~/Library/Logs/" + logfile)
+        
 fh = logging.FileHandler(logfile, mode="w")
 fh.setLevel(logging.DEBUG)
 
