@@ -30,5 +30,11 @@ easy_install pygame
 easy_install pyyaml
 ```
 
+Ubuntu Linux users can install the following packages via apt-get to grab all the dependencies easily and install them into the system python. This also downloads all libraries required to build these modules using `pip install`
+
+```bash
+apt-get install python-opengl python-pygame python-yaml python-numpy
+```
+
 You should now be able to run MCEdit with `python mcedit.py` assuming you've installed all the dependencies correctly.
 
