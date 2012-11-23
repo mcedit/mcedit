@@ -2439,7 +2439,6 @@ class LevelEditor(GLViewport):
         if keyname == 'enter':
             keyname = 'return'
 
-        logging.debug("Key down: %s", keyname)
         d = self.cameraInputs
         im = [0., 0., 0.]
         mods = evt.dict.get('mod', 0)
