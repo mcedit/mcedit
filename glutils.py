@@ -202,7 +202,7 @@ class FramebufferTexture(Texture):
         GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, None)
         self.enabled = False
         self._texID = tex
-        if bool(FBO.glGenFramebuffers):
+        if bool(FBO.glGenFramebuffers) and "Intel" not in GL.glGetString(GL.GL_VENDOR):
             buf = FBO.glGenFramebuffers(1)
             depthbuffer = FBO.glGenRenderbuffers(1)
 
