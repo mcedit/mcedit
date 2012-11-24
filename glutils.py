@@ -232,8 +232,6 @@ class FramebufferTexture(Texture):
             self.enabled = True
         else:
             GL.glReadBuffer(GL.GL_BACK)
-            if bool(window_pos.glWindowPos2dARB):
-                pixels = GL.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE)
 
             GL.glPushAttrib(GL.GL_VIEWPORT_BIT | GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_TEST | GL.GL_STENCIL_BUFFER_BIT)
             GL.glDisable(GL.GL_STENCIL_TEST)
@@ -246,10 +244,6 @@ class FramebufferTexture(Texture):
             GL.glBindTexture(GL.GL_TEXTURE_2D, tex)
             GL.glReadBuffer(GL.GL_BACK)
             GL.glCopyTexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height)
-
-            if bool(window_pos.glWindowPos2dARB):
-                window_pos.glWindowPos2dARB(0,0)
-                GL.glDrawPixels(width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels)
 
             GL.glPopAttrib()
 
