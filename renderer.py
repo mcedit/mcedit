@@ -331,6 +331,17 @@ class ChunkCalculator (object):
         def release(self):
             pass
 
+    class renderstateVines(object):
+        @classmethod
+        def bind(self):
+            GL.glDisable(GL.GL_CULL_FACE)
+            GL.glEnable(GL.GL_ALPHA_TEST)
+
+        @classmethod
+        def release(self):
+            GL.glEnable(GL.GL_CULL_FACE)
+            GL.glDisable(GL.GL_ALPHA_TEST)
+
     class renderstateLowDetail(object):
         @classmethod
         def bind(self):
@@ -383,6 +394,7 @@ class ChunkCalculator (object):
 
     renderstates = (
         renderstatePlain,
+        renderstateVines,
         renderstateLowDetail,
         renderstateAlphaTest,
         renderstateIce,
@@ -408,6 +420,7 @@ class ChunkCalculator (object):
                 IceBlockRenderer,
                 FeatureBlockRenderer,
                 StairBlockRenderer,
+                VineBlockRenderer,
             # button, floor plate, door -> 1-cube features
             # lever, sign, wall sign, stairs -> 2-cube features
 
@@ -1845,6 +1858,54 @@ class StairBlockRenderer(BlockRenderer):
 
     makeVertices = stairVertices
 
+class VineBlockRenderer(BlockRenderer):
+    blocktypes = [106]
+
+    SouthBit = 1 #FaceZIncreasing
+    WestBit = 2 #FaceXDecreasing
+    NorthBit = 4 #FaceZDecreasing
+    EastBit = 8 #FaceXIncreasing
+
+    renderstate = ChunkCalculator.renderstateVines
+
+    def vineFaceVertices(self, direction, blockIndices, exposedFaceIndices, blocks, blockData, blockLight, facingBlockLight, texMap):
+
+        bdata = blockData[blockIndices]
+        blockIndices = numpy.array(blockIndices)
+        if direction == pymclevel.faces.FaceZIncreasing:
+            blockIndices[blockIndices] = (bdata & 1).astype(bool)
+        elif direction == pymclevel.faces.FaceXDecreasing:
+            blockIndices[blockIndices] = (bdata & 2).astype(bool)
+        elif direction == pymclevel.faces.FaceZDecreasing:
+            blockIndices[blockIndices] = (bdata & 4).astype(bool)
+        elif direction == pymclevel.faces.FaceXIncreasing:
+            blockIndices[blockIndices] = (bdata & 8).astype(bool)
+        else:
+            return []
+        vertexArray = self.makeTemplate(direction, blockIndices)
+        if not len(vertexArray):
+            return vertexArray
+
+        vertexArray[_ST] += texMap(self.blocktypes[0], [0], direction)[:, numpy.newaxis, 0:2]
+
+        lights = blockLight[blockIndices][..., numpy.newaxis, numpy.newaxis]
+        vertexArray.view('uint8')[_RGB] *= lights
+
+        vertexArray.view('uint8')[_RGB] *= LeafBlockRenderer.leafColor
+
+        if direction == pymclevel.faces.FaceZIncreasing:
+            vertexArray[_XYZ][..., 2] -= 0.0625
+        if direction == pymclevel.faces.FaceXDecreasing:
+            vertexArray[_XYZ][..., 0] += 0.0625
+        if direction == pymclevel.faces.FaceZDecreasing:
+            vertexArray[_XYZ][..., 2] += 0.0625
+        if direction == pymclevel.faces.FaceXIncreasing:
+            vertexArray[_XYZ][..., 0] -= 0.0625
+
+        return vertexArray
+
+    makeFaceVertices = vineFaceVertices
+
 
 class SlabBlockRenderer(BlockRenderer):
     blocktypes = [44, 126]
@@ -1871,7 +1932,7 @@ class SlabBlockRenderer(BlockRenderer):
         if direction != pymclevel.faces.FaceYIncreasing and direction != pymclevel.faces.FaceYDecreasing:
             vertexArray[_XYZ][..., 2:4, 1] -= 0.5
             vertexArray[_ST][..., 2:4, 1] += 8
-            
+
         vertexArray[_XYZ][..., 1][top] += 0.5
 
         return vertexArray
