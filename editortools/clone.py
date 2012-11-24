@@ -1071,6 +1071,10 @@ class ConstructionTool(CloneTool):
 
     def loadSchematic(self, filename):
         """ actually loads a schematic or a level """
+        if self.editor.level.filename == filename:
+            alert(u"Can't import a level into itself (for now).")
+            return
+
         try:
             level = pymclevel.fromFile(filename)
             self.loadLevel(level)
