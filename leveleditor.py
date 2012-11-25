@@ -12,6 +12,7 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 from editortools.thumbview import ThumbView
+from pymclevel.infiniteworld import SessionLockLost
 
 """
 leveleditor.py
@@ -2071,6 +2072,13 @@ class LevelEditor(GLViewport):
                 level = self.level
                 if level.parentWorld:
                     level = level.parentWorld
+
+                if hasattr(level, 'checkSessionLock'):
+                    try:
+                        level.checkSessionLock()
+                    except SessionLockLost, e:
+                        alert(e.message + "\n\nYour changes cannot be saved.")
+                        return
 
                 for level in itertools.chain(level.dimensions.itervalues(), [level]):
 
