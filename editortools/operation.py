@@ -2,6 +2,7 @@ import atexit
 import os
 import shutil
 import tempfile
+from albow.root import Cancel
 import pymclevel
 from mceutils import showProgress
 from pymclevel.mclevelbase import exhaust
@@ -24,7 +25,10 @@ class Operation(object):
         self.level = level
 
     def extractUndo(self, level, box):
-        return self.extractUndoChunks(level, box.chunkPositions, box.chunkCount)
+        if isinstance(level, pymclevel.MCInfdevOldLevel):
+            return self.extractUndoChunks(level, box.chunkPositions, box.chunkCount)
+        else:
+            return self.extractUndoSchematic(level, box)
 
     def extractUndoChunks(self, level, chunks, chunkCount = None):
         undoLevel = pymclevel.MCInfdevOldLevel(mkundotemp(), create=True)
@@ -48,6 +52,19 @@ class Operation(object):
 
         return undoLevel
 
+    def extractUndoSchematic(self, level, box):
+        if box.volume > 131072:
+            sch = showProgress("Recording undo...", level.extractZipSchematicIter(box), cancel=True)
+        else:
+            sch = level.extractZipSchematic(box)
+        if sch == "Cancel":
+            raise Cancel
+        if sch:
+            sch.sourcePoint = box.origin
+
+        return sch
+
+
     # represents a single undoable operation
     def perform(self, recordUndo=True):
         " Perform the operation. Record undo information if recordUndo"
@@ -61,9 +78,13 @@ class Operation(object):
 
             def _undo():
                 yield 0, 0, "Undoing..."
-                for i, (cx, cz) in enumerate(self.undoLevel.allChunks):
-                    self.level.copyChunkFrom(self.undoLevel, cx, cz)
-                    yield i, self.undoLevel.chunkCount, "Copying chunk %s..." % ((cx, cz),)
+                if hasattr(self.level, 'copyChunkFrom'):
+                    for i, (cx, cz) in enumerate(self.undoLevel.allChunks):
+                        self.level.copyChunkFrom(self.undoLevel, cx, cz)
+                        yield i, self.undoLevel.chunkCount, "Copying chunk %s..." % ((cx, cz),)
+                else:
+                    for i in self.level.copyBlocksFromIter(self.undoLevel, self.undoLevel.bounds, self.undoLevel.sourcePoint):
+                        yield i, self.undoLevel.chunkCount, "Copying..."
 
             if self.undoLevel.chunkCount > 25:
                 showProgress("Undoing...", _undo())
