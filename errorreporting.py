@@ -16,6 +16,7 @@ errorreporting.py
 
 Patch the `traceback' module to print "self" with each stack frame.
 """
+import collections
 import sys
 import traceback
 import platform
@@ -127,7 +128,7 @@ def json_crash_report():
         exception['message'] = sanitize(str(exc_value))
     except:
         exception['message'] = ""
-        
+
     exception['occurred_at'] = datetime.now().isoformat()
 
     try:
@@ -142,7 +143,7 @@ def json_crash_report():
     app_env['language'] = 'python'
     app_env['language_version'] = sys.version
 
-    env = app_env['env'] = {}
+    env = app_env['env'] = collections.OrderedDict()
 
     env['OS_NAME'] = os.name,
     env['OS_VERSION'] = platform.version()
@@ -150,6 +151,10 @@ def json_crash_report():
     env['OS_PLATFORM'] = platform.platform()
     env['OS_CPU'] = platform.processor()
 
+    env['FS_ENCODING'] = sys.getfilesystemencoding()
+
+    if 'LANG' in os.environ:
+        env['LANG'] = os.environ['LANG']
 
     try:
         from albow import root
