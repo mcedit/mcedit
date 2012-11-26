@@ -13,7 +13,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 import os
 import traceback
-from albow import FloatField, IntField, AttrRef, Row, Label, Widget, TabPanel, TextField, CheckBox, Column, Button
+from albow import FloatField, IntField, AttrRef, Row, Label, Widget, TabPanel, CheckBox, Column, Button, TextFieldWrapped
 from editortools.blockview import BlockButton
 from editortools.editortool import EditorTool
 from glbackground import Panel
@@ -113,32 +113,48 @@ class FilterModuleOptions(Widget):
 
                 if isinstance(optionType[0], (str, unicode)):
                     isChoiceButton = False
-                    if len(optionType) == 3:
-                        a,b,c = optionType
-                        if a == "strValSize":
-                            field = TextField(value=b, width=c)
-                            page.optionDict[optionName] = AttrRef(field, 'value')
 
-                            row = Row((Label(optionName), field))
-                            rows.append(row)
-                        else:
-                            isChoiceButton = True
-                    elif len(optionType) == 2:
-                        a,b = optionType
-                        if a == "strVal":
-                            field = TextField(value=b, width=200)
-                            page.optionDict[optionName] = AttrRef(field, 'value')
+                    if optionType[0] == "string":
+                        kwds = []
+                        wid = None
+                        lin = None
+                        val = None
+                        for keyword in optionType:
+                            if isinstance(keyword, (str, unicode)) and keyword != "string":
+                                kwds.append(keyword)
+                        for keyword in kwds:
+                            splitWord = keyword.split('=')
+                            if len(splitWord) > 1:
+                                v = None
+                                key = None
 
-                            row = Row((Label(optionName), field))
-                            rows.append(row)
-                        elif a == "strSize":
-                            field = TextField(value="Input String Here", width=b)
-                            page.optionDict[optionName] = AttrRef(field, 'value')
+                                try:
+                                    v = int(splitWord[1])
+                                except:
+                                    pass
 
-                            row = Row((Label(optionName), field))
-                            rows.append(row)
-                        else:
-                            isChoiceButton = True
+                                key = splitWord[0]
+                                if v is not None:
+                                    if key == "lines":
+                                        lin = v
+                                    elif key == "width":
+                                        wid = v
+                                else:
+                                    if key == "value":
+                                        val = splitWord[1]
+
+                        if lin is None:
+                            lin = 1
+                        if val is None:
+                            val = "Input String Here"
+                        if wid is None:
+                            wid = 200
+
+                        field = TextFieldWrapped(value=val, width=wid,lines=lin)
+                        page.optionDict[optionName] = AttrRef(field, 'value')
+
+                        row = Row((Label(optionName), field))
+                        rows.append(row)
                     else:
                         isChoiceButton = True
 
@@ -171,7 +187,7 @@ class FilterModuleOptions(Widget):
                 rows.append(wrapped_label(optionName, 50))
 
             elif optionType == "string":
-                field = TextField(value="Input String Here", width=200)
+                field = TextFieldWrapped(value="Input String Here", width=200, lines=1)
                 page.optionDict[optionName] = AttrRef(field, 'value')
 
                 row = Row((Label(optionName), field))
