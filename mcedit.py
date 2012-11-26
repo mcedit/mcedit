@@ -881,7 +881,7 @@ class MCEdit(GLViewport):
 
             # We shouldn't be using Github for this.
             app = esky.Esky(
-                sys.executable,
+                sys.executable.decode(sys.getfilesystemencoding()),
                 'https://github.com/mcedit/mcedit/downloads'
             )
             try:
