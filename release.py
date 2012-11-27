@@ -1,4 +1,5 @@
 import os.path
+import subprocess
 
 
 def get_version():
@@ -6,7 +7,10 @@ def get_version():
     Loads the build version from the bundled version file, if available.
     """
     if not os.path.exists('RELEASE-VERSION'):
-        return 'unknown'
+        try:
+            return subprocess.check_output('git describe --tags --match=*.*.*'.split())
+        except:
+            return 'unknown'
 
     fin = open('RELEASE-VERSION', 'rb')
     v = fin.read().strip()
