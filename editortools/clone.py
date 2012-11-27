@@ -1079,7 +1079,7 @@ class ConstructionTool(CloneTool):
             level = pymclevel.fromFile(filename)
             self.loadLevel(level)
         except Exception, e:
-            print u"Unable to import file {0} : {1}".format(filename, e)
+            logging.warn(u"Unable to import file %s : %s", filename, e)
 
             traceback.print_exc()
             if filename:
