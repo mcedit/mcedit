@@ -98,8 +98,11 @@ def sanitize(s):
     home = os.path.expanduser("~")
 
     s = s.replace(parentDir, "[MCEdit folder]")
+    s = s.replace(repr(parentDir)[1:-1], "[MCEdit folder]")
     s = s.replace(minecraftDir, "[Minecraft folder]")
+    s = s.replace(repr(minecraftDir)[1:-1], "[Minecraft folder]")
     s = s.replace(home, "[User home folder]")
+    s = s.replace(repr(home)[1:-1], "[User home folder]")
     return s
 
 def get_backtrace():
