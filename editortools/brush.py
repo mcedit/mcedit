@@ -819,9 +819,9 @@ class BrushTool(CloneTool):
         if self.brushMode.name != "Flood Fill":
             if len(self.draggedPositions):  # if self.isDragging
                 self.lastPosition = lastPoint = self.draggedPositions[-1]
+                point = [p + d * self.reticleOffset for p, d in zip(pos, direction)]
                 if any([abs(a - b) >= self.minimumSpacing
-                        for a, b in zip(pos, lastPoint)]):
-                    point = [p + d * self.reticleOffset for p, d in zip(pos, direction)]
+                        for a, b in zip(point, lastPoint)]):
                     self.dragLineToPoint(point)
 
     def dragLineToPoint(self, point):
@@ -829,9 +829,13 @@ class BrushTool(CloneTool):
             self.draggedPositions = [point]
             return
 
-        if pygame.key.get_mods() & pygame.KMOD_SHIFT and len(self.draggedPositions):
-            points = bresenham.bresenham(self.draggedPositions[-1], point)
-            self.draggedPositions.extend(points[1:])
+        if pygame.key.get_mods() & pygame.KMOD_SHIFT:
+            if len(self.draggedPositions):
+                points = bresenham.bresenham(self.draggedPositions[-1], point)
+                self.draggedPositions.extend(points[::self.minimumSpacing][1:])
+            elif self.lastPosition is not None:
+                points = bresenham.bresenham(self.lastPosition, point)
+                self.draggedPositions.extend(points[::self.minimumSpacing][1:])
         else:
             self.draggedPositions.append(point)
 
