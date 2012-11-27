@@ -927,7 +927,7 @@ class MCEdit(GLViewport):
 
                     try:
                         app.auto_update(callback)
-                    except esky.EskyVersionError:
+                    except (esky.EskyVersionError, EnvironmentError):
                         albow.alert("Failed to install update %s" % update_version)
                     else:
                         albow.alert("Version %s installed. Restart MCEdit to begin using it." % update_version)
