@@ -28,7 +28,7 @@ if hasattr(sys, 'frozen'):
         logfile = os.path.join(app.appdir, logfile)
     elif sys.platform == "darwin":
         logfile = os.path.expanduser("~/Library/Logs/" + logfile)
-        
+
 fh = logging.FileHandler(logfile, mode="w")
 fh.setLevel(logging.DEBUG)
 
@@ -1019,6 +1019,7 @@ def main(argv):
     except Exception, e:
         logging.error('An unhandled error occured.', exc_info=True)
         errorreporting.reportException()
+        logging.error("MCEdit version %s", release.get_version())
         display.quit()
         return 1
     return 0
