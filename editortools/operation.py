@@ -7,11 +7,12 @@ import pymclevel
 from mceutils import showProgress
 from pymclevel.mclevelbase import exhaust
 
-undo_folder = os.path.join(tempfile.gettempdir(), "mcedit_undo")
-if not os.path.exists(undo_folder):
-    os.mkdir(undo_folder)
+undo_folder = os.path.join(tempfile.gettempdir(), "mcedit_undo", str(os.getpid()))
 
 def mkundotemp():
+    if not os.path.exists(undo_folder):
+        os.makedirs(undo_folder)
+
     return tempfile.mkdtemp("mceditundo", dir=undo_folder)
 
 atexit.register(shutil.rmtree, undo_folder, True)
