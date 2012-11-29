@@ -126,11 +126,14 @@ def json_crash_report():
 
     exception = report['exception'] = {}
     exception['backtrace'] = get_backtrace()
-    exception['exception_class'] = exc_class.__name__
-    try:
-        exception['message'] = sanitize(str(exc_value))
-    except:
-        exception['message'] = ""
+    exception['exception_class'] = str(exc_class)
+    if isinstance(exc_class, UnicodeError):
+        exception['message'] = str(exc_class)
+    else:
+        try:
+            exception['message'] = sanitize(str(exc_value))
+        except:
+            exception['message'] = ""
 
     exception['occurred_at'] = datetime.now().isoformat()
 
