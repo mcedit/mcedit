@@ -53,7 +53,7 @@ def extract_tb(tb, limit=None):
         name = co.co_name
         self = f.f_locals.get('self')
         try:
-            selfstr = self and "(self={0})".format(self) or " "
+            selfstr = self and "(self is a {0})".format(self.__class__.__name__) or " "
         except:
             selfstr = " "
         traceback.linecache.checkcache(filename)
