@@ -1020,11 +1020,11 @@ def main(argv):
         logging.error('An unhandled error occured.', exc_info=True)
         errorreporting.reportException()
         logging.error("MCEdit version %s", release.get_version())
+        display.quit()
         if hasattr(sys, 'frozen') and sys.platform == 'win32':
             print "Press RETURN or close this window to dismiss."
             raw_input()
-            
-        display.quit()
+
         return 1
     return 0
 
