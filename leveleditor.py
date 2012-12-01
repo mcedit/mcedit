@@ -1287,22 +1287,19 @@ class CameraViewport(GLViewport):
             root.get_root().update_tooltip()
 
             focusPair = self.blockFaceUnderCursor
-            if focusPair is not None:
 
-                # xxx whose job is it to check this stuff
-                (blockPosition, faceDirection) = focusPair
-                if None != blockPosition:
-                    self.editor.updateInspectionString(blockPosition)
-                    # for t in self.toolbar.tools:
+            (blockPosition, faceDirection) = focusPair
+            if None != blockPosition:
+                self.editor.updateInspectionString(blockPosition)
+                # for t in self.toolbar.tools:
 
-                    if self.find_widget(mouse.get_pos()) == self:
-                        ct = self.editor.currentTool
-                        if ct:
-                            if focusPair != None or self.mouseMovesCamera:
-                                ct.drawTerrainReticle()
-                                ct.drawToolReticle()
-                        else:
-                            self.editor.drawWireCubeReticle()
+                if self.find_widget(mouse.get_pos()) == self:
+                    ct = self.editor.currentTool
+                    if ct:
+                        ct.drawTerrainReticle()
+                        ct.drawToolReticle()
+                    else:
+                        self.editor.drawWireCubeReticle()
 
             for t in self.editor.toolbar.tools:
                 t.drawTerrainMarkers()
