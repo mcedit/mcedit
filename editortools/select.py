@@ -870,8 +870,6 @@ class SelectionTool(EditorTool):
                     GL.glDisable(GL.GL_BLEND)
                     GL.glDisable(GL.GL_DEPTH_TEST)
 
-        pos, direction = self.editor.blockFaceUnderCursor
-        x, y, z = pos
         selectionColor = map(lambda a: a * a * a * a, self.selectionColor)
 
         # draw a colored box representing the possible selection
@@ -882,12 +880,14 @@ class SelectionTool(EditorTool):
         if ((self.selectionInProgress or self.clickSelectionInProgress) and otherCorner != None):
             GL.glPolygonOffset(DepthOffset.PotentialSelection, DepthOffset.PotentialSelection)
 
-            box = self.selectionBoxForCorners(otherCorner, pos)
-            if self.chunkMode:
-                box = box.chunkBox(self.editor.level)
-                if pygame.key.get_mods() & pygame.KMOD_ALT:
-                    selectionColor = [1., 0., 0.]
-            self.editor.drawConstructionCube(box, selectionColor + [self.alpha, ])
+            pos, direction = self.editor.blockFaceUnderCursor
+            if pos is not None:
+                box = self.selectionBoxForCorners(otherCorner, pos)
+                if self.chunkMode:
+                    box = box.chunkBox(self.editor.level)
+                    if pygame.key.get_mods() & pygame.KMOD_ALT:
+                        selectionColor = [1., 0., 0.]
+                self.editor.drawConstructionCube(box, selectionColor + [self.alpha, ])
         else:
             # don't draw anything at the mouse cursor if we're resizing the box
             if self.dragResizeFace is None:
