@@ -530,7 +530,7 @@ class CameraViewport(GLViewport):
 
         try:
             block = self.editor.level.blockAt(*intProjectedPoint)
-        except pymclevel.ChunkNotPresent:
+        except (EnvironmentError, pymclevel.ChunkNotPresent):
             return intProjectedPoint, d
 
         if block == pymclevel.alphaMaterials.SnowLayer.ID:
@@ -543,7 +543,7 @@ class CameraViewport(GLViewport):
                     neighborBlock = self.editor.level.blockAt(*point)
                     if block != neighborBlock:
                         potentialOffsets.append(offsets)
-                except pymclevel.ChunkNotPresent:
+                except (EnvironmentError, pymclevel.ChunkNotPresent):
                     pass
 
         # check each component of the face vector to see if that face is exposed
@@ -990,7 +990,7 @@ class CameraViewport(GLViewport):
                                 if te and "Items" in te and "id" in te:
                                     self.editor.endSelection()
                                     self.editContainer(point, te["id"].value)
-                            except pymclevel.ChunkNotPresent:
+                            except (EnvironmentError, pymclevel.ChunkNotPresent):
                                 pass
 
     def leftClickUp(self, evt):

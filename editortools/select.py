@@ -756,7 +756,7 @@ class SelectionTool(EditorTool):
                         bt = self.editor.level.blockAt(sx, sy, sz)
                         if(bt):
                             alpha = 0.2
-                    except pymclevel.ChunkNotPresent:
+                    except (EnvironmentError, pymclevel.ChunkNotPresent):
                         pass
 
                     GL.glLineWidth(lineWidth)
@@ -913,7 +913,7 @@ class SelectionTool(EditorTool):
             if(bt):
 ##                textureCoords = materials[bt][0]
                 alpha = 0.12
-        except pymclevel.ChunkNotPresent:
+        except (EnvironmentError, pymclevel.ChunkNotPresent):
             pass
 
         # cube sides
