@@ -1278,7 +1278,12 @@ class CameraViewport(GLViewport):
             self.drawCeiling()
 
         if self.editor.level:
-            self.updateBlockFaceUnderCursor()
+            try:
+                self.updateBlockFaceUnderCursor()
+            except (EnvironmentError, pymclevel.ChunkNotPresent) as e:
+                logging.debug("Updating cursor block: %s", e)
+                self.blockFaceUnderCursor = (None, None)
+
             root.get_root().update_tooltip()
 
             focusPair = self.blockFaceUnderCursor
