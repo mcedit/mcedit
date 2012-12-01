@@ -2678,7 +2678,7 @@ class LevelEditor(GLViewport):
                 self.saveFile()
             if answer == "Cancel":
                 return
-            
+
         self.unsavedEdits = 0
 
         self.level = None
@@ -2872,7 +2872,7 @@ class LevelEditor(GLViewport):
         worlds = []
         for f in worldFiles:
             try:
-                lev = pymclevel.MCInfdevOldLevel(f)
+                lev = pymclevel.MCInfdevOldLevel(f, readonly=True)
             except Exception:
                 continue
             else:

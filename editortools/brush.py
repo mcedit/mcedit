@@ -715,7 +715,7 @@ class BrushTool(CloneTool):
         # xxx mouthful
         if clipFilename:
             try:
-                self.loadLevel(pymclevel.fromFile(clipFilename))
+                self.loadLevel(pymclevel.fromFile(clipFilename, readonly=True))
             except Exception, e:
                 alert("Failed to load file %s" % clipFilename)
                 self.brushMode = "Fill"
