@@ -30,8 +30,8 @@ def alertFilterException(func):
         try:
             func(*args, **kw)
         except Exception, e:
-            alert(u"Exception during filter operation. See console for details.\n\n{0}".format(e))
             print traceback.format_exc()
+            alert(u"Exception during filter operation. See console for details.\n\n{0}".format(e))
 
     return _func
 
@@ -348,6 +348,7 @@ class FilterTool(EditorTool):
             self.editor.remove(self.panel)
 
         self.reloadFilters()
+
         #self.panel = FilterToolPanel(self)
         self.panel.reload()
 
@@ -366,12 +367,24 @@ class FilterTool(EditorTool):
         filterFiles = os.listdir(filterDir)
         filterPyfiles = filter(lambda x: x.endswith(".py"), filterFiles)
 
-        filterModules = (__import__(x[:-3]) for x in filterPyfiles)
+        def tryImport(name):
+            try:
+                return __import__(name)
+            except Exception, e:
+                print traceback.format_exc()
+                alert(u"Exception while importing filter module {}. See console for details.\n\n{}".format(name, e))
+                return object()
+
+        filterModules = (tryImport(x[:-3]) for x in filterPyfiles)
         filterModules = filter(lambda module: hasattr(module, "perform"), filterModules)
 
         self.filterModules = dict((self.moduleDisplayName(x), x) for x in filterModules)
-        [reload(m) for m in self.filterModules.itervalues()]
-        filterModules = (__import__(x[:-3]) for x in filterPyfiles)
+        for m in self.filterModules.itervalues():
+            try:
+                reload(m)
+            except Exception, e:
+                print traceback.format_exc()
+                alert(u"Exception while reloading filter module {}. Using previously loaded module. See console for details.\n\n{}".format(m.__file__, e))
 
     @property
     def filterNames(self):
