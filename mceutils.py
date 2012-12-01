@@ -47,6 +47,9 @@ def alertException(func):
             return func(*args, **kw)
         except root.Cancel:
             alert("Canceled.")
+        except pymclevel.infiniteworld.SessionLockLost as e:
+            alert(e.message + "\n\nYour changes cannot be saved.")
+            
         except Exception, e:
             logging.exception("Exception:")
             if ask("Error during {0}: {1!r}".format(func, e)[:1000], ["Report Error", "Okay"], default=1, cancel=0) == "Report Error":
