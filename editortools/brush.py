@@ -352,7 +352,7 @@ class Modes:
 
         def brushBoxForPointAndOptions(self, point, options={}):
             point = [p + options.get('center' + c, 0) for p, c in zip(point, 'xyz')]
-            return BoundingBox(point, options['brushSize'])
+            return BoundingBox(point, options['level'].size)
 
         def createOptions(self, panel, tool):
             col = [panel.brushModeRow]
