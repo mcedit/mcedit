@@ -678,7 +678,7 @@ class TextEditorWrapped(Widget):
         il = self.insertion_line
         if il is not None:
             il = max(0, min(il, (len(self.textL)-1)))
-        if i is not None:
+        if i is not None and il is not None:
             i = max(0, min(i, len(self.textL[il])-1))
         return text, i, il
 
