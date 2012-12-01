@@ -677,7 +677,8 @@ class TextEditorWrapped(Widget):
         i = self.insertion_step
         il = self.insertion_line
         if i is not None:
-            i = max(0, min(i, len(self.textL[il])))
+            if il < len(textL):
+                i = max(0, min(i, len(self.textL[il])))
         return text, i, il
 
     def move_insertion_point(self, d):
