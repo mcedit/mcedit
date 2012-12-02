@@ -1814,7 +1814,9 @@ class StairBlockRenderer(BlockRenderer):
         materialIndices = self.getMaterialIndices(blockMaterials)
         yield
         stairBlocks = blocks[materialIndices]
-        stairData = blockData[materialIndices] & 0x3
+        stairData = blockData[materialIndices]
+        stairTop = (stairData >> 2).astype(bool)
+        stairData &= 3
 
         blockLight = areaBlockLights[1:-1, 1:-1, 1:-1]
         x, z, y = materialIndices.nonzero()
@@ -1826,7 +1828,7 @@ class StairBlockRenderer(BlockRenderer):
 
             if _ == "step":
                 vertexArray[_XYZST] += self.stairTemplates[4][..., :5]
-
+                vertexArray[_XYZ][..., 1][stairTop] += 0.5
             else:
                 vertexArray[_XYZST] += self.stairTemplates[stairData][..., :5]
 
