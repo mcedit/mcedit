@@ -1847,8 +1847,7 @@ class StairBlockRenderer(BlockRenderer):
 
 
 class SlabBlockRenderer(BlockRenderer):
-    slabID = 44
-    blocktypes = [slabID]
+    blocktypes = [44, 126]
 
     def slabFaceVertices(self, direction, blockIndices, exposedFaceIndices, blocks, blockData, blockLight, facingBlockLight, texMap):
         if direction != pymclevel.faces.FaceYIncreasing:
@@ -1856,12 +1855,14 @@ class SlabBlockRenderer(BlockRenderer):
 
         lights = facingBlockLight[blockIndices][..., numpy.newaxis, numpy.newaxis]
         bdata = blockData[blockIndices]
+        top = (bdata >> 3).astype(bool)
+        bdata &= 7
 
         vertexArray = self.makeTemplate(direction, blockIndices)
         if not len(vertexArray):
             return vertexArray
 
-        vertexArray[_ST] += texMap(self.slabID, bdata, direction)[:, numpy.newaxis, 0:2]
+        vertexArray[_ST] += texMap(blocks[blockIndices], bdata, direction)[:, numpy.newaxis, 0:2]
         vertexArray.view('uint8')[_RGB] *= lights
 
         if direction == pymclevel.faces.FaceYIncreasing:
@@ -1870,6 +1871,8 @@ class SlabBlockRenderer(BlockRenderer):
         if direction != pymclevel.faces.FaceYIncreasing and direction != pymclevel.faces.FaceYDecreasing:
             vertexArray[_XYZ][..., 2:4, 1] -= 0.5
             vertexArray[_ST][..., 2:4, 1] += 8
+            
+        vertexArray[_XYZ][..., 1][top] += 0.5
 
         return vertexArray
 
