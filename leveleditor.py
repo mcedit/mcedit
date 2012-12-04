@@ -972,26 +972,26 @@ class CameraViewport(GLViewport):
             if point is not None:
                 point = map(lambda x: int(numpy.floor(x)), point)
                 if self.editor.currentTool is self.editor.selectionTool:
-                    block = self.editor.level.blockAt(*point)
-                    if distance2(point, self.cameraPosition) > 4:
-                        blockEditors = {
-                            pymclevel.alphaMaterials.MonsterSpawner.ID:   self.editMonsterSpawner,
-                            pymclevel.alphaMaterials.Sign.ID:             self.editSign,
-                            pymclevel.alphaMaterials.WallSign.ID:         self.editSign,
-                        }
-                        edit = blockEditors.get(block)
-                        if edit:
-                            self.editor.endSelection()
-                            edit(point)
-                        else:
-                            # detect "container" tiles
-                            try:
+                    try:
+                        block = self.editor.level.blockAt(*point)
+                        if distance2(point, self.cameraPosition) > 4:
+                            blockEditors = {
+                                pymclevel.alphaMaterials.MonsterSpawner.ID:   self.editMonsterSpawner,
+                                pymclevel.alphaMaterials.Sign.ID:             self.editSign,
+                                pymclevel.alphaMaterials.WallSign.ID:         self.editSign,
+                            }
+                            edit = blockEditors.get(block)
+                            if edit:
+                                self.editor.endSelection()
+                                edit(point)
+                            else:
+                                # detect "container" tiles
                                 te = self.editor.level.tileEntityAt(*point)
                                 if te and "Items" in te and "id" in te:
                                     self.editor.endSelection()
                                     self.editContainer(point, te["id"].value)
-                            except (EnvironmentError, pymclevel.ChunkNotPresent):
-                                pass
+                    except (EnvironmentError, pymclevel.ChunkNotPresent):
+                        pass
 
     def leftClickUp(self, evt):
         self.editor.toolMouseUp(evt, self.blockFaceUnderCursor)
