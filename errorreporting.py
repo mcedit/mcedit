@@ -126,9 +126,9 @@ def json_crash_report():
 
     exception = report['exception'] = {}
     exception['backtrace'] = get_backtrace()
-    exception['exception_class'] = str(exc_class)
+    exception['exception_class'] = exc_class.__name__
     if isinstance(exc_class, UnicodeError):
-        exception['message'] = str(exc_class)
+        exception['message'] = exc_class.__name__
     else:
         try:
             exception['message'] = sanitize(str(exc_value))
