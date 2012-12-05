@@ -85,7 +85,10 @@ def okayAboveSpawn(level, pos):
 
 
 def positionValid(level, pos):
-    return okayAt63(level, pos) and okayAboveSpawn(level, pos)
+    try:
+        return okayAt63(level, pos) and okayAboveSpawn(level, pos)
+    except EnvironmentError:
+        return False
 
 
 class PlayerSpawnMoveOperation(Operation):
