@@ -27,6 +27,7 @@ imported from editortools/
 
 import gc
 import os
+import math
 import csv
 import copy
 import time
@@ -428,9 +429,9 @@ class CameraViewport(GLViewport):
             else:
                 return x
 
-        dx = -numpy.sin(numpy.radians(yaw)) * numpy.cos(numpy.radians(pitch))
-        dy = -numpy.sin(numpy.radians(pitch))
-        dz = numpy.cos(numpy.radians(yaw)) * numpy.cos(numpy.radians(pitch))
+        dx = -math.sin(math.radians(yaw)) * math.cos(math.radians(pitch))
+        dy = -math.sin(math.radians(pitch))
+        dz = math.cos(math.radians(yaw)) * math.cos(math.radians(pitch))
         return map(nanzero, [dx, dy, dz])
 
     def updateMouseVector(self):
