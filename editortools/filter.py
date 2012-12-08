@@ -11,6 +11,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import collections
 import os
 import traceback
 from albow import FloatField, IntField, AttrRef, Row, Label, Widget, TabPanel, CheckBox, Column, Button, TextFieldWrapped
@@ -378,7 +379,7 @@ class FilterTool(EditorTool):
         filterModules = (tryImport(x[:-3]) for x in filterPyfiles)
         filterModules = filter(lambda module: hasattr(module, "perform"), filterModules)
 
-        self.filterModules = dict((self.moduleDisplayName(x), x) for x in filterModules)
+        self.filterModules = collections.OrderedDict(sorted((self.moduleDisplayName(x), x) for x in filterModules))
         for m in self.filterModules.itervalues():
             try:
                 reload(m)
