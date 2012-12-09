@@ -2,6 +2,8 @@ import atexit
 import os
 import shutil
 import tempfile
+from pymclevel import BoundingBox
+import numpy
 from albow.root import Cancel
 import pymclevel
 from mceutils import showProgress
@@ -32,6 +34,14 @@ class Operation(object):
             return self.extractUndoSchematic(level, box)
 
     def extractUndoChunks(self, level, chunks, chunkCount = None):
+        if not isinstance(level, pymclevel.MCInfdevOldLevel):
+            chunks = numpy.array(list(chunks))
+            mincx, mincz = numpy.min(chunks, 0)
+            maxcx, maxcz = numpy.max(chunks, 0)
+            box = BoundingBox((mincx << 4, 0, mincz << 4), (maxcx << 4, level.Height, maxcz << 4))
+
+            return self.extractUndoSchematic(level, box)
+
         undoLevel = pymclevel.MCInfdevOldLevel(mkundotemp(), create=True)
         if not chunkCount:
             try:
