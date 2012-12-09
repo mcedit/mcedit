@@ -948,7 +948,7 @@ class TileTicksRenderer(EntityRendererGeneric):
     layer = Layer.TileTicks
 
     def makeChunkVertices(self, chunk):
-        if "Level" in chunk.root_tag and "TileTicks" in chunk.root_tag["Level"]:
+        if chunk.root_tag and "Level" in chunk.root_tag and "TileTicks" in chunk.root_tag["Level"]:
             ticks = chunk.root_tag["Level"]["TileTicks"]
             if len(ticks):
                 self.vertexArrays.append(self._computeVertices([[t[i].value for i in "xyz"] for t in ticks],
