@@ -64,6 +64,7 @@ class FileListView(PaletteView):
             names = []
         self.names = sorted(names)
         self.selection = None
+        self.scroll = 0
 
     def num_items(self):
         return len(self.names)
