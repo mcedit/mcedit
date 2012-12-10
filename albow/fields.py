@@ -893,6 +893,9 @@ class TextEditorWrapped(Widget):
 
             if line >= len(textL):
                 line = len(textL) - 1
+                
+            if line < 0:
+                line = 0
 
             def width(i):
                 return font.size(textL[line][:i])[0]
