@@ -879,10 +879,9 @@ class MCEdit(GLViewport):
             # We're being run from a bundle, check for updates.
             import esky
 
-            # We shouldn't be using Github for this.
             app = esky.Esky(
                 sys.executable.decode(sys.getfilesystemencoding()),
-                'https://github.com/mcedit/mcedit/downloads'
+                'https://bitbucket.org/codewarrior0/mcedit/downloads'
             )
             try:
                 update_version = app.find_update()
