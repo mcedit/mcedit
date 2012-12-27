@@ -63,7 +63,7 @@ SETUP_COMMON = {
     'author': 'David Vierra',
     'author_email': 'codewarrior0@gmail.com',
 
-    'url': 'http://www.github.com/mcedit/mcedit',
+    'url': 'http://www.mcedit.net/',
 
     # PyPi,
     'keywords': 'minecraft world editor',
