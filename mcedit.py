@@ -905,13 +905,13 @@ class MCEdit(GLViewport):
                     def callback(args):
                         status = args['status']
                         status_texts = {
-                            'searching': "Finding updates...",
-                            'found':  "Found version {new_version}",
-                            'downloading': "Downloading: {received} / {size}",
-                            'ready': "Downloaded {path}",
-                            'installing': "Installing {new_version}",
-                            'cleaning up': "Cleaning up...",
-                            'done': "Done."
+                            'searching': u"Finding updates...",
+                            'found':  u"Found version {new_version}",
+                            'downloading': u"Downloading: {received} / {size}",
+                            'ready': u"Downloaded {path}",
+                            'installing': u"Installing {new_version}",
+                            'cleaning up': u"Cleaning up...",
+                            'done': u"Done."
                         }
                         text = status_texts.get(status, 'Unknown').format(**args)
                         if status != 'downloding':
