@@ -11,8 +11,9 @@ dist
 build
 *.egg-info
 
-# The "standard" virtualenv directory.
+# Virtualenv directories
 ENV
+ENV32
 
 #profiling/outputs
 mcedit.ini
@@ -24,3 +25,4 @@ RELEASE-VERSION
 
 .DS_Store
 .idea
+
