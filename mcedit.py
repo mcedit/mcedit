@@ -914,8 +914,6 @@ class MCEdit(GLViewport):
                             'done': u"Done."
                         }
                         text = status_texts.get(status, 'Unknown').format(**args)
-                        if status != 'downloding':
-                            print args
 
                         panel = Dialog()
                         panel.idleevent = lambda event: panel.dismiss()
