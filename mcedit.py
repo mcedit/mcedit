@@ -933,9 +933,7 @@ class MCEdit(GLViewport):
                         raise SystemExit()
 
         if mcedit.closeMinecraftWarning:
-            answer = albow.ask("Warning: You must close Minecraft completely before editing. Save corruption may result. Get Satisfaction to learn more.", ["Get Satisfaction", "Don't remind me again.", "OK"], default=1, cancel=1)
-            if answer == "Get Satisfaction":
-                mcplatform.platform_open("http://getsatisfaction.com/mojang/topics/region_file_cache_interferes_with_map_editors_risking_save_corruption")
+            answer = albow.ask("Warning: Only open a world in one program at a time. If you open a world at the same time in MCEdit and in Minecraft, you will lose your work and possibly damage your save file.\n\n If you are using Minecraft 1.3 or earlier, you need to close Minecraft completely before you use MCEdit.", ["Don't remind me again.", "OK"], default=1, cancel=1)
             if answer == "Don't remind me again.":
                 mcedit.closeMinecraftWarning = False
 
