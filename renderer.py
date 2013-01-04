@@ -1044,6 +1044,10 @@ class LowDetailBlockRenderer(BlockRenderer):
         GL.glDrawArrays(GL.GL_QUADS, 0, len(buf) * 4)
         GL.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY)
 
+    def setAlpha(self, alpha):
+        for va in self.vertexArrays:
+            va.view('uint8')[..., -1] = alpha
+
     def makeChunkVertices(self, ch):
         step = 1
 
