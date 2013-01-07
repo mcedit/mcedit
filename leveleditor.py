@@ -877,8 +877,6 @@ class CameraViewport(GLViewport):
                             chunk.Entities.value = entities
                             chunk.dirty = True
 
-                        chunk.compress()
-
                         yield (i, self.editor.level.chunkCount)
                         i += 1
 
