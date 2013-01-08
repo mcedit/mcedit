@@ -781,7 +781,7 @@ class TextEditorWrapped(Widget):
     def insert_char(self, c):
         if self.upper:
             c = c.upper()
-        if c <= "\x7f":
+        if c <= u"\xff":
             if c == "\x08" or c == "\x7f":
                 text, i = self.get_text_and_insertion_point()
                 if i is None and (self.selection_start is None or self.selection_end is None):
