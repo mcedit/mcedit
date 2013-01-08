@@ -432,7 +432,7 @@ class ChunkCalculator (object):
             # portal
             ]
 
-        self.materialMap = materialMap = numpy.zeros((256,), 'uint8')
+        self.materialMap = materialMap = numpy.zeros((pymclevel.materials.id_limit,), 'uint8')
         materialMap[1:] = 1  # generic blocks
 
         materialCount = 2
@@ -555,7 +555,7 @@ class ChunkCalculator (object):
     def getAreaBlocks(self, chunk, neighboringChunks):
         chunkWidth, chunkLength, chunkHeight = chunk.Blocks.shape
 
-        areaBlocks = numpy.zeros((chunkWidth + 2, chunkLength + 2, chunkHeight + 2), numpy.uint8)
+        areaBlocks = numpy.zeros((chunkWidth + 2, chunkLength + 2, chunkHeight + 2), numpy.uint16)
         areaBlocks[1:-1, 1:-1, 1:-1] = chunk.Blocks
         areaBlocks[:1, 1:-1, 1:-1] = neighboringChunks[pymclevel.faces.FaceXDecreasing].Blocks[-1:, :chunkLength, :chunkHeight]
         areaBlocks[-1:, 1:-1, 1:-1] = neighboringChunks[pymclevel.faces.FaceXIncreasing].Blocks[:1, :chunkLength, :chunkHeight]

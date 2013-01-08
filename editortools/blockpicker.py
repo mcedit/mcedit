@@ -4,6 +4,7 @@ from editortools import thumbview
 from editortools import blockview
 from glbackground import GLBackground
 from mceutils import CheckBoxLabel
+from pymclevel import materials
 
 from pymclevel.materials import Block
 
@@ -166,9 +167,9 @@ class BlockPicker(Dialog):
             if ":" in text:
                 text, num = text.split(":", 1)
                 blockData = int(num) & 0xf
-                blockID = int(text) & 0xff
+                blockID = int(text) % materials.id_limit
             else:
-                blockID = int(text) & 0xff
+                blockID = int(text) % materials.id_limit
 
             block = self.materials.blockWithID(blockID, blockData)
 

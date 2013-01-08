@@ -1655,7 +1655,7 @@ class LevelEditor(GLViewport):
     def analyzeBox(self, level, box):
         entityCounts = defaultdict(int)
         tileEntityCounts = defaultdict(int)
-        types = numpy.zeros(4096, dtype='uint32')
+        types = numpy.zeros(65536, dtype='uint32')
 
         def _analyzeBox():
             i = 0
@@ -1663,7 +1663,7 @@ class LevelEditor(GLViewport):
                 i += 1
                 yield i, box.chunkCount
                 blocks = numpy.array(chunk.Blocks[slices], dtype='uint16')
-                blocks |= (numpy.array(chunk.Data[slices], dtype='uint16') << 8)
+                blocks |= (numpy.array(chunk.Data[slices], dtype='uint16') << 12)
                 b = numpy.bincount(blocks.ravel())
                 types[:b.shape[0]] += b
 
@@ -1684,7 +1684,7 @@ class LevelEditor(GLViewport):
         tileEntitySum = numpy.sum(tileEntityCounts.values())
         presentTypes = types.nonzero()
 
-        blockCounts = sorted([(level.materials[t & 0xff, t >> 8], types[t]) for t in presentTypes[0]])
+        blockCounts = sorted([(level.materials[t & 0xfff, t >> 12], types[t]) for t in presentTypes[0]])
 
         counts = []
         c = 0
