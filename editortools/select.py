@@ -627,14 +627,14 @@ class SelectionTool(EditorTool):
             self.selectionInProgress = False
             self.currentCorner = 1
             self.clickSelectionInProgress = False
-
+            self.dragStartPoint = None
+            
         else:
             points = self.getSelectionPoints()
             if not all(points):
                 points = (pos, pos)  # set both points on the first click
             else:
                 points[self.currentCorner] = pos
-
             if not self.clickSelectionInProgress:
                 self.clickSelectionInProgress = True
             else:
