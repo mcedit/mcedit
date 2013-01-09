@@ -11,6 +11,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
+import sys
 from editortools.thumbview import ThumbView
 from pymclevel.infiniteworld import SessionLockLost
 
@@ -987,9 +988,12 @@ class CameraViewport(GLViewport):
     def mouse_down(self, evt):
         button = remapMouseButton(evt.button)
         logging.debug("Mouse down %d @ %s", button, evt.pos)
-
+        
         if button == 1:
-            self.leftClickDown(evt)
+            if sys.platform == "darwin" and evt.ctrl:
+                self.rightClickDown(evt)
+            else:
+                self.leftClickDown(evt)
         elif button == 2:
             self.rightClickDown(evt)
         else:
@@ -1003,7 +1007,10 @@ class CameraViewport(GLViewport):
         button = remapMouseButton(evt.button)
         logging.debug("Mouse up   %d @ %s", button, evt.pos)
         if button == 1:
-            self.leftClickUp(evt)
+            if sys.platform == "darwin" and evt.ctrl:
+                self.rightClickUp(evt)
+            else:
+                self.leftClickUp(evt)
         elif button == 2:
             self.rightClickUp(evt)
         else:
