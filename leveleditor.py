@@ -988,7 +988,7 @@ class CameraViewport(GLViewport):
     def mouse_down(self, evt):
         button = remapMouseButton(evt.button)
         logging.debug("Mouse down %d @ %s", button, evt.pos)
-        
+
         if button == 1:
             if sys.platform == "darwin" and evt.ctrl:
                 self.rightClickDown(evt)
@@ -3352,7 +3352,7 @@ class LevelEditor(GLViewport):
 
     def quit(self):
         self.mouseLookOff()
-        self.parent.confirm_quit()
+        self.mcedit.confirm_quit()
 
     mouseWasCaptured = False
 
