@@ -142,21 +142,12 @@ class ControlPanel(Panel):
     def __init__(self, editor):
         Panel.__init__(self)
         self.editor = editor
-        self.size = editor.size
-        self.anchor = "rltb"
 
         self.bg_color = (0, 0, 0, 0.8)
 
         header = self.getHeader()
         keysColumn = [Label("")]
         buttonsColumn = [header]
-
-        '''def addRow(key, text, action):
-            b = Button(text, action=action, width = 300)
-            l = Label(key,width=100,margin=b.margin)
-            l.height=b.height
-            keysColumn.append(l)
-            buttonsColumn.append(b)'''
 
         cmd = mcplatform.cmd_name
         hotkeys = ([(cmd + "-N", "Create New World", editor.mcedit.createNewWorld),
@@ -181,24 +172,20 @@ class ControlPanel(Panel):
 
         buttons = mceutils.HotkeyColumn(hotkeys, keysColumn, buttonsColumn)
 
-        # buttons.buttons[-1].ref =
-
-        self.add(buttons)
-        buttons.right = self.centerx
-        buttons.centery = self.centery
-        buttons.anchor = "wh"
-
         sideColumn = editor.mcedit.makeSideColumn()
-        sideColumn.centery = self.centery
-        sideColumn.left = self.centerx
-        sideColumn.anchor = "wh"
 
-        self.add(sideColumn)
-
+        self.add(Row([buttons, sideColumn]))
         self.shrink_wrap()
 
     def key_down(self, evt):
-        self.editor.key_down(evt)
+        if key.name(evt.key) == 'escape':
+            self.dismiss()
+        else:
+            self.editor.key_down(evt)
+
+    def mouse_down(self, e):
+        if e not in self:
+            self.dismiss()
 
 
 def unproject(x, y, z):
@@ -1438,6 +1425,8 @@ class LevelEditor(GLViewport):
         self.generateStars()
 
         self.optionsBar = Widget()
+
+        mcEditButton = Button("MCEdit", action=self.showControls)
         viewDistanceDown = Button("<", action=self.decreaseViewDistance)
         viewDistanceUp = Button(">", action=self.increaseViewDistance)
         viewDistanceReadout = ValueDisplay(width=40, ref=AttrRef(self.renderer, "viewDistance"))
@@ -1492,7 +1481,7 @@ class LevelEditor(GLViewport):
         self.viewportButton = Button("Camera View", action=self.swapViewports,
             tooltipText="Shortcut: TAB")
 
-        row = (viewDistanceDown, Label("View Distance:"), viewDistanceReadout, viewDistanceUp,
+        row = (mcEditButton, viewDistanceDown, Label("View Distance:"), viewDistanceReadout, viewDistanceUp,
                readoutGrid, viewButton, self.viewportButton)
 
         # row += (Button("CR Info", action=self.showChunkRendererInfo), )
@@ -1522,9 +1511,9 @@ class LevelEditor(GLViewport):
         self.currentTool = None
         self.toolbar.selectTool(0)
 
-        self.controlPanel = controlPanel = ControlPanel(self)
-        controlPanel.anchor = "tlbr"
-        controlPanel.rect = self.rect
+        self.controlPanel = ControlPanel(self)
+        self.controlPanel.topleft = mcEditButton.bottomleft
+
 
     def __del__(self):
         self.deleteAllCopiedSchematics()
@@ -2504,7 +2493,7 @@ class LevelEditor(GLViewport):
                 self.showWorldInfo()
             if keyname == 'g':
                 self.showGotoPanel()
-            
+
             if keyname == 'e':
                 self.selectionTool.exportSelection()
 
@@ -3137,10 +3126,6 @@ class LevelEditor(GLViewport):
         if not self.level:
             return
 
-        if key.get_mods() & (mcplatform.cmd_name is "Cmd" and KMOD_META or KMOD_CTRL):
-            self.showControls()
-        else:
-            self.hideControls()
         if not self.shouldLoadAndRender:
             return
 
@@ -3359,32 +3344,13 @@ class LevelEditor(GLViewport):
         self.undoStack.append(op)
 
     def quit(self):
-        self.hideControls()
         self.mouseLookOff()
         self.parent.confirm_quit()
 
     mouseWasCaptured = False
 
     def showControls(self):
-        if self.controlPanel.parent:
-            return
-
-        controlPanel = self.controlPanel
-
-        controlPanel.size = self.size
-        self.add(self.controlPanel)
-        mouseWasCaptured = self.mainViewport.mouseMovesCamera
-        self.mouseLookOff()
-        self.mouseWasCaptured = mouseWasCaptured
-
-    def hideControls(self):
-        if None is self.controlPanel.parent:
-            return
-
-        if self.mouseWasCaptured and root.top_widget == root.get_root():
-            self.mouseLookOn()
-
-        self.controlPanel.set_parent(None)
+        self.controlPanel.present(False)
 
     infoPanel = None
 
