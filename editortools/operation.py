@@ -94,7 +94,7 @@ class Operation(object):
                         self.level.copyChunkFrom(self.undoLevel, cx, cz)
                         yield i, self.undoLevel.chunkCount, "Copying chunk %s..." % ((cx, cz),)
                 else:
-                    for i in self.level.copyBlocksFromIter(self.undoLevel, self.undoLevel.bounds, self.undoLevel.sourcePoint):
+                    for i in self.level.copyBlocksFromIter(self.undoLevel, self.undoLevel.bounds, self.undoLevel.sourcePoint, biomes=True):
                         yield i, self.undoLevel.chunkCount, "Copying..."
 
             if self.undoLevel.chunkCount > 25:

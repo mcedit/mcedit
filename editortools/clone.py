@@ -43,6 +43,7 @@ import config
 CloneSettings = config.Settings("Clone")
 CloneSettings.copyAir = CloneSettings("Copy Air", True)
 CloneSettings.copyWater = CloneSettings("Copy Water", True)
+CloneSettings.copyBiomes = CloneSettings("Copy Biomes", True)
 CloneSettings.placeImmediately = CloneSettings("Place Immediately", True)
 
 
@@ -97,13 +98,14 @@ class CoordsInput(Widget):
 
 
 class BlockCopyOperation(Operation):
-    def __init__(self, editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater):
+    def __init__(self, editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater, copyBiomes):
         super(BlockCopyOperation, self).__init__(editor, destLevel)
         self.sourceLevel = sourceLevel
         self.sourceBox = sourceBox
         self.destPoint = Vector(*destPoint)
         self.copyAir = copyAir
         self.copyWater = copyWater
+        self.copyBiomes = copyBiomes
         self.sourceBox, self.destPoint = block_copy.adjustCopyParameters(self.level, self.sourceLevel, self.sourceBox,
                                                                          self.destPoint)
 
@@ -131,7 +133,7 @@ class BlockCopyOperation(Operation):
                 blocksToCopy.remove(9)
 
         with setWindowCaption("Copying - "):
-            i = self.level.copyBlocksFromIter(self.sourceLevel, self.sourceBox, self.destPoint, blocksToCopy, create=True)
+            i = self.level.copyBlocksFromIter(self.sourceLevel, self.sourceBox, self.destPoint, blocksToCopy, create=True, biomes=self.copyBiomes)
             showProgress("Copying {0:n} blocks...".format(self.sourceBox.volume), i)
 
     def bufferSize(self):
@@ -139,7 +141,7 @@ class BlockCopyOperation(Operation):
 
 
 class CloneOperation(Operation):
-    def __init__(self, editor, sourceLevel, sourceBox, originSourceBox, destLevel, destPoint, copyAir, copyWater, repeatCount):
+    def __init__(self, editor, sourceLevel, sourceBox, originSourceBox, destLevel, destPoint, copyAir, copyWater, copyBiomes, repeatCount):
         super(CloneOperation, self).__init__(editor, destLevel)
 
         self.blockCopyOps = []
@@ -150,7 +152,7 @@ class CloneOperation(Operation):
             delta = (0, 0, 0)
 
         for i in range(repeatCount):
-            op = BlockCopyOperation(editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater)
+            op = BlockCopyOperation(editor, sourceLevel, sourceBox, destLevel, destPoint, copyAir, copyWater, copyBiomes)
             dirty = op.dirtyBox()
 
             # bounds check - xxx move to BoundingBox
@@ -297,14 +299,22 @@ class CloneToolPanel(Panel):
 
         copyWaterRow = Row((self.copyWaterCheckBox, self.copyWaterLabel))
 
+        self.copyBiomesCheckBox = CheckBox(ref=AttrRef(self.tool, "copyBiomes"))
+        self.copyBiomesLabel = Label("Copy Biomes")
+        self.copyBiomesLabel.mouse_down = self.copyBiomesCheckBox.mouse_down
+        self.copyBiomesLabel.tooltipText = "Shortcut: ALT-3"
+        self.copyBiomesCheckBox.tooltipText = self.copyBiomesLabel.tooltipText
+
+        copyBiomesRow = Row((self.copyBiomesCheckBox, self.copyBiomesLabel))
+
         self.performButton = Button("Clone", width=100, align="c")
         self.performButton.tooltipText = "Shortcut: ENTER"
         self.performButton.action = tool.confirm
         self.performButton.enable = lambda: (tool.destPoint is not None)
         if self.useOffsetInput:
-            col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.offsetInput, repeatRow, scaleRow, copyAirRow, copyWaterRow, self.performButton))
+            col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.offsetInput, repeatRow, scaleRow, copyAirRow, copyWaterRow, copyBiomesRow, self.performButton))
         else:
-            col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.nudgeButton, copyAirRow, copyWaterRow, self.performButton))
+            col = Column((rotateRow, rollRow, flipRow, mirrorRow, alignRow, self.nudgeButton, copyAirRow, copyWaterRow, copyBiomesRow, self.performButton))
 
         self.add(col)
         self.anchor = "lwh"
@@ -393,6 +403,7 @@ class CloneTool(EditorTool):
 
     copyAir = CloneSettings.copyAir.configProperty()
     copyWater = CloneSettings.copyWater.configProperty()
+    copyBiomes = CloneSettings.copyBiomes.configProperty()
 
     def nudge(self, nudge):
         if self.destPoint is None:
@@ -939,6 +950,7 @@ class CloneTool(EditorTool):
                             destPoint=self.destPoint,
                             copyAir=self.copyAir,
                             copyWater=self.copyWater,
+                            copyBiomes=self.copyBiomes,
                             repeatCount=self.repeatCount)
 
         self.editor.toolbar.selectTool(-1)  # deselect tool so that the clone tool's selection change doesn't update its schematic
