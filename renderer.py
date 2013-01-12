@@ -458,13 +458,13 @@ class ChunkCalculator (object):
             mats[b.ID] = materialCount
             materialCount += 1
 
-    hiddenOreMaterials = numpy.arange(256, dtype='uint8')
+    hiddenOreMaterials = numpy.arange(pymclevel.materials.id_limit, dtype='uint8')
     hiddenOreMaterials[2] = 1  # don't show boundaries between dirt,grass,sand,gravel,stone
     hiddenOreMaterials[3] = 1
     hiddenOreMaterials[12] = 1
     hiddenOreMaterials[13] = 1
 
-    roughMaterials = numpy.ones((256,), dtype='uint8')
+    roughMaterials = numpy.ones((pymclevel.materials.id_limit,), dtype='uint8')
     roughMaterials[0] = 0
     addTransparentMaterials(None, roughMaterials, 2)
 
