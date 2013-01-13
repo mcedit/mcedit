@@ -2690,7 +2690,9 @@ class LevelEditor(GLViewport):
         self.mcedit.removeEditor()
 
     def repairRegions(self):
-        for rf in self.level.regionFiles.itervalues():
+        worldFolder = self.level.worldFolder
+        for filename in worldFolder.findRegionFiles():
+            rf = worldFolder.tryLoadRegionFile(filename)
             rf.repair()
 
         alert("Repairs complete.  See the console window for details.")
@@ -2791,10 +2793,13 @@ class LevelEditor(GLViewport):
 
                 items.append(chunkCountLabel)
 
-            if hasattr(self.level, 'regionFiles') and len(self.level.regionFiles):
-                regionCount = len(self.level.regionFiles)
-                regionCountLabel = Label("Number of regions: {0}".format(regionCount))
-                items.append(regionCountLabel)
+
+            if hasattr(self.level, 'worldFolder'):
+                if hasattr(self.level.worldFolder, 'regionFiles'):
+                    worldFolder = self.level.worldFolder
+                    regionCount = len(worldFolder.regionFiles)
+                    regionCountLabel = Label("Number of regions: {0}".format(regionCount))
+                    items.append(regionCountLabel)
 
                 button = Button("Repair regions", action=self.repairRegions)
                 items.append(button)
