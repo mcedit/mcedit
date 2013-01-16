@@ -2682,7 +2682,7 @@ class LevelEditor(GLViewport):
                 return
 
         self.unsavedEdits = 0
-
+        self.mainViewport.mouseLookOff()
         self.level = None
         self.renderer.stopWork()
         self.removeWorker(self.renderer)
