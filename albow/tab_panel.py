@@ -157,7 +157,7 @@ class TabPanel(Widget):
         i = (x - m) * n // width
         if 0 <= i < n:
             return i
-
+        
     def gl_draw_self(self, root, offset):
         self.gl_draw(root, offset)
 
@@ -166,7 +166,7 @@ class TabPanel(Widget):
 
         if len(pages) > 1:
             tlcorner = (offset[0] + self.bottomleft[0], offset[1] + self.bottomleft[1])
-            pageTabContents = []
+            pageTabContents = []        
             current_page = self.current_page
             n = len(pages)
             b = self.tab_border_width
@@ -182,7 +182,7 @@ class TabPanel(Widget):
             surface = Surface(self.size, SRCALPHA)
 
             glEnable(GL_BLEND)
-
+            
             for i, page in enumerate(pages):
                 x1 = x0+tabWidth
                 selected = page is current_page
@@ -197,8 +197,8 @@ class TabPanel(Widget):
                 offs = ((tabWidth - r.size[0])/2) + m +((s+tabWidth)*i)
 
                 surface.blit(buf, (offs, m))
-                x0 = x1 + s
-
+                x0 = x1 + s    
+            
             data = image.tostring(surface, 'RGBA', 1)
             rect = self.rect.move(offset)
             w, h = root.size
@@ -214,5 +214,6 @@ class TabPanel(Widget):
             glDrawPixels(self.width, self.height,
                 GL_RGBA, GL_UNSIGNED_BYTE, fromstring(data, dtype='uint8'))
             glPopAttrib()
+            glFlush()
 
             glDisable(GL_BLEND)
