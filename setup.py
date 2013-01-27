@@ -191,6 +191,8 @@ def main():
         **SETUP_COMMON
     )
 
+    os.unlink('RELEASE-VERSION')
+
 
 if __name__ == '__main__':
     main()
