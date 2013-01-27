@@ -311,7 +311,8 @@ class FillTool(EditorTool):
 
         color = 1.0, 1.0, 1.0, 0.35
         if blockInfo:
-            tex = self.blockTextures[blockInfo.ID]
+            tex = self.blockTextures.get(blockInfo.ID, self.blockTextures[255]) # xxx
+
             # color = (1.5 - alpha, 1.0, 1.5 - alpha, alpha - 0.35)
             GL.glMatrixMode(GL.GL_TEXTURE)
             GL.glPushMatrix()
