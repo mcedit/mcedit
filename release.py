@@ -8,7 +8,7 @@ def get_version():
     """
     if not os.path.exists('RELEASE-VERSION'):
         try:
-            return subprocess.check_output('git describe --tags --match=*.*.*'.split())
+            return subprocess.check_output('git describe --tags --match=*.*.*'.split()).strip()
         except:
             return 'unknown'
 

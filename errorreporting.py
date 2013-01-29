@@ -106,36 +106,78 @@ def sanitize(s):
     return s
 
 def get_backtrace():
-    backtrace = traceback.format_exc()
-    try:
-        backtrace = sanitize(backtrace)
+    tb = sys.exc_traceback
+    backtrace = []
+    for filename, lineno, name, line, selfstr in extract_tb(tb):
+        backtrace.append({
+            "file":filename,
+            "line":lineno,
+            "symbol":name,
+        })
 
-    except Exception, e:
-        print repr(e), "while scrubbing user directories from crash log! Error not reported."
-        raise
-
-    return backtrace.split('\n')
+    return backtrace
 
 def json_crash_report():
+    """
+    fields = arguments[1] || new Object();
+        fields.api_key = this.options.APIKey;
+        fields.environment = this.options.environment;
+        fields.client = "javascript";
+        fields.revision = this.options.revision;
+        fields.class_name = error.type || error.name;
+        if (!error.name && (matches = error.message.match(/^(Uncaught )?(\w+): (.+)/))) {
+          fields.class_name = matches[2];
+          fields.message = matches[3];
+        } else {
+          fields.message = error.message;
+        }
+        if ((_ref5 = fields.class_name) == null) {
+          fields.class_name = 'Error';
+        }
+        fields.backtraces = buildBacktrace(error.stack);
+        fields.capture_method = error.mode;
+        fields.occurred_at = ISODateString(new Date());
+        fields.schema = window.location.protocol.replace(/:$/, '');
+        fields.host = window.location.hostname;
+        if (window.location.port.length > 0) {
+          fields.port = window.location.port;
+        }
+        fields.path = window.location.pathname;
+        fields.query = window.location.search;
+        if (window.location.hash !== '') {
+          fields.fragment = window.location.hash;
+        }
+        fields.user_agent = navigator.userAgent;
+        fields.screen_width = screen.width;
+        fields.screen_height = screen.height;
+        fields.window_width = window.innerWidth;
+        fields.window_height = window.innerHeight;
+        fields.color_depth = screen.colorDepth;
+    :return:
+    :rtype:
+    """
     exc_class, exc_value, exc_tb = sys.exc_info()
 
-    report = {}
-    # We don't handle requests, so repurpose the request fields for release info.
-    request = report['request'] = {}
-    request['controller'] = release.release
+    fields = {}
+    fields['build'] = release.release
+    fields['client'] = 'MCEdit Client(?)'
 
-    exception = report['exception'] = {}
-    exception['backtrace'] = get_backtrace()
-    exception['exception_class'] = exc_class.__name__
+    fields['backtraces'] = [{
+        "name":"Crashed Thread",
+        "faulted": True,
+        "backtrace": get_backtrace(),
+    }]
+
+    fields['class_name'] = exc_class.__name__
     if isinstance(exc_value, UnicodeError):
-        exception['message'] = exc_class.__name__
+        fields['message'] = exc_class.__name__
     else:
         try:
-            exception['message'] = sanitize(str(exc_value))
+            fields['message'] = sanitize(str(exc_value))
         except:
-            exception['message'] = ""
+            fields['message'] = ""
 
-    exception['occurred_at'] = datetime.now().isoformat()
+    fields['occurred_at'] = datetime.now().isoformat()
 
     try:
         os.getcwdu().encode('ascii')
@@ -143,64 +185,65 @@ def json_crash_report():
     except UnicodeEncodeError:
         ascii_cwd = False
 
-    app_env = report['application_environment'] = {}
-    app_env['application_root_directory'] = "ASCII" if ascii_cwd else "Unicode"
-    app_env['framework'] = 'mcedit'
-    app_env['language'] = 'python'
-    app_env['language_version'] = sys.version
+    fields['environment'] = "development"
+    fields['application_root_directory'] = "ASCII" if ascii_cwd else "Unicode"
+    fields['language_version'] = sys.version
 
-    env = app_env['env'] = collections.OrderedDict()
+    fields['api_key'] = "6ea52b17-ac76-4fd8-8db4-2d7303473ca2"
+    fields['OS_NAME'] = os.name
+    fields['OS_VERSION'] = platform.version()
+    fields['OS_ARCH'] = platform.architecture()
+    fields['OS_PLATFORM'] = platform.platform()
+    fields['OS_CPU'] = platform.processor()
 
-    env['OS_NAME'] = os.name,
-    env['OS_VERSION'] = platform.version()
-    env['OS_ARCH'] = platform.architecture()
-    env['OS_PLATFORM'] = platform.platform()
-    env['OS_CPU'] = platform.processor()
-
-    env['FS_ENCODING'] = sys.getfilesystemencoding()
+    fields['FS_ENCODING'] = sys.getfilesystemencoding()
 
     if 'LANG' in os.environ:
-        env['LANG'] = os.environ['LANG']
+        fields['LANG'] = os.environ['LANG']
 
     try:
         from albow import root
-        env['FRAMES'] = str(root.get_root().frames)
+        fields['FRAMES'] = str(root.get_root().frames)
     except:
         log.info("Can't get frame count")
 
     try:
         from OpenGL import GL
-        env['GL_VERSION'] = GL.glGetString(GL.GL_VERSION)
+        fields['GL_VERSION'] = GL.glGetString(GL.GL_VERSION)
     except:
         log.info("Can't get GL_VERSION")
 
     try:
         from OpenGL import GL
-        env['GL_VENDOR'] = GL.glGetString(GL.GL_VENDOR)
+        fields['GL_VENDOR'] = GL.glGetString(GL.GL_VENDOR)
     except:
         log.info("Can't get GL_VENDOR")
 
 
     try:
         from OpenGL import GL
-        env['GL_RENDERER'] = GL.glGetString(GL.GL_RENDERER)
+        fields['GL_RENDERER'] = GL.glGetString(GL.GL_RENDERER)
     except:
         log.info("Can't get GL_RENDERER")
 
-    return json.dumps(report)
+    return json.dumps(fields)
 
 def post_crash_report():
     """
-    POST http://api.exceptional.io/api/errors?api_key=YOUR_API_KEY&protocol_version=5
 
-    Note: protocol_version 5 means use zlib compression.
+        body = JSON.stringify(fields);
+        this.HTTPTransmit(this.options.APIHost + this.options.notifyPath, [['Content-Type', 'application/json']], body);
     """
 
     report = json_crash_report()
 
-    body = zlib.compress(report)
-    conn = httplib.HTTPConnection("api.exceptional.io")
-    conn.request("POST", "http://api.exceptional.io/api/errors?api_key=%s&protocol_version=5" % EXCEPTIONAL_API_KEY, body)
+    #conn = httplib.HTTPConnection("192.168.1.108", 3000)
+    #conn.request("POST", "http://192.168.1.108:3000/bugs", body)
+    conn = httplib.HTTPConnection("bugs.mcedit.net")
+    headers = { "Content-type": "application/octet-stream" }
+
+    conn.request("POST", "/bugs.php?foo=bar", report, headers)
+
 
     resp = conn.getresponse()
     print "Response status: %s\n Response data: %s\n" % (resp.status, resp.read())
@@ -210,7 +253,7 @@ def post_crash_report():
 def reportException():
     try:
         import config
-        if config.config.get("Settings", "report crashes new"):
+        if config.config.getboolean("Settings", "report crashes new"):
             post_crash_report()
     except Exception, e:
         print "Error while reporting crash: ", repr(e)

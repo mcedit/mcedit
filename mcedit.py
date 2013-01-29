@@ -949,6 +949,8 @@ class MCEdit(GLViewport):
             Settings.reportCrashesAsked.set(True)
 
         config.saveConfig()
+        if "-causeError" in sys.argv:
+            raise ValueError, "Error requested via -causeError"
 
         while True:
             try:
