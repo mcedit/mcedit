@@ -66,7 +66,7 @@ def findDataDir():
     def fsdecode(x):
         return x.decode(sys.getfilesystemencoding())
 
-    argzero = fsdecode(sys.argv[0])
+    argzero = fsdecode(os.path.abspath(sys.argv[0]))
 
     if sys.platform == "win32":
         if hasattr(sys, 'frozen'):
