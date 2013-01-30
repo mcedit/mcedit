@@ -25,6 +25,8 @@ import os
 import json
 import httplib
 import zlib
+import directories
+import mcplatform
 import release
 import logging
 log = logging.getLogger(__name__)
@@ -92,7 +94,6 @@ traceback.format_list = format_list
 EXCEPTIONAL_API_KEY = "37eaf2a19432e268829ef4fa35921ad399bbda80"
 
 def sanitize(s):
-    import mcplatform
     parentDir = mcplatform.parentDir
     minecraftDir = mcplatform.minecraftDir
     home = os.path.expanduser("~")
@@ -110,7 +111,7 @@ def get_backtrace():
     backtrace = []
     for filename, lineno, name, line, selfstr in extract_tb(tb):
         backtrace.append({
-            "file":filename,
+            "file":os.path.normpath(filename).replace(directories.dataDir, ""),
             "line":lineno,
             "symbol":name,
         })
