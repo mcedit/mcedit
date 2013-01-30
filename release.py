@@ -12,7 +12,7 @@ def get_version():
         except:
             return 'unknown'
 
-    fin = open('RELEASE-VERSION', 'rb')
+    fin = open(os.path.join(directories.dataDir, 'RELEASE-VERSION'), 'rb')
     v = fin.read().strip()
     fin.close()
 
@@ -28,7 +28,7 @@ def get_commit():
         except:
             return 'unknown'
 
-    fin = open('GIT-COMMIT', 'rb')
+    fin = open(os.path.join(directories.dataDir, 'GIT-COMMIT'), 'rb')
     v = fin.read().strip()
     fin.close()
 

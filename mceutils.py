@@ -49,7 +49,7 @@ def alertException(func):
             alert("Canceled.")
         except pymclevel.infiniteworld.SessionLockLost as e:
             alert(e.message + "\n\nYour changes cannot be saved.")
-            
+
         except Exception, e:
             logging.exception("Exception:")
             if ask("Error during {0}: {1!r}".format(func, e)[:1000], ["Report Error", "Okay"], default=1, cancel=0) == "Report Error":
@@ -308,7 +308,7 @@ def loadAlphaTerrainTexture():
     except Exception, e:
         print repr(e), "while loading texture pack info."
 
-    texW, texH, terraindata = loadPNGFile("terrain.png")
+    texW, texH, terraindata = loadPNGFile(os.path.join(directories.dataDir, "terrain.png"))
 
     def slurpZipExt(zipextfile):
         # zipextfile.read() doesn't read all available data
@@ -414,6 +414,7 @@ def loadTextureFunc(w, h, ndata):
 
 
 def loadPNGTexture(filename):
+    filename = os.path.join(directories.dataDir, filename)
     try:
         w, h, ndata = loadPNGFile(filename)
 
