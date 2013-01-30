@@ -111,7 +111,7 @@ def get_backtrace():
     backtrace = []
     for filename, lineno, name, line, selfstr in reversed(extract_tb(tb)):
         backtrace.append({
-            "file":os.path.normpath(filename).replace(directories.dataDir, ""),
+            "file":os.path.normpath(filename).replace(directories.dataDir, "").replace(".pyo", ".py").replace(".pyc", ".py"),
             "line":lineno,
             "symbol":name,
         })
