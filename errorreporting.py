@@ -109,7 +109,7 @@ def sanitize(s):
 def get_backtrace():
     tb = sys.exc_traceback
     backtrace = []
-    for filename, lineno, name, line, selfstr in extract_tb(tb):
+    for filename, lineno, name, line, selfstr in reversed(extract_tb(tb)):
         backtrace.append({
             "file":os.path.normpath(filename).replace(directories.dataDir, ""),
             "line":lineno,
