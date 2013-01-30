@@ -159,7 +159,9 @@ def json_crash_report():
     exc_class, exc_value, exc_tb = sys.exc_info()
 
     fields = {}
+    fields['revision'] = release.commit
     fields['build'] = release.release
+
     fields['client'] = 'MCEdit Client(?)'
 
     fields['backtraces'] = [{

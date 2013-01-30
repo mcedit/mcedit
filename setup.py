@@ -32,20 +32,22 @@ def get_git_version():
         match = '--match=*.*.*build*'
     else:
         match = '--match=*.*.*'
-    try:
-        p = subprocess.Popen(
-            ['git', 'describe', '--abbrev=4', '--tags', match],
-            stdout=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-            # Shell=True is required due to a Popen Win32 bug.
-            shell=True if platform.system() == 'Windows' else False
-        )
-    except:
-        return 'unknown'
 
-    version = p.stdout.readlines()[0].strip()
+    try:
+        version = subprocess.check_output('git describe --abbrev=4 --tags'.split() + [match]).strip()
+    except:
+        version = 'unknown'
     fout = open('RELEASE-VERSION', 'wb')
     fout.write(version)
+    fout.write('\n')
+    fout.close()
+    fout = open('GIT-COMMIT', 'wb')
+
+    try:
+        commit = subprocess.check_output('git rev-parse HEAD'.split()).strip()
+    except:
+        commit = 'unknown'
+    fout.write(commit)
     fout.write('\n')
     fout.close()
 
@@ -181,7 +183,8 @@ def main():
             'char.png',
             'gui.png',
             'terrain.png',
-            'RELEASE-VERSION'
+            'RELEASE-VERSION',
+            'GIT-COMMIT',
         ])
     ]
 
@@ -192,6 +195,7 @@ def main():
     )
 
     os.unlink('RELEASE-VERSION')
+    os.unlink('GIT-COMMIT')
 
 
 if __name__ == '__main__':
