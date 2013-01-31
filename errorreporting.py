@@ -178,7 +178,7 @@ def json_crash_report():
         try:
             fields['message'] = sanitize(str(exc_value))
         except:
-            fields['message'] = ""
+            fields['message'] = "unknown"
 
     fields['occurred_at'] = datetime.now().isoformat()
 
