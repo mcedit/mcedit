@@ -188,16 +188,27 @@ def json_crash_report():
     except UnicodeEncodeError:
         ascii_cwd = False
 
-    fields['environment'] = "development"
+    if 'build' in release.release:
+        environment = 'testing'
+    elif "-debug" in sys.argv:
+        environment = 'development'
+    else:
+        environment = 'production'
+        
+    fields['environment'] = environment
+
     fields['application_root_directory'] = "ASCII" if ascii_cwd else "Unicode"
     fields['language_version'] = sys.version
 
     fields['api_key'] = "6ea52b17-ac76-4fd8-8db4-2d7303473ca2"
-    fields['OS_NAME'] = os.name
-    fields['OS_VERSION'] = platform.version()
-    fields['OS_ARCH'] = platform.architecture()
-    fields['OS_PLATFORM'] = platform.platform()
-    fields['OS_CPU'] = platform.processor()
+
+    fields['device_type'] = platform.processor() # 'Intel64 Family 6 Model 30 Stepping 5, GenuineIntel'
+
+    fields['operating_system'] = platform.system() # 'Windows'
+    fields['os_version'] = platform.release() # '7'
+    fields['os_build'] = platform.version() # '6.1.7601'
+
+    fields['architecture'] = platform.architecture() # 'AMD64'
 
     fields['FS_ENCODING'] = sys.getfilesystemencoding()
 
