@@ -43,8 +43,18 @@ if "-v" in sys.argv:
 if "-vv" in sys.argv:
     ch.setLevel(logging.DEBUG)
 
-fmt = logging.Formatter(
-    '[%(levelname)s][%(module)s.py:%(lineno)d]:%(message)s'
+
+class FileLineFormatter(logging.Formatter):
+
+    def format(self, record):
+        record.__dict__['fileline'] = "%(module)s.py:%(lineno)d" % record.__dict__
+        record.__dict__['nameline'] = "%(name)s.py:%(lineno)d" % record.__dict__
+        return super(FileLineFormatter, self).format(record)
+
+
+
+fmt = FileLineFormatter(
+    '[%(levelname)8s][%(nameline)30s]:%(message)s'
 )
 fh.setFormatter(fmt)
 ch.setFormatter(fmt)
