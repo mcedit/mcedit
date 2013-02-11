@@ -16,6 +16,10 @@ import logging
 
 # Setup file and stderr logging.
 logger = logging.getLogger()
+
+# Set the log level up while importing OpenGL.GL to hide some obnoxious warnings about old array handlers
+logger.setLevel(logging.WARN)
+from OpenGL import GL
 logger.setLevel(logging.DEBUG)
 
 logfile = 'mcedit.log'
@@ -63,7 +67,6 @@ from mcplatform import platform_open
 import numpy
 
 
-from OpenGL import GL
 import os
 import os.path
 import pygame
