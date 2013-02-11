@@ -36,10 +36,12 @@ fh = logging.FileHandler(logfile, mode="w")
 fh.setLevel(logging.DEBUG)
 
 ch = logging.StreamHandler()
-if "-debug" in sys.argv:
+ch.setLevel(logging.WARN)
+
+if "-v" in sys.argv:
     ch.setLevel(logging.INFO)
-else:
-    ch.setLevel(logging.WARN)
+if "-vv" in sys.argv:
+    ch.setLevel(logging.DEBUG)
 
 fmt = logging.Formatter(
     '[%(levelname)s][%(module)s.py:%(lineno)d]:%(message)s'
