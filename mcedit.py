@@ -8,7 +8,6 @@ Startup, main menu, keyboard configuration, automatic updating.
 import OpenGL
 import sys
 import os
-import errorreporting
 
 if "-debug" not in sys.argv:
     OpenGL.ERROR_CHECKING = False
@@ -983,6 +982,23 @@ def main(argv):
     Setup display, bundled schematics. Handle unclean
     shutdowns.
     """
+    client = None
+    try:
+        import squash_python
+        version = release.get_version()
+        client = squash_python.get_client()
+        client.APIKey = "6ea52b17-ac76-4fd8-8db4-2d7303473ca2"
+        client.environment = "testing" if "build" in version else "production"
+        client.host = "http://bugs.mcedit.net"
+        client.notifyPath = "/bugs.php"
+        client.revision = release.get_commit()
+        client.build = version
+        client.timeout = 5
+        client.disabled = not config.config.getboolean("Settings", "report crashes new")
+        client.reportErrors()
+        client.hook()
+    except ImportError:
+        pass
 
     try:
         display.init()
@@ -1011,18 +1027,15 @@ def main(argv):
 
     try:
         MCEdit.main()
-    except SystemExit:
-        return 0
-    except Exception, e:
-        logging.error('An unhandled error occured.', exc_info=True)
-        errorreporting.reportException()
+    except Exception:
         logging.error("MCEdit version %s", release.get_version())
         display.quit()
         if hasattr(sys, 'frozen') and sys.platform == 'win32':
             print "Press RETURN or close this window to dismiss."
             raw_input()
 
-        return 1
+        raise
+
     return 0
 
 
