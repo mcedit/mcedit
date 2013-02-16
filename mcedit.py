@@ -997,7 +997,6 @@ def main(argv):
     Setup display, bundled schematics. Handle unclean
     shutdowns.
     """
-    client = None
     try:
         import squash_python
         version = release.get_version()
@@ -1010,6 +1009,10 @@ def main(argv):
         client.build = version
         client.timeout = 5
         client.disabled = not config.config.getboolean("Settings", "report crashes new")
+        def _reportingChanged(val):
+            client.disabled = not val
+
+        Settings.reportCrashes.addObserver(client, '_enabled', _reportingChanged)
         client.reportErrors()
         client.hook()
     except ImportError:
