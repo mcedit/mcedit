@@ -57,7 +57,8 @@ def alertException(func):
                     squash_python.get_client().recordException(*sys.exc_info())
                 except ImportError:
                     pass
-
+                except Exception:
+                    logging.exception("Error while recording exception data:")
 
     return _alertException
 
