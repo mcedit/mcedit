@@ -75,7 +75,6 @@ def perform(level, box, options):
     for x in xrange(minx, box.maxx, 16):
         for z in xrange(minz, box.maxz, 16):
             chunk = level.getChunk(x / 16, z / 16)
-            chunk.decompress()
             chunk.dirty = True
             array = chunk.root_tag["Level"]["Biomes"].value
 
