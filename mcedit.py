@@ -999,6 +999,9 @@ def main(argv):
     """
     try:
         import squash_python
+        squash_python.uploader.SquashUploader.headers.pop("Content-encoding", None)
+        squash_python.uploader.SquashUploader.headers.pop("Accept-encoding", None)
+
         version = release.get_version()
         client = squash_python.get_client()
         client.APIKey = "6ea52b17-ac76-4fd8-8db4-2d7303473ca2"
