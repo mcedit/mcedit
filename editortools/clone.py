@@ -193,13 +193,16 @@ class CloneOperation(Operation):
         return self._dirtyBox
 
     def perform(self, recordUndo=True):
-        if recordUndo:
-            chunks = set()
-            for op in self.blockCopyOps:
-                chunks.update(op.dirtyBox().chunkPositions)
-            self.undoLevel = self.extractUndoChunks(self.level, chunks)
-        [i.perform(False) for i in self.blockCopyOps]
-        [i.perform(recordUndo) for i in self.selectionOps]
+        with setWindowCaption("COPYING - "):
+            self.editor.freezeStatus("Copying %0.1f million blocks" % (float(self._dirtyBox.volume) / 1048576.,))
+            if recordUndo:
+                chunks = set()
+                for op in self.blockCopyOps:
+                    chunks.update(op.dirtyBox().chunkPositions)
+                self.undoLevel = self.extractUndoChunks(self.level, chunks)
+
+            [i.perform(False) for i in self.blockCopyOps]
+            [i.perform(recordUndo) for i in self.selectionOps]
 
     def undo(self):
         super(CloneOperation, self).undo()
@@ -954,10 +957,6 @@ class CloneTool(EditorTool):
                             repeatCount=self.repeatCount)
 
         self.editor.toolbar.selectTool(-1)  # deselect tool so that the clone tool's selection change doesn't update its schematic
-
-        with setWindowCaption("COPYING - "):
-            self.editor.freezeStatus("Copying %0.1f million blocks" % (float(destVolume) / 1048576.,))
-            self.performWithRetry(op)
 
         self.editor.addUnsavedEdit()
 

@@ -853,7 +853,6 @@ class BrushTool(CloneTool):
                             self.editor.level,
                             self.draggedPositions,
                             self.getBrushOptions())
-        self.performWithRetry(op)
 
         box = op.dirtyBox()
         self.editor.addOperation(op)

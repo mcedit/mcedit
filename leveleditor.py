@@ -55,7 +55,7 @@ from collections import defaultdict, deque
 from OpenGL import GL
 from OpenGL import GLU
 
-from albow import alert, ask, AttrRef, Button, Column, get_font, Grid, input_text, IntField, Menu, root, Row, TableColumn, TableView, TextField, TimeField, Widget
+from albow import alert, ask, AttrRef, Button, Column, get_font, Grid, input_text, IntField, Menu, root, Row, TableColumn, TableView, TextField, TimeField, Widget, CheckBox
 from albow.controls import Label, SmallValueDisplay, ValueDisplay
 from albow.dialogs import Dialog, QuickDialog, wrapped_label
 from albow.openglwidgets import GLOrtho, GLViewport
@@ -1488,8 +1488,10 @@ class LevelEditor(GLViewport):
         self.viewportButton = Button("Camera View", action=self.swapViewports,
             tooltipText="Shortcut: TAB")
 
+        self.recordUndoButton = mceutils.CheckBoxLabel("Record Undo", ref=AttrRef(self, 'recordUndo'))
+
         row = (mcEditButton, viewDistanceDown, Label("View Distance:"), viewDistanceReadout, viewDistanceUp,
-               readoutGrid, viewButton, self.viewportButton)
+               readoutGrid, viewButton, self.viewportButton, self.recordUndoButton)
 
         # row += (Button("CR Info", action=self.showChunkRendererInfo), )
         row = Row(row)
@@ -1948,6 +1950,7 @@ class LevelEditor(GLViewport):
 
         self.undoStack = []
         self.loadLevel(level)
+        self.recordUndo = True
         self.clearUnsavedEdits()
 
         self.renderer.position = self.currentViewport.cameraPosition
@@ -2098,6 +2101,7 @@ class LevelEditor(GLViewport):
             self.freezeStatus("Saving...")
             self.level.saveInPlace()
 
+        self.recordUndo = True
         self.clearUnsavedEdits()
 
     def addUnsavedEdit(self):
@@ -2131,7 +2135,7 @@ class LevelEditor(GLViewport):
     def saveInfoLabelText(self):
         if self.unsavedEdits == 0:
             return ""
-        return "{0} unsaved edits.  CTRL-S to save.  ".format(self.unsavedEdits)
+        return "{0} unsaved edits.  CTRL-S to save.  {1}".format(self.unsavedEdits, "" if self.recordUndo else "(UNDO DISABLED)")
 
     @property
     def viewDistanceLabelText(self):
@@ -3357,7 +3361,18 @@ class LevelEditor(GLViewport):
         self.currentTool.selectionChanged()
 
     def addOperation(self, op):
-        self.undoStack.append(op)
+        if self.recordUndo:
+            self.undoStack.append(op)
+        self.performWithRetry(op)
+
+    recordUndo = True
+
+    def performWithRetry(self, op):
+        try:
+            op.perform(self.recordUndo)
+        except MemoryError:
+            self.invalidateAllChunks()
+            op.perform(self.recordUndo)
 
     def quit(self):
         self.mouseLookOff()

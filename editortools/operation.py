@@ -2,6 +2,7 @@ import atexit
 import os
 import shutil
 import tempfile
+import albow
 from pymclevel import BoundingBox
 import numpy
 from albow.root import Cancel
@@ -57,7 +58,11 @@ class Operation(object):
             undoLevel.saveInPlace()
 
         if chunkCount > 25 or chunkCount < 1:
-            showProgress("Recording undo...", _extractUndo())
+            if "Canceled" == showProgress("Recording undo...", _extractUndo(), cancel=True):
+                if albow.ask("Continue with undo disabled?", ["Continue", "Cancel"]) == "Cancel":
+                    raise Cancel
+                else:
+                    return None
         else:
             exhaust(_extractUndo())
 

@@ -244,7 +244,6 @@ class FillTool(EditorTool):
                 blocksToReplace = []
                 op = BlockFillOperation(self.editor, self.editor.level, self.selectionBox(), self.blockInfo, blocksToReplace)
 
-            self.performWithRetry(op)
 
         self.editor.addOperation(op)
 

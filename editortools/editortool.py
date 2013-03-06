@@ -293,9 +293,3 @@ class EditorTool(object):
             self.panel.parent.remove(self.panel)
             self.panel = None
 
-    def performWithRetry(self, op, recordUndo=True):
-        try:
-            op.perform(recordUndo)
-        except MemoryError:
-            self.editor.invalidateAllChunks()
-            op.perform(recordUndo)

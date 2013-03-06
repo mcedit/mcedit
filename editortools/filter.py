@@ -403,7 +403,6 @@ class FilterTool(EditorTool):
             op = FilterOperation(self.editor, self.editor.level, self.selectionBox(), filterModule, self.panel.filterOptionsPanel.options)
 
             self.editor.level.showProgress = showProgress
-            self.performWithRetry(op)
 
             self.editor.addOperation(op)
             self.editor.addUnsavedEdit()
