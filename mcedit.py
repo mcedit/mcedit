@@ -1048,10 +1048,11 @@ def main(argv):
 
     try:
         MCEdit.main()
-    except Exception:
+    except Exception as e:
         logging.error("MCEdit version %s", release.get_version())
         display.quit()
         if hasattr(sys, 'frozen') and sys.platform == 'win32':
+            logging.exception("%s", e)
             print "Press RETURN or close this window to dismiss."
             raw_input()
 
