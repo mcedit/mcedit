@@ -1326,7 +1326,7 @@ class PlantBlockRenderer(BlockRenderer):
 
             vertexArray[_ST] += texes[:, numpy.newaxis, 0:2]
 
-            vertexArray.view('uint8')[_RGBA] = 0xf  # ignore precomputed directional light
+            vertexArray.view('uint8')[_RGB] = 0xf  # ignore precomputed directional light
             vertexArray.view('uint8')[_RGB] *= lights
             if colorize is not None:
                 vertexArray.view('uint8')[_RGB][colorize] *= LeafBlockRenderer.leafColor
