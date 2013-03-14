@@ -493,6 +493,9 @@ class OptionsPanel(Dialog):
         mouseSpeedRow = mceutils.FloatInputRow("Mouse Speed: ",
             ref=ControlSettings.mouseSpeed.propertyRef(), width=100, min=0.1, max=20.0)
 
+        undoLimitRow = mceutils.IntInputRow("Undo Limit: ",
+            ref=Settings.undoLimit.propertyRef(), width=100, min=0)
+
         invertRow = mceutils.CheckBoxLabel("Invert Mouse",
             ref=ControlSettings.invertMousePitch.propertyRef(),
             tooltipText="Reverse the up and down motion of the mouse.")
@@ -542,6 +545,7 @@ class OptionsPanel(Dialog):
             cameraBrakeSpeedRow,
             blockBufferRow,
             mouseSpeedRow,
+            undoLimitRow,
         )
 
         options = (

@@ -114,6 +114,8 @@ Settings.vsync = Settings("vertical sync", 0)
 Settings.visibilityCheck = Settings("visibility check", False)
 Settings.viewMode = Settings("View Mode", "Camera")
 
+Settings.undoLimit = Settings("Undo Limit", 20)
+
 ControlSettings = config.Settings("Controls")
 ControlSettings.mouseSpeed = ControlSettings("mouse speed", 5.0)
 ControlSettings.cameraAccel = ControlSettings("camera acceleration", 125.0)
@@ -1513,7 +1515,9 @@ class LevelEditor(GLViewport):
         self.viewportContainer.top = row.bottom
         self.viewportContainer.size = self.mainViewport.size
         self.add(self.viewportContainer)
+
         Settings.viewMode.addObserver(self)
+        Settings.undoLimit.addObserver(self)
 
         self.reloadToolbar()
 
@@ -3363,6 +3367,9 @@ class LevelEditor(GLViewport):
     def addOperation(self, op):
         if self.recordUndo:
             self.undoStack.append(op)
+            if len(self.undoStack) > self.undoLimit:
+                self.undoStack.pop(0)
+
         self.performWithRetry(op)
 
     recordUndo = True
