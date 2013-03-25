@@ -12,6 +12,7 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 import os
+import traceback
 from OpenGL import GL
 
 from collections import defaultdict
@@ -31,6 +32,7 @@ import pymclevel
 from pymclevel.box import Vector, BoundingBox, FloatBox
 from fill import  BlockFillOperation
 import tempfile
+from pymclevel import nbt
 
 SelectSettings = config.Settings("Selection")
 SelectSettings.showPreviousSelection = SelectSettings("Show Previous Selection", True)
@@ -281,8 +283,13 @@ class SelectionTool(EditorTool):
                 text += "{id}: {pos}\n".format(id=t["id"].value, pos=[t[a].value for a in "xyz"])
             except Exception, e:
                 text += repr(e)
-            if "Items" not in t:
-                text += str(t)
+            if "Items" in t and not pygame.key.get_mods() & pygame.KMOD_ALT:
+                text += "--Items omitted. ALT to view. Double-click to edit.--\n"
+                t = nbt.TAG_Compound(list(t.value))
+                del t["Items"]
+
+            text += str(t)
+
         return text
 
     @property
