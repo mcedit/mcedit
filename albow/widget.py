@@ -743,7 +743,7 @@ class Widget(object):
             GLU.gluOrtho2D(0, w, 0, h)
             GL.glMatrixMode(GL.GL_MODELVIEW)
             GL.glLoadIdentity()
-            GL.glRasterPos2i(rect.left, h - rect.bottom)
+            GL.glRasterPos2i(max(rect.left, 0), max(h - rect.bottom, 0))
             GL.glPushAttrib(GL.GL_COLOR_BUFFER_BIT)
             GL.glEnable(GL.GL_BLEND)
             GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
