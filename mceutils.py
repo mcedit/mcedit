@@ -413,7 +413,7 @@ class ChoiceButton(ValueButton):
     align = "c"
     choose = None
 
-    def __init__(self, choices, **kw):
+    def __init__(self, choices, scrolling=True, scroll_items=30, **kw):
         # passing an empty list of choices is ill-advised
 
         if 'choose' in kw:
@@ -421,6 +421,8 @@ class ChoiceButton(ValueButton):
 
         ValueButton.__init__(self, action=self.showMenu, **kw)
 
+        self.scrolling = scrolling
+        self.scroll_items = scroll_items
         self.choices = choices or ["[UNDEFINED]"]
 
         widths = [self.font.size(c)[0] for c in choices] + [self.width]
@@ -458,7 +460,8 @@ class ChoiceButton(ValueButton):
     @choices.setter
     def choices(self, ch):
         self._choices = ch
-        self.menu = Menu("", ((name, "pickMenu") for name in self._choices))
+        self.menu = Menu("", ((name, "pickMenu") for name in self._choices),
+                         self.scrolling, self.scroll_items)
 
 
 def CheckBoxLabel(title, *args, **kw):
