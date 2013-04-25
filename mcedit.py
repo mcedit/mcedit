@@ -398,23 +398,23 @@ class GraphicsPanel(Panel):
         Panel.__init__(self)
 
         self.mcedit = mcedit
-
-        def getPacks():
-            return ["[Default]", "[Current]"] + mcplatform.getTexturePacks()
-
-        def packChanged():
-            self.texturePack = self.texturePackChoice.selectedChoice
-            packs = getPacks()
-            if self.texturePack not in packs:
-                self.texturePack = "[Default]"
-            self.texturePackChoice.selectedChoice = self.texturePack
-            self.texturePackChoice.choices = packs
-
-        self.texturePackChoice = texturePackChoice = mceutils.ChoiceButton(getPacks(), choose=packChanged)
-        if self.texturePack in self.texturePackChoice.choices:
-            self.texturePackChoice.selectedChoice = self.texturePack
-
-        texturePackRow = albow.Row((albow.Label("Skin: "), texturePackChoice))
+#
+#        def getPacks():
+#            return ["[Default]", "[Current]"] + mcplatform.getTexturePacks()
+#
+#        def packChanged():
+#            self.texturePack = self.texturePackChoice.selectedChoice
+#            packs = getPacks()
+#            if self.texturePack not in packs:
+#                self.texturePack = "[Default]"
+#            self.texturePackChoice.selectedChoice = self.texturePack
+#            self.texturePackChoice.choices = packs
+#
+#        self.texturePackChoice = texturePackChoice = mceutils.ChoiceButton(getPacks(), choose=packChanged)
+#        if self.texturePack in self.texturePackChoice.choices:
+#            self.texturePackChoice.selectedChoice = self.texturePack
+#
+#        texturePackRow = albow.Row((albow.Label("Skin: "), texturePackChoice))
 
         fieldOfViewRow = mceutils.FloatInputRow("Field of View: ",
             ref=Settings.fov.propertyRef(), width=100, min=25, max=120)
@@ -440,7 +440,7 @@ class GraphicsPanel(Panel):
         settingsColumn = albow.Column((fastLeavesRow,
                                   roughGraphicsRow,
                                   enableMouseLagRow,
-                                  texturePackRow,
+#                                  texturePackRow,
                                   fieldOfViewRow,
                                   targetFPSRow,
                                   bufferLimitRow,
