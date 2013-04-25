@@ -8,6 +8,7 @@ import sys
 from root import get_root, get_focus
 from dialogs import Dialog
 from theme import ThemeProperty
+from pygame import Rect, draw
 
 #---------------------------------------------------------------------------
 
@@ -53,14 +54,25 @@ class Menu(Dialog):
 
     disabled_color = ThemeProperty('disabled_color')
     click_outside_response = -1
+    scroll_button_size = ThemeProperty('scroll_button_size')
+    scroll_button_color = ThemeProperty('scroll_button_color')
+    scroll = 0
 
-    def __init__(self, title, items, **kwds):
+    def __init__(self, title, items, scrolling=False, scroll_items=30,
+                 scroll_page=5, **kwds):
         self.title = title
         self.items = items
         self._items = [MenuItem(*item) for item in items]
+        self.scrolling = scrolling and len(self._items) > scroll_items
+        self.scroll_items = scroll_items
+        self.scroll_page = scroll_page
         Dialog.__init__(self, **kwds)
+
         h = self.font.get_linesize()
-        self.height = h * len(self._items) + h
+        if self.scrolling:
+            self.height = h * self.scroll_items + h
+        else:
+            self.height = h * len(self._items) + h
 
     def present(self, client, pos):
         client = client or get_root()
@@ -70,7 +82,10 @@ class Menu(Dialog):
         h = font.get_linesize()
         items = self._items
         margin = self.margin
-        height = h * len(items) + h
+        if self.scrolling:
+            height = h * self.scroll_items + h
+        else:
+            height = h * len(items) + h
         w1 = w2 = 0
         for item in items:
             item.enabled = self.command_is_enabled(item, focus)
@@ -80,6 +95,8 @@ class Menu(Dialog):
         self._key_margin = width
         if w2 > 0:
             width += w2 + margin
+        if self.scrolling:
+            width += self.scroll_button_size            
         self.size = (width, height)
         self._hilited = None
 
@@ -100,18 +117,42 @@ class Menu(Dialog):
                 handler = handler.next_handler()
         return True
 
+    def scroll_up_rect(self):
+        d = self.scroll_button_size
+        r = Rect(0, 0, d, d)
+        m = self.margin
+        r.top = m
+        r.right = self.width - m
+        r.inflate_ip(-4, -4)
+        return r
+
+    def scroll_down_rect(self):
+        d = self.scroll_button_size
+        r = Rect(0, 0, d, d)
+        m = self.margin
+        r.bottom = self.height - m
+        r.right = self.width - m
+        r.inflate_ip(-4, -4)
+        return r
+
     def draw(self, surf):
         font = self.font
         h = font.get_linesize()
         sep = surf.get_rect()
         sep.height = 1
+        if self.scrolling:
+            sep.width -= self.margin + self.scroll_button_size
         colors = [self.disabled_color, self.fg_color]
         bg = self.bg_color
         xt = self.margin
         xk = self._key_margin
         y = h // 2
         hilited = self._hilited
-        for item in self._items:
+        if self.scrolling:
+            items = self._items[self.scroll:self.scroll + self.scroll_items]
+        else:
+            items = self._items
+        for item in items:
             text = item.text
             if not text:
                 sep.top = y + h // 2
@@ -121,6 +162,8 @@ class Menu(Dialog):
                     rect = surf.get_rect()
                     rect.top = y
                     rect.height = h
+                    if self.scrolling:
+                        rect.width -= xt + self.scroll_button_size
                     surf.fill(colors[1], rect)
                     color = bg
                 else:
@@ -132,6 +175,21 @@ class Menu(Dialog):
                     buf = font.render(keyname, True, color)
                     surf.blit(buf, (xk, y))
             y += h
+        if self.scrolling:
+            if self.can_scroll_up():
+                self.draw_scroll_up_button(surf)
+            if self.can_scroll_down():
+                self.draw_scroll_down_button(surf)
+
+    def draw_scroll_up_button(self, surface):
+        r = self.scroll_up_rect()
+        c = self.scroll_button_color
+        draw.polygon(surface, c, [r.bottomleft, r.midtop, r.bottomright])
+
+    def draw_scroll_down_button(self, surface):
+        r = self.scroll_down_rect()
+        c = self.scroll_button_color
+        draw.polygon(surface, c, [r.topleft, r.midbottom, r.topright])
 
     def mouse_move(self, e):
         self.mouse_drag(e)
@@ -143,20 +201,55 @@ class Menu(Dialog):
             self.invalidate()
 
     def mouse_up(self, e):
-        item = self.find_enabled_item(e)
-        if item:
-            self.dismiss(self._items.index(item))
+        if 1 <= e.button <= 3:
+            item = self.find_enabled_item(e)
+            if item:
+                self.dismiss(self._items.index(item))
 
     def find_enabled_item(self, e):
         x, y = e.local
-        if 0 <= x < self.width:
+        if 0 <= x < (self.width - self.margin - self.scroll_button_size
+                     if self.scrolling else self.width):
             h = self.font.get_linesize()
-            i = (y - h // 2) // h
+            i = (y - h // 2) // h + self.scroll
             items = self._items
             if 0 <= i < len(items):
                 item = items[i]
                 if item.enabled:
                     return item
+
+    def mouse_down(self, event):
+        if event.button == 1:
+            if self.scrolling:
+                p = event.local
+                if self.scroll_up_rect().collidepoint(p):
+                    self.scroll_up()
+                    return
+                elif self.scroll_down_rect().collidepoint(p):
+                    self.scroll_down()
+                    return
+        if event.button == 4:
+            self.scroll_up()
+        if event.button == 5:
+            self.scroll_down()
+
+        Dialog.mouse_down(self, event)
+
+    def scroll_up(self):
+        if self.can_scroll_up():
+            self.scroll = max(self.scroll - self.scroll_page, 0)
+
+    def scroll_down(self):
+        if self.can_scroll_down():
+            self.scroll = min(self.scroll + self.scroll_page,
+                              len(self._items) - self.scroll_items)
+
+    def can_scroll_up(self):
+        return self.scrolling and self.scroll > 0
+
+    def can_scroll_down(self):
+        return (self.scrolling and
+                self.scroll + self.scroll_items < len(self._items))
 
     def find_item_for_key(self, e):
         for item in self._items:

@@ -206,6 +206,8 @@ menu.fg_color = (255, 255, 255)
 menu.disabled_color = (0, 0, 0)
 menu.margin = 8
 menu.border_color = (192, 192, 192)
+menu.scroll_button_size = 16
+menu.scroll_button_color = (255, 255, 0)
 
 root.MenuBar = Theme('MenuBar', base=menu)
 root.MenuBar.border_width = 0
