@@ -2701,7 +2701,8 @@ class LevelEditor(GLViewport):
         worldFolder = self.level.worldFolder
         for filename in worldFolder.findRegionFiles():
             rf = worldFolder.tryLoadRegionFile(filename)
-            rf.repair()
+            if rf:
+                rf.repair()
 
         alert("Repairs complete.  See the console window for details.")
 
