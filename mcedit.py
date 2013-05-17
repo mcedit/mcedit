@@ -1022,7 +1022,7 @@ def main(argv):
         Settings.reportCrashes.addObserver(client, '_enabled', _reportingChanged)
         client.reportErrors()
         client.hook()
-    except ImportError:
+    except (ImportError, UnicodeError) as e:
         pass
 
     try:
