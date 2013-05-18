@@ -2576,14 +2576,9 @@ class LevelEditor(GLViewport):
                 self.currentTool.swap()
 
             if keyname == 'escape':
-                if self.currentViewport == self.chunkViewport:
-                    self.toolbar.selectTool(8)
-                else:
-                    if self.currentTool != self.toolbar.tools[0]:
-                        self.toolbar.selectTool(-1)
-                    else:
-                        self.toolbar.tools[0].endSelection()
+                self.toolbar.tools[0].endSelection()
                 self.mouseLookOff()
+                self.showControls()
 
             # movement
             if keyname == config.config.get('Keys', 'Left'):
