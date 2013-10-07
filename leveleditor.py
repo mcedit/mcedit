@@ -12,6 +12,7 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE."""
 import sys
+from compass import CompassOverlay
 from editortools.thumbview import ThumbView
 from pymclevel.infiniteworld import SessionLockLost
 
@@ -1304,6 +1305,18 @@ class CameraViewport(GLViewport):
         if self.drawFog:
             self.disableFog()
 
+        if self._compass is None:
+            self._compass = CompassOverlay()
+
+        self._compass.yawPitch = self.yaw, 0
+
+        with gl.glPushMatrix(GL.GL_PROJECTION):
+            GL.glLoadIdentity()
+            GL.glOrtho(0., 1., float(self.height) / self.width, 0, -200, 200)
+
+            self._compass.draw()
+
+    _compass = None
 
 class ChunkViewport(CameraViewport):
     defaultScale = 1.0  # pixels per block

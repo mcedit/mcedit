@@ -306,8 +306,6 @@ def loadPNGFile(filename):
     powers = (16, 32, 64, 128, 256, 512, 1024, 2048, 4096)
     assert (w in powers) and (h in powers)  # how crude
 
-    ndata = numpy.array(data, dtype='uint8')
-
     return w, h, data
 
 
@@ -316,12 +314,12 @@ def loadTextureFunc(w, h, ndata):
     return w, h
 
 
-def loadPNGTexture(filename):
+def loadPNGTexture(filename, *a, **kw):
     filename = os.path.join(directories.dataDir, filename)
     try:
         w, h, ndata = loadPNGFile(filename)
 
-        tex = glutils.Texture(functools.partial(loadTextureFunc, w, h, ndata))
+        tex = glutils.Texture(functools.partial(loadTextureFunc, w, h, ndata), *a, **kw)
         tex.data = ndata
         return tex
     except Exception, e:
