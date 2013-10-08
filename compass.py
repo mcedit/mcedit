@@ -38,7 +38,7 @@ class CompassOverlay(Drawable):
             else:
                 filename = "compass.png"
 
-            self._tex = loadPNGTexture(filename)#, minFilter=GL.GL_LINEAR, magFilter=GL.GL_LINEAR)
+            self._tex = loadPNGTexture("toolicons/" + filename)#, minFilter=GL.GL_LINEAR, magFilter=GL.GL_LINEAR)
 
         self._tex.bind()
         size = 0.075
