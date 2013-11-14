@@ -1,6 +1,18 @@
 # Reporting Issues
 
-**Before** submitting an issue, read [Reporting Issues](https://github.com/mcedit/mcedit/wiki/Reporting-Issues) and be sure to include all of the required info in your description.
+**Before** submitting an issue, read [Reporting Issues](https://github.com/mcedit/mcedit/wiki/Reporting-Issues) and be sure to include all of the required info in your description:
+
+* **Steps to Reproduce** - Step by step, tell us exactly which buttons to click on, text to enter, and keys to press that lead you to discover the problem.
+* **MCEdit Version Number** - Found in the title bar of the main window.
+* **Minecraft Version Number** - You should already know how to find this. Also include a list of the mods you are using.
+* **Operating System Version** - At the very least, say whether you are on Windows, Mac, or Linux. To get a more exact version (e.g. "Windows Vista SP1 64-bit", "Mac OS X 10.6.4"):
+ + Windows: click Start, then right-click Computer and choose "Properties". 
+ + Mac OS X: Choose "About This Mac" from the Apple menu.  
+ + Linux: See your distro's documentation to find out how to get the version number.
+ + An animal is not a version number.<br><br>
+
+* **Error log** - If MCEdit tells you it had an error, there will be vital information inside the console window and/or error log file. On Windows, this is the file `mcedit.log` inside the `MCEdit-<version>-<platform>` folder. Use [pastebin](http://pastebin.com/) or [gist](https://gist.github.com/) for logs longer than a dozen lines. On Mac OS X, error info can be copied from the Console utility. (`mcedit.log` is also present on OS X, though it's buried deep inside the application bundle.) On Linux, the error log will be shown on the terminal you started MCEdit from.
+
 
 The issue tracker is the preferred channel for [bug reports](#bugs),
 [features requests](#features) and [submitting pull
