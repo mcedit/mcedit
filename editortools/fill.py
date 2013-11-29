@@ -279,14 +279,16 @@ class FillTool(EditorTool):
 
         self.blockTextures = {}
 
+        pixelWidth = 512 if self.editor.level.materials.name in ("Pocket", "Alpha") else 256
+
         def blockTexFunc(type):
             def _func():
                 s, t = blockTextures[type][0]
                 if not hasattr(terrainTexture, "data"):
                     return
                 w, h = terrainTexture.data.shape[:2]
-                s = s * w / 256
-                t = t * h / 256
+                s = s * w / pixelWidth
+                t = t * h / pixelWidth
                 texData = numpy.array(terrainTexture.data[t:t + h / 16, s:s + w / 16])
                 GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, w / 16, h / 16, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, texData)
             return _func

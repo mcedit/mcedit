@@ -2547,6 +2547,9 @@ class MCRenderer(object):
             return
 
         chunksDrawn = 0
+        if self.level.materials.name in ("Pocket", "Alpha"):
+            GL.glMatrixMode(GL.GL_TEXTURE)
+            GL.glScalef(1/2., 1/2., 1/2.)
 
         with gl.glPushMatrix(GL.GL_MODELVIEW):
             dx, dy, dz = self.origin
@@ -2582,6 +2585,10 @@ class MCRenderer(object):
             GL.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY)
                 # if self.drawLighting:
             self.drawLoadableChunkMarkers()
+
+        if self.level.materials.name in ("Pocket", "Alpha"):
+            GL.glMatrixMode(GL.GL_TEXTURE)
+            GL.glScalef(2., 2., 2.)
 
     renderErrorHandled = False
 
