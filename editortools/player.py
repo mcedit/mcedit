@@ -481,8 +481,13 @@ class PlayerSpawnPositionTool(PlayerPositionTool):
         GL.glDisable(GL.GL_DEPTH_TEST)
 
     def drawCage(self, x, y, z):
-        cageTexVerts = pymclevel.MCInfdevOldLevel.materials.blockTextures[52, 0]
-        cageTexVerts = numpy.array([((tx, ty), (tx + 16, ty), (tx + 16, ty + 16), (tx, ty + 16)) for (tx, ty) in cageTexVerts], dtype='float32')
+        cageTexVerts = numpy.array(pymclevel.MCInfdevOldLevel.materials.blockTextures[52, 0])
+
+        pixelScale = 0.5 if self.editor.level.materials.name in ("Pocket", "Alpha") else 1.0
+        texSize = 16 * pixelScale
+        cageTexVerts *= pixelScale
+
+        cageTexVerts = numpy.array([((tx, ty), (tx + texSize, ty), (tx + texSize, ty + texSize), (tx, ty + texSize)) for (tx, ty) in cageTexVerts], dtype='float32')
         GL.glEnable(GL.GL_ALPHA_TEST)
 
         drawCube(BoundingBox((x, y, z), (1, 1, 1)), texture=pymclevel.alphaMaterials.terrainTexture, textureVertices=cageTexVerts)

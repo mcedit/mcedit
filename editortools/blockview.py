@@ -33,17 +33,21 @@ class BlockView(GLOrtho):
         GL.glEnable(GL.GL_TEXTURE_2D)
         GL.glEnable(GL.GL_ALPHA_TEST)
         self.materials.terrainTexture.bind()
+        pixelScale = 0.5 if self.materials.name in ("Pocket", "Alpha") else 1.0
+        texSize = 16 * pixelScale
+
         GL.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY)
         GL.glVertexPointer(2, GL.GL_FLOAT, 0, array([-1, -1,
                                  - 1, 1,
                                  1, 1,
                                  1, -1, ], dtype='float32'))
-        texOrigin = self.materials.blockTextures[blockInfo.ID, blockInfo.blockData, 0]
+        texOrigin = array(self.materials.blockTextures[blockInfo.ID, blockInfo.blockData, 0])
+        texOrigin *= pixelScale
 
-        GL.glTexCoordPointer(2, GL.GL_FLOAT, 0, array([texOrigin[0], texOrigin[1] + 16,
+        GL.glTexCoordPointer(2, GL.GL_FLOAT, 0, array([texOrigin[0], texOrigin[1] + texSize,
                                   texOrigin[0], texOrigin[1],
-                                  texOrigin[0] + 16, texOrigin[1],
-                                  texOrigin[0] + 16, texOrigin[1] + 16], dtype='float32'))
+                                  texOrigin[0] + texSize, texOrigin[1],
+                                  texOrigin[0] + texSize, texOrigin[1] + texSize], dtype='float32'))
 
         GL.glDrawArrays(GL.GL_QUADS, 0, 4)
 
