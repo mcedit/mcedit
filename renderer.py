@@ -453,6 +453,10 @@ class ChunkCalculator (object):
             pymclevel.materials.alphaMaterials.MonsterSpawner,
             pymclevel.materials.alphaMaterials.Vines,
             pymclevel.materials.alphaMaterials.Fire,
+            pymclevel.materials.alphaMaterials.Trapdoor,
+            pymclevel.materials.alphaMaterials.Lever,
+            pymclevel.materials.alphaMaterials.BrewingStand,
+
         ]
         for b in transparentMaterials:
             mats[b.ID] = materialCount
